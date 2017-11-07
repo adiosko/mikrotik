@@ -1,13 +1,14 @@
 import LoginManager
 import apiList
 import tikapy
+import socket
 
-login = LoginManager()
+login = LoginManager('admin','admin')
 api = apiList()
 
-port =  8728
+port = 8728
 username = "admin"
-password = '"password"'
+password = 'admin'
 devices = login.listMikrotikDevices()
 api = tikapy.TikapyClient(devices[0], port)
 print ("Available devices are "+devices)

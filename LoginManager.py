@@ -1,11 +1,11 @@
-import sys, posix, time, md5, binascii, socket, select
+import sys, posix, time, binascii, socket, select
 import pexpect
 import os
 
 class LoginManager:
     """ Class representing Microtic """
-    def __init__(self,hostIP,login,password):
-        self.host = hostIP
+    def __init__(self,login,password):
+        #self.host = hostIP
         self.username = login
         self.pwd = password
 
