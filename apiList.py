@@ -8,13 +8,13 @@ class apiList():
     #api = tikapy.TikapyClient(address[0], port)
     #global api
 
-    def __init__(self,login,password,api,address):
+    def __init__(self,login,password,address):
         self.user = login
         self.pwd = password
         self.address = login.listMikrotikDevices()
-        self.API = tikapy.TikapyClient(address[0], 8728)
+        #self.API = tikapy.TikapyClient(address[0], 8728)
 
-    login = LoginManager('admin','admin')
+    login = LoginManager
 
     def connectToMikrotik(self,address,port,username,password):
         connect = api.login(user=username,password=password)

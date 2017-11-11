@@ -2,18 +2,12 @@ import LoginManager
 import apiList
 import tikapy
 import socket
+import Interfaces
 
-login = LoginManager('admin','admin')
-api = apiList()
-
-port = 8728
+login = LoginManager.LoginManager('admin','admin')
 username = "admin"
 password = 'admin'
-devices = login.listMikrotikDevices()
-api = tikapy.TikapyClient(devices[0], port)
-print ("Available devices are "+devices)
+interface = Interfaces.InterfaceManager('172.16.49.2')
+interface.listInterfaces()
+#login.mactelnetLoginToSingleDevice('admin','admin')
 
-api.connectToMikrotik(devices[0],port,username,password)
-api.listInterfaces()
-api.listIpAddresses()
-api.disconnectFromMikrotik()
