@@ -1,5 +1,4 @@
 import LoginManager
-import apiList
 from os import system
 import pexpect
 from tikapy import TikapyClient
@@ -12,10 +11,18 @@ class InterfaceManager:
         self.client  = TikapyClient(address,8728)
 
     def listInterfaces(self):
+        """
+        method which lists all interfaces on mikrotik
+        :return: list of interfaces (optional mac addresses) on mikrotik
+        """
         interfaces = {}
         self.client.login('admin','admin')
         interfaces = self.client.talk(['/interface/print'])
-        #print(interfaces)
+        for i in interfaces:
+            listinterfaces = interfaces[i]['name']
+            listmacs = interfaces[i]['mac-address']
+            print( listinterfaces )  # vrati ether1
+            print( listmacs )
         return interfaces
 
 

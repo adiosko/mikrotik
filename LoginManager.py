@@ -44,6 +44,12 @@ class LoginManager:
 
     # metoda na prihlasenie pomocou SSH
     def loginSSH(self, login, password):
+        """
+        method to login to mikrotik device via SSH with username and password using the library pxssh
+        :param login: username on mikrotik
+        :param password: password of user
+        :return: connection to mikrotik or exception
+        """
         from pexpect import pxssh, spawn, expect
         import getpass
         try:
@@ -57,14 +63,6 @@ class LoginManager:
             connect.login( server, login, password )
             commands = pxssh.spawn( )
             time.sleep( 10 )
-            connect.logout( )
-            '''
-            commands.expect('Please press "Enter" to continue!')
-            commands.sendline('\013')
-            connect.sendline('/ip address print')
-            connect.prompt()
-            print connect.before
-            '''
         except pxssh.ExceptionPxssh as e:
             print( "Error" )
             print( str( e ) )
@@ -78,6 +76,10 @@ class LoginManager:
 # zoznam devicov
 
     def listMikrotikDevices(self):
+        """
+        method to list all mikrotik devices (near) using the os.system
+        :return: list of mikrotik devices (mac addresses)
+        """
         deviceList = []
         loadMacAddress = False
         os.system("mactelnet -l -t 20 2>&1 > mt.output")
@@ -95,6 +97,13 @@ class LoginManager:
 
 
     def mactelnetLoginToSingleDevice(self, username, password, address=None):
+        """
+        Method to login to device via mactelnet using username and password and using macaddress of previous method
+        :param username: username on mikrotik
+        :param password: password of user
+        :param address: mac address of mikrotik
+        :return:
+        """
         deviceList = self.listMikrotikDevices()
         print( deviceList )
         if address:
@@ -105,12 +114,3 @@ class LoginManager:
             os.system( 'mactelnet {} -u {} -p {}'.format( deviceList[0], username, password ) )
         else:
             print("No device was found")
-
-
-def unusedCode(self):
-    # username = 'admin'
-    #  password = '""'
-    # os.system("/interface/print")
-    # os.system("/quit")
-    # print "test na git"
-    pass

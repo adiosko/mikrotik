@@ -1,3 +1,5 @@
+#toto je testovacie prostredie na testovanie kodu
+
 from tikapy import TikapyClient
 from pprint import pprint
 
