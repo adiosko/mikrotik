@@ -7,7 +7,7 @@ import Interfaces
 login = LoginManager.LoginManager('admin','admin')
 username = "admin"
 password = 'admin'
-interface = Interfaces.InterfaceManager('172.16.49.2')
+interface = Interfaces.InterfaceManager('192.168.1.1')
 interface.listInterfaces()
 print("\n")
 #interface.listEthernetInterfaces()

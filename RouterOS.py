@@ -3,10 +3,10 @@
 from tikapy import TikapyClient
 from pprint import pprint
 
-client =  TikapyClient('172.16.49.2',8728)
+client =  TikapyClient('192.168.1.1',8728)
 
 client.login('admin','admin')
-pprint(client.talk(['/interface/bridge/print']))
+pprint(client.talk(['/interface/print']))
 #pprint(client.talk(['/ip/address/print']))
 #pprint(client.talk(['/ip/route/print']))
 

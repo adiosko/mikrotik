@@ -19,12 +19,20 @@ class InterfaceManager:
         self.client.login('admin','admin')
         interfaces = self.client.talk(['/interface/print'])
         for i in interfaces:
+            listinterfaces = []
+            listmacs = []
+            run = []
+            disabled = []
             listinterfaces = interfaces[i]['name']
             listmacs = interfaces[i]['mac-address']
             run = interfaces[i]['running']
+            disabled = interfaces[i]['disabled']
+            #print(listinterfaces)
             print( "Interface "+i+" name: "+listinterfaces)  # vrati ether1
             print( "Interface "+i+" MAC address: "+listmacs)
             print("Interface "+i+" is running: "+run)
+            print("Interface "+i+" is disabled: "+disabled)
+            print(interfaces)
             return interfaces
 
     def listEthernetInterfaces(self):
@@ -38,6 +46,7 @@ class InterfaceManager:
         for i in interfaces:
             listethernet = interfaces[i]['name']
             print(listethernet)
+            print(interfaces)
         return interfaces
 
     def listEoIPInterfaces(self):
