@@ -2,6 +2,7 @@ import LoginManager
 from os import system
 import pexpect
 from tikapy import TikapyClient
+from tikapy import TikapySslClient
 from pprint import pprint
 
 class InterfaceManager:
@@ -19,10 +20,10 @@ class InterfaceManager:
         self.client.login('admin','admin')
         interfaces = self.client.talk(['/interface/print'])
         for i in interfaces:
-            listinterfaces = []
-            listmacs = []
-            run = []
-            disabled = []
+            listinterfaces = {}
+            listmacs = {}
+            run = {}
+            disabled = {}
             listinterfaces = interfaces[i]['name']
             listmacs = interfaces[i]['mac-address']
             run = interfaces[i]['running']
@@ -32,8 +33,9 @@ class InterfaceManager:
             print( "Interface "+i+" MAC address: "+listmacs)
             print("Interface "+i+" is running: "+run)
             print("Interface "+i+" is disabled: "+disabled)
-            print(interfaces)
-            return interfaces
+            print("\n")
+            #print(interfaces)
+        return interfaces
 
     def listEthernetInterfaces(self):
         """
