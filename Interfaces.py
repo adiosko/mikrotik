@@ -77,11 +77,11 @@ class InterfaceManager:
         """
         interfaces = {}
         self.client.login( 'admin', 'admin' )
-        interfaces = self.client.talk( ['/interface/eoip/print'] )
+        interfaces = self.client.talk( ['/interface/vlan/print'] )
         for i in interfaces:
-            listeoip = interfaces[i]['name']
-            if listeoip:
-                print( listeoip )
+            listvlan = interfaces[i]['name']
+            if listvlan:
+                print(listvlan)
             else:
                 print( "No EoIP interface found" )
         return interfaces
