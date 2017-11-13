@@ -9,5 +9,9 @@ username = "admin"
 password = 'admin'
 interface = Interfaces.InterfaceManager('172.16.49.2')
 interface.listInterfaces()
+print("\n")
+#interface.listEthernetInterfaces()
+interface.listBridgeInterfaces()
+
 #login.mactelnetLoginToSingleDevice('admin','admin')
 
