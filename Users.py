@@ -80,7 +80,7 @@ class Users:
         :param group: new user group i.e read,write,full
         :return: users
         """
-        self.client.login( 'admin', 'admin' )
+        #self.client.login( 'admin', 'admin' )
         users = self.client.talk(['/user/set', '=numbers='+username, '=group='+group])
         return users
 
