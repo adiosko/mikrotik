@@ -5,15 +5,19 @@ import socket
 import Interfaces
 import Users
 import Services
+import Files
 
 username = "admin"
 password = 'admin'
 login = LoginManager.LoginManager(username,password)
+address = "192.168.1.1"
 
 #objects
-interface = Interfaces.InterfaceManager('192.168.1.1')
-users = Users.Users("192.168.1.1")
-services = Services.Services("192.168.1.1")
+interface = Interfaces.InterfaceManager(address)
+users = Users.Users(address)
+services = Services.Services(address)
+filesmaager = Files.Files(address)
+
 services.enableService("www")
 services.listServices()
 
