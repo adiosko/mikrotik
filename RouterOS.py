@@ -2,14 +2,19 @@
 
 from tikapy import TikapyClient
 from pprint import pprint
+import tikapy
 
 client =  TikapyClient('192.168.1.1',8728)
 
 client.login('admin','admin')
-pprint(client.talk(['/interface/print']))
+#pprint(client.__setattr__(name="meno", passw="password"))
 #pprint(client.talk(['/ip/address/print']))
-#pprint(client.talk(['/ip/route/print']))
+#pprint(client.talk(['/user/add/'])
 
+#def add_user(name, password, disabled=False, group=write):
+client.talk(['/user/set','=numbers=adrian','=group=read'])
+
+#add_user("test", ""))
 client.disconnect()
 
 
