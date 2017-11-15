@@ -1,7 +1,7 @@
 import sys, posix, time, binascii, socket, select
 import pexpect
 import os
-
+import scp
 
 class LoginManager:
     """ Class representing Microtic """
