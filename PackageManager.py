@@ -46,6 +46,21 @@ class PackageManager:
         packages = self.client.talk(['/system/package/unschedule','=numbers='+packagename])
         return packages
 
+    def packageDowngrade(self):
+        packages = self.client.talk(['/system/package/downgrade'])
+        return packages
+
+    def unninstalPackage(self,packagename):
+        packages = self.client.talk(['/system/package/uninstall','=numbers='+packagename])
+        return packages
+
+    def checkforupdates(self):
+        packages = self.client.talk(['/'])
+
+    def checkInstalation(self):
+        pass
+
+
 
 
 

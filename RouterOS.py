@@ -7,8 +7,9 @@ import os
 
 client =  TikapyClient('172.16.129.2',8728)
 
-os.system("sshpass -p 'admin' scp /home/adrian/Desktop/ExtendVolume  admin@172.16.129.2:volume1")
-os.system("sshpass -p 'admin' scp admin@172.16.129.2:backup.backup /home/adrian/Desktop/router")
+pprint(client.talk(['/system/package/update','=check-for-updates']))
+#os.system("sshpass -p 'admin' scp /home/adrian/Desktop/ExtendVolume  admin@172.16.129.2:volume1")
+#os.system("sshpass -p 'admin' scp admin@172.16.129.2:backup.backup /home/adrian/Desktop/router")
 
 '''
 client.login('admin','admin')
