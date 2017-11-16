@@ -54,6 +54,9 @@ class PackageManager:
         packages = self.client.talk(['/system/package/uninstall','=numbers='+packagename])
         return packages
 
+    def installPackage(self,packagename):
+        pass
+
     def checkforupdates(self):
         packages = self.client.talk(['/'])
 
