@@ -3,19 +3,25 @@
 from tikapy import TikapyClient
 from pprint import pprint
 import tikapy
+import os
 
-client =  TikapyClient('192.168.1.1',8728)
+client =  TikapyClient('172.16.129.2',8728)
 
+os.system("sshpass -p 'admin' scp /home/adrian/Desktop/ExtendVolume  admin@172.16.129.2:volume1")
+os.system("sshpass -p 'admin' scp admin@172.16.129.2:backup.backup /home/adrian/Desktop/router")
+
+'''
 client.login('admin','admin')
 #pprint(client.__setattr__(name="meno", passw="password"))
 #pprint(client.talk(['/ip/address/print']))
 #pprint(client.talk(['/user/add/'])
 
 #def add_user(name, password, disabled=False, group=write):
-client.talk(['/user/set','=numbers=adrian','=group=read'])
+pprint(client.talk(['/file/print']))
 
 #add_user("test", ""))
 client.disconnect()
+'''
 
 
 

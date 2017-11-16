@@ -11,22 +11,18 @@ import pexpect
 username = "admin"
 password = 'admin'
 login = LoginManager.LoginManager(username,password)
-address = "172.16.49.2"
+address = "172.16.129.2"
 
 #objects
 interface = Interfaces.InterfaceManager(address)
 users = Users.Users(address)
 services = Services.Services(address)
-filesmaager = Files.Files(address)
-#filesmaager.exportConfig("exportCOnfig")
-filesmaager.importConfig("exportCOnfig.rsc")
-"""
-filepath = "/home/adrian/Desktop/Emacs-Cheat-Sheet.pdf"
-client = pexpect.spawn( "scp " + filepath + " " + address + ":/files" )
-client.expect( username + "@" + address + "s password:" )
-client.sendline( password )
-#client.expect( pexpect.EOF, timeout=10 )
-"""
+filesmanager = Files.Files(address)
+
+filesmanager.backupRouter()
+filesmanager.listFiles()
+
+
 
 
 

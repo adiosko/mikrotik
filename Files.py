@@ -5,6 +5,7 @@ import pexpect
 import LoginManager
 from paramiko import SSHClient
 from scp import SCPClient
+import os
 
 class Files:
     def __init__(self,address):
@@ -22,24 +23,32 @@ class Files:
             print(files[i]['type']+"\t"+files[i]['creation-time']+"\t"+files[i]['name'])
         return files
 
-    def backupRouter(self,filename):
+    def backupRouter(self):
         """
-        method will create backup file of curent config
+        mathod will backup router without naming using system name identity-date.backup
+        :return: return files
+        """
+        backup = self.client.talk(['/system/backup/save'])
+        return backup
+
+    def backupRouterwithSpecificFilename(self,filename):
+        """
+        method will create backup file of curent config with specific name
         :param filename: name of the backup file you want to create
         :return: backup dictionary
         """
         backup = self.client.talk(['/system/backup/save','=name='+filename])
         return backup
 
-    #dokoncit
-    def loadBackup(self,filename,password,address):
-        backup = self.client.talk(['system/backup/load','=name='+filename+"=password="+password])
-        child = pexpect.spawn( address)
-        child.expect("[y/N]")
-        if child.sendline("y"):
-            print("Restoring and rebooting the device")
-        else:
-            print("action cancelled")
+        # dokoncit
+    def loadBackup(self, filename, password):
+        """
+        method will restore mikrotik config via backup file (backup.backup for exmaple)
+        :param filename: filename.backup created by backuRouter method
+        :param password: password of backup file, if none use ""
+        :return: backup files
+        """
+        backup = self.client.talk( ['/system/backup/load', '=name=' + filename, '=password=' + password] )
         return backup
 
     def setBackupPassword(self,filename,password):
@@ -70,12 +79,32 @@ class Files:
         backup = self.client.talk(['/system/backup/save','=name='+filename,'=dont-encrypt=yes'])
         return backup
 
-    #dokoncit
-    def uploadFile(self,filepath,address,username,password):
-        client = pexpect.spawn("scp "+filepath+" "+address+":/files")
-        client.expect(username+"@"+address+"s password:")
-        client.sendline(password)
-        client.expect(pexpect.EOF, timeout=10)
+
+    def uploadFile(self,username,password,filepath,destinationfilename,host):
+        """
+        method will upload file from local machine to mikrotik
+        :param username: username on the router
+        :param password: password of the pushed username
+        :param filepath: path to file on local machine
+        :param destinationfilename: filename which you want to use on mikrotik file tree
+        :param host: IP address of the device
+        :return: return operation status
+        """
+        upload = os.system("sshpass -p "+password+" scp "+filepath+" "+username+"@"+host+":"+destinationfilename)
+        return upload
+
+    def downloadFile(self, username,password,filename,destinationfilepath,host):
+        """
+        method will download file frok mikrotik to local machine
+        :param username: username on mikrotik
+        :param password: password on mikrotik
+        :param filename: file name, which you want to download
+        :param destinationfilepath: path, where to download the file to your machine
+        :param host: IP address of mikrotik
+        :return: return operation status
+        """
+        download = os.system("sshpass -p "+password+" scp "+username+"@"+host+":"+filename+" "+destinationfilepath)
+        return download
 
     def exportConfig(self,filename):
         """
@@ -87,18 +116,18 @@ class Files:
         return files
 
     #opravit
+    """
     def importConfig(self,filename):
-        """
         method will import file.rsc to current config
         :param filename:
         :return:
-        """
         if filename:
             files = self.client.talk(['/import','=file-name='+filename,'=verbose=yes'])
         else:
             print("File does not exists")
         return files
+    """
 
-    def downloadFile(self,filename):
-        pass
+
+
 
