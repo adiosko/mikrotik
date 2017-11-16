@@ -1,12 +1,7 @@
 #THIS IS MAIN LIBRARY WHRE MAIN CODE WILL RUN CONSISTING OF ALL LIBRARIES CREATED IN THIS PROJECT
 import LoginManager
 import tikapy
-import socket
-import Interfaces
-import Users
-import Services
-import Files
-import pexpect
+import Interfaces, Users, Services, Files, PackageManager
 
 username = "admin"
 password = 'admin'
@@ -18,10 +13,11 @@ interface = Interfaces.InterfaceManager(address)
 users = Users.Users(address)
 services = Services.Services(address)
 filesmanager = Files.Files(address)
+packages = PackageManager.PackageManager(address)
 
-filesmanager.backupRouter()
-filesmanager.listFiles()
-
+#calling methods
+packages.unschedulePackageDisable("ipv6")
+packages.listPackages()
 
 
 
