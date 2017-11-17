@@ -6,10 +6,9 @@ from tikapy import TikapySslClient
 from pprint import pprint
 
 class InterfaceManager:
-    def __init__(self,address):
-        #self.interface = interface
-        #self.mac = mac
+    def __init__(self,address,username,password):
         self.client  = TikapyClient(address,8728)
+        self.client.login( username, password)
 
     def listInterfaces(self):
         """
@@ -17,7 +16,7 @@ class InterfaceManager:
         :return: list of interfaces (optional mac addresses) on mikrotik
         """
         interfaces = {}
-        self.client.login('admin','admin')
+
         interfaces = self.client.talk(['/interface/print'])
         print("Interfaces on mikrotik are: ")
         for i in interfaces:
@@ -35,7 +34,6 @@ class InterfaceManager:
         :return: list of ethernet interfaces
         """
         interfaces = {}
-        self.client.login('admin','admin')
         interfaces = self.client.talk(['/interface/ethernet/print'])
         for i in interfaces:
             listethernet = interfaces[i]['name']
@@ -49,7 +47,6 @@ class InterfaceManager:
         :return: list of ethernet interfaces
         """
         interfaces = {}
-        self.client.login( 'admin', 'admin' )
         interfaces = self.client.talk( ['/interface/eoip/print'] )
         for i in interfaces:
             listeoip = interfaces[i]['name']
@@ -65,7 +62,6 @@ class InterfaceManager:
         :return: list of bridge interfaces
         """
         interfaces = {}
-        self.client.login( 'admin', 'admin' )
         interfaces = self.client.talk(['/interface/bridge/print'])
         for i in interfaces:
             listbridge = interfaces[i]['name']
@@ -79,7 +75,6 @@ class InterfaceManager:
         :return:
         """
         interfaces = {}
-        self.client.login( 'admin', 'admin' )
         interfaces = self.client.talk( ['/interface/vlan/print'] )
         for i in interfaces:
             listvlan = interfaces[i]['name']

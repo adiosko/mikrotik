@@ -2,9 +2,9 @@ from tikapy import TikapyClient
 from tikapy import TikapySslClient
 
 class PackageManager:
-    def __init__(self,address):
+    def __init__(self,address,username,password):
         self.client = TikapyClient( address, 8728 )
-        self.client.login( 'admin', 'admin' )
+        self.client.login( username, password )
 
     def listPackages(self):
         """

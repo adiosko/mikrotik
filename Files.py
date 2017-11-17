@@ -8,7 +8,7 @@ from scp import SCPClient
 import os
 
 class Files:
-    def __init__(self,address):
+    def __init__(self,address,username,password):
         self.client = TikapyClient( address, 8728 )
         self.client.login( 'admin', 'admin' )
 
