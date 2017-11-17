@@ -1,7 +1,7 @@
 #THIS IS MAIN LIBRARY WHRE MAIN CODE WILL RUN CONSISTING OF ALL LIBRARIES CREATED IN THIS PROJECT
 import LoginManager
 import tikapy
-import Interfaces, Users, Services, Files, PackageManager
+import Interfaces, Users, Services, Files, PackageManager, SystemMaintenance
 
 username = "admin"
 password = 'admin'
@@ -14,10 +14,11 @@ users = Users.Users(address)
 services = Services.Services(address)
 filesmanager = Files.Files(address)
 packages = PackageManager.PackageManager(address)
+system = SystemMaintenance.SystemMaintenance(address,username,password)
 
 #calling methods
 #packages.unschedulePackageDisable("ipv6")
-packages.installPackageUpdate()
+system.shutdownRouter()
 
 
 
