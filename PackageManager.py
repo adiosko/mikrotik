@@ -47,21 +47,67 @@ class PackageManager:
         return packages
 
     def packageDowngrade(self):
+        """
+        method will downgrade system packages
+        :return: list of system packages
+        """
         packages = self.client.talk(['/system/package/downgrade'])
         return packages
 
     def unninstalPackage(self,packagename):
+        """
+        method will schedule the unninstalation after the device reboot via its package name
+        :param packagename: name of the package you want to remove
+        :return: list of packages
+        """
         packages = self.client.talk(['/system/package/uninstall','=numbers='+packagename])
         return packages
 
-    def installPackage(self,packagename):
-        pass
+    def exportPackageConfiguration(self,filename):
+        """
+        method will export configuration of packages configuration to a file.rsc, to verify  use Files library to
+        verify it
+        :param packagename: name of the file you wanna export configuration to
+        :return: list of packages
+        """
+        packages = self.client.talk(['/system/package/export','=file='+filename])
+        return packages
+
+    def installPackageUpdate(self):
+        """
+        method will update packages on mikrotik
+        :return: list of packages words
+        """
+        packages = self.client.talk(['/system/package/update/install'])
+        print(packages)
+        return packages
 
     def checkforupdates(self):
-        packages = self.client.talk(['/'])
+        """
+        method will check for packages updates online
+        :return: result of api words
+        """
+        packages = self.client.talk(['/system/package/update/check-for-updates'])
+        print(packages)
+        return packages
 
     def checkInstalation(self):
-        pass
+        """
+        method will check mikrotik installation
+        :return: output of results
+        """
+        instal = self.client.talk(['/system/check-installation'])
+        print(instal)
+        return instal
+
+    def checkDisk(self):
+        """
+        method will check disk on  mikrotik after device reboot
+        :return: result of api
+        """
+        disk = self.client.talk(['/system/check-disk'])
+        print(disk)
+        return disk
 
 
 

@@ -17,7 +17,7 @@ packages = PackageManager.PackageManager(address)
 
 #calling methods
 #packages.unschedulePackageDisable("ipv6")
-packages.unschedulePa
+packages.installPackageUpdate()
 
 
 
