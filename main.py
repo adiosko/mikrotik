@@ -2,6 +2,7 @@
 import LoginManager
 import tikapy
 import Interfaces, Users, Services, Files, PackageManager, SystemMaintenance
+import SystemClock, Certificates, Identity
 
 username = "admin"
 password = 'admin'
@@ -15,8 +16,12 @@ services = Services.Services(address,username,password)
 filesmanager = Files.Files(address,username,password)
 packages = PackageManager.PackageManager(address,username,password)
 system = SystemMaintenance.SystemMaintenance(address,username,password)
+clock = SystemClock.SystemClock(address,username,password)
+certs = Certificates.Certificates(address,username,password)
+host = Identity.Identity(address,username,password)
 
-#calling methods
+host.setHostname("Diplomka")
+#client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
 
