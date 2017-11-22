@@ -2,7 +2,7 @@
 import LoginManager
 import tikapy
 import Interfaces, Users, Services, Files, PackageManager, SystemMaintenance
-import SystemClock, Certificates, Identity, AutoUpdate, Console, Health
+import SystemClock, Certificates, Identity, AutoUpdate, Console, Health, History, LCD
 
 username = "admin"
 password = 'admin'
@@ -22,8 +22,10 @@ host = Identity.Identity(address,username,password)
 update = AutoUpdate.AutoUpdate(address,username,password)
 console = Console.Console(address,username,password)
 helth = Health.Health(address,username,password)
+history = History.History(address,username,password)
+LCD =  LCD.LCD(address,username,password)
 
-helth.disableAfterReboot()
+LCD.enableProperty("uptime")
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
