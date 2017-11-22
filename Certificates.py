@@ -143,6 +143,7 @@ class Certificates:
         print(certs)
         return certs
     #opravit
+
     def revokeCertificate(self,certName):
         certs = self.client.talk(['/certificate/issued-revoke','=numbers='+certName])
         print(certs)
@@ -151,3 +152,54 @@ class Certificates:
     def createCertificateRequest(self,certName,passphrase):
         certs = self.client.talk(['/certificate/create-certificate-request','=template='+certName,'= key-passphrase='+passphrase])
         return certs
+
+    def listSCEPServers(self):
+        certs = self.client.talk(['/certificate/scep-server/print'])
+        if certs == {}:
+            print("No SCEP servers found")
+        else:
+            print(certs)
+        return certs
+
+    #otazka ci implementovat
+    def addSCEPServer(self,ca,pathToCA,valid,lifetime):
+        certs = self.client.talk(['/certificate/scep-server/add','=ca-cert='+ca
+                                  ,'=path='+pathToCA,'=days-valid='+valid
+                                  ,'=request-lifetime='+lifetime])
+        return certs
+
+
+    def listRaProxy(self):
+        """
+        Method will list all proxy connected to scep server
+        :return:  list of words
+        """
+        certs = self.client.talk(['/certificate/scep-server/ra/print'])
+        if certs == {}:
+            print("There are no proxy setup")
+        else:
+            print(certs)
+        return certs
+
+    def  generateOTPPassword(self,minutes):
+        """
+        Method will generate passwords for certificates
+        :param minutes: count of minutes to use
+        :return: list of certs
+        """
+        certs = self.client.talk(['/certificate/scep-server/otp/generate','=minutes-valid='+minutes])
+        return certs
+
+    def listOTPPasswords(self):
+        """
+        Method will list generated passwords for certs
+        :return: list of passwords (hash)
+        """
+        certs = self.client.talk(['/certificate/scep-server/otp/print'])
+        if certs == {}:
+            print("No passwords generated")
+        else:
+            print("Password\texpiresIn\tUsed")
+            for i in certs:
+                print(certs[i]['password']+" "+certs[i]['expires']+" "+certs[i]['used'])
+        return  certs
