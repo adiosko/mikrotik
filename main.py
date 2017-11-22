@@ -2,7 +2,7 @@
 import LoginManager
 import tikapy
 import Interfaces, Users, Services, Files, PackageManager, SystemMaintenance
-import SystemClock, Certificates, Identity
+import SystemClock, Certificates, Identity, AutoUpdate
 
 username = "admin"
 password = 'admin'
@@ -19,9 +19,9 @@ system = SystemMaintenance.SystemMaintenance(address,username,password)
 clock = SystemClock.SystemClock(address,username,password)
 certs = Certificates.Certificates(address,username,password)
 host = Identity.Identity(address,username,password)
+update = AutoUpdate.AutoUpdate(address,username,password)
 
-certs.generateOTPPassword("1")
-certs.listOTPPasswords()
+update.listMirrors()
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
