@@ -2,12 +2,13 @@
 import LoginManager
 import tikapy
 import Interfaces, Users, Services, Files, PackageManager, SystemMaintenance
-import SystemClock, Certificates, Identity, AutoUpdate, Console, Health, History, LCD
+import SystemClock, Certificates, Identity, AutoUpdate, Console, Health, History, LCD, LED
+import Licence
 
 username = "admin"
 password = 'admin'
 login = LoginManager.LoginManager(username,password)
-address = "192.168.1.1"
+address = "172.16.129.2"
 
 #objects
 interface = Interfaces.InterfaceManager(address,username,password)
@@ -24,8 +25,9 @@ console = Console.Console(address,username,password)
 helth = Health.Health(address,username,password)
 history = History.History(address,username,password)
 LCD =  LCD.LCD(address,username,password)
-
-system.shutdownRouter()
+led = LED.LED(address,username,password)
+licence = Licence.Licence(address,username,password)
+licence.buyNewLicence("admin","2","deposit")
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
