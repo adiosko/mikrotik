@@ -3,7 +3,7 @@ import LoginManager
 import tikapy
 import Interfaces, Users, Services, Files, PackageManager, SystemMaintenance
 import SystemClock, Certificates, Identity, AutoUpdate, Console, Health, History, LCD, LED
-import Licence
+import Licence,Logging
 
 username = "admin"
 password = 'admin'
@@ -27,7 +27,10 @@ history = History.History(address,username,password)
 LCD =  LCD.LCD(address,username,password)
 led = LED.LED(address,username,password)
 licence = Licence.Licence(address,username,password)
-licence.buyNewLicence("admin","2","deposit")
+log = Logging.Logging(address,username,password)
+
+
+log.addAction("test","memory","200targ  ")
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
