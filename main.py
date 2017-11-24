@@ -7,7 +7,7 @@ import SystemClock, Certificates, Identity, AutoUpdate, Console, Health, History
 username = "admin"
 password = 'admin'
 login = LoginManager.LoginManager(username,password)
-address = "172.16.129.2"
+address = "192.168.1.1"
 
 #objects
 interface = Interfaces.InterfaceManager(address,username,password)
@@ -25,7 +25,7 @@ helth = Health.Health(address,username,password)
 history = History.History(address,username,password)
 LCD =  LCD.LCD(address,username,password)
 
-LCD.enableProperty("uptime")
+system.shutdownRouter()
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()

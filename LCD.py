@@ -35,13 +35,22 @@ class LCD:
             print(prop[i]['display-time']+"\t"+prop[i]['description'])
         return prop
 
-    def enableProperty(self,properties):
+    def enableProperty(self,props):
         """
         Method will enable property on LCD
         :param property: bits, ether1, identity, packets, resources, time, uptime, version
         :return: list
         """
-        prop = self.client.talk("/system/lcd/page/enable","=numbers="+properties)
+        prop = self.client.talk(["/system/lcd/page/enable","=numbers="+props])
+        return prop
+
+    def disableLCDProperty(self,props):
+        """
+        Method will disable LCD property by its name
+        :param props:  LCD property you wanna disable
+        :return:  list of response
+        """
+        prop = self.client.talk( ["/system/lcd/page/disable", "=numbers=" + props] )
         return prop
 
 
