@@ -1,10 +1,10 @@
 #THIS IS MAIN LIBRARY WHRE MAIN CODE WILL RUN CONSISTING OF ALL LIBRARIES CREATED IN THIS PROJECT
 import LoginManager
 import tikapy
-import Interfaces, Users, Services, Files, PackageManager, SystemMaintenance
-import SystemClock, Certificates, Identity, AutoUpdate, Console, Health, History, LCD, LED
-import Licence,Logging, NTPclient,NTPserver,ResetConfig, Resources, RouterBoard, Scheduller, Scripts, SpecialLogin
-import UPS, WatchDog
+from System import Interfaces, Users, Services, Files, PackageManager, SystemMaintenance
+from System import SystemClock, Certificates, Identity, AutoUpdate, Console, Health, History, LCD, LED
+from System import Licence,Logging, NTPclient,NTPserver,ResetConfig, Resources, RouterBoard, Scheduller, Scripts, SpecialLogin
+from System import UPS, WatchDog
 
 username = "admin"
 password = 'admin'
@@ -40,7 +40,7 @@ spl = SpecialLogin.SpecialLogin(address,username,password)
 ups = UPS.UPS(address,username,password)
 wdg = WatchDog.WatchDog(address,username,password)
 
-wdg.setSMTPServer("10.1.1.1")
+system.shutdownRouter()
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
