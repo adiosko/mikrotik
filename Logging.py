@@ -70,6 +70,19 @@ class Logging:
         log = self.client.talk( ['/system/logging/disable', '=numbers=' + number] )
         return log
 
+    def listCustomActions(self):
+        """
+        Method will list all custom actions
+        :return: list
+        """
+        action = self.client.talk(['/system/logging/action/print'])
+        if action == {}:
+            print("No customa ction found")
+        else:
+            print("Name\ttype\tisDefault")
+            for i in action:
+                print(action[i]['name']+"\t"+action[i]['target']+"\t"+action[i]['default'])
+
     def addAction(self,name,type,lines):
         """
         Method will add customa ction to mikrotik
@@ -78,5 +91,31 @@ class Logging:
         :param stoponfull:action will stop if is full
         :return: list
         """
-        action = self.client.talk(['/system/logging/action/add','=name='+name,'=type=','=target='+type,'=memory-lines='+lines])
+        action = self.client.talk(['/system/logging/action/add','=name='+name,'=target='+type,'=memory-lines='+lines])
+        return action
+
+    def removeAction(self,actionName):
+        """
+        Method will remove custom action name
+        :param actionName: action Name u wanna remove
+        :return: list
+        """
+        if actionName == "disk" or actionName == "echo" or actionName == "memory" or actionName == "remote":
+            print("cannot remove default action")
+        else:
+            action = self.client.talk(['/system/logging/action/remove','=numbers='+actionName])
+        return action
+
+    def setAction(self,actionName,newName,type,lines):
+        """
+        Method will edit action which exists
+        :param actionName: name of action u wanna edit
+        :return: list
+        """
+        if actionName == "disk" or actionName == "echo" or actionName == "memory" or actionName == "remote":
+            print( "cannot edit default action" )
+            self.client.disconnect()
+        else:
+            action = self.client.talk(['/system/logging/action/set','=numbers='+actionName,'=name='+newName,'=target='
+                                       +type,'=memory-lines='+lines])
         return action

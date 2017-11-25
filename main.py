@@ -3,7 +3,8 @@ import LoginManager
 import tikapy
 import Interfaces, Users, Services, Files, PackageManager, SystemMaintenance
 import SystemClock, Certificates, Identity, AutoUpdate, Console, Health, History, LCD, LED
-import Licence,Logging
+import Licence,Logging, NTPclient,NTPserver,ResetConfig, Resources, RouterBoard, Scheduller, Scripts, SpecialLogin
+import UPS, WatchDog
 
 username = "admin"
 password = 'admin'
@@ -28,9 +29,18 @@ LCD =  LCD.LCD(address,username,password)
 led = LED.LED(address,username,password)
 licence = Licence.Licence(address,username,password)
 log = Logging.Logging(address,username,password)
+ntpc = NTPclient.NTPclient(address,username,password)
+ntps = NTPserver.NTPserver(address,username,password)
+reset = ResetConfig.ResetConfig(address,username,password)
+resc = Resources.Resources(address,username,password)
+rbr = RouterBoard.RouterBoard(address,username,password)
+schd = Scheduller.Scheduller(address, username, password)
+scr = Scripts.Scripts(address,username,password)
+spl = SpecialLogin.SpecialLogin(address,username,password)
+ups = UPS.UPS(address,username,password)
+wdg = WatchDog.WatchDog(address,username,password)
 
-
-log.addAction("test","memory","200targ  ")
+wdg.setSMTPServer("10.1.1.1")
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
