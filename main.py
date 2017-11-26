@@ -5,6 +5,7 @@ from System import Interfaces, Users, Services, Files, PackageManager, SystemMai
 from System import SystemClock, Certificates, Identity, AutoUpdate, Console, Health, History, LCD, LED
 from System import Licence,Logging, NTPclient,NTPserver,ResetConfig, Resources, RouterBoard, Scheduller, Scripts, SpecialLogin
 from System import UPS, WatchDog
+from makeSupportFile import makeSupport
 
 username = "admin"
 password = 'admin'
@@ -39,14 +40,11 @@ scr = Scripts.Scripts(address,username,password)
 spl = SpecialLogin.SpecialLogin(address,username,password)
 ups = UPS.UPS(address,username,password)
 wdg = WatchDog.WatchDog(address,username,password)
+sup = makeSupport.makeSupport(address,username,password)
 
-system.shutdownRouter()
+sup.makeSupportFile("test")
+
+
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
-
-
-
-
-
-

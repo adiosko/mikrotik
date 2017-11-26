@@ -12,4 +12,8 @@ class makeSupport:
         :param filename: if no name is provided, default name wull be useed
         :return: list
         """
-        sup = self.client.talk(['#kod https://wiki.mikrotik.com/wiki/Manual:Support_Output_File'])
+        if (filename == None):
+            sup = self.client.talk(['/system/sup-output'])
+        else:
+            sup = self.client.talk(['/system/sup-output','=name='+filename])
+        return sup
