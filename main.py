@@ -6,6 +6,7 @@ from System import SystemClock, Certificates, Identity, AutoUpdate, Console, Hea
 from System import Licence,Logging, NTPclient,NTPserver,ResetConfig, Resources, RouterBoard, Scheduller, Scripts, SpecialLogin
 from System import UPS, WatchDog
 from makeSupportFile import makeSupport
+from Dude import Devices,Notifications, Probes, RosInfo
 
 username = "admin"
 password = 'admin'
@@ -41,8 +42,13 @@ spl = SpecialLogin.SpecialLogin(address,username,password)
 ups = UPS.UPS(address,username,password)
 wdg = WatchDog.WatchDog(address,username,password)
 sup = makeSupport.makeSupport(address,username,password)
+dev = Devices.Devices(address,username,password)
+notif = Notifications.Notifications(address,username,password)
+probe = Probes.Probes(address,username,password)
+ros = RosInfo.RosInfo(address,username,password)
 
-sup.makeSupportFile("test")
+
+ros.listAddresses()
 
 
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
