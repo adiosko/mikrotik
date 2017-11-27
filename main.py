@@ -11,7 +11,7 @@ from Dude import Devices,Notifications, Probes, RosInfo
 username = "admin"
 password = 'admin'
 login = LoginManager.LoginManager(username,password)
-address = "172.16.129.2"
+address = "172.16.53.2"
 
 #objects
 interface = Interfaces.InterfaceManager(address,username,password)
@@ -48,7 +48,7 @@ probe = Probes.Probes(address,username,password)
 ros = RosInfo.RosInfo(address,username,password)
 
 
-ros.listAddresses()
+ros.listDhcpLeases()
 
 
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
