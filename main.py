@@ -6,7 +6,7 @@ from System import SystemClock, Certificates, Identity, AutoUpdate, Console, Hea
 from System import Licence,Logging, NTPclient,NTPserver,ResetConfig, Resources, RouterBoard, Scheduller, Scripts, SpecialLogin
 from System import UPS, WatchDog
 from makeSupportFile import makeSupport
-from Dude import Devices,Notifications, Probes, RosInfo
+from Dude import Devices,Notifications, Probes, RosInfo, Services, Settings
 
 username = "admin"
 password = 'admin'
@@ -46,9 +46,10 @@ dev = Devices.Devices(address,username,password)
 notif = Notifications.Notifications(address,username,password)
 probe = Probes.Probes(address,username,password)
 ros = RosInfo.RosInfo(address,username,password)
+serv = Services.Services(address,username,password)
+sett = Settings.Settings(address,username,password)
 
-
-ros.listDhcpLeases()
+sett.disableDude()
 
 
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
