@@ -49,7 +49,7 @@ class Email:
         :param file:  file (optional)
         :return:
         """
-        if file == None or copy == None:
+        if (file == None) or (copy == None):
             mail = self.client.talk(['/tool/e-mail/send','=server='+address,'=port='+port,'=user='+user,
                                      '=password='+password,'=start-tls='+tls,'=to='+sendTo,'=from='+fromUser,
                                      '=subject='+Subject,'=body='+body])

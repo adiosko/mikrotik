@@ -7,6 +7,7 @@ from System import Licence,Logging, NTPclient,NTPserver,ResetConfig, Resources, 
 from System import UPS, WatchDog
 from makeSupportFile import makeSupport
 from Dude import Devices,Notifications, Probes, RosInfo, Services, Settings
+from Tools import BwServer, BwTest, Email, FloodPing, Graphing, IpScan, MacServer, Netwatch, PacketSniffer
 
 username = "admin"
 password = 'admin'
@@ -48,9 +49,17 @@ probe = Probes.Probes(address,username,password)
 ros = RosInfo.RosInfo(address,username,password)
 serv = Services.Services(address,username,password)
 sett = Settings.Settings(address,username,password)
+bws = BwServer.BwServer(address,username,password)
+bwt = BwTest.BwTest(address,username,password)
+mail = Email.Email(address,username,password)
+fping = FloodPing.FloodPing(address,username,password)
+graf = Graphing.Graphing(address,username,password)
+ips = IpScan.IpScan(address,username,password)
+mac = MacServer.MacServer(address,username,password)
+nwc = Netwatch.Netwatch(address,username,password)
+sniff = PacketSniffer.PacketSniffer(address,username,password)
 
-sett.disableDude()
-
+sniff.filterOperation("and")
 
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
