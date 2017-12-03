@@ -7,7 +7,8 @@ from System import Licence,Logging, NTPclient,NTPserver,ResetConfig, Resources, 
 from System import UPS, WatchDog
 from makeSupportFile import makeSupport
 from Dude import Devices,Notifications, Probes, RosInfo, Services, Settings
-from Tools import BwServer, BwTest, Email, FloodPing, Graphing, IpScan, MacServer, Netwatch, PacketSniffer
+from Tools import BwServer, BwTest, Email, FloodPing, Graphing, IpScan, MacServer, Netwatch, PacketSniffer, Ping, PingSpeed
+from Tools import Profile, RoMon
 
 username = "admin"
 password = 'admin'
@@ -58,8 +59,12 @@ ips = IpScan.IpScan(address,username,password)
 mac = MacServer.MacServer(address,username,password)
 nwc = Netwatch.Netwatch(address,username,password)
 sniff = PacketSniffer.PacketSniffer(address,username,password)
+ping = Ping.Ping(address,username,password)
+speed = PingSpeed.PingSpeed(address,username,password)
+prof = Profile.Profile(address,username,password)
+romon = RoMon.RoMon(address,username,password)
 
-sniff.filterOperation("and")
+
 
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
