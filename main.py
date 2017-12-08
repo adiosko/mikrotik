@@ -8,7 +8,7 @@ from System import UPS, WatchDog
 from makeSupportFile import makeSupport
 from Dude import Devices,Notifications, Probes, RosInfo, Services, Settings
 from Tools import BwServer, BwTest, Email, FloodPing, Graphing, IpScan, MacServer, Netwatch, PacketSniffer, Ping, PingSpeed
-from Tools import Profile, RoMon
+from Tools import Profile, RoMon, SMS, Telnet, Torch, TrafficGenerator, TrafficMonitorList
 
 username = "admin"
 password = 'admin'
@@ -63,9 +63,12 @@ ping = Ping.Ping(address,username,password)
 speed = PingSpeed.PingSpeed(address,username,password)
 prof = Profile.Profile(address,username,password)
 romon = RoMon.RoMon(address,username,password)
+SMS = SMS.SMS(address,username,password)
+torch = Torch.Torch(address,username,password)
+traff = TrafficGenerator.TrafficGenerator(address,username,password)
+mon = TrafficMonitorList.TrafficMonitorList(address,username,password)
 
-
-
+mon.removeItem("0")
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
