@@ -11,6 +11,7 @@ from Tools import BwServer, BwTest, Email, FloodPing, Graphing, IpScan, MacServe
 from Tools import Profile, RoMon, SMS, Telnet, Torch, TrafficGenerator, TrafficMonitorList
 from log import Log
 from Radius import Radius
+from Queues import SimpleQueues, QueueInterfaces, QueueTree, QueueTypes
 
 username = "admin"
 password = 'admin'
@@ -71,8 +72,12 @@ traff = TrafficGenerator.TrafficGenerator(address,username,password)
 mon = TrafficMonitorList.TrafficMonitorList(address,username,password)
 log = Log.Log(address,username,password)
 radius = Radius.Radius(address,username,password)
+queue = SimpleQueues.SimpleQueues(address,username,password)
+qiface = QueueInterfaces.QueueInterfaces(address,username,password)
+tree = QueueTree.QueueTree(address,username,password)
+qtypes = QueueTypes.QueueTypes(address,username,password)
 
-radius.removeRadius("0")
+qtypes.removeQueueType("hovadina")
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
