@@ -10,6 +10,7 @@ from Dude import Devices,Notifications, Probes, RosInfo, Services, Settings
 from Tools import BwServer, BwTest, Email, FloodPing, Graphing, IpScan, MacServer, Netwatch, PacketSniffer, Ping, PingSpeed
 from Tools import Profile, RoMon, SMS, Telnet, Torch, TrafficGenerator, TrafficMonitorList
 from log import Log
+from Radius import Radius
 
 username = "admin"
 password = 'admin'
@@ -69,8 +70,9 @@ torch = Torch.Torch(address,username,password)
 traff = TrafficGenerator.TrafficGenerator(address,username,password)
 mon = TrafficMonitorList.TrafficMonitorList(address,username,password)
 log = Log.Log(address,username,password)
+radius = Radius.Radius(address,username,password)
 
-log.listLog()
+radius.removeRadius("0")
 #client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass'])
 #packages.unschedulePackageDisable("ipv6")
 #system.shutdownRouter()
