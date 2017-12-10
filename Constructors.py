@@ -11,6 +11,7 @@ from Tools import Profile, RoMon, SMS, Telnet, Torch, TrafficGenerator, TrafficM
 from log import Log
 from Radius import Radius
 from Queues import SimpleQueues, QueueInterfaces, QueueTree, QueueTypes
+from Routing import BFD, bgpInstance
 
 
 class Mikrotik:
@@ -76,6 +77,7 @@ class Mikrotik:
         self.qiface = QueueInterfaces.QueueInterfaces( address, username, password )
         self.tree = QueueTree.QueueTree( address, username, password )
         self.qtypes = QueueTypes.QueueTypes( address, username, password )
-
+        self.bfd = BFD.BFD(address,username,password)
+        self.inst = bgpInstance.BGPInstance(address,username,password)
 
 
