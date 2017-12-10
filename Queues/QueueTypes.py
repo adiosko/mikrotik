@@ -39,3 +39,5 @@ class QueueTypes:
         queue = self.client.talk(['/queue/type/remove','=numbers='+name])
         return queue
 
+    #nastavenie queue types default
+
