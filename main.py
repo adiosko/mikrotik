@@ -1,4 +1,4 @@
 import Constructors
 
 mikrotik = Constructors.Mikrotik(address="172.16.53.2",username="admin",password="admin")
-mikrotik.inst.setIgnoreAsPathLength("bgp")
+mikrotik.badv.listAdvertisments()

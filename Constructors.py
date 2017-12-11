@@ -11,7 +11,7 @@ from Tools import Profile, RoMon, SMS, Telnet, Torch, TrafficGenerator, TrafficM
 from log import Log
 from Radius import Radius
 from Queues import SimpleQueues, QueueInterfaces, QueueTree, QueueTypes
-from Routing import BFD, bgpInstance
+from Routing import BFD, bgpInstance, bgpVRF, bgpPeer, bgpNetworks,bgpAfregates,VPNRoutes,bgpAdverisment
 
 
 class Mikrotik:
@@ -79,5 +79,12 @@ class Mikrotik:
         self.qtypes = QueueTypes.QueueTypes( address, username, password )
         self.bfd = BFD.BFD(address,username,password)
         self.inst = bgpInstance.BGPInstance(address,username,password)
+        self.vrf = bgpVRF.bgpVRF(address,username,password)
+        self.peer=bgpPeer.bgpPeer(address,username,password)
+        self.bnet=bgpNetworks.bgpNetworks(address,username,password)
+        self.bagr = bgpAfregates.bgpAgregates(address,username,password)
+        self.bvpn = VPNRoutes.VPNRoutes(address,username,password)
+        self.badv = bgpAdverisment.bgpAdvertisment(address,username,password)
+
 
 
