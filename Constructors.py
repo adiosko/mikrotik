@@ -11,8 +11,8 @@ from Tools import Profile, RoMon, SMS, Telnet, Torch, TrafficGenerator, TrafficM
 from log import Log
 from Radius import Radius
 from Queues import SimpleQueues, QueueInterfaces, QueueTree, QueueTypes
-from Routing import BFD, bgpInstance, bgpVRF, bgpPeer, bgpNetworks,bgpAfregates,VPNRoutes,bgpAdverisment
-
+from Routing import BFD, bgpInstance, bgpVRF, bgpPeer, bgpNetworks,bgpAfregates,VPNRoutes,bgpAdverisment, RoutingFilters
+from  Routing import FIlterChains
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -85,6 +85,8 @@ class Mikrotik:
         self.bagr = bgpAfregates.bgpAgregates(address,username,password)
         self.bvpn = VPNRoutes.VPNRoutes(address,username,password)
         self.badv = bgpAdverisment.bgpAdvertisment(address,username,password)
+        self.filt = RoutingFilters.RoutingFilters(address,username,password)
+        self.chain = FIlterChains.FilterChains(address,username,password)
 
 
 
