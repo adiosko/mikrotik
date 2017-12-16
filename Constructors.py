@@ -12,7 +12,7 @@ from log import Log
 from Radius import Radius
 from Queues import SimpleQueues, QueueInterfaces, QueueTree, QueueTypes
 from Routing import BFD, bgpInstance, bgpVRF, bgpPeer, bgpNetworks,bgpAfregates,VPNRoutes,bgpAdverisment, RoutingFilters
-from  Routing import FIlterChains
+from  Routing import FIlterChains, FilterBGP, FilterActions, FilterBgpActions
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -87,6 +87,9 @@ class Mikrotik:
         self.badv = bgpAdverisment.bgpAdvertisment(address,username,password)
         self.filt = RoutingFilters.RoutingFilters(address,username,password)
         self.chain = FIlterChains.FilterChains(address,username,password)
+        self.bgpfilter = FilterBGP.FilterBGP(address,username,password)
+        self.bgpaction = FilterActions.FilterActions(address,username,password)
+        self.bgpact = FilterBgpActions.FilterBgpActions(address,username,password)
 
 
 
