@@ -12,7 +12,7 @@ from log import Log
 from Radius import Radius
 from Queues import SimpleQueues, QueueInterfaces, QueueTree, QueueTypes
 from Routing import BFD, bgpInstance, bgpVRF, bgpPeer, bgpNetworks,bgpAfregates,VPNRoutes,bgpAdverisment, RoutingFilters
-from  Routing import FIlterChains, FilterBGP, FilterActions, FilterBgpActions
+from  Routing import FIlterChains, FilterBGP, FilterActions, FilterBgpActions, IgmpProxy
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -90,6 +90,7 @@ class Mikrotik:
         self.bgpfilter = FilterBGP.FilterBGP(address,username,password)
         self.bgpaction = FilterActions.FilterActions(address,username,password)
         self.bgpact = FilterBgpActions.FilterBgpActions(address,username,password)
+        self.proxy = IgmpProxy.IgmpProxy(address,username,password)
 
 
 
