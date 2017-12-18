@@ -12,7 +12,9 @@ from log import Log
 from Radius import Radius
 from Queues import SimpleQueues, QueueInterfaces, QueueTree, QueueTypes
 from Routing import BFD, bgpInstance, bgpVRF, bgpPeer, bgpNetworks,bgpAfregates,VPNRoutes,bgpAdverisment, RoutingFilters
-from  Routing import FIlterChains, FilterBGP, FilterActions, FilterBgpActions, IgmpProxy
+from  Routing import FIlterChains, FilterBGP, FilterActions, FilterBgpActions, IgmpProxy, MME, OspfInterface,OspfInstances
+from Routing import OspfNetworks, OspfArea, OspfAreaRanges,OspfVirtualLink, OspfNeighbors, OspfNbmaNeighbor,OspfShamLinks
+from Routing import OspfLsa, OspfRoutes,OspfAsBorderRouters,OspfAreaBorderRouters
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -91,6 +93,17 @@ class Mikrotik:
         self.bgpaction = FilterActions.FilterActions(address,username,password)
         self.bgpact = FilterBgpActions.FilterBgpActions(address,username,password)
         self.proxy = IgmpProxy.IgmpProxy(address,username,password)
-
-
-
+        self.mme = MME.MME(address,username,password)
+        self.oiface = OspfInterface.OspfInterface(address,username,password)
+        self.oinstance = OspfInstances.OspfInstances(address,username,password)
+        self.onet = OspfNetworks.OspfNetworks(address,username,password)
+        self.oarea = OspfArea.OspfArea(address,username,password)
+        self.orange = OspfAreaRanges.OspfAreaRanges(address,username,password)
+        self.ovirt = OspfVirtualLink.OspfVirtualLinks(address,username,password)
+        self.oneig = OspfNeighbors.OspfNeighbors(address,username,password)
+        self.onbma = OspfNbmaNeighbor.OspfNbmaNeighbor(address,username,password)
+        self.osham = OspfShamLinks.OspfShamLinks(address,username,password)
+        self.olsa = OspfLsa.OspfLsa(address,username,password)
+        self.oroute = OspfRoutes.OspfRoutes(address,username,password)
+        self.oasrtr = OspfAsBorderRouters.OspfAsBorderRouters(address,username,password)
+        self.oareartr = OspfAreaBorderRouters.OspfAreaBorderRouters(address,username,password)
