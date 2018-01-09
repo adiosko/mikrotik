@@ -14,7 +14,8 @@ from Queues import SimpleQueues, QueueInterfaces, QueueTree, QueueTypes
 from Routing import BFD, bgpInstance, bgpVRF, bgpPeer, bgpNetworks,bgpAfregates,VPNRoutes,bgpAdverisment, RoutingFilters
 from  Routing import FIlterChains, FilterBGP, FilterActions, FilterBgpActions, IgmpProxy, MME, OspfInterface,OspfInstances
 from Routing import OspfNetworks, OspfArea, OspfAreaRanges,OspfVirtualLink, OspfNeighbors, OspfNbmaNeighbor,OspfShamLinks
-from Routing import OspfLsa, OspfRoutes,OspfAsBorderRouters,OspfAreaBorderRouters
+from Routing import OspfLsa, OspfRoutes,OspfAsBorderRouters,OspfAreaBorderRouters, RoutingFilters, RoutingFilterMatchers
+from Routing import RoutingFilterBgp
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -107,3 +108,6 @@ class Mikrotik:
         self.oroute = OspfRoutes.OspfRoutes(address,username,password)
         self.oasrtr = OspfAsBorderRouters.OspfAsBorderRouters(address,username,password)
         self.oareartr = OspfAreaBorderRouters.OspfAreaBorderRouters(address,username,password)
+        self.rflt = RoutingFilters.RoutingFilters(address,username,password)
+        self.rfltmatch = RoutingFilterMatchers.RoutingFiltersMatchers(address,username,password)
+        self.rfltbgp = RoutingFilterBgp.RoutingFilterBgp(address,username,password)
