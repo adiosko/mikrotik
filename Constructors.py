@@ -16,7 +16,7 @@ from  Routing import FIlterChains, FilterBGP, FilterActions, FilterBgpActions, I
 from Routing import OspfNetworks, OspfArea, OspfAreaRanges,OspfVirtualLink, OspfNeighbors, OspfNbmaNeighbor,OspfShamLinks
 from Routing import OspfLsa, OspfRoutes,OspfAsBorderRouters,OspfAreaBorderRouters, RoutingFilters, RoutingFilterMatchers
 from Routing import RoutingFilterBgp, RoutingFilterActions,PimSettings,PimInterfaces,PimRp,PimBsrCandidates,RpCandidate
-from Routing import PimNeighbors, PimBsr,PimMRib,PimMfc, PimJoins,PimIgmpGroups
+from Routing import PimNeighbors, PimBsr,PimMRib,PimMfc, PimJoins,PimIgmpGroups,PrefixList
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -123,3 +123,4 @@ class Mikrotik:
         self.pmfc = PimMfc.PimMfc(address,username,password)
         self.pjoin = PimJoins.PimJoins(address,username,password)
         self.pigmp = PimIgmpGroups.PimIgmpGroups(address,username,password)
+        self.pflist = PrefixList.PrefixList(address,username,password)
