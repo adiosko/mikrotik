@@ -15,7 +15,8 @@ from Routing import BFD, bgpInstance, bgpVRF, bgpPeer, bgpNetworks,bgpAfregates,
 from  Routing import FIlterChains, FilterBGP, FilterActions, FilterBgpActions, IgmpProxy, MME, OspfInterface,OspfInstances
 from Routing import OspfNetworks, OspfArea, OspfAreaRanges,OspfVirtualLink, OspfNeighbors, OspfNbmaNeighbor,OspfShamLinks
 from Routing import OspfLsa, OspfRoutes,OspfAsBorderRouters,OspfAreaBorderRouters, RoutingFilters, RoutingFilterMatchers
-from Routing import RoutingFilterBgp, RoutingFilterActions,PimSettings,PimInterfaces,PimRp
+from Routing import RoutingFilterBgp, RoutingFilterActions,PimSettings,PimInterfaces,PimRp,PimBsrCandidates,RpCandidate
+from Routing import PimNeighbors, PimBsr,PimMRib,PimMfc, PimJoins,PimIgmpGroups
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -115,4 +116,10 @@ class Mikrotik:
         self.pim = PimSettings.PimSettings(address,username,password)
         self.piface = PimInterfaces.PimInterfaces(address,username,password)
         self.prp = PimRp.PimRp(address,username,password)
-
+        self.pbsrc = PimBsrCandidates.PimBsrCandidates(address,username,password)
+        self.prpc = RpCandidate.RpCandidate(address,username,password)
+        self.pbsr = PimBsr.BsrStats(address,username,password)
+        self.pmrib = PimMRib.PimMRib(address,username,password)
+        self.pmfc = PimMfc.PimMfc(address,username,password)
+        self.pjoin = PimJoins.PimJoins(address,username,password)
+        self.pigmp = PimIgmpGroups.PimIgmpGroups(address,username,password)
