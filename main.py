@@ -1,4 +1,4 @@
 import Constructors
 
 mikrotik = Constructors.Mikrotik(address="172.16.53.2",username="admin",password="admin")
-mikrotik.rngroute.listRoutes()
+mikrotik.mrbind.setNextHop("0","2.2.2.2")

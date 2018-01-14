@@ -18,6 +18,9 @@ from Routing import OspfLsa, OspfRoutes,OspfAsBorderRouters,OspfAreaBorderRouter
 from Routing import RoutingFilterBgp, RoutingFilterActions,PimSettings,PimInterfaces,PimRp,PimBsrCandidates,RpCandidate
 from Routing import PimNeighbors, PimBsr,PimMRib,PimMfc, PimJoins,PimIgmpGroups,PrefixList, RipSettings, RipInterfaces
 from Routing import RipNetworks, RipKeys, RipNeighbors, RipRoutes,RipNgSettings,RipNgInterface, RipNgRoutes
+from MPLS import MplsSettings, MplsLdpSettings,MplsLdpInterface, MplsLdpNeighbor, MplsAcceptFilter, MplsAdvertiseFilter
+from  MPLS import MplsForwardingTable,MplsInterface, MplsLocalBinding, MplsRemoteBindings
+
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -134,3 +137,13 @@ class Mikrotik:
         self.rngset = RipNgSettings.RipNgSettings(address,username,password)
         self.rngiface = RipNgInterface.RipNgInterfaces(address,username,password)
         self.rngroute = RipNgRoutes.RipNgRoutes(address,username,password)
+        self.mset = MplsSettings.MplsSettings(address,username,password)
+        self.mldpset = MplsLdpSettings.MplsLdpSettings(address,username,password)
+        self.mldpiface = MplsLdpInterface.MplsLdpInterface(address,username,password)
+        self.mldpneig = MplsLdpNeighbor.MplsLdpNeighbors(address,username,password)
+        self.mldpacceptfilter = MplsAcceptFilter.MplsLdpAcceptFilter(address,username,password)
+        self.mldpadvertfilter = MplsAdvertiseFilter.MplsAdvertiseFilter(address,username,password)
+        self.mfwtable = MplsForwardingTable.MplsForwardingTable(address,username,password)
+        self.miface = MplsInterface.MplsInterface(address,username,password)
+        self.mlbind = MplsLocalBinding.MplsLocalBinding(address,username,password)
+        self.mrbind = MplsRemoteBindings.MplsRemoteBinding(address,username,password)
