@@ -20,6 +20,7 @@ from Routing import PimNeighbors, PimBsr,PimMRib,PimMfc, PimJoins,PimIgmpGroups,
 from Routing import RipNetworks, RipKeys, RipNeighbors, RipRoutes,RipNgSettings,RipNgInterface, RipNgRoutes
 from MPLS import MplsSettings, MplsLdpSettings,MplsLdpInterface, MplsLdpNeighbor, MplsAcceptFilter, MplsAdvertiseFilter
 from  MPLS import MplsForwardingTable,MplsInterface, MplsLocalBinding, MplsRemoteBindings
+from MPLS import TrafficEngInterface,TrafficEngTunnelPath,TrafficEngPathState, TrafficEngResvState, TrafficEngTraffInterface
 
 
 class Mikrotik:
@@ -147,3 +148,8 @@ class Mikrotik:
         self.miface = MplsInterface.MplsInterface(address,username,password)
         self.mlbind = MplsLocalBinding.MplsLocalBinding(address,username,password)
         self.mrbind = MplsRemoteBindings.MplsRemoteBinding(address,username,password)
+        self.teiface = TrafficEngInterface.TrafficEngInterface(address,username,password)
+        self.tetunp = TrafficEngTunnelPath.TrafficEngTunnelPath(address,username,password)
+        self.tepstate =TrafficEngPathState.TrafficEngPathState(address,username,password)
+        self.terstate = TrafficEngResvState.TrafficEngResvState(address,username,password)
+        self.tetriface = TrafficEngTraffInterface.TrafficEngTraffInterface(address,username,password)
