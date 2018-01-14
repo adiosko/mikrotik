@@ -17,7 +17,7 @@ from Routing import OspfNetworks, OspfArea, OspfAreaRanges,OspfVirtualLink, Ospf
 from Routing import OspfLsa, OspfRoutes,OspfAsBorderRouters,OspfAreaBorderRouters, RoutingFilters, RoutingFilterMatchers
 from Routing import RoutingFilterBgp, RoutingFilterActions,PimSettings,PimInterfaces,PimRp,PimBsrCandidates,RpCandidate
 from Routing import PimNeighbors, PimBsr,PimMRib,PimMfc, PimJoins,PimIgmpGroups,PrefixList, RipSettings, RipInterfaces
-from Routing import RipNetworks, RipKeys, RipNeighbors, RipRoutes
+from Routing import RipNetworks, RipKeys, RipNeighbors, RipRoutes,RipNgSettings,RipNgInterface, RipNgRoutes
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -131,3 +131,6 @@ class Mikrotik:
         self.rkey = RipKeys.RipKeys(address,username,password)
         self.rneig = RipNeighbors.RipNeighbors(address,username,password)
         self.rroute = RipRoutes.RipRoutes(address,username,password)
+        self.rngset = RipNgSettings.RipNgSettings(address,username,password)
+        self.rngiface = RipNgInterface.RipNgInterfaces(address,username,password)
+        self.rngroute = RipNgRoutes.RipNgRoutes(address,username,password)
