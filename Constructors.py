@@ -21,7 +21,7 @@ from Routing import RipNetworks, RipKeys, RipNeighbors, RipRoutes,RipNgSettings,
 from MPLS import MplsSettings, MplsLdpSettings,MplsLdpInterface, MplsLdpNeighbor, MplsAcceptFilter, MplsAdvertiseFilter
 from  MPLS import MplsForwardingTable,MplsInterface, MplsLocalBinding, MplsRemoteBindings
 from MPLS import TrafficEngInterface,TrafficEngTunnelPath,TrafficEngPathState, TrafficEngResvState, TrafficEngTraffInterface
-
+from MPLS import MplsVpls,MplsBgpVpls,MplsCiscoBgpVpls
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -153,3 +153,6 @@ class Mikrotik:
         self.tepstate =TrafficEngPathState.TrafficEngPathState(address,username,password)
         self.terstate = TrafficEngResvState.TrafficEngResvState(address,username,password)
         self.tetriface = TrafficEngTraffInterface.TrafficEngTraffInterface(address,username,password)
+        self.mvpls = MplsVpls.MplsVpls(address,username,password)
+        self.mbgp = MplsBgpVpls.MplsBgpVpls(address,username,password)
+        self.mcisco = MplsCiscoBgpVpls.MplsCiscoBgpVpls(address,username,password)
