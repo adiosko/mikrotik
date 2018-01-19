@@ -1,4 +1,4 @@
 import Constructors
 
-mikrotik = Constructors.Mikrotik(address="172.16.53.2",username="admin",password="admin")
-mikrotik.mcisco.addInterface()
+mikrotik = Constructors.Mikrotik(address="172.16.53.3",username="admin",password="admin")
+mikrotik.pool.listUsedPrefixes()

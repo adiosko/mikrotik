@@ -22,6 +22,7 @@ from MPLS import MplsSettings, MplsLdpSettings,MplsLdpInterface, MplsLdpNeighbor
 from  MPLS import MplsForwardingTable,MplsInterface, MplsLocalBinding, MplsRemoteBindings
 from MPLS import TrafficEngInterface,TrafficEngTunnelPath,TrafficEngPathState, TrafficEngResvState, TrafficEngTraffInterface
 from MPLS import MplsVpls,MplsBgpVpls,MplsCiscoBgpVpls
+from IPv6 import Ipv6Addresses, DHCPv6Client,DHCPrelay, DhcpServer, Pool
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -156,3 +157,8 @@ class Mikrotik:
         self.mvpls = MplsVpls.MplsVpls(address,username,password)
         self.mbgp = MplsBgpVpls.MplsBgpVpls(address,username,password)
         self.mcisco = MplsCiscoBgpVpls.MplsCiscoBgpVpls(address,username,password)
+        self.ipv6add = Ipv6Addresses.Ipv6Addresses(address,username,password)
+        self.dhcpv6c = DHCPv6Client.Dhcpv6Client(address,username,password)
+        self.dhcpr = DHCPrelay.Dhcpv6Relay(address,username,password)
+        self.dhcps = DhcpServer.DhcpServer(address,username,password)
+        self.pool = Pool.Pool(address,username,password)
