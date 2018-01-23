@@ -23,6 +23,8 @@ from  MPLS import MplsForwardingTable,MplsInterface, MplsLocalBinding, MplsRemot
 from MPLS import TrafficEngInterface,TrafficEngTunnelPath,TrafficEngPathState, TrafficEngResvState, TrafficEngTraffInterface
 from MPLS import MplsVpls,MplsBgpVpls,MplsCiscoBgpVpls
 from IPv6 import Ipv6Addresses, DHCPv6Client,DHCPrelay, DhcpServer, Pool, Ipv6NeighborDiscovery, Neighbors, IPv6Settings
+from IPv6 import IPv6Route, FirewallFilter, FirewallGeneralSetup
+
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -165,3 +167,6 @@ class Mikrotik:
         self.ipv6nd = Ipv6NeighborDiscovery.IPv6NeighborDiscovery(address,username,password)
         self.ipv6neig = Neighbors.Neighbors(address,username,password)
         self.ipv6set = IPv6Settings.Settings(address,username,password)
+        self.ipv6rt = IPv6Route.IPv6Route(address,username,password)
+        self.ipv6fw1 = FirewallFilter.FirewallFilter(address,username,password)
+        self.ipv6fw2 = FirewallGeneralSetup.FirewallGeneralSetup(address,username,password)
