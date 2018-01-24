@@ -23,7 +23,7 @@ from  MPLS import MplsForwardingTable,MplsInterface, MplsLocalBinding, MplsRemot
 from MPLS import TrafficEngInterface,TrafficEngTunnelPath,TrafficEngPathState, TrafficEngResvState, TrafficEngTraffInterface
 from MPLS import MplsVpls,MplsBgpVpls,MplsCiscoBgpVpls
 from IPv6 import Ipv6Addresses, DHCPv6Client,DHCPrelay, DhcpServer, Pool, Ipv6NeighborDiscovery, Neighbors, IPv6Settings
-from IPv6 import IPv6Route, FirewallFilter, FirewallGeneralSetup
+from IPv6 import IPv6Route, FirewallFilter, FirewallGeneralSetup, FirewallAdvancedSetup, FirewallExtraSetup
 
 
 class Mikrotik:
@@ -170,3 +170,5 @@ class Mikrotik:
         self.ipv6rt = IPv6Route.IPv6Route(address,username,password)
         self.ipv6fw1 = FirewallFilter.FirewallFilter(address,username,password)
         self.ipv6fw2 = FirewallGeneralSetup.FirewallGeneralSetup(address,username,password)
+        self.ipv6fw3 = FirewallAdvancedSetup.FirewallAdvancedSetup(address,username,password)
+        self.ipv6fw4 = FirewallExtraSetup.FirewallExtraSetup(address,username,password)
