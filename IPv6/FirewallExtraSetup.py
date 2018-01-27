@@ -219,13 +219,3 @@ class FirewallExtraSetup:
         """
         ipv6 = self.client.talk( ['/ipv6/firewall/raw/set', '=numbers=' + number, '=hop-limit=' + filt] )
         return ipv6
-
-
-
-
-
-
-
-
-
-
