@@ -1,4 +1,4 @@
 import Constructors
 
-mikrotik = Constructors.Mikrotik(address="172.16.53.3",username="admin",password="admin")
-mikrotik.dhclient.listCLients()
+mikrotik = Constructors.Mikrotik(address="192.168.1.1",username="admin",password="admin")
+mikrotik.dhcpserver1.listAlets()
