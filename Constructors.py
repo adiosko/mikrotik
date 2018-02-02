@@ -25,7 +25,9 @@ from MPLS import MplsVpls,MplsBgpVpls,MplsCiscoBgpVpls
 from IPv6 import Ipv6Addresses, DHCPv6Client,DHCPrelay, DhcpServer, Pool, Ipv6NeighborDiscovery, Neighbors, IPv6Settings
 from IPv6 import IPv6Route, FirewallFilter, FirewallGeneralSetup, FirewallAdvancedSetup, FirewallExtraSetup
 from IPv6 import FirewallActions, FirewallConenctions,Ipv6AddressList, FirewallMangle, FirewallRaw
-from IPv4 import Arp,Accounting, Addresses, DhcpCLient, DhcpRelay, DhcpServer
+from IPv4 import Arp,Accounting, Addresses, DhcpCLient, DhcpRelay, DhcpServer, DNSglobal, DNScache, DNSstatic
+from  IPv4 import FirewallFilter, FirewallNAT, FirewallMangle, FireallGeneralSetup, FirewallAdvancedSetup, FirewallExtraSetup
+from IPv4 import  FirewallAction, FirewallServicePOrts, FirewallCOnnections, FirewallAddressist, FirewallL7Protocols
 
 
 class Mikrotik:
@@ -185,3 +187,17 @@ class Mikrotik:
         self.dhclient = DhcpCLient.DhcpClient(address,username,password)
         self.dhrelay = DhcpRelay.DhcpRelay(address,username,password)
         self.dhcpserver1 = DhcpServer.DhcpServer(address,username,password)
+        self.dnsglob = DNSglobal.DNSglobal(address,username,password)
+        self.dnscache = DNScache.DNScache(address,username,password)
+        self.dnsstatic = DNSstatic.DNSstatic(address,username,password)
+        self.fw1 = FirewallFilter.FirewallFilter(address,username,password)
+        self.fw2 = FirewallNAT.FirewallNAT(address,username,password)
+        self.fw3 = FirewallMangle.FirewallMangle(address,username,password)
+        self.fw4 = FireallGeneralSetup.FirewallGeneralSetup(address,username,password)
+        self.fw5 = FirewallAdvancedSetup.FirewallAdvancedSetup(address,username,password)
+        self.fw6 = FirewallExtraSetup.FirewallExtraSetup(address,username,password)
+        self.fw7 = FirewallAction.FirewallActions(address,username,password)
+        self.fwservice = FirewallServicePOrts.FirewallServicePOrts(address,username,password)
+        self.fwconn = FirewallCOnnections.FirewallConnections(address,username,password)
+        self.fwaddr = FirewallAddressist.FirewallAddressList(address,username,password)
+        self.fwl7 = FirewallL7Protocols.FirewallL7Protocols(address,username,password)
