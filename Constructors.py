@@ -28,6 +28,7 @@ from IPv6 import FirewallActions, FirewallConenctions,Ipv6AddressList, FirewallM
 from IPv4 import Arp,Accounting, Addresses, DhcpCLient, DhcpRelay, DhcpServer, DNSglobal, DNScache, DNSstatic
 from  IPv4 import FirewallFilter, FirewallNAT, FirewallMangle, FireallGeneralSetup, FirewallAdvancedSetup, FirewallExtraSetup
 from IPv4 import  FirewallAction, FirewallServicePOrts, FirewallCOnnections, FirewallAddressist, FirewallL7Protocols
+from IPv4 import HotspotServer, HotspotServerProfile,HotspotUsers,HotspotUserProfile, HotspotActive
 
 
 class Mikrotik:
@@ -201,3 +202,8 @@ class Mikrotik:
         self.fwconn = FirewallCOnnections.FirewallConnections(address,username,password)
         self.fwaddr = FirewallAddressist.FirewallAddressList(address,username,password)
         self.fwl7 = FirewallL7Protocols.FirewallL7Protocols(address,username,password)
+        self.hpotserver = HotspotServer.HotspotServer(address,username,password)
+        self.hpotserverprofile = HotspotServerProfile.HotspotServerProfile(address,username,password)
+        self.hpotusers = HotspotUsers.HotspotUsers(address,username,password)
+        self.hpotuprofiles = HotspotUserProfile.HotspotUserProfile(address,username,password)
+        self.hactive = HotspotActive.HotspotActive(address,username,password)
