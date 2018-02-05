@@ -28,7 +28,8 @@ from IPv6 import FirewallActions, FirewallConenctions,Ipv6AddressList, FirewallM
 from IPv4 import Arp,Accounting, Addresses, DhcpCLient, DhcpRelay, DhcpServer, DNSglobal, DNScache, DNSstatic
 from  IPv4 import FirewallFilter, FirewallNAT, FirewallMangle, FireallGeneralSetup, FirewallAdvancedSetup, FirewallExtraSetup
 from IPv4 import  FirewallAction, FirewallServicePOrts, FirewallCOnnections, FirewallAddressist, FirewallL7Protocols
-from IPv4 import HotspotServer, HotspotServerProfile,HotspotUsers,HotspotUserProfile, HotspotActive
+from IPv4 import HotspotServer, HotspotServerProfile,HotspotUsers,HotspotUserProfile, HotspotActive, HotspotIpBindings
+from  IPv4 import HotspotServicePorts, HotspotWalledGarden, HotspotWalledGardenList, HotspotCookies
 
 
 class Mikrotik:
@@ -207,3 +208,8 @@ class Mikrotik:
         self.hpotusers = HotspotUsers.HotspotUsers(address,username,password)
         self.hpotuprofiles = HotspotUserProfile.HotspotUserProfile(address,username,password)
         self.hactive = HotspotActive.HotspotActive(address,username,password)
+        self.hsbind = HotspotIpBindings.HotspotIpBinding(address,username,password)
+        self.hsport = HotspotServicePorts.HotspotServicePorts(address,username,password)
+        self.hswg = HotspotWalledGarden.HotspotWalledGarden(address,username,password)
+        self.hswgl = HotspotWalledGardenList.HotspotWalledGardenList(address,username,password)
+        self.hscookie = HotspotCookies.HotspotCookies(address,username,password)
