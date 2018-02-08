@@ -132,6 +132,3 @@ class HotspotWalledGardenList:
         """
         hotspot = self.client.talk( ['/ip/hotspot/walled-garden/ip/set', '=numbers=' + number, '=dst-port=' + port] )
         return hotspot
-
-
-

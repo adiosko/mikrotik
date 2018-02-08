@@ -29,7 +29,9 @@ from IPv4 import Arp,Accounting, Addresses, DhcpCLient, DhcpRelay, DhcpServer, D
 from  IPv4 import FirewallFilter, FirewallNAT, FirewallMangle, FireallGeneralSetup, FirewallAdvancedSetup, FirewallExtraSetup
 from IPv4 import  FirewallAction, FirewallServicePOrts, FirewallCOnnections, FirewallAddressist, FirewallL7Protocols
 from IPv4 import HotspotServer, HotspotServerProfile,HotspotUsers,HotspotUserProfile, HotspotActive, HotspotIpBindings
-from  IPv4 import HotspotServicePorts, HotspotWalledGarden, HotspotWalledGardenList, HotspotCookies
+from  IPv4 import HotspotServicePorts, HotspotWalledGarden, HotspotWalledGardenList, HotspotCookies, IPsecPolicies
+from IPv4 import IPsecGroups, IpsecPeers, IpsecRemotePeers, IPsecModeCOnfig, IPsecProposal, IpsecInstalledSa
+from IPv4 import IPsecKeys, IPsecUsers, NeighborLIst, NeighborDIscovery, Packing, Pool, PoolUsedAddresses
 
 
 class Mikrotik:
@@ -213,3 +215,17 @@ class Mikrotik:
         self.hswg = HotspotWalledGarden.HotspotWalledGarden(address,username,password)
         self.hswgl = HotspotWalledGardenList.HotspotWalledGardenList(address,username,password)
         self.hscookie = HotspotCookies.HotspotCookies(address,username,password)
+        self.ipsec1 = IPsecPolicies.IPsecPolicy(address,username,password)
+        self.ipsec2 = IPsecGroups.IPsecGroups(address,username,password)
+        self.ipsec3 = IpsecPeers.IPsecPeers(address,username,password)
+        self.ipsec4 = IpsecRemotePeers.IPsecRemotePeers(address,username,password)
+        self.ipsec5 = IPsecModeCOnfig.IPsecModeConfig(address,username,password)
+        self.ipsec6 = IPsecProposal.IPsecProposal(address,username,password)
+        self.ipsec7 = IpsecInstalledSa.IPsecInstalledSa(address,username,password)
+        self.ipsec8 = IPsecKeys.IPsecKeys(address,username,password)
+        self.ipsec9 = IPsecUsers.IPsecUsers(address,username,password)
+        self.neig1 = NeighborLIst.NeighborList(address,username,password)
+        self.neig2 = NeighborDIscovery.NeighborDiscovery(address,username,password)
+        self.pack = Packing.Packing(address,username,password)
+        self.pool1 = Pool.Pool(address,username,password)
+        self.pool2 = PoolUsedAddresses.PoolUsedAddresses(address,username,password)
