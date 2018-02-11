@@ -32,6 +32,10 @@ from IPv4 import HotspotServer, HotspotServerProfile,HotspotUsers,HotspotUserPro
 from  IPv4 import HotspotServicePorts, HotspotWalledGarden, HotspotWalledGardenList, HotspotCookies, IPsecPolicies
 from IPv4 import IPsecGroups, IpsecPeers, IpsecRemotePeers, IPsecModeCOnfig, IPsecProposal, IpsecInstalledSa
 from IPv4 import IPsecKeys, IPsecUsers, NeighborLIst, NeighborDIscovery, Packing, Pool, PoolUsedAddresses
+from IPv4 import RouteGeneral, RouteNexthops, RouteRules, RoouteVrf, Smb, SmbShare, SmbUsers, Snmp, SnmpCommnity
+from IPv4 import Services, Settings, Socks, SocksAccess, SocksConnections, Tftp, TrafficFlow, TrafficFlowIpfix
+from IPv4 import UpnpSetting, UpnpInterface, WebProxySettings, WebProxyLookup, WebProxyInserts, WebProxyRefreshes
+from IPv4 import WebProxyAccess, WebProxyCache, WebProxyDirect, WebProxyConnections, WebProxyCacheContetnt
 
 
 class Mikrotik:
@@ -229,3 +233,31 @@ class Mikrotik:
         self.pack = Packing.Packing(address,username,password)
         self.pool1 = Pool.Pool(address,username,password)
         self.pool2 = PoolUsedAddresses.PoolUsedAddresses(address,username,password)
+        self.route1 = RouteGeneral.RouteGeneral(address,username,password)
+        self.route2 = RouteNexthops.RouteNexthops(address,username,password)
+        self.route3 = RouteRules.RouteRules(address,username,password)
+        self.route4 = RoouteVrf.RouteVrf(address,username,password)
+        self.smb = Smb.Smb(address,username,password)
+        self.smbshare = SmbShare.SmbShare(address,username,password)
+        self.smbuser = SmbUsers.SmbUsers(address,username,password)
+        self.snmp = Snmp.Snmp(address,username,password)
+        self.snmpcomm = SnmpCommnity.SnmpCommunity(address,username,password)
+        self.service = Services.Services(address,username,password)
+        self.setting = Settings.Settings(address,username,password)
+        self.socks = Socks.Socks(address,username,password)
+        self.socksaccess = SocksAccess.SocksAccess(address,username,password)
+        self.sockconn = SocksConnections.SocksConnections(address,username,password)
+        self.tftp = Tftp.Tftp(address,username,password)
+        self.trafficflow = TrafficFlow.TrafficFlow(address,username,password)
+        self.trafficflow = TrafficFlowIpfix.TrafficFlowIpfix(address,username,password)
+        self.upnpset = UpnpSetting.UpnpSetting(address,username,password)
+        self.upnpiface = UpnpInterface.UpnpInterface(address,username,password)
+        self.webproxyset = WebProxySettings.WebProxySettings(address,username,password)
+        self.webproxylookup = WebProxyLookup.WebProxyLookup(address,username,password)
+        self.webproxyinserts = WebProxyInserts.WebProxyInserts(address,username,password)
+        self.webproxyrefreshes = WebProxyRefreshes.WebProxyRefreshes(address,username,password)
+        self.webproxyaccess = WebProxyAccess.WebProxyAccess(address,username,password)
+        self.webproxycache = WebProxyCache.WebProxycache(address,username,password)
+        self.webproxydirect = WebProxyDirect.WebProxyDirect(address,username,password)
+        self.webproxyconnections = WebProxyConnections.WebProxyConnections(address,username,password)
+        self.webproxycachecontent = WebProxyCacheContetnt.WebProxyCacheContent(address,username,password)
