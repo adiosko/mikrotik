@@ -36,6 +36,8 @@ from IPv4 import RouteGeneral, RouteNexthops, RouteRules, RoouteVrf, Smb, SmbSha
 from IPv4 import Services, Settings, Socks, SocksAccess, SocksConnections, Tftp, TrafficFlow, TrafficFlowIpfix
 from IPv4 import UpnpSetting, UpnpInterface, WebProxySettings, WebProxyLookup, WebProxyInserts, WebProxyRefreshes
 from IPv4 import WebProxyAccess, WebProxyCache, WebProxyDirect, WebProxyConnections, WebProxyCacheContetnt
+from  mesh import MeshInterfaces, MeshPorts, MeshFdb
+from switch import SwitchGeeral, SwitchPorts, SwitchHost, SwitchVlan
 
 
 class Mikrotik:
@@ -261,3 +263,10 @@ class Mikrotik:
         self.webproxydirect = WebProxyDirect.WebProxyDirect(address,username,password)
         self.webproxyconnections = WebProxyConnections.WebProxyConnections(address,username,password)
         self.webproxycachecontent = WebProxyCacheContetnt.WebProxyCacheContent(address,username,password)
+        self.meshiface = MeshInterfaces.MeshInterfaces(address,username,password)
+        self.meshport = MeshPorts.MeshPorts(address,username,password)
+        self.meshfdb = MeshFdb.MeshFdb(address,username,password)
+        self.switch = SwitchGeeral.SwitchGeneral(address,username,password)
+        self.switchport = SwitchPorts.SwitchPorts(address,username,password)
+        self.switchhost = SwitchHost.SwitchHost(address,username,password)
+        self.switchvlan = SwitchVlan.SwitchVlan(address,username,password)
