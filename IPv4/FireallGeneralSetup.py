@@ -43,7 +43,7 @@ class FirewallGeneralSetup:
         :param src:
         :return:
         """
-        ip = self.client.talk(['/ip/firewall/filter/set','=numbers='+number,'=src-address='+src])
+        ip = self.client.talk( ['/ip/firewall/filter/set', '=numbers=' + number, '=src-address=' + src] )
         return ip
 
     def setSrcAddressMangle(self, number, src):

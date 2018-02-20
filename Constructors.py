@@ -38,7 +38,8 @@ from IPv4 import UpnpSetting, UpnpInterface, WebProxySettings, WebProxyLookup, W
 from IPv4 import WebProxyAccess, WebProxyCache, WebProxyDirect, WebProxyConnections, WebProxyCacheContetnt
 from  mesh import MeshInterfaces, MeshPorts, MeshFdb
 from switch import SwitchGeeral, SwitchPorts, SwitchHost, SwitchVlan, SwitchRule
-from bridge import BridgeGeneral, BridgeSettings, BridgePorts, BridgeHosts, BridgeMdb
+from bridge import BridgeGeneral, BridgeSettings, BridgePorts, BridgeHosts, BridgeMdb, bridgeNat, bridgeArp
+from bridge import bridgeNatAdvanced,bridgeNatGeneral, bridgeNatStp
 
 
 class Mikrotik:
@@ -277,3 +278,8 @@ class Mikrotik:
         self.bridgeport = BridgePorts.BridgePorts(address,username,password)
         self.bridgehost = BridgeHosts.BridgeHosts(address,username,password)
         self.bridgemdb = BridgeMdb.BridgeMdb(address,username,password)
+        self.bnat = bridgeNat.bridgeNat(address,username,password)
+        self.bnatgen = bridgeNatGeneral.bridgeNatGeneral(address,username,password)
+        self.bnatgenadv = bridgeNatAdvanced.bridgeNatAdvanced(address,username,password)
+        self.bridgenatarp = bridgeArp.bridgeNatArp(address,username,password)
+        self.bridgestp = bridgeNatStp.bridgeNatStp(address,username,password)
