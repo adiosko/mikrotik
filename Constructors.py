@@ -39,7 +39,8 @@ from IPv4 import WebProxyAccess, WebProxyCache, WebProxyDirect, WebProxyConnecti
 from  mesh import MeshInterfaces, MeshPorts, MeshFdb
 from switch import SwitchGeeral, SwitchPorts, SwitchHost, SwitchVlan, SwitchRule
 from bridge import BridgeGeneral, BridgeSettings, BridgePorts, BridgeHosts, BridgeMdb, bridgeNat, bridgeArp
-from bridge import bridgeNatAdvanced,bridgeNatGeneral, bridgeNatStp
+from bridge import bridgeNatAdvanced,bridgeNatGeneral, bridgeNatStp,bridgeFilter,bridgeFilterAction,bridgeFilterAdvanced
+from bridge import bridgeFIlterArp,bridgeFIlterArp,bridgeFilterStp,bridgeMSTI,bridgePortMstOverride,bridgeVlan,bridgeNatAction
 
 
 class Mikrotik:
@@ -283,3 +284,13 @@ class Mikrotik:
         self.bnatgenadv = bridgeNatAdvanced.bridgeNatAdvanced(address,username,password)
         self.bridgenatarp = bridgeArp.bridgeNatArp(address,username,password)
         self.bridgestp = bridgeNatStp.bridgeNatStp(address,username,password)
+        self.bridgefilter = bridgeFilter.bridgefilter(address,username,password)
+        self.bridgefiltact = bridgeFilterAction.bridgeFilterAction(address,username,password)
+        self.bridgefiltadv = bridgeFilterAdvanced.bridgeFilterAdvanced(address,username,password)
+        self.bridgefiltarp = bridgeFIlterArp.bridgeFilterArp(address,username,password)
+        self.bridgegen = bridgeFilter.bridgefilter(address,username,password)
+        self.bridgestp = bridgeNatStp.bridgeNatStp(address,username,password)
+        self.bridgemsti = bridgeMSTI.bridgeMSTI(address,username,password)
+        self.bridgemstoverride = bridgePortMstOverride.bridgeMstOverride(address,username,password)
+        self.bridgenatact = bridgeNatAction.bridgeNatAction(address,username,password)
+        self.bridgvlan = bridgeVlan.bridgeVlan(address,username,password)

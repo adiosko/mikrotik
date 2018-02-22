@@ -2,14 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeArp.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeNat.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeNatAdvanced.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeNatGeneral.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeNatStp.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeFIlterArp.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeFilter.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeFilterAction.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeFilterGeneral.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeFilterStp.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeMSTI.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeNatAction.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgePortMstOverride.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bridge/bridgeVlan.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Constructors.py" afterPath="$PROJECT_DIR$/Constructors.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/IPv4/FireallGeneralSetup.py" afterPath="$PROJECT_DIR$/IPv4/FireallGeneralSetup.py" />
     </list>
     <ignored path="diplomkap3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,11 +44,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bridgeNatGeneral.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bridge/bridgeNatGeneral.py">
+      <file leaf-file-name="bridgeMSTI.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bridge/bridgeMSTI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="112" column="186" selection-start-line="112" selection-start-column="25" selection-end-line="112" selection-end-column="186" />
+            <state relative-caret-position="544">
+              <caret line="66" column="19" selection-start-line="30" selection-start-column="4" selection-end-line="66" selection-end-column="19" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -52,23 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bridgeNatAdvanced.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bridge/bridgeNatAdvanced.py">
+      <file leaf-file-name="bridgeVlan.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bridge/bridgeVlan.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bridgeArp.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bridge/bridgeArp.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="291">
-              <caret line="67" column="18" selection-start-line="58" selection-start-column="4" selection-end-line="67" selection-end-column="18" />
+            <state relative-caret-position="724">
+              <caret line="109" column="19" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -79,20 +71,8 @@
       <file leaf-file-name="bridgeNatStp.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bridge/bridgeNatStp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="562">
-              <caret line="128" column="18" selection-start-line="128" selection-start-column="18" selection-end-line="128" selection-end-column="18" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FirewallExtraSetup.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IPv4/FirewallExtraSetup.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="531">
-              <caret line="145" column="17" selection-start-line="137" selection-start-column="4" selection-end-line="145" selection-end-column="17" />
+            <state relative-caret-position="108">
+              <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -103,8 +83,8 @@
       <file leaf-file-name="Constructors.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Constructors.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
-              <caret line="284" column="76" selection-start-line="284" selection-start-column="76" selection-end-line="284" selection-end-column="76" />
+            <state relative-caret-position="562">
+              <caret line="295" column="72" selection-start-line="295" selection-start-column="72" selection-end-line="295" selection-end-column="72" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -127,16 +107,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/IPv4/Pool.py" />
-        <option value="$PROJECT_DIR$/IPv4/PoolUsedAddresses.py" />
-        <option value="$PROJECT_DIR$/IPv4/RouteGeneral.py" />
-        <option value="$PROJECT_DIR$/IPv4/RouteNexthops.py" />
-        <option value="$PROJECT_DIR$/IPv4/RouteRules.py" />
-        <option value="$PROJECT_DIR$/IPv4/RoouteVrf.py" />
-        <option value="$PROJECT_DIR$/IPv4/SmbShare.py" />
-        <option value="$PROJECT_DIR$/IPv4/SmbUsers.py" />
-        <option value="$PROJECT_DIR$/IPv4/Smb.py" />
-        <option value="$PROJECT_DIR$/IPv4/SnmpCommnity.py" />
         <option value="$PROJECT_DIR$/IPv4/Snmp.py" />
         <option value="$PROJECT_DIR$/IPv4/Services.py" />
         <option value="$PROJECT_DIR$/IPv4/Settings.py" />
@@ -177,6 +147,16 @@
         <option value="$PROJECT_DIR$/bridge/bridgeNatAdvanced.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeArp.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeNatStp.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeFilter.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeFilterGeneral.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeFIlterArp.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeFilterStp.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeNatAction.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeFilterAction.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgePortMstOverride.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeMSTI.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeVlan.py" />
         <option value="$PROJECT_DIR$/Constructors.py" />
       </list>
     </option>
@@ -259,20 +239,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="bridge" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="diplomkap3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="diplomkap3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="IPv4" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -556,83 +522,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/IPv4/RouteGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/RouteNexthops.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/RouteRules.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/RoouteVrf.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/SmbShare.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="934">
-          <caret line="95" column="22" selection-start-line="95" selection-start-column="22" selection-end-line="95" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/Smb.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1026">
-          <caret line="57" column="18" selection-start-line="57" selection-start-column="18" selection-end-line="57" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/SnmpCommnity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2250">
-          <caret line="125" column="19" selection-start-line="125" selection-start-column="19" selection-end-line="125" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/Snmp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1854">
-          <caret line="103" column="19" selection-start-line="103" selection-start-column="19" selection-end-line="103" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/SmbUsers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/Services.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/Settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/IPv4/SocksConnections.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
@@ -836,7 +725,158 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/BridgeMdb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IPv4/FireallGeneralSetup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="45" column="102" selection-start-line="45" selection-start-column="102" selection-end-line="45" selection-end-column="102" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IPv4/FirewallAdvancedSetup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IPv4/FirewallExtraSetup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2592">
+          <caret line="145" column="17" selection-start-line="137" selection-start-column="4" selection-end-line="145" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IPv4/FirewallAction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="582" column="17" selection-start-line="575" selection-start-column="4" selection-end-line="582" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/bridge/bridgeNat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="562">
+          <caret line="81" column="18" selection-start-line="8" selection-start-column="4" selection-end-line="81" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeFilter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="490">
+          <caret line="81" column="21" selection-start-line="81" selection-start-column="21" selection-end-line="81" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="196" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatAdvanced.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="13" column="16" selection-start-line="0" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-792">
+          <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="98" column="17" selection-start-line="98" selection-start-column="17" selection-end-line="98" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeArp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="19" selection-start-line="0" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeFIlterArp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-968">
+          <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterStp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="127" column="58" selection-start-line="127" selection-start-column="58" selection-end-line="127" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatAction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="406">
+          <caret line="178" column="17" selection-start-line="152" selection-start-column="4" selection-end-line="178" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterAction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatStp.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
@@ -846,10 +886,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/BridgeMdb.py">
+    <entry file="file://$PROJECT_DIR$/bridge/bridgePortMstOverride.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
+        <state relative-caret-position="526">
+          <caret line="107" column="19" selection-start-line="107" selection-start-column="19" selection-end-line="107" selection-end-column="19" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
@@ -864,70 +904,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/FireallGeneralSetup.py">
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeMSTI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="45" column="102" selection-start-line="45" selection-start-column="102" selection-end-line="45" selection-end-column="102" />
+        <state relative-caret-position="544">
+          <caret line="66" column="19" selection-start-line="30" selection-start-column="4" selection-end-line="66" selection-end-column="19" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/FirewallAdvancedSetup.py">
+    <entry file="file://$PROJECT_DIR$/bridge/bridgeVlan.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="112" column="186" selection-start-line="112" selection-start-column="25" selection-end-line="112" selection-end-column="186" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/FirewallExtraSetup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="531">
-          <caret line="145" column="17" selection-start-line="137" selection-start-column="4" selection-end-line="145" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatAdvanced.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeArp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="67" column="18" selection-start-line="58" selection-start-column="4" selection-end-line="67" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatStp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="562">
-          <caret line="128" column="18" selection-start-line="128" selection-start-column="18" selection-end-line="128" selection-end-column="18" />
+        <state relative-caret-position="724">
+          <caret line="109" column="19" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
@@ -936,8 +926,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Constructors.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="284" column="76" selection-start-line="284" selection-start-column="76" selection-end-line="284" selection-end-column="76" />
+        <state relative-caret-position="562">
+          <caret line="295" column="72" selection-start-line="295" selection-start-column="72" selection-end-line="295" selection-end-column="72" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
