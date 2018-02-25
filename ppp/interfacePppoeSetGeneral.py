@@ -3,9 +3,9 @@ from tikapy import TikapySslClient
 
 class interfacePppoeClientSetGeneral:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
-        self.client.login( username,password)
-
+        self.server = TikapyClient( address, 8728 )
+        self.server.login( username,password)
+        
     def setName(self,name,newName):
         """
         Method will set name
@@ -13,7 +13,7 @@ class interfacePppoeClientSetGeneral:
         :param newName:
         :return:
         """
-        pppoe = self.client.talk(['/interface/pppoe-client/set','=numbers='+name,'=name='+newName])
+        pppoe = self.server.talk(['/interface/pppoe-server/set','=numbers='+name,'=name='+newName])
         return pppoe
 
     def setMaxMtu(self,name,mtu="1450"):
@@ -23,7 +23,7 @@ class interfacePppoeClientSetGeneral:
         :param mtu:
         :return:
         """
-        pppoe = self.client.talk( ['/interface/pppoe-client/set', '=numbers=' + name, '=max-mtu=' + mtu] )
+        pppoe = self.server.talk( ['/interface/pppoe-server/set', '=numbers=' + name, '=max-mtu=' + mtu] )
         return pppoe
 
     def setMaxMru(self,name,mru="1450"):
@@ -33,7 +33,7 @@ class interfacePppoeClientSetGeneral:
         :param mru:
         :return:
         """
-        pppoe = self.client.talk( ['/interface/pppoe-client/set', '=numbers=' + name, '=max-mru=' + mru] )
+        pppoe = self.server.talk( ['/interface/pppoe-server/set', '=numbers=' + name, '=max-mru=' + mru] )
         return pppoe
 
     def setMrru(self,name,mrru="1500"):
@@ -43,9 +43,9 @@ class interfacePppoeClientSetGeneral:
         :param mrru:
         :return:
         """
-        pppoe = self.client.talk( ['/interface/pppoe-client/set', '=numbers=' + name, '=mrru=' + mrru] )
+        pppoe = self.server.talk( ['/interface/pppoe-server/set', '=numbers=' + name, '=mrru=' + mrru] )
         return pppoe
-    
+
     def setInterface(self,name,interface="ether1"):
         """
         Method will set mrru
@@ -53,5 +53,5 @@ class interfacePppoeClientSetGeneral:
         :param interface:
         :return:
         """
-        pppoe = self.client.talk( ['/interface/pppoe-client/set', '=numbers=' + name, '=interface=' + interface] )
+        pppoe = self.server.talk( ['/interface/pppoe-server/set', '=numbers=' + name, '=interface=' + interface] )
         return pppoe

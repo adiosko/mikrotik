@@ -2,26 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/IPv4/__init__.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppClient.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppClientSetGeneral.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppClientSetPpp.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppServer.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppServerSetDialIn.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppServerSetGeneral.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpClient.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpServerBinding.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpServerSetGeneral.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpCLientGeneralSet.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpClient.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpServerBinding.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpServerSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceL2tpCLient.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceL2tpClientSetGeneral.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceL2tpServerBinding.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceL2tpSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnClient.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnClientSetDialOut.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnClientSetGeneral.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnServerBinding.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnServerSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppoe.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppoeClient.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppoeClientSetDialOut.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppoeSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppoeSetGeneral.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" afterPath="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" />
-      <change beforePath="$PROJECT_DIR$/ppp/interfacePptpServer.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Constructors.py" afterPath="$PROJECT_DIR$/Constructors.py" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" afterPath="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" />
     </list>
     <ignored path="diplomkap3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -50,13 +48,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="interfaceSstpClientSetDialOut.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py">
+      <file leaf-file-name="Constructors.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Constructors.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="487">
-              <caret line="212" column="19" lean-forward="true" selection-start-line="212" selection-start-column="19" selection-end-line="212" selection-end-column="19" />
+            <state relative-caret-position="2527">
+              <caret line="354" column="80" lean-forward="false" selection-start-line="354" selection-start-column="80" selection-end-line="354" selection-end-column="80" />
               <folding>
-                <element signature="e#0#31#0" expanded="true" />
+                <element signature="e#0#19#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -74,18 +72,28 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>ppp-server</find>
-      <find>ppp</find>
       <find>ppp-client</find>
-      <find>pptp-client</find>
       <find>sstp-server</find>
+      <find>pptp-client</find>
+      <find>Server</find>
+      <find>ppp</find>
+      <find>l2tp</find>
+      <find>client</find>
       <find>server</find>
+      <find>pptp</find>
     </findStrings>
     <replaceStrings>
       <replace>pptp-server</replace>
       <replace>pptp</replace>
       <replace>sstp-server</replace>
       <replace>sstp-client</replace>
+      <replace>l2tp-server</replace>
+      <replace>Client</replace>
+      <replace>l2tp</replace>
+      <replace>ovpn</replace>
+      <replace>server</replace>
       <replace>client</replace>
+      <replace>pppoe</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -94,21 +102,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/IPv4/WebProxyCacheContetnt.py" />
-        <option value="$PROJECT_DIR$/mesh/MeshInterfaces.py" />
-        <option value="$PROJECT_DIR$/mesh/MeshPorts.py" />
-        <option value="$PROJECT_DIR$/mesh/MeshFdb.py" />
-        <option value="$PROJECT_DIR$/switch/SwitchGeeral.py" />
-        <option value="$PROJECT_DIR$/switch/SwitchPorts.py" />
-        <option value="$PROJECT_DIR$/switch/SwitchHost.py" />
-        <option value="$PROJECT_DIR$/switch/SwitchVlan.py" />
-        <option value="$PROJECT_DIR$/switch/SwitchRule.py" />
-        <option value="$PROJECT_DIR$/bridge/BridgeGeneral.py" />
-        <option value="$PROJECT_DIR$/bridge/BridgeSettings.py" />
-        <option value="$PROJECT_DIR$/bridge/BridgePorts.py" />
-        <option value="$PROJECT_DIR$/bridge/BridgeHosts.py" />
-        <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/bridge/BridgeMdb.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeNat.py" />
         <option value="$PROJECT_DIR$/IPv4/FireallGeneralSetup.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeNatGeneral.py" />
@@ -124,7 +117,6 @@
         <option value="$PROJECT_DIR$/bridge/bridgePortMstOverride.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeMSTI.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeVlan.py" />
-        <option value="$PROJECT_DIR$/Constructors.py" />
         <option value="$PROJECT_DIR$/bridge/__init__.py" />
         <option value="$PROJECT_DIR$/IPv4/__init__.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" />
@@ -138,13 +130,29 @@
         <option value="$PROJECT_DIR$/ppp/interfacePptpServerBinding.py" />
         <option value="$PROJECT_DIR$/ppp/interfacePptpServerSetGeneral.py" />
         <option value="$PROJECT_DIR$/ppp/interfacePptpClient.py" />
-        <option value="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" />
         <option value="$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py" />
         <option value="$PROJECT_DIR$/ppp/interfaceSstpServerBinding.py" />
         <option value="$PROJECT_DIR$/ppp/interfaceSstpServerSet.py" />
         <option value="$PROJECT_DIR$/ppp/interfaceSstpClient.py" />
         <option value="$PROJECT_DIR$/ppp/interfaceSstpCLientGeneralSet.py" />
         <option value="$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py" />
+        <option value="$PROJECT_DIR$/ppp/__init__.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceL2tpServerBinding.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceL2tpSet.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceL2tpCLient.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceL2tpClientSetGeneral.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceOvpnServerBinding.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceOvpnServerSet.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceOvpnClient.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceOvpnClientSetGeneral.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceOvpnClientSetDialOut.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppoe.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppoeSet.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppoeClient.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppoeSetGeneral.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppoeClientSetDialOut.py" />
+        <option value="$PROJECT_DIR$/Constructors.py" />
       </list>
     </option>
   </component>
@@ -193,6 +201,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -210,7 +219,6 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -449,7 +457,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290461" sideWeight="0.4960464" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31511253" sideWeight="0.48550344" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32508072" sideWeight="0.4095941" order="9" side_tool="false" content_ui="tabs" x="1931" y="373" width="1897" height="306" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14994664" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15154749" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -505,172 +513,11 @@
           <url>file://$PROJECT_DIR$/IPv6/FirewallExtraSetup.py</url>
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="3" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/IPv4/FirewallAdvancedSetup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/FirewallExtraSetup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2592">
-          <caret line="145" column="17" lean-forward="false" selection-start-line="137" selection-start-column="4" selection-end-line="145" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/FirewallAction.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="582" column="17" lean-forward="false" selection-start-line="575" selection-start-column="4" selection-end-line="582" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeNat.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="562">
-          <caret line="81" column="18" lean-forward="false" selection-start-line="8" selection-start-column="4" selection-end-line="81" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeFilter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="490">
-          <caret line="81" column="21" lean-forward="false" selection-start-line="81" selection-start-column="21" selection-end-line="81" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="196" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatAdvanced.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="13" column="16" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-792">
-          <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeArp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="19" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeFIlterArp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-968">
-          <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterStp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="127" column="58" lean-forward="false" selection-start-line="127" selection-start-column="58" selection-end-line="127" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterAction.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeNatStp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgePortMstOverride.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="526">
-          <caret line="107" column="19" lean-forward="false" selection-start-line="107" selection-start-column="19" selection-end-line="107" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeMSTI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="975">
-          <caret line="66" column="19" lean-forward="false" selection-start-line="30" selection-start-column="4" selection-end-line="66" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/bridgeVlan.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1620">
-          <caret line="109" column="19" lean-forward="false" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="uml://Python/#/home/adrian/PycharmProjects/diplomkap3/bridge/bridgeArp.py">
-      <provider selected="true" editor-type-id="UmlEditorProvider">
-        <state>
-          <ID>Python</ID>
-          <OriginalElement>#/home/adrian/PycharmProjects/diplomkap3/bridge/bridgeArp.py</OriginalElement>
-          <nodes>
-            <node x="" y="">_collections_abc.Hashable</node>
-            <node x="" y="">bridge.bridgeArp.bridgeNatArp</node>
-            <node x="" y="">object</node>
-          </nodes>
-          <notes />
-          <edges />
-          <settings layout="Hierarchic Group" zoom="1.0" x="103.0" y="95.0" />
-          <SelectedNodes />
-          <Categories />
-          <SCOPE>All</SCOPE>
-        </state>
-      </provider>
-    </entry>
-    <entry file="uml://Python/#/home/adrian/PycharmProjects/diplomkap3/bridge/BridgeHosts.py">
-      <provider selected="true" editor-type-id="UmlEditorProvider">
-        <state>
-          <ID>Python</ID>
-          <OriginalElement>#/home/adrian/PycharmProjects/diplomkap3/bridge/BridgeHosts.py</OriginalElement>
-          <nodes>
-            <node x="" y="">bridge.BridgeHosts.BridgeHosts</node>
-            <node x="" y="">_collections_abc.Hashable</node>
-            <node x="" y="">object</node>
-          </nodes>
-          <notes />
-          <edges />
-          <settings layout="Hierarchic Group" zoom="0.6834532374100719" x="143.0" y="447.0" />
-          <SelectedNodes />
-          <Categories>
-            <Category>Fields</Category>
-            <Category>Inner Classes</Category>
-            <Category>Methods</Category>
-          </Categories>
-          <SCOPE>All</SCOPE>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bridge/BridgeHosts.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -757,14 +604,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Constructors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="uml://Python/#/home/adrian/PycharmProjects/diplomkap3/bridge/bridgeFilterAdvanced.py">
       <provider selected="true" editor-type-id="UmlEditorProvider">
         <state>
@@ -823,13 +662,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bridge/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -969,14 +801,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="37" lean-forward="true" selection-start-line="13" selection-start-column="37" selection-end-line="13" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interface.py" />
     <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -991,54 +816,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
           <caret line="60" column="55" lean-forward="false" selection-start-line="60" selection-start-column="55" selection-end-line="60" selection-end-column="55" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePppServer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="61" column="18" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="61" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpServer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpServerSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="19" lean-forward="true" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpServerBinding.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="12" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="62" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="40" column="28" lean-forward="true" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
           <folding>
             <element signature="e#0#31#0" expanded="false" />
           </folding>
@@ -1070,7 +847,345 @@
         <state relative-caret-position="105">
           <caret line="7" column="47" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
           <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppServerSetDialIn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="16" column="18" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="16" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpServerSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="18" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="26" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppServerSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-248">
+          <caret line="45" column="51" lean-forward="false" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IPv4/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://Python/#/home/adrian/PycharmProjects/diplomkap3/ppp">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>Python</ID>
+          <OriginalElement>#/home/adrian/PycharmProjects/diplomkap3/ppp</OriginalElement>
+          <nodes>
+            <node x="" y="">ppp.interfaceSstpClientSetDialOut.interfaceSstpClientSetDialOut</node>
+            <node x="" y="">ppp.secretSettings.secretSettings</node>
+            <node x="" y="">ppp.profileProtocols.profileProtocols</node>
+            <node x="" y="">ppp.pppAuthenticationAndAcounting.pppAuthenticationAndAcounting</node>
+            <node x="" y="">ppp.profileScripts.profileScripts</node>
+            <node x="" y="">ppp.pppoeSettings.pppoeSettings</node>
+            <node x="" y="">ppp.profileGeneral.profileGeneral</node>
+            <node x="" y="">ppp.interfacePppClient.interfacePppclient</node>
+            <node x="" y="">ppp.interfacePppClientSetGeneral.interfacePppClientSetSetGeneral</node>
+            <node x="" y="">ppp.interfacePptpServer.interfacePptpServer</node>
+            <node x="" y="">ppp.interfaceSstpCLientGeneralSet.interfaceSstpClientSetGeneral</node>
+            <node x="" y="">ppp.interfacePptpCLientSetDialOut.interfacePptpClientSetDialOut</node>
+            <node x="" y="">ppp.interfacePppServer.interfacePppServer</node>
+            <node x="" y="">ppp.profileLimits.profileLimits</node>
+            <node x="" y="">ppp.profileQueue.profileQueue</node>
+            <node x="" y="">ppp.interfacePptpServerBinding.interfacePptpServer</node>
+            <node x="" y="">ppp.l2tpSecrets.l2tpSecrets</node>
+            <node x="" y="">ppp.interfaceSstpClient.interfaceSstpClient</node>
+            <node x="" y="">ppp.interfaceSstpServer.interfaceSstpServer</node>
+            <node x="" y="">ppp.interfacePptpClientSetGeneral.interfacePptpClientSetGeneral</node>
+            <node x="" y="">ppp.pppoe.pppoe</node>
+            <node x="" y="">ppp.interfacePppServerSetGeneral.interfacePppServerSetGeneral</node>
+            <node x="" y="">ppp.profiles.profiles</node>
+            <node x="" y="">ppp.interfacePppServerSetDialIn.interfacePppServerSetDialIn</node>
+            <node x="" y="">ppp.interfacePppClientSetPpp.interfacePppClientSetPpp</node>
+            <node x="" y="">ppp.interfaceOvpnServer.interfaceOvpnServer</node>
+            <node x="" y="">ppp.interfaceSstpServerSet.interfaceSstpServerSetGeneral</node>
+            <node x="" y="">ppp.interfaceSstpServerBinding.interfaceSstpServerBinding</node>
+            <node x="" y="">ppp.interfaceL2tpServer.interfaceL2tpServer</node>
+            <node x="" y="">ppp.interfacePptpClient.interfacePptpClient</node>
+            <node x="" y="">_collections_abc.Hashable</node>
+            <node x="" y="">ppp.secrets.secrets</node>
+            <node x="" y="">object</node>
+            <node x="" y="">ppp.interfacePptpServerSetGeneral.interfacePptpServerSetGeneral</node>
+            <node x="" y="">ppp.activeConnections.activeCOnnections</node>
+          </nodes>
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.035399812654347" x="757.81933923857" y="285.18761051757184" />
+          <SelectedNodes />
+          <Categories>
+            <Category>Methods</Category>
+          </Categories>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppClientSetPpp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="18" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="26" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceL2tpServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="18" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="159" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceOvpnServerBinding.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceL2tpSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="19" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="26" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceL2tpClientSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="20" column="31" lean-forward="true" selection-start-line="20" selection-start-column="31" selection-end-line="20" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceOvpnServerSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="17" lean-forward="false" selection-start-line="0" selection-start-column="17" selection-end-line="0" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceL2tpCLient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="18" lean-forward="true" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="47" column="37" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="62" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceOvpnClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-278">
+          <caret line="11" column="16" lean-forward="false" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceOvpnClientSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="517">
+          <caret line="36" column="18" lean-forward="false" selection-start-line="36" selection-start-column="18" selection-end-line="36" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceOvpnServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="472">
+          <caret line="46" column="17" lean-forward="true" selection-start-line="46" selection-start-column="17" selection-end-line="46" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="241">
+          <caret line="17" column="19" lean-forward="true" selection-start-line="9" selection-start-column="3" selection-end-line="17" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceOvpnClientSetDialOut.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1635">
+          <caret line="109" column="19" lean-forward="false" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceL2tpServerBinding.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="62" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="547">
+          <caret line="61" column="18" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="61" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpServerBinding.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpServerSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="26" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppoeSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="532">
+          <caret line="36" column="20" lean-forward="false" selection-start-line="36" selection-start-column="20" selection-end-line="36" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppoe.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="571">
+          <caret line="51" column="61" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="62" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppoeClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="930">
+          <caret line="62" column="20" lean-forward="true" selection-start-line="62" selection-start-column="20" selection-end-line="62" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppoeSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="56" column="20" lean-forward="true" selection-start-line="48" selection-start-column="4" selection-end-line="56" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
+          <folding>
             <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="547">
+          <caret line="113" column="19" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="113" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppoeClientSetDialOut.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="123" column="20" lean-forward="true" selection-start-line="123" selection-start-column="20" selection-end-line="123" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1085,78 +1200,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ppp/interfacePppClientSetGeneral.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="37">
+        <state relative-caret-position="240">
           <caret line="17" column="18" lean-forward="true" selection-start-line="9" selection-start-column="4" selection-end-line="17" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpClient.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="15" column="25" lean-forward="true" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePppServerSetDialIn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="16" column="18" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="16" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpServerSet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="18" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="26" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePppClientSetPpp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-773">
-          <caret line="26" column="18" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="26" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePppServerSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-248">
-          <caret line="45" column="51" lean-forward="false" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="113" column="19" lean-forward="true" selection-start-line="105" selection-start-column="4" selection-end-line="113" selection-end-column="19" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py">
+    <entry file="file://$PROJECT_DIR$/Constructors.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="212" column="19" lean-forward="true" selection-start-line="212" selection-start-column="19" selection-end-line="212" selection-end-column="19" />
+        <state relative-caret-position="2527">
+          <caret line="354" column="80" lean-forward="false" selection-start-line="354" selection-start-column="80" selection-end-line="354" selection-end-column="80" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#19#0" expanded="true" />
           </folding>
         </state>
       </provider>

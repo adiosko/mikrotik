@@ -41,7 +41,16 @@ from switch import SwitchGeeral, SwitchPorts, SwitchHost, SwitchVlan, SwitchRule
 from bridge import BridgeGeneral, BridgeSettings, BridgePorts, BridgeHosts, BridgeMdb, bridgeNat, bridgeArp
 from bridge import bridgeNatAdvanced,bridgeNatGeneral, bridgeNatStp,bridgeFilter,bridgeFilterAction,bridgeFilterAdvanced
 from bridge import bridgeFIlterArp,bridgeFIlterArp,bridgeFilterStp,bridgeMSTI,bridgePortMstOverride,bridgeVlan,bridgeNatAction
-
+from ppp import activeConnections,interfaceL2tpCLient,interfaceL2tpClientSetGeneral,interfaceL2tpServer,interfaceL2tpServerBinding
+from ppp import interfaceL2tpSet,interfaceOvpnClient,interfaceOvpnClientSetDialOut,interfacePppClientSetGeneral,interfaceOvpnServer
+from ppp import interfacePppClient,interfacePppClientSetPpp,interfacePppClientSetGeneral,interfacePppoe,interfacePppoeClientSetDialOut
+from ppp import interfacePppoeSet,interfacePppoeSetGeneral,interfacePppServer,interfacePppServerSetDialIn,interfacePppServerSetGeneral
+from ppp import interfacePppServerSetGeneral,interfacePptpClient,interfacePptpCLientSetDialOut,interfacePptpClientSetGeneral
+from ppp import interfacePptpServer,interfacePptpServerBinding,interfacePptpServerSetGeneral,interfaceSstpClient,interfaceSstpClientSetDialOut
+from ppp import interfaceSstpClientSetDialOut,interfaceSstpServer,interfaceSstpServerSet,interfaceSstpServerBinding
+from ppp import l2tpSecrets,pppAuthenticationAndAcounting,pppoe,pppoeSettings,profileGeneral,profileLimits,profileProtocols
+from ppp import profileQueue,profiles,profileScripts,secrets,secretSettings,interfaceOvpnClientSetGeneral,interfaceOvpnServerBinding,interfaceOvpnClientSetDialOut
+from ppp import interfaceOvpnServerSet, interfacePppClientSetPpp,interfacePppoeClient,interfacePppoeClientSetDialOut,interfaceSstpCLientGeneralSet
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -294,3 +303,53 @@ class Mikrotik:
         self.bridgemstoverride = bridgePortMstOverride.bridgeMstOverride(address,username,password)
         self.bridgenatact = bridgeNatAction.bridgeNatAction(address,username,password)
         self.bridgvlan = bridgeVlan.bridgeVlan(address,username,password)
+        self.activeppp = activeConnections.activeCOnnections(address,username,password)
+        self.l2tpclient = interfaceL2tpCLient.interfaceL2tpClientServer( address, username, password )
+        self.l2tpclientgeneral = interfaceL2tpClientSetGeneral.interfaceL2tpClientSetGeneral( address, username, password )
+        self.l2tpserver = interfaceL2tpServer.interfaceL2tpServer( address, username, password )
+        self.l2tpserverbind = interfaceL2tpServerBinding.interfaceL2tpServerBinding( address, username, password )
+        self.l2tpset = interfaceL2tpSet.interfaceL2tpServerSet( address, username, password )
+        self.l2tpclient = interfaceL2tpCLient.interfaceL2tpClientServer( address, username, password )
+        self.l2tpserverbind = interfaceL2tpServerBinding.interfaceL2tpServerBinding( address, username, password )
+        self.l2tpset1 = interfaceL2tpSet.interfaceL2tpServerSet( address, username, password )
+        self.ovpnclient = interfaceOvpnClient.interfaceOvpnClient( address, username, password )
+        self.ovpnclientdial = interfaceOvpnClientSetDialOut.interfaceOvpnClientSetDialOut( address, username, password )
+        self.ovpncclientgen = interfaceOvpnClientSetGeneral.interfaceOvpnClientSetGeneral( address, username, password )
+        self.ovpnserver = interfaceOvpnServer.interfaceOvpnServer( address, username, password )
+        self.ovpnserverbin = interfaceOvpnServerBinding.interfaceOvpnServerBinding( address, username, password )
+        self.ovpnserverset = interfaceOvpnServerSet.interfaceOvpnServerBinding( address, username, password )
+        self.pppclient = interfacePppClient.interfacePppclient(address,username,password)
+        self.pppclientgen = interfacePppClientSetGeneral.interfacePppClientSetSetGeneral(address,username,password)
+        self.pppclientppp = interfacePppClientSetPpp.interfacePppClientSetPpp(address,username,password)
+        self.pppoeserver = interfacePppoe.interfacePppoeServerBinding(address,username,password)
+        self.pppoeClient = interfacePppoeClient.interfacePppoeClient(address,username,password)
+        self.pppoeClientdial = interfacePppoeClientSetDialOut.interfacePppoeClientSetDialOut(address,username,password)
+        self.pppoeset = interfacePppoeSet.interfacePppoeServerSet(address,username,password)
+        self.pppoegenset = interfacePppoeSetGeneral.interfacePppoeClientSetGeneral(address,username,password)
+        self.pppserver = interfacePppServer.interfacePppServer(address,username,password)
+        self.pppserverdial = interfacePppServerSetDialIn.interfacePppServerSetDialIn(address,username,password)
+        self.pppservergen = interfacePppServerSetGeneral.interfacePppServerSetGeneral(address,username,password)
+        self.pptpclient = interfacePptpClient.interfacePptpClient(address,username,password)
+        self.pptpclientdial = interfacePptpCLientSetDialOut.interfacePptpClientSetDialOut(address,username,password)
+        self.pptpclientgen = interfacePptpClientSetGeneral.interfacePppoeClientSetGeneral(address,username,password)
+        self.pptpserver = interfacePptpServer.interfacePptpServer(address,username,password)
+        self.pptpserbin = interfacePptpServerBinding.interfacePptpServer(address,username,password)
+        self.pptpsergen = interfacePptpServerSetGeneral.interfacePptpServerSetGeneral(address,username,password)
+        self.sstpserver = interfaceSstpServer.interfaceSstpServer(address,username,password)
+        self.sstpserversetbin = interfaceSstpServerBinding.interfaceSstpServerBinding(address,username,password)
+        self.sstpserverglob = interfaceSstpServerSet.interfaceSstpServerSetGeneral(address,username,password)
+        self.sstpclient = interfaceSstpClient.interfaceSstpClient(address,username,password)
+        self.sstpclientgen = interfaceSstpCLientGeneralSet.interfaceSstpClientSetGeneral(address,username,password)
+        self.sstpclientdial = interfaceSstpClientSetDialOut.interfaceSstpClientSetDialOut(address,username,password)
+        self.l2tpsecret = l2tpSecrets.l2tpSecrets(address,username,password)
+        self.pppauth = pppAuthenticationAndAcounting.pppAuthenticationAndAcounting(address,username,password)
+        self.pppoe = pppoe.pppoe(address,username,password)
+        self.pppoeset = pppoeSettings.pppoeSettings(address,username,password)
+        self.profgen = profileGeneral.profileGeneral(address,username,password)
+        self.profLimit = profileLimits.profileLimits(address,username,password)
+        self.profprot = profileProtocols.profileProtocols(address,username,password)
+        self.profqueue = profileQueue.profileQueue(address,username,password)
+        self.profiles = profiles.profiles(address,username,password)
+        self.profilescript = profileScripts.profileScripts(address,username,password)
+        self.secret = secrets.secrets(address,username,password)
+        self.secretset = secretSettings.secretSettings(address,username,password)
