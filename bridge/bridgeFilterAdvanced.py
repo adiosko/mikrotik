@@ -16,16 +16,6 @@ class bridgeFilterAdvanced:
         vlan = self.client.talk(['/interface/bridge/filter/set','=numbers='+number,'=vlan-id='+vlan])
         return vlan
 
-    def setVlanId(self, number, vlan="1"):
-        """
-        Method will set vlan id
-        :param number:
-        :param vlan:
-        :return:
-        """
-        vlan = self.client.talk( ['/interface/bridge/filter/set', '=numbers=' + number, '=vlan-id=' + vlan] )
-        return vlan
-
     def setVlanPriority(self, number, vlan="1"):
         """
         Method will set vlan id

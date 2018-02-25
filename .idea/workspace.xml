@@ -2,10 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/diplomkap3.iml" afterPath="$PROJECT_DIR$/.idea/diplomkap3.iml" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/IPv4/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppClient.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppClientSetGeneral.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppClientSetPpp.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppServer.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppServerSetDialIn.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePppServerSetGeneral.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpClient.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpServerBinding.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfacePptpServerSetGeneral.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpCLientGeneralSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpClient.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpServerBinding.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/ppp/interfaceSstpServerSet.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" afterPath="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePptpServer.py" afterPath="" />
     </list>
     <ignored path="diplomkap3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,65 +50,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bridgeFilterAdvanced.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py">
+      <file leaf-file-name="interfaceSstpClientSetDialOut.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" lean-forward="true" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bridgeMSTI.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bridge/bridgeMSTI.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="975">
-              <caret line="66" column="19" lean-forward="false" selection-start-line="30" selection-start-column="4" selection-end-line="66" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bridgeVlan.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bridge/bridgeVlan.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1620">
-              <caret line="109" column="19" lean-forward="false" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bridgeNatStp.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bridge/bridgeNatStp.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Constructors.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Constructors.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-210">
-              <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bridgeNatAction.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bridge/bridgeNatAction.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="25" column="0" lean-forward="true" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+            <state relative-caret-position="487">
+              <caret line="212" column="19" lean-forward="true" selection-start-line="212" selection-start-column="19" selection-end-line="212" selection-end-column="19" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -109,31 +71,29 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>ppp-server</find>
+      <find>ppp</find>
+      <find>ppp-client</find>
+      <find>pptp-client</find>
+      <find>sstp-server</find>
+      <find>server</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>pptp-server</replace>
+      <replace>pptp</replace>
+      <replace>sstp-server</replace>
+      <replace>sstp-client</replace>
+      <replace>client</replace>
+    </replaceStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/IPv4/Snmp.py" />
-        <option value="$PROJECT_DIR$/IPv4/Services.py" />
-        <option value="$PROJECT_DIR$/IPv4/Settings.py" />
-        <option value="$PROJECT_DIR$/IPv4/SocksAccess.py" />
-        <option value="$PROJECT_DIR$/IPv4/SocksConnections.py" />
-        <option value="$PROJECT_DIR$/IPv4/Socks.py" />
-        <option value="$PROJECT_DIR$/IPv4/Tftp.py" />
-        <option value="$PROJECT_DIR$/IPv4/TrafficFlowIpfix.py" />
-        <option value="$PROJECT_DIR$/IPv4/TrafficFlow.py" />
-        <option value="$PROJECT_DIR$/IPv4/UpnpSetting.py" />
-        <option value="$PROJECT_DIR$/IPv4/UpnpInterface.py" />
-        <option value="$PROJECT_DIR$/IPv4/WebProxyLookup.py" />
-        <option value="$PROJECT_DIR$/IPv4/WebProxyInserts.py" />
-        <option value="$PROJECT_DIR$/IPv4/WebProxyRefreshes.py" />
-        <option value="$PROJECT_DIR$/IPv4/WebProxySettings.py" />
-        <option value="$PROJECT_DIR$/IPv4/WebProxyCache.py" />
-        <option value="$PROJECT_DIR$/IPv4/WebProxyDirect.py" />
-        <option value="$PROJECT_DIR$/IPv4/WebProxyAccess.py" />
-        <option value="$PROJECT_DIR$/IPv4/WebProxyConnections.py" />
         <option value="$PROJECT_DIR$/IPv4/WebProxyCacheContetnt.py" />
         <option value="$PROJECT_DIR$/mesh/MeshInterfaces.py" />
         <option value="$PROJECT_DIR$/mesh/MeshPorts.py" />
@@ -157,7 +117,6 @@
         <option value="$PROJECT_DIR$/bridge/bridgeNatStp.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeFilter.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeFilterGeneral.py" />
-        <option value="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeFIlterArp.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeFilterStp.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeNatAction.py" />
@@ -166,6 +125,26 @@
         <option value="$PROJECT_DIR$/bridge/bridgeMSTI.py" />
         <option value="$PROJECT_DIR$/bridge/bridgeVlan.py" />
         <option value="$PROJECT_DIR$/Constructors.py" />
+        <option value="$PROJECT_DIR$/bridge/__init__.py" />
+        <option value="$PROJECT_DIR$/IPv4/__init__.py" />
+        <option value="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" />
+        <option value="$PROJECT_DIR$/ppp/interface.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppServer.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppServerSetGeneral.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppServerSetDialIn.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppClient.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppClientSetGeneral.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePppClientSetPpp.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePptpServerBinding.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePptpServerSetGeneral.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePptpClient.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" />
+        <option value="$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceSstpServerBinding.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceSstpServerSet.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceSstpClient.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceSstpCLientGeneralSet.py" />
+        <option value="$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py" />
       </list>
     </option>
   </component>
@@ -214,8 +193,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -226,22 +203,14 @@
             <path>
               <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
               <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
-              <item name="bridge" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
-              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
-              <item name="IPv4" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
-              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
-              <item name="venv" type="462c0819:PsiDirectoryNode" />
+              <item name="ppp" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -480,7 +449,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290461" sideWeight="0.4960464" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31511253" sideWeight="0.48550344" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32508072" sideWeight="0.4095941" order="9" side_tool="false" content_ui="tabs" x="1931" y="373" width="1897" height="306" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14674494" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14994664" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -541,167 +510,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/IPv4/UpnpInterface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/WebProxyInserts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="20" lean-forward="false" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/WebProxyLookup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="20" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="16" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/WebProxyRefreshes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="20" lean-forward="false" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/WebProxySettings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/WebProxyDirect.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="123" column="96" lean-forward="false" selection-start-line="123" selection-start-column="96" selection-end-line="123" selection-end-column="96" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/WebProxyAccess.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="123" column="96" lean-forward="false" selection-start-line="123" selection-start-column="96" selection-end-line="123" selection-end-column="96" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/WebProxyCache.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/WebProxyConnections.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="20" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="16" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/WebProxyCacheContetnt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mesh/MeshInterfaces.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mesh/MeshPorts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mesh/MeshFdb.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/switch/SwitchGeeral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/switch/SwitchPorts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/switch/SwitchHost.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/switch/SwitchVlan.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/switch/SwitchRule.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/BridgeSettings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="562">
-          <caret line="40" column="21" lean-forward="false" selection-start-line="40" selection-start-column="21" selection-end-line="40" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/BridgeGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/BridgePorts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bridge/BridgeMdb.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/FireallGeneralSetup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="45" column="102" lean-forward="false" selection-start-line="45" selection-start-column="102" selection-end-line="45" selection-end-column="102" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/IPv4/FirewallAdvancedSetup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -791,7 +599,7 @@
         <state relative-caret-position="75">
           <caret line="6" column="45" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -816,7 +624,7 @@
         <state relative-caret-position="1620">
           <caret line="109" column="19" lean-forward="false" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -918,10 +726,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bridge/bridgeNatAction.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="0" lean-forward="true" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+        <state relative-caret-position="360">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -938,28 +746,21 @@
           </nodes>
           <notes />
           <edges />
-          <settings layout="Hierarchic Group" zoom="0.08904747130003103" x="143.35714285714312" y="2873.0" />
+          <settings layout="Hierarchic Group" zoom="0.08904747130003103" x="143.0" y="2873.0" />
           <SelectedNodes />
           <Categories>
-            <Category>Methods</Category>
-            <Category>Inner Classes</Category>
             <Category>Fields</Category>
+            <Category>Inner Classes</Category>
+            <Category>Methods</Category>
           </Categories>
+          <SCOPE>All</SCOPE>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Constructors.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-210">
-          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="31" lean-forward="false" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="31" />
+        <state relative-caret-position="15">
+          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -976,11 +777,12 @@
           </nodes>
           <notes />
           <edges />
-          <settings layout="Hierarchic Group" zoom="0.6721311475409836" x="273.5" y="677.0" />
+          <settings layout="Hierarchic Group" zoom="0.6721311475409836" x="274.0" y="677.0" />
           <SelectedNodes />
           <Categories>
             <Category>Methods</Category>
           </Categories>
+          <SCOPE>All</SCOPE>
         </state>
       </provider>
     </entry>
@@ -992,20 +794,370 @@
           <nodes />
           <notes />
           <edges />
-          <settings layout="Hierarchic Group" zoom="1.0" x="799.5" y="287.0" />
+          <settings layout="Hierarchic Group" zoom="1.0" x="800.0" y="167.0" />
           <SelectedNodes />
           <Categories>
             <Category>All</Category>
           </Categories>
+          <SCOPE>All</SCOPE>
           <VISIBILITY>Details</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://JavaScript-modules-diagram//home/adrian/PycharmProjects/diplomkap3/bridge">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JavaScript-modules-diagram</ID>
+          <OriginalElement>$PROJECT_DIR$/bridge</OriginalElement>
+          <nodes />
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.0" x="800.0" y="287.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>All</Category>
+          </Categories>
+          <SCOPE>All</SCOPE>
+          <VISIBILITY>Details</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bridge/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IPv4/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://Python/#/home/adrian/PycharmProjects/diplomkap3/IPv4">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>Python</ID>
+          <OriginalElement>#/home/adrian/PycharmProjects/diplomkap3/IPv4</OriginalElement>
+          <nodes>
+            <node x="" y="">IPv4.Accounting.Accounting</node>
+            <node x="" y="">IPv4.IPsecUsers.IPsecUsers</node>
+            <node x="" y="">IPv4.FireallGeneralSetup.FirewallGeneralSetup</node>
+            <node x="" y="">IPv4.WebProxyAccess.WebProxyAccess</node>
+            <node x="" y="">IPv4.FirewallNAT.FirewallNAT</node>
+            <node x="" y="">IPv4.HotspotServicePorts.HotspotServicePorts</node>
+            <node x="" y="">IPv4.HotspotServer.HotspotServer</node>
+            <node x="" y="">IPv4.IPsecProposal.IPsecProposal</node>
+            <node x="" y="">object</node>
+            <node x="" y="">IPv4.Tftp.Tftp</node>
+            <node x="" y="">IPv4.FirewallAction.FirewallActions</node>
+            <node x="" y="">IPv4.IpsecPeers.IPsecPeers</node>
+            <node x="" y="">IPv4.DNSglobal.DNSglobal</node>
+            <node x="" y="">IPv4.SmbShare.SmbShare</node>
+            <node x="" y="">IPv4.HotspotWalledGardenList.HotspotWalledGardenList</node>
+            <node x="" y="">IPv4.WebProxyDirect.WebProxyDirect</node>
+            <node x="" y="">IPv4.RouteGeneral.RouteGeneral</node>
+            <node x="" y="">IPv4.TrafficFlow.TrafficFlow</node>
+            <node x="" y="">IPv4.Snmp.Snmp</node>
+            <node x="" y="">IPv4.HotspotActive.HotspotActive</node>
+            <node x="" y="">IPv4.FirewallAddressist.FirewallAddressList</node>
+            <node x="" y="">IPv4.HotspotHost.HotspotHosts</node>
+            <node x="" y="">IPv4.SmbUsers.SmbUsers</node>
+            <node x="" y="">IPv4.IPsecModeCOnfig.IPsecModeConfig</node>
+            <node x="" y="">IPv4.DhcpCLient.DhcpClient</node>
+            <node x="" y="">IPv4.HotspotCookies.HotspotCookies</node>
+            <node x="" y="">IPv4.Arp.Arp</node>
+            <node x="" y="">IPv4.RouteNexthops.RouteNexthops</node>
+            <node x="" y="">IPv4.HotspotServerProfile.HotspotServerProfile</node>
+            <node x="" y="">IPv4.IPsecKeys.IPsecKeys</node>
+            <node x="" y="">IPv4.WebProxySettings.WebProxySettings</node>
+            <node x="" y="">IPv4.Services.Services</node>
+            <node x="" y="">IPv4.RoouteVrf.RouteVrf</node>
+            <node x="" y="">IPv4.SocksAccess.SocksAccess</node>
+            <node x="" y="">IPv4.WebProxyRefreshes.WebProxyRefreshes</node>
+            <node x="" y="">IPv4.IpsecInstalledSa.IPsecInstalledSa</node>
+            <node x="" y="">IPv4.WebProxyCache.WebProxycache</node>
+            <node x="" y="">IPv4.Pool.Pool</node>
+            <node x="" y="">IPv4.WebProxyCacheContetnt.WebProxyCacheContent</node>
+            <node x="" y="">IPv4.HotspotIpBindings.HotspotIpBinding</node>
+            <node x="" y="">_collections_abc.Hashable</node>
+            <node x="" y="">IPv4.WebProxyLookup.WebProxyLookup</node>
+            <node x="" y="">IPv4.WebProxyConnections.WebProxyConnections</node>
+            <node x="" y="">IPv4.IPsecGroups.IPsecGroups</node>
+            <node x="" y="">IPv4.NeighborLIst.NeighborList</node>
+            <node x="" y="">IPv4.HotspotUserProfile.HotspotUserProfile</node>
+            <node x="" y="">IPv4.UpnpInterface.UpnpInterface</node>
+            <node x="" y="">IPv4.TrafficFlowIpfix.TrafficFlowIpfix</node>
+            <node x="" y="">IPv4.Addresses.Addresses</node>
+            <node x="" y="">IPv4.DNScache.DNScache</node>
+            <node x="" y="">IPv4.IPsecPolicies.IPsecPolicy</node>
+            <node x="" y="">IPv4.FirewallL7Protocols.FirewallL7Protocols</node>
+            <node x="" y="">IPv4.SocksConnections.SocksConnections</node>
+            <node x="" y="">IPv4.Smb.Smb</node>
+            <node x="" y="">IPv4.SnmpCommnity.SnmpCommunity</node>
+            <node x="" y="">IPv4.DhcpServer.DhcpServer</node>
+            <node x="" y="">IPv4.UpnpSetting.UpnpSetting</node>
+            <node x="" y="">IPv4.FirewallServicePOrts.FirewallServicePOrts</node>
+            <node x="" y="">IPv4.FirewallMangle.FirewallMangle</node>
+            <node x="" y="">IPv4.RouteRules.RouteRules</node>
+            <node x="" y="">IPv4.PoolUsedAddresses.PoolUsedAddresses</node>
+            <node x="" y="">IPv4.HotspotUsers.HotspotUsers</node>
+            <node x="" y="">IPv4.Socks.Socks</node>
+            <node x="" y="">IPv4.FirewallCOnnections.FirewallConnections</node>
+            <node x="" y="">IPv4.FirewallExtraSetup.FirewallExtraSetup</node>
+            <node x="" y="">IPv4.Packing.Packing</node>
+            <node x="" y="">IPv4.DhcpRelay.DhcpRelay</node>
+            <node x="" y="">IPv4.Settings.Settings</node>
+            <node x="" y="">IPv4.FirewallAdvancedSetup.FirewallAdvancedSetup</node>
+            <node x="" y="">IPv4.WebProxyInserts.WebProxyInserts</node>
+            <node x="" y="">IPv4.NeighborDIscovery.NeighborDiscovery</node>
+            <node x="" y="">IPv4.HotspotWalledGarden.HotspotWalledGarden</node>
+            <node x="" y="">IPv4.FirewallFilter.FirewallFilter</node>
+            <node x="" y="">IPv4.IpsecRemotePeers.IPsecRemotePeers</node>
+            <node x="" y="">IPv4.DNSstatic.DNSstatic</node>
+          </nodes>
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.4000000000000001" x="12071.0" y="-265.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>Methods</Category>
+          </Categories>
+          <SCOPE>All</SCOPE>
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://Python/#/home/adrian/PycharmProjects/diplomkap3/bridge">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>Python</ID>
+          <OriginalElement>#/home/adrian/PycharmProjects/diplomkap3/bridge</OriginalElement>
+          <nodes>
+            <node x="" y="">bridge.bridgeVlan.bridgeVlan</node>
+            <node x="" y="">bridge.BridgeHosts.BridgeHosts</node>
+            <node x="" y="">_collections_abc.Hashable</node>
+            <node x="" y="">bridge.bridgeFilter.bridgefilter</node>
+            <node x="" y="">bridge.bridgeNat.bridgeNat</node>
+            <node x="" y="">bridge.bridgeNatStp.bridgeNatStp</node>
+            <node x="" y="">bridge.bridgeFilterStp.bridgeNatStp</node>
+            <node x="" y="">bridge.bridgeMSTI.bridgeMSTI</node>
+            <node x="" y="">bridge.bridgeNatAdvanced.bridgeNatAdvanced</node>
+            <node x="" y="">bridge.BridgePorts.BridgePorts</node>
+            <node x="" y="">bridge.bridgeArp.bridgeNatArp</node>
+            <node x="" y="">bridge.bridgeNatGeneral.bridgeNatGeneral</node>
+            <node x="" y="">bridge.BridgeGeneral.BridgeGeneral</node>
+            <node x="" y="">bridge.bridgePortMstOverride.bridgeMstOverride</node>
+            <node x="" y="">bridge.BridgeSettings.BridgeSettings</node>
+            <node x="" y="">bridge.bridgeFilterGeneral.bridgeFilterGeneral</node>
+            <node x="" y="">object</node>
+            <node x="" y="">bridge.bridgeFIlterArp.bridgeFilterArp</node>
+            <node x="" y="">bridge.BridgeMdb.BridgeMdb</node>
+            <node x="" y="">bridge.bridgeFilterAction.bridgeFilterAction</node>
+            <node x="" y="">bridge.bridgeNatAction.bridgeNatAction</node>
+            <node x="" y="">bridge.bridgeFilterAdvanced.bridgeFilterAdvanced</node>
+          </nodes>
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="0.4249894470240608" x="3811.0" y="631.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>Methods</Category>
+          </Categories>
+          <SCOPE>All</SCOPE>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interface.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="37" lean-forward="true" selection-start-line="13" selection-start-column="37" selection-end-line="13" selection-end-column="37" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="4" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="60" column="55" lean-forward="false" selection-start-line="60" selection-start-column="55" selection-end-line="60" selection-end-column="55" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="547">
+          <caret line="61" column="18" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="61" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpServer.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="31" lean-forward="true" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpServerSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="19" lean-forward="true" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpServerBinding.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="12" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="62" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="40" column="28" lean-forward="true" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpServerBinding.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="394">
+          <caret line="44" column="0" lean-forward="true" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="62" column="18" lean-forward="true" selection-start-line="62" selection-start-column="18" selection-end-line="62" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpCLientGeneralSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="47" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="31" lean-forward="false" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppClientSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="37">
+          <caret line="17" column="18" lean-forward="true" selection-start-line="9" selection-start-column="4" selection-end-line="17" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="15" column="25" lean-forward="true" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppServerSetDialIn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="16" column="18" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="16" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpServerSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="18" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="26" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppClientSetPpp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-773">
+          <caret line="26" column="18" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="26" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePppServerSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-248">
+          <caret line="45" column="51" lean-forward="false" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="113" column="19" lean-forward="true" selection-start-line="105" selection-start-column="4" selection-end-line="113" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="212" column="19" lean-forward="true" selection-start-line="212" selection-start-column="19" selection-end-line="212" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
