@@ -51,6 +51,9 @@ from ppp import interfaceSstpClientSetDialOut,interfaceSstpServer,interfaceSstpS
 from ppp import l2tpSecrets,pppAuthenticationAndAcounting,pppoe,pppoeSettings,profileGeneral,profileLimits,profileProtocols
 from ppp import profileQueue,profiles,profileScripts,secrets,secretSettings,interfaceOvpnClientSetGeneral,interfaceOvpnServerBinding,interfaceOvpnClientSetDialOut
 from ppp import interfaceOvpnServerSet, interfacePppClientSetPpp,interfacePppoeClient,interfacePppoeClientSetDialOut,interfaceSstpCLientGeneralSet
+from wireless import channels,channelSet,securityProfile,securityProfileSetGeneral,securityProfileRadius,securityProfileEap,securityProfileStaticKeys
+from  wireless import  connectList, connectListSet
+
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -353,3 +356,12 @@ class Mikrotik:
         self.profilescript = profileScripts.profileScripts(address,username,password)
         self.secret = secrets.secrets(address,username,password)
         self.secretset = secretSettings.secretSettings(address,username,password)
+        self.wchannel = channels.Channels(address,username,password)
+        self.wchannelset = channelSet.ChannelsSet(address,username,password)
+        self.security1 = securityProfile.securityProfile(address,username,password)
+        self.security2 = securityProfileSetGeneral.securityProfileSetGeneral(address,username,password)
+        self.security3 = securityProfileRadius.securityProfileRadius(address,username,password)
+        self.security4 = securityProfileEap.securityProfileSetEap(address,username,password)
+        self.security5 = securityProfileStaticKeys.securityProfileSetStaticKeys(address,username,password)
+        self.conlist = connectList.connectList(address,username,password)
+        self.connlistset = connectListSet.connectListSet(address,username,password)
