@@ -52,7 +52,9 @@ from ppp import l2tpSecrets,pppAuthenticationAndAcounting,pppoe,pppoeSettings,pr
 from ppp import profileQueue,profiles,profileScripts,secrets,secretSettings,interfaceOvpnClientSetGeneral,interfaceOvpnServerBinding,interfaceOvpnClientSetDialOut
 from ppp import interfaceOvpnServerSet, interfacePppClientSetPpp,interfacePppoeClient,interfacePppoeClientSetDialOut,interfaceSstpCLientGeneralSet
 from wireless import channels,channelSet,securityProfile,securityProfileSetGeneral,securityProfileRadius,securityProfileEap,securityProfileStaticKeys
-from  wireless import  connectList, connectListSet
+from  wireless import  connectList, connectListSet,accessList,accessListSet,NstremeDual,nstremeSetGeneral,nstreameSetDual
+from wireless import nstremeDataRates,interfaceCap, interfaceWpsCLient, interfaceRepeater,interfaceWirelessAllignement
+from wireless import interfaceSnifferSetting,wirelessSnooper
 
 
 class Mikrotik:
@@ -365,3 +367,15 @@ class Mikrotik:
         self.security5 = securityProfileStaticKeys.securityProfileSetStaticKeys(address,username,password)
         self.conlist = connectList.connectList(address,username,password)
         self.connlistset = connectListSet.connectListSet(address,username,password)
+        self.acl = accessList.accessList(address,username,password)
+        self.aclset = accessListSet.accessListSet(address,username,password)
+        self.nstream1 = NstremeDual.NstreamDual(address,username,password)
+        self.nstreamsetgen = nstremeSetGeneral.NstreamSetGeneral(address,username,password)
+        self.nstreamsetdual = nstreameSetDual.NstreamSetDual(address,username,password)
+        self.nstreamrates = nstremeDataRates.NstreamSetDataRates(address,username,password)
+        self.cap = interfaceCap.interfaceCap(address,username,password)
+        self.wps = interfaceWpsCLient.interfaceWpsCLient(address,username,password)
+        self.repeater = interfaceRepeater.interfaceRepeater(address,username,password)
+        self.align = interfaceWirelessAllignement.interfaceWirelessAlignement(address,username,password)
+        self.sniffer = interfaceSnifferSetting.interfaceWirelessSmiffer(address,username,password)
+        self.snooper = wirelessSnooper.interfaceWirelessSnooper(address,username,password)
