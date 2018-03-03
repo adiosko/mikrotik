@@ -54,8 +54,11 @@ from ppp import interfaceOvpnServerSet, interfacePppClientSetPpp,interfacePppoeC
 from wireless import channels,channelSet,securityProfile,securityProfileSetGeneral,securityProfileRadius,securityProfileEap,securityProfileStaticKeys
 from  wireless import  connectList, connectListSet,accessList,accessListSet,NstremeDual,nstremeSetGeneral,nstreameSetDual
 from wireless import nstremeDataRates,interfaceCap, interfaceWpsCLient, interfaceRepeater,interfaceWirelessAllignement
-from wireless import interfaceSnifferSetting,wirelessSnooper
-
+from wireless import interfaceSnifferSetting,wirelessSnooper,interfaceVirtual,interfaceVirtualWirelessSet,interfaceVirtualGeneralSet
+from wireless import interfaceVirtualApbridgeSet,interfaceVirtualBridgeSet,interfaceVirtualNstreamDualSlave
+from wireless import interfaceVirtualNstreamDualSlave,interfaceVirtualStation,interfaceVirtualStationBridge
+from wireless import interfaceVirtualStationPseudobridge, interfaceVirtualStationPseudoBridgeClone, interfaceVirtualWds
+from wireless import interfaceVirtualWds, interfaceVirtualWdsSlave
 
 class Mikrotik:
     def __init__(self,username,password,address):
@@ -379,3 +382,17 @@ class Mikrotik:
         self.align = interfaceWirelessAllignement.interfaceWirelessAlignement(address,username,password)
         self.sniffer = interfaceSnifferSetting.interfaceWirelessSmiffer(address,username,password)
         self.snooper = wirelessSnooper.interfaceWirelessSnooper(address,username,password)
+        self.virt = interfaceVirtual.interfaceVirtual(address,username,password)
+        self,virtwireless = interfaceVirtualWirelessSet.interfaceVirtualWirelessAllignmentOnlySet(address,username,password)
+        self.virtaligngen = interfaceVirtualGeneralSet.interfaceVirtualGeneralSet(address,username,password)
+        self.virtapbridge = interfaceVirtualApbridgeSet.interfaceVirtualApbridgeSet(address,username,password)
+        self.virtbridge = interfaceVirtualBridgeSet.interfaceVirtualBridgeSet(address,username,password)
+        self.virtnstremeslave = interfaceVirtualNstreamDualSlave.interfaceVirtualNstreamDualSlave(address,username,password)
+        self.virtnsslave = interfaceVirtualNstreamDualSlave.interfaceVirtualNstreamDualSlave(address,username,password)
+        self.virtstation =interfaceVirtualStation.interfaceVirtualStation(address,username,password)
+        self.virtstationbr = interfaceVirtualStationBridge.interfaceVirtualStationBridge(address,username,password)
+        self.virtpsbr = interfaceVirtualStationPseudobridge.interfaceVirtualStationPseudobridge(address,username,password)
+        self.virtclone = interfaceVirtualStationPseudoBridgeClone.interfaceVirtualStationPseudobridge(address,username,password)
+        self.virtwds = interfaceVirtualWds.interfaceVirtualWds(address,username,password)
+        self.wds = interfaceVirtualWds.interfaceVirtualWds(address,username,password)
+        self.wdsslave = interfaceVirtualWdsSlave.interfaceVirtualWdsSLave(address,username,password)

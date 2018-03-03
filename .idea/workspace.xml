@@ -2,19 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/NstremeDual.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/accessList.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/accessListSet.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceCap.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceRepeater.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceSnifferSetting.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceWirelessAllignement.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceWpsCLient.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaces.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/nstreameSetDual.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/nstremeDataRates.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/nstremeSetGeneral.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/wirelessSnooper.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceNstreamDualDataratesSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceNstremeDualGeneralSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceNstremeDualGlobal.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceNstremeDualSetDual.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualApbridgeSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualBridgeSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualNstreamDualSlave.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualStation.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualStationBridge.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudoBridgeClone.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudobridge.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualWds.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualWdsSlave.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceWds.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceWdsSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/wireless/interfaceWdsSetGeneral.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/Constructors.py" afterPath="$PROJECT_DIR$/Constructors.py" />
     </list>
@@ -53,7 +56,7 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
+            <state relative-caret-position="0">
               <caret line="3" column="32" lean-forward="false" selection-start-line="3" selection-start-column="32" selection-end-line="3" selection-end-column="32" />
               <folding />
             </state>
@@ -63,8 +66,8 @@
       <file leaf-file-name="Constructors.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Constructors.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="517">
-              <caret line="380" column="90" lean-forward="false" selection-start-line="380" selection-start-column="90" selection-end-line="380" selection-end-column="90" />
+            <state relative-caret-position="502">
+              <caret line="397" column="100" lean-forward="false" selection-start-line="397" selection-start-column="100" selection-end-line="397" selection-end-column="100" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -72,11 +75,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="interfaces.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/wireless/interfaces.py">
+      <file leaf-file-name="interfaceNstreamDualDataratesSet.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/wireless/interfaceNstreamDualDataratesSet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="20" lean-forward="false" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+            <state relative-caret-position="375">
+              <caret line="26" column="19" lean-forward="true" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="interfaceWdsSet.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsSet.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="15" column="54" lean-forward="false" selection-start-line="15" selection-start-column="34" selection-end-line="15" selection-end-column="54" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -105,6 +118,8 @@
       <find>client</find>
       <find>server</find>
       <find>pptp</find>
+      <find>/interface/wireless/</find>
+      <find>/interface/wireless/comment</find>
     </findStrings>
     <replaceStrings>
       <replace>pptp-server</replace>
@@ -118,6 +133,7 @@
       <replace>server</replace>
       <replace>client</replace>
       <replace>pppoe</replace>
+      <replace>/interface/wireless/wds/comment</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -126,23 +142,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/ppp/interfaceOvpnServerSet.py" />
-        <option value="$PROJECT_DIR$/ppp/interfaceOvpnClient.py" />
-        <option value="$PROJECT_DIR$/ppp/interfaceOvpnClientSetGeneral.py" />
-        <option value="$PROJECT_DIR$/ppp/interfaceOvpnClientSetDialOut.py" />
-        <option value="$PROJECT_DIR$/ppp/interfacePppoe.py" />
-        <option value="$PROJECT_DIR$/ppp/interfacePppoeSet.py" />
-        <option value="$PROJECT_DIR$/ppp/interfacePppoeClient.py" />
-        <option value="$PROJECT_DIR$/ppp/interfacePppoeSetGeneral.py" />
-        <option value="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" />
-        <option value="$PROJECT_DIR$/ppp/interfacePppoeClientSetDialOut.py" />
-        <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/wireless/channels.py" />
-        <option value="$PROJECT_DIR$/wireless/channelSet.py" />
-        <option value="$PROJECT_DIR$/wireless/securityProfile.py" />
-        <option value="$PROJECT_DIR$/wireless/securityProfileRadius.py" />
-        <option value="$PROJECT_DIR$/wireless/securityProfileEap.py" />
-        <option value="$PROJECT_DIR$/wireless/securityProfileSetGeneral.py" />
         <option value="$PROJECT_DIR$/wireless/securityProfileStaticKeys.py" />
         <option value="$PROJECT_DIR$/wireless/connectList.py" />
         <option value="$PROJECT_DIR$/Dude/__init__.py" />
@@ -174,9 +173,26 @@
         <option value="$PROJECT_DIR$/wireless/interfaceRepeater.py" />
         <option value="$PROJECT_DIR$/wireless/interfaceWirelessAllignement.py" />
         <option value="$PROJECT_DIR$/wireless/interfaceSnifferSetting.py" />
-        <option value="$PROJECT_DIR$/Constructors.py" />
         <option value="$PROJECT_DIR$/wireless/wirelessSnooper.py" />
         <option value="$PROJECT_DIR$/wireless/interfaces.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualApbridgeSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualBridgeSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualNstreamDualSlave.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStation.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudobridge.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudoBridgeClone.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualWds.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStationBridge.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualWdsSlave.py" />
+        <option value="$PROJECT_DIR$/Constructors.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWdsSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWds.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWdsSetGeneral.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWdsWdsSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceNstremeDualGlobal.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceNstremeDualGeneralSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceNstremeDualSetDual.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceNstreamDualDataratesSet.py" />
       </list>
     </option>
   </component>
@@ -473,7 +489,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1919" y="0" width="1922" height="1053" extended-state="6" />
+    <frame x="1849" y="0" width="1922" height="1053" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290461" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -482,7 +498,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290461" sideWeight="0.4960464" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31431648" sideWeight="0.48550344" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32508072" sideWeight="0.4095941" order="9" side_tool="false" content_ui="tabs" x="1931" y="373" width="1897" height="306" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15314835" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1547492" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -543,545 +559,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePppoe.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="571">
-          <caret line="51" column="61" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="62" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePppoeClient.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="930">
-          <caret line="62" column="20" lean-forward="true" selection-start-line="62" selection-start-column="20" selection-end-line="62" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePppoeSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="56" column="20" lean-forward="true" selection-start-line="48" selection-start-column="4" selection-end-line="56" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="113" column="19" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="113" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePppoeClientSetDialOut.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="123" column="20" lean-forward="true" selection-start-line="123" selection-start-column="20" selection-end-line="123" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ppp/interfacePppClientSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="17" column="18" lean-forward="true" selection-start-line="9" selection-start-column="4" selection-end-line="17" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="uml://Python/#/home/adrian/PycharmProjects/diplomkap3/ppp">
-      <provider selected="true" editor-type-id="UmlEditorProvider">
-        <state>
-          <ID>Python</ID>
-          <OriginalElement>#/home/adrian/PycharmProjects/diplomkap3/ppp</OriginalElement>
-          <nodes>
-            <node x="13233.0" y="956.5">ppp.l2tpSecrets.l2tpSecrets</node>
-            <node x="11298.0" y="956.5">ppp.pppoe.pppoe</node>
-            <node x="8248.0" y="1002.5">ppp.profileScripts.profileScripts</node>
-            <node x="8563.0" y="991.0">ppp.profileProtocols.profileProtocols</node>
-            <node x="7179.0" y="1002.5">ppp.activeConnections.activeCOnnections</node>
-            <node x="8264.0" y="126.0">object</node>
-            <node x="13548.0" y="991.0">ppp.interfaceOvpnClientSetGeneral.interfaceOvpnClientSetGeneral</node>
-            <node x="634.0" y="853.0">ppp.pppoeSettings.pppoeSettings</node>
-            <node x="1397.0" y="991.0">ppp.interfacePppServerSetDialIn.interfacePppServerSetDialIn</node>
-            <node x="14799.0" y="818.5">ppp.interfaceL2tpServer.interfaceL2tpServer</node>
-            <node x="1838.0" y="853.0">ppp.profileGeneral.profileGeneral</node>
-            <node x="10250.0" y="956.5">ppp.secrets.secrets</node>
-            <node x="16112.0" y="1002.5">ppp.interfaceSstpServerSet.interfaceSstpServerSetGeneral</node>
-            <node x="13975.0" y="968.0">ppp.interfacePppoeSetGeneral.interfacePppoeClientSetGeneral</node>
-            <node x="306.0" y="956.5">ppp.interfacePppoe.interfacePppoeServerBinding</node>
-            <node x="4014.0" y="910.5">ppp.secretSettings.secretSettings</node>
-            <node x="12453.0" y="956.5">ppp.interfaceSstpServerBinding.interfaceSstpServerBinding</node>
-            <node x="9218.0" y="1002.5">ppp.interfaceSstpCLientGeneralSet.interfaceSstpClientSetGeneral</node>
-            <node x="9944.0" y="956.5">ppp.interfacePppClient.interfacePppclient</node>
-            <node x="12024.0" y="968.0">ppp.interfacePptpClientSetGeneral.interfacePppoeClientSetGeneral</node>
-            <node x="3585.0" y="979.5">ppp.interfacePppClientSetGeneral.interfacePppClientSetSetGeneral</node>
-            <node x="968.0" y="1002.5">ppp.interfacePptpServerSetGeneral.interfacePptpServerSetGeneral</node>
-            <node x="3229.0" y="979.5">ppp.profileLimits.profileLimits</node>
-            <node x="6445.0" y="1002.5">ppp.interfaceOvpnServerSet.interfaceOvpnServerBinding</node>
-            <node x="9638.0" y="1002.5">ppp.interfaceL2tpSet.interfaceL2tpServerSet</node>
-            <node x="15781.0" y="956.5">ppp.interfaceL2tpCLient.interfaceL2tpClientServer</node>
-            <node x="6816.0" y="899.0">ppp.interfacePppClientSetPpp.interfacePppClientSetPpp</node>
-            <node x="14382.0" y="979.5">ppp.interfaceL2tpClientSetGeneral.interfaceL2tpClientSetGeneral</node>
-            <node x="2490.0" y="887.5">ppp.interfacePppoeClientSetDialOut.interfacePppoeClientSetDialOut</node>
-            <node x="5371.0" y="956.5">ppp.interfacePppoeClient.interfacePppoeClient</node>
-            <node x="8301.5" y="0.0">_collections_abc.Hashable</node>
-            <node x="11613.0" y="784.0">ppp.interfaceSstpClientSetDialOut.interfaceSstpClientSetDialOut</node>
-            <node x="2923.0" y="956.5">ppp.interfaceOvpnClient.interfaceOvpnClient</node>
-            <node x="12838.0" y="956.5">ppp.interfaceOvpnServerBinding.interfaceOvpnServerBinding</node>
-            <node x="16494.0" y="922.0">ppp.interfacePppServerSetGeneral.interfacePppServerSetGeneral</node>
-            <node x="5684.0" y="956.5">ppp.interfacePptpServerBinding.interfacePptpServer</node>
-            <node x="6029.0" y="899.0">ppp.interfacePptpCLientSetDialOut.interfacePptpClientSetDialOut</node>
-            <node x="10598.0" y="956.5">ppp.interfaceL2tpServerBinding.interfaceL2tpServerBinding</node>
-            <node x="8912.0" y="956.5">ppp.interfacePptpClient.interfacePptpClient</node>
-            <node x="10983.0" y="830.0">ppp.interfaceSstpServer.interfaceSstpServer</node>
-            <node x="4329.0" y="899.0">ppp.interfaceOvpnClientSetDialOut.interfaceOvpnClientSetDialOut</node>
-            <node x="7494.0" y="864.5">ppp.interfaceOvpnServer.interfaceOvpnServer</node>
-            <node x="4750.0" y="991.0">ppp.profileQueue.profileQueue</node>
-            <node x="7809.0" y="979.5">ppp.pppAuthenticationAndAcounting.pppAuthenticationAndAcounting</node>
-            <node x="15114.0" y="979.5">ppp.profiles.profiles</node>
-            <node x="5065.0" y="956.5">ppp.interfaceSstpClient.interfaceSstpClient</node>
-            <node x="15429.0" y="933.5">ppp.interfacePptpServer.interfacePptpServer</node>
-            <node x="2168.0" y="991.0">ppp.interfacePppoeSet.interfacePppoeServerSet</node>
-            <node x="0.0" y="956.5">ppp.interfacePppServer.interfacePppServer</node>
-          </nodes>
-          <notes />
-          <edges>
-            <edge source="ppp.interfacePppServerSetDialIn.interfacePppServerSetDialIn" target="object">
-              <point x="0.0" y="-61.0" />
-              <point x="1607.5" y="584.0" />
-              <point x="8289.18085106383" y="584.0" />
-              <point x="-106.31914893617068" y="199.0" />
-            </edge>
-            <edge source="ppp.profileQueue.profileQueue" target="object">
-              <point x="0.0" y="-61.0" />
-              <point x="4897.5" y="674.0" />
-              <point x="8339.54255319149" y="674.0" />
-              <point x="-55.95744680851021" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceOvpnServerBinding.interfaceOvpnServerBinding" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="13025.5" y="644.0" />
-              <point x="8468.244680851063" y="644.0" />
-              <point x="72.7446808510631" y="199.0" />
-            </edge>
-            <edge source="ppp.profileGeneral.profileGeneral" target="object">
-              <point x="0.0" y="-199.0" />
-              <point x="1993.0" y="594.0" />
-              <point x="8294.77659574468" y="594.0" />
-              <point x="-100.72340425531911" y="199.0" />
-            </edge>
-            <edge source="ppp.profileProtocols.profileProtocols" target="object">
-              <point x="0.0" y="-61.0" />
-              <point x="8727.5" y="764.0" />
-              <point x="8401.095744680852" y="764.0" />
-              <point x="5.595744680851567" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppoe.interfacePppoeServerBinding" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="460.0" y="554.0" />
-              <point x="8272.393617021276" y="554.0" />
-              <point x="-123.10638297872356" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePptpClientSetGeneral.interfacePppoeClientSetGeneral" target="object">
-              <point x="0.0" y="-84.0" />
-              <point x="12228.5" y="664.0" />
-              <point x="8457.053191489362" y="664.0" />
-              <point x="61.55319148936178" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePptpServerBinding.interfacePptpServer" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="5846.5" y="704.0" />
-              <point x="8356.329787234043" y="704.0" />
-              <point x="-39.17021276595733" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePptpClient.interfacePptpClient" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="9055.0" y="754.0" />
-              <point x="8406.691489361701" y="754.0" />
-              <point x="11.191489361701315" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppServerSetGeneral.interfacePppServerSetGeneral" target="object">
-              <point x="0.0" y="-130.0" />
-              <point x="16694.5" y="544.0" />
-              <point x="8524.202127659573" y="544.0" />
-              <point x="128.7021276595733" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceOvpnClientSetDialOut.interfaceOvpnClientSetDialOut" target="object">
-              <point x="0.0" y="-153.0" />
-              <point x="4529.5" y="664.0" />
-              <point x="8333.946808510638" y="664.0" />
-              <point x="-61.55319148936178" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppServer.interfacePppServer" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="143.0" y="544.0" />
-              <point x="8266.797872340425" y="544.0" />
-              <point x="-128.70212765957513" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppoeClientSetDialOut.interfacePppoeClientSetDialOut" target="object">
-              <point x="0.0" y="-164.5" />
-              <point x="2696.5" y="614.0" />
-              <point x="8305.968085106382" y="614.0" />
-              <point x="-89.5319148936178" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceSstpServerSet.interfaceSstpServerSetGeneral" target="object">
-              <point x="0.0" y="-49.5" />
-              <point x="16293.0" y="554.0" />
-              <point x="8518.606382978724" y="554.0" />
-              <point x="123.10638297872356" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceL2tpClientSetGeneral.interfaceL2tpClientSetGeneral" target="object">
-              <point x="0.0" y="-72.5" />
-              <point x="14580.5" y="604.0" />
-              <point x="8490.627659574468" y="604.0" />
-              <point x="95.12765957446754" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceSstpClient.interfaceSstpClient" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="5208.0" y="684.0" />
-              <point x="8345.13829787234" y="684.0" />
-              <point x="-50.361702127660465" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceSstpClientSetDialOut.interfaceSstpClientSetDialOut" target="object">
-              <point x="0.0" y="-268.0" />
-              <point x="11808.5" y="674.0" />
-              <point x="8451.45744680851" y="674.0" />
-              <point x="55.95744680851021" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppoeSetGeneral.interfacePppoeClientSetGeneral" target="object">
-              <point x="0.0" y="-84.0" />
-              <point x="14168.5" y="614.0" />
-              <point x="8485.031914893616" y="614.0" />
-              <point x="89.53191489361598" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppClient.interfacePppclient" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="10087.0" y="724.0" />
-              <point x="8423.478723404256" y="724.0" />
-              <point x="27.978723404256016" y="199.0" />
-            </edge>
-            <edge source="ppp.profiles.profiles" target="object">
-              <point x="0.0" y="-72.5" />
-              <point x="15261.5" y="584.0" />
-              <point x="8501.81914893617" y="584.0" />
-              <point x="106.31914893617068" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceL2tpServer.interfaceL2tpServer" target="object">
-              <point x="0.0" y="-233.5" />
-              <point x="14946.5" y="594.0" />
-              <point x="8496.22340425532" y="594.0" />
-              <point x="100.72340425531911" y="199.0" />
-            </edge>
-            <edge source="object" target="_collections_abc.Hashable">
-              <point x="0.0" y="-199.0" />
-              <point x="0.0" y="38.0" />
-            </edge>
-            <edge source="ppp.profileScripts.profileScripts" target="object">
-              <point x="0.0" y="-49.5" />
-              <point x="0.0" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceOvpnServerSet.interfaceOvpnServerBinding" target="object">
-              <point x="0.0" y="-49.5" />
-              <point x="6620.5" y="724.0" />
-              <point x="8367.521276595744" y="724.0" />
-              <point x="-27.978723404256016" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppoeSet.interfacePppoeServerSet" target="object">
-              <point x="0.0" y="-61.0" />
-              <point x="2319.0" y="604.0" />
-              <point x="8300.372340425532" y="604.0" />
-              <point x="-95.12765957446754" y="199.0" />
-            </edge>
-            <edge source="ppp.secretSettings.secretSettings" target="object">
-              <point x="0.0" y="-141.5" />
-              <point x="4161.5" y="654.0" />
-              <point x="8328.351063829787" y="654.0" />
-              <point x="-67.14893617021335" y="199.0" />
-            </edge>
-            <edge source="ppp.pppoeSettings.pppoeSettings" target="object">
-              <point x="0.0" y="-199.0" />
-              <point x="791.0" y="564.0" />
-              <point x="8277.989361702128" y="564.0" />
-              <point x="-117.51063829787199" y="199.0" />
-            </edge>
-            <edge source="ppp.l2tpSecrets.l2tpSecrets" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="13380.5" y="634.0" />
-              <point x="8473.840425531915" y="634.0" />
-              <point x="78.34042553191466" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceSstpCLientGeneralSet.interfaceSstpClientSetGeneral" target="object">
-              <point x="0.0" y="-49.5" />
-              <point x="9418.0" y="744.0" />
-              <point x="8412.287234042553" y="744.0" />
-              <point x="16.787234042552882" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceOvpnServer.interfaceOvpnServer" target="object">
-              <point x="0.0" y="-187.5" />
-              <point x="7641.5" y="754.0" />
-              <point x="8384.308510638297" y="754.0" />
-              <point x="-11.191489361703134" y="199.0" />
-            </edge>
-            <edge source="ppp.secrets.secrets" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="10414.0" y="714.0" />
-              <point x="8429.074468085106" y="714.0" />
-              <point x="33.574468085105764" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceSstpServerBinding.interfaceSstpServerBinding" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="12635.5" y="654.0" />
-              <point x="8462.648936170213" y="654.0" />
-              <point x="67.14893617021335" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceOvpnClient.interfaceOvpnClient" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="3066.0" y="624.0" />
-              <point x="8311.563829787234" y="624.0" />
-              <point x="-83.93617021276623" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppClientSetGeneral.interfacePppClientSetSetGeneral" target="object">
-              <point x="0.0" y="-72.5" />
-              <point x="3789.5" y="644.0" />
-              <point x="8322.755319148937" y="644.0" />
-              <point x="-72.7446808510631" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppoeClient.interfacePppoeClient" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="5517.5" y="694.0" />
-              <point x="8350.734042553191" y="694.0" />
-              <point x="-44.7659574468089" y="199.0" />
-            </edge>
-            <edge source="ppp.activeConnections.activeCOnnections" target="object">
-              <point x="0.0" y="-49.5" />
-              <point x="7326.5" y="744.0" />
-              <point x="8378.712765957447" y="744.0" />
-              <point x="-16.787234042552882" y="199.0" />
-            </edge>
-            <edge source="ppp.pppoe.pppoe" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="11445.5" y="684.0" />
-              <point x="8445.861702127659" y="684.0" />
-              <point x="50.361702127658646" y="199.0" />
-            </edge>
-            <edge source="ppp.profileLimits.profileLimits" target="object">
-              <point x="0.0" y="-72.5" />
-              <point x="3397.0" y="634.0" />
-              <point x="8317.159574468085" y="634.0" />
-              <point x="-78.34042553191466" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceL2tpCLient.interfaceL2tpClientServer" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="15936.5" y="564.0" />
-              <point x="8513.010638297872" y="564.0" />
-              <point x="117.51063829787199" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceSstpServer.interfaceSstpServer" target="object">
-              <point x="0.0" y="-222.0" />
-              <point x="11130.5" y="694.0" />
-              <point x="8440.265957446809" y="694.0" />
-              <point x="44.7659574468089" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePptpServer.interfacePptpServer" target="object">
-              <point x="0.0" y="-118.5" />
-              <point x="15595.0" y="574.0" />
-              <point x="8507.41489361702" y="574.0" />
-              <point x="111.91489361702043" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceL2tpSet.interfaceL2tpServerSet" target="object">
-              <point x="0.0" y="-49.5" />
-              <point x="9781.0" y="734.0" />
-              <point x="8417.882978723404" y="734.0" />
-              <point x="22.38297872340445" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePptpCLientSetDialOut.interfacePptpClientSetDialOut" target="object">
-              <point x="0.0" y="-153.0" />
-              <point x="6227.0" y="714.0" />
-              <point x="8361.925531914894" y="714.0" />
-              <point x="-33.574468085105764" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceOvpnClientSetGeneral.interfaceOvpnClientSetGeneral" target="object">
-              <point x="0.0" y="-61.0" />
-              <point x="13751.5" y="624.0" />
-              <point x="8479.436170212766" y="624.0" />
-              <point x="83.93617021276623" y="199.0" />
-            </edge>
-            <edge source="ppp.interfaceL2tpServerBinding.interfaceL2tpServerBinding" target="object">
-              <point x="0.0" y="-95.5" />
-              <point x="10780.5" y="704.0" />
-              <point x="8434.670212765957" y="704.0" />
-              <point x="39.17021276595733" y="199.0" />
-            </edge>
-            <edge source="ppp.pppAuthenticationAndAcounting.pppAuthenticationAndAcounting" target="object">
-              <point x="0.0" y="-72.5" />
-              <point x="8018.5" y="764.0" />
-              <point x="8389.904255319148" y="764.0" />
-              <point x="-5.595744680851567" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePptpServerSetGeneral.interfacePptpServerSetGeneral" target="object">
-              <point x="0.0" y="-49.5" />
-              <point x="1172.5" y="574.0" />
-              <point x="8283.58510638298" y="574.0" />
-              <point x="-111.91489361702043" y="199.0" />
-            </edge>
-            <edge source="ppp.interfacePppClientSetPpp.interfacePppClientSetPpp" target="object">
-              <point x="0.0" y="-153.0" />
-              <point x="6987.5" y="734.0" />
-              <point x="8373.117021276596" y="734.0" />
-              <point x="-22.38297872340445" y="199.0" />
-            </edge>
-          </edges>
-          <settings layout="Hierarchic Group" zoom="0.09399940880874963" x="2543.0" y="180.0" />
-          <SelectedNodes>
-            <node>ppp.interfacePppServer.interfacePppServer</node>
-          </SelectedNodes>
-          <Categories>
-            <Category>Methods</Category>
-          </Categories>
-          <SCOPE>All</SCOPE>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tools/BwServer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/channels.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="23" column="120" lean-forward="true" selection-start-line="23" selection-start-column="21" selection-end-line="23" selection-end-column="120" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/channelSet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/securityProfileSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
-          <caret line="176" column="19" lean-forward="false" selection-start-line="176" selection-start-column="19" selection-end-line="176" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/securityProfileEap.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/securityProfileStaticKeys.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="542">
-          <caret line="73" column="19" lean-forward="false" selection-start-line="73" selection-start-column="19" selection-end-line="73" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/securityProfileRadius.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/connectList.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Dude/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv6/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/KVM/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/log/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/makeSupportFile/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mesh/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1214,7 +691,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
+        <state relative-caret-position="0">
           <caret line="3" column="32" lean-forward="false" selection-start-line="3" selection-start-column="32" selection-end-line="3" selection-end-column="32" />
           <folding />
         </state>
@@ -1250,62 +727,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/NstremeDual.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="69" column="19" lean-forward="true" selection-start-line="69" selection-start-column="19" selection-end-line="69" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/nstremeDataRates.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="19" lean-forward="true" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/nstremeSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/w60gstation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="57" lean-forward="true" selection-start-line="13" selection-start-column="57" selection-end-line="13" selection-end-column="57" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/nstreameSetDual.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="23" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceManagementSet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/w60gstation.py" />
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceManagementSet.py" />
     <entry file="file://$PROJECT_DIR$/wireless/interfaceCap.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -1356,16 +779,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Constructors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="517">
-          <caret line="380" column="90" lean-forward="false" selection-start-line="380" selection-start-column="90" selection-end-line="380" selection-end-column="90" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wireless/wirelessSnooper.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -1378,11 +791,261 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wireless/interfaces.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="20" lean-forward="false" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+        <state relative-caret-position="547">
+          <caret line="62" column="19" lean-forward="false" selection-start-line="62" selection-start-column="19" selection-end-line="62" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualGeneralSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualApbridgeSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="225" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="225" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualNstreamDualSlave.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1470">
+          <caret line="98" column="16" lean-forward="true" selection-start-line="98" selection-start-column="16" selection-end-line="98" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="79" column="20" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="119" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualWirelessSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="45" column="19" lean-forward="true" selection-start-line="8" selection-start-column="3" selection-end-line="45" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStationPseudoBridgeClone.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="337">
+          <caret line="119" column="66" lean-forward="true" selection-start-line="119" selection-start-column="66" selection-end-line="119" selection-end-column="66" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStationPseudobridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="100" column="28" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="119" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualWds.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="119" column="19" lean-forward="true" selection-start-line="119" selection-start-column="19" selection-end-line="119" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStationBridge.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="870">
+          <caret line="58" column="11" lean-forward="true" selection-start-line="58" selection-start-column="11" selection-end-line="58" selection-end-column="11" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualBridgeSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="11" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="225" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualWdsSlave.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python3.5/dist-packages/tikapy/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="412">
+          <caret line="243" column="12" lean-forward="true" selection-start-line="243" selection-start-column="12" selection-end-line="243" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtual.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="55" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="76" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWds.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="54" lean-forward="false" selection-start-line="15" selection-start-column="34" selection-end-line="15" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsWdsSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="19" lean-forward="false" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="19" lean-forward="true" selection-start-line="15" selection-start-column="8" selection-end-line="16" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Constructors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="502">
+          <caret line="397" column="100" lean-forward="false" selection-start-line="397" selection-start-column="100" selection-end-line="397" selection-end-column="100" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/NstremeDual.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="45" column="11" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="69" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstremeDualGlobal.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="60" column="19" lean-forward="false" selection-start-line="60" selection-start-column="19" selection-end-line="60" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstremeDualGeneralSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/nstremeSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="23" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="56" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstremeDualSetDual.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="34" lean-forward="false" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/nstreameSetDual.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="116" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="136" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/nstremeDataRates.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="9" column="11" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="26" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstreamDualDataratesSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="26" column="19" lean-forward="true" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
+          <folding />
         </state>
       </provider>
     </entry>
