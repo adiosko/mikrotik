@@ -1,19 +1,19 @@
 from tikapy import TikapyClient
 from tikapy import TikapySslClient
 
-class securitySet:
+class configSecurity:
     def __init__(self, address, username, password):
         self.client = TikapyClient(address, 8728)
         self.client.login(username, password)
 
-    def setName(self,name,newName):
+    def useSecurity(self,name,secName):
         """
-
+        Method wil lset security profile earlier created in security
         :param name:
-        :param newName:
+        :param secName:
         :return:
         """
-        wifi = self.client.talk(['/caps-man/security/set','=numbers='+name,'=name='+newName])
+        wifi = self.client.talk(['/caps-man/configuration/set','=numbers='+name,'=security='+secName])
         return wifi
 
     def setAuthenticationType(self,name,auth):
@@ -23,7 +23,7 @@ class securitySet:
         :param auth:  wpa-eap,wpa-psk,wpa2-eap,wpa2-psk
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=authentication-types=' + auth] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.authentication-types=' + auth] )
         return wifi
 
     def setEncryption(self,name,encrypt="aes-com"):
@@ -33,7 +33,7 @@ class securitySet:
         :param encrypt: aes-com,tkip
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=encryption=' + encrypt] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.encryption=' + encrypt] )
         return wifi
 
     def setGroupEncryption(self,name,ebcrypt="aes-com"):
@@ -43,7 +43,7 @@ class securitySet:
         :param ebcrypt:  aes-com,tkip
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=group-encryption=' + ebcrypt] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.group-encryption=' + ebcrypt] )
         return wifi
 
     def setGroupKeyUpdate(self,name,update="00:00:00"):
@@ -53,7 +53,7 @@ class securitySet:
         :param update:
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=group-key-update=' + update] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.group-key-update=' + update] )
         return wifi
 
     def setPassphrase(self,name,passphrase):
@@ -63,7 +63,7 @@ class securitySet:
         :param passphrase:
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=passphrase=' + passphrase] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.passphrase=' + passphrase] )
         return wifi
 
     def setEapMethods(self,name,methods="eap-tls"):
@@ -73,7 +73,7 @@ class securitySet:
         :param methods: eap-tls,passthrough
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=eap-methods=' + methods] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.eap-methods=' + methods] )
         return wifi
 
     def setEaoRadiusAccounting(self,name):
@@ -82,7 +82,7 @@ class securitySet:
         :param name:
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=eap-radius-accounting=yes'] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.eap-radius-accounting=yes'] )
         return wifi
 
     def unsetEapRadiusAccounting(self,name):
@@ -91,7 +91,7 @@ class securitySet:
         :param name:
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=eap-radius-accounting=no'] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.eap-radius-accounting=no'] )
         return wifi
 
     def setTlsMode(self,name,mode="verify-certificate"):
@@ -101,7 +101,7 @@ class securitySet:
         :param mode: verify-certificate,dont-verify-certificate,no-certificates
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=tls-mode='+mode] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.tls-mode='+mode] )
         return wifi
 
     def setTlsCertificate(self,name,cert):
@@ -111,5 +111,5 @@ class securitySet:
         :param cert:
         :return:
         """
-        wifi = self.client.talk( ['/caps-man/security/set', '=numbers=' + name, '=tls-certificate='+cert] )
+        wifi = self.client.talk( ['/caps-man/configuration/set', '=numbers=' + name, '=security.tls-certificate='+cert] )
         return wifi
