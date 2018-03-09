@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="" />
+    <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/eoIPTunel.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/eoIpSetGeneral.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/eoipSetLoopProtection.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/ethernet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/ethernetLoopProtectionSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/ethernetSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/ethernetSetGeneral.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/greTunel.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/greTunelSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/ipTunel.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/ipTunelSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/vlan.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/vlanLoopProtectSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/vlanSetGeneral.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/vrrp.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/vrrpGeneralSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/vrrpScriptSet.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/interfaces/vrrpSetVrrp.py" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="diplomkap3.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -34,31 +54,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.py">
+      <file leaf-file-name="ethernetSet.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/interfaces/ethernetSet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="3" column="32" lean-forward="false" selection-start-line="3" selection-start-column="32" selection-end-line="3" selection-end-column="32" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Constructors.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Constructors.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5955">
-              <caret line="397" column="100" lean-forward="false" selection-start-line="397" selection-start-column="100" selection-end-line="397" selection-end-column="100" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="provisoning.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/capsman/provisoning.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="16" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+            <state relative-caret-position="532">
+              <caret line="87" column="20" lean-forward="true" selection-start-line="87" selection-start-column="20" selection-end-line="87" selection-end-column="20" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -66,23 +66,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="interfaceSet.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/capsman/interfaceSet.py">
+      <file leaf-file-name="ethernet.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/interfaces/ethernet.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="547">
-              <caret line="77" column="19" lean-forward="true" selection-start-line="77" selection-start-column="19" selection-end-line="77" selection-end-column="19" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="configWireless.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/capsman/configWireless.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="547">
-              <caret line="184" column="19" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="184" selection-end-column="19" />
+              <caret line="45" column="20" lean-forward="true" selection-start-line="45" selection-start-column="20" selection-end-line="45" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -117,6 +105,10 @@
       <find>/caps-man/rates</find>
       <find>/caps-man/channel</find>
       <find>/caps-man/configuration</find>
+      <find>/interface/bonding</find>
+      <find>/interface/gre</find>
+      <find>/interface/ipip</find>
+      <find>/interface/vlan</find>
     </findStrings>
     <replaceStrings>
       <replace>pptp-server</replace>
@@ -134,6 +126,10 @@
       <replace>DataPath</replace>
       <replace>/caps-man/configuration</replace>
       <replace>/caps-man/interface</replace>
+      <replace>/interface/vlan</replace>
+      <replace>/interface/ipip</replace>
+      <replace>/interface/eoip</replace>
+      <replace>/interface/ethernet</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -142,24 +138,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/wireless/interfaceRepeater.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceWirelessAllignement.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceSnifferSetting.py" />
-        <option value="$PROJECT_DIR$/wireless/wirelessSnooper.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaces.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceVirtualApbridgeSet.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceVirtualBridgeSet.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceVirtualNstreamDualSlave.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStation.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudobridge.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudoBridgeClone.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceVirtualWds.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStationBridge.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceVirtualWdsSlave.py" />
-        <option value="$PROJECT_DIR$/Constructors.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceWdsSet.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceWds.py" />
-        <option value="$PROJECT_DIR$/wireless/interfaceWdsSetGeneral.py" />
         <option value="$PROJECT_DIR$/wireless/interfaceWdsWdsSet.py" />
         <option value="$PROJECT_DIR$/wireless/interfaceNstremeDualGlobal.py" />
         <option value="$PROJECT_DIR$/wireless/interfaceNstremeDualGeneralSet.py" />
@@ -193,6 +171,24 @@
         <option value="$PROJECT_DIR$/capsman/interfaceChannelSet.py" />
         <option value="$PROJECT_DIR$/capsman/interfaceWirelessSet.py" />
         <option value="$PROJECT_DIR$/capsman/interfaceSet.py" />
+        <option value="$PROJECT_DIR$/interfaces/vrrp.py" />
+        <option value="$PROJECT_DIR$/interfaces/vrrpGeneralSet.py" />
+        <option value="$PROJECT_DIR$/interfaces/vrrpSetVrrp.py" />
+        <option value="$PROJECT_DIR$/interfaces/vrrpScriptSet.py" />
+        <option value="$PROJECT_DIR$/interfaces/vlan.py" />
+        <option value="$PROJECT_DIR$/interfaces/vlanSetGeneral.py" />
+        <option value="$PROJECT_DIR$/interfaces/vlanLoopProtectSet.py" />
+        <option value="$PROJECT_DIR$/interfaces/greTunel.py" />
+        <option value="$PROJECT_DIR$/interfaces/ipTunel.py" />
+        <option value="$PROJECT_DIR$/interfaces/greTunelSet.py" />
+        <option value="$PROJECT_DIR$/interfaces/ipTunelSet.py" />
+        <option value="$PROJECT_DIR$/interfaces/eoIPTunel.py" />
+        <option value="$PROJECT_DIR$/interfaces/eoIpSetGeneral.py" />
+        <option value="$PROJECT_DIR$/interfaces/eoipSetLoopProtection.py" />
+        <option value="$PROJECT_DIR$/interfaces/ethernet.py" />
+        <option value="$PROJECT_DIR$/interfaces/ethernetSetGeneral.py" />
+        <option value="$PROJECT_DIR$/interfaces/ethernetLoopProtectionSet.py" />
+        <option value="$PROJECT_DIR$/interfaces/ethernetSet.py" />
       </list>
     </option>
   </component>
@@ -202,7 +198,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="2022" />
     <option name="width" value="1890" />
     <option name="height" value="1037" />
@@ -241,6 +237,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -248,12 +246,15 @@
               <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
               <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="interfaces" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -484,7 +485,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1919" y="0" width="1922" height="1053" extended-state="7" />
+    <frame x="2022" y="0" width="1922" height="1053" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290461" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290461" sideWeight="0.5904059" order="7" side_tool="true" content_ui="tabs" />
@@ -492,7 +494,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290461" sideWeight="0.4960464" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31431648" sideWeight="0.48550344" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32508072" sideWeight="0.4095941" order="9" side_tool="false" content_ui="tabs" x="1931" y="373" width="1897" height="306" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15955175" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16115262" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -553,147 +555,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="79" column="20" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="119" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualWirelessSet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="45" column="19" lean-forward="true" selection-start-line="8" selection-start-column="3" selection-end-line="45" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStationPseudoBridgeClone.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="119" column="66" lean-forward="true" selection-start-line="119" selection-start-column="66" selection-end-line="119" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStationPseudobridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="100" column="28" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="119" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualWds.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="119" column="19" lean-forward="true" selection-start-line="119" selection-start-column="19" selection-end-line="119" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStationBridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="870">
-          <caret line="58" column="11" lean-forward="true" selection-start-line="58" selection-start-column="11" selection-end-line="58" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualBridgeSet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="11" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="225" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualWdsSlave.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python3.5/dist-packages/tikapy/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="412">
-          <caret line="243" column="12" lean-forward="true" selection-start-line="243" selection-start-column="12" selection-end-line="243" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtual.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="55" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="76" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceWds.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsWdsSet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="19" lean-forward="false" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="19" lean-forward="true" selection-start-line="15" selection-start-column="8" selection-end-line="16" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/NstremeDual.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="45" column="11" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="69" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstremeDualGlobal.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="60" column="19" lean-forward="false" selection-start-line="60" selection-start-column="19" selection-end-line="60" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstremeDualGeneralSet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/nstremeSetGeneral.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="23" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="56" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstremeDualSetDual.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="34" lean-forward="false" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/nstreameSetDual.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="116" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="136" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wireless/nstremeDataRates.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="9" column="11" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="26" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsSet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -712,9 +573,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -722,9 +580,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -732,9 +587,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -742,9 +594,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -752,9 +601,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -762,9 +608,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="19" lean-forward="false" selection-start-line="3" selection-start-column="19" selection-end-line="3" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -772,9 +615,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="17" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="43" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -782,9 +622,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="492">
           <caret line="43" column="19" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="43" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -792,9 +629,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="547">
           <caret line="43" column="19" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="43" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -802,9 +636,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="45" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -812,9 +643,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="472">
           <caret line="113" column="83" lean-forward="false" selection-start-line="113" selection-start-column="83" selection-end-line="113" selection-end-column="83" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -822,15 +650,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="547">
           <caret line="132" column="19" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="132" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Constructors.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5955">
+        <state relative-caret-position="5055">
           <caret line="397" column="100" lean-forward="false" selection-start-line="397" selection-start-column="100" selection-end-line="397" selection-end-column="100" />
           <folding />
         </state>
@@ -840,7 +665,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="547">
           <caret line="76" column="19" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="76" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -848,25 +672,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="547">
           <caret line="114" column="19" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="114" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/capsman/interfaceDatapath.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/capsman/interfaceDatapath.py" />
     <entry file="file://$PROJECT_DIR$/capsman/interfaceSecuritySet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1350">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -874,9 +687,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -884,7 +694,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="547">
           <caret line="132" column="19" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="132" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -892,9 +701,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -902,7 +708,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="547">
           <caret line="76" column="19" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="76" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -910,9 +715,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="17" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -920,7 +722,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="547">
           <caret line="104" column="19" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="104" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -928,18 +729,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="477">
           <caret line="103" column="58" lean-forward="false" selection-start-line="103" selection-start-column="58" selection-end-line="103" selection-end-column="58" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/capsman/provisoning.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="16" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+        <state relative-caret-position="60">
+          <caret line="5" column="16" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -948,19 +746,203 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1177">
           <caret line="85" column="19" lean-forward="true" selection-start-line="85" selection-start-column="19" selection-end-line="85" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/capsman/configWireless.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="184" column="19" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="184" selection-end-column="19" />
+        <state relative-caret-position="2745">
+          <caret line="184" column="19" lean-forward="false" selection-start-line="19" selection-start-column="4" selection-end-line="184" selection-end-column="19" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/capsman/interfaceWirelessSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/capsman/interfaceSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="47" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/vrrp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="47" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/vrrpGeneralSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="47" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/vrrpScriptSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="27" column="19" lean-forward="true" selection-start-line="27" selection-start-column="19" selection-end-line="27" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="32" lean-forward="false" selection-start-line="3" selection-start-column="32" selection-end-line="3" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/vrrpSetVrrp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="31" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/vlan.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="47" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/bondingGeneralSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="382">
+          <caret line="46" column="20" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="46" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/greTunelSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="547">
+          <caret line="121" column="20" lean-forward="true" selection-start-line="9" selection-start-column="4" selection-end-line="121" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/ipTunel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="63" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/eoIPTunel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="47" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/ipTunelSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="547">
+          <caret line="121" column="20" lean-forward="true" selection-start-line="47" selection-start-column="4" selection-end-line="121" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/eoIpSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1118">
+          <caret line="54" column="51" lean-forward="false" selection-start-line="54" selection-start-column="51" selection-end-line="54" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/eoipSetLoopProtection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="24" column="16" lean-forward="true" selection-start-line="24" selection-start-column="16" selection-end-line="24" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/greTunel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="47" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/vlanSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="382">
+          <caret line="47" column="20" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="47" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/ethernetSetGeneral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="424">
+          <caret line="29" column="32" lean-forward="true" selection-start-line="29" selection-start-column="32" selection-end-line="29" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/vlanLoopProtectSet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="9" column="42" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="37" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/ethernetLoopProtectionSet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="7" selection-end-column="47" />
@@ -970,13 +952,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/capsman/interfaceSet.py">
+    <entry file="file://$PROJECT_DIR$/interfaces/ethernetSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="77" column="19" lean-forward="true" selection-start-line="77" selection-start-column="19" selection-end-line="77" selection-end-column="19" />
+        <state relative-caret-position="532">
+          <caret line="87" column="20" lean-forward="true" selection-start-line="87" selection-start-column="20" selection-end-line="87" selection-end-column="20" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/interfaces/ethernet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="547">
+          <caret line="45" column="20" lean-forward="true" selection-start-line="45" selection-start-column="20" selection-end-line="45" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>
