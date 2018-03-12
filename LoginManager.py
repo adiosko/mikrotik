@@ -2,6 +2,12 @@ import sys, posix, time, binascii, socket, select
 import pexpect
 import os
 import scp
+from centralControl import centralControl
+
+credentials = {
+    "192.168.26.5" : "jozo1",
+    "192.175.16.15" : "jozo2"
+}
 
 class LoginManager:
     """ Class representing Microtic """
@@ -12,7 +18,7 @@ class LoginManager:
         self.pwd = password
 
     # telnet na mikrotik
-    def loginTelnet(self, login, password):
+    def loginTelnet(self, password, login="admin"):
         """
         Function to login to mikrotik via telnet
         :param login:
@@ -20,32 +26,37 @@ class LoginManager:
         :return:
         """
         import telnetlib
-        try:
-            host = '172.16.49.2'
-            port = 23
-            telnetcon = telnetlib.Telnet( host, port )
-            telnetcon = telnetlib.Telnet( host )
-            # user input
-            telnetcon.read_until( b"Login: " )
-            telnetcon.write( login.encode( ) + "\n" )
-            # user password
-            telnetcon.read_until( b"Password: " )
-            telnetcon.write( password.encode( ) + b"\n" )
-            time.sleep( 10 )
-            telnetcon.close( )
-            '''
-            telnetcon.read_until()
-            telnetcon.read_all('Please press "Enter" to continue!'+"\n")
-            telnetcon.write('\013')
-            telnetcon.read_all('/ip address print')
-            '''
-        except:
-            print( "Cannot connect to router via telnet" )
+        central = centralControl(login, password)
+        server_list = central.listMikrotikDevices()
+        print(server_list)
+        for server in server_list:
+            try:
+                #host = '172.16.49.2'
+                #port = 23
+                telnetcon = telnetlib.Telnet( host=server, port=23 )
+                #telnetcon = telnetlib.Telnet( server )
+                # user input
+                telnetcon.read_until( b"Login: " )
+                telnetcon.write( login.encode( ) + "\n" )
+                # user password
+                telnetcon.read_until( b"Password: " )
+                telnetcon.write( password.encode( ) + b"\n" )
+                time.sleep( 10 )
+                telnetcon.close( )
+                '''
+                telnetcon.read_until()
+                telnetcon.read_all('Please press "Enter" to continue!'+"\n")
+                telnetcon.write('\013')
+                telnetcon.read_all('/ip address print')
+                '''
+            except:
+                print( "Cannot connect to router via telnet" )
 
     # metoda na prihlasenie pomocou SSH
-    def loginSSH(self, login, password):
+    def loginSSH(self, server,login, password):
         """
         method to login to mikrotik device via SSH with username and password using the library pxssh
+        :param server: server to conenct
         :param login: username on mikrotik
         :param password: password of user
         :return: connection to mikrotik or exception
