@@ -53,6 +53,16 @@ class Users:
         users = self.client.talk( ['/user/set', '=numbers='+username, '=password='+password])
         return users
 
+    def changeUsername(self,username,newUser):
+        """
+
+        :param username:
+        :param newUser:
+        :return:
+        """
+        users = self.client.talk(['/user/set', '=numbers=' + username, '=name=' + newUser])
+        return users
+
     def enableSystemUser(self,username,disabled):
         """
         enable disabled user
