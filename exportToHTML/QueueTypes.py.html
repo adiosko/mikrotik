@@ -1,0 +1,316 @@
+<html>
+<head>
+<title>QueueTypes.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+QueueTypes.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">QueueTypes: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listQueueTypes(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list queue types 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/type/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">queue == {}: 
+            print(</span><span class="s4">&quot;No queue found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Queue type name </span><span class="s0">\t</span><span class="s4"> Kind of queue&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">queue: 
+                print(queue[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+queue[i][</span><span class="s4">'kind'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">addQueue(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">type=</span><span class="s4">&quot;pfifo&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add new queue type 
+        :param name: 
+        :param type: bfifo, mq-pfifo,none,pcq,pfifo,red,sfq 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/type/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=kind='</span><span class="s1">+type]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">removeQueueType(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove queue type 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/type/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s5">#nastavenie queue types</span><span class="s1"> 
+    </span><span class="s5"># names cannot be changed</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setKind(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">kind): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new kind of default values 
+        :param name: 
+        :param kind: pfifo,sfq,mq-pfifo,none,pcq,red,bfifo 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=kind='</span><span class="s1">+kind] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPfifoQueueSize(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">size): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set queue size for specific method of pfifo 
+        :param name: default, default-small, ethernet-default 
+        :param size: 50 default 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=kind=pfifo'</span><span class="s0">,</span><span class="s4">'=pfifo-limit='</span><span class="s1">+size] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setSfqPerturb(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">perturb=</span><span class="s4">&quot;5&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set sfq perturb hotspot-default 
+        :param name: 
+        :param perturb: in secs def 5 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=sfq'</span><span class="s0">, </span><span class="s4">'=sfq-perturb=' </span><span class="s1">+ perturb] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setSfqAllot(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">allot=</span><span class="s4">&quot;1514&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pcq allot hotspot-default 
+        :param name: name of pcq queue type 
+        :param allot: 1514 bytes def 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=sfq'</span><span class="s0">, </span><span class="s4">'=sfq-allot=' </span><span class="s1">+allot] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setMqPfifoQueueSize(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">size=</span><span class="s4">&quot;50&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new queue size of mq pfifo what is multi-queue-ethernet-default 
+        :param name: 
+        :param size: def 50 packets 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=mq-pfifo'</span><span class="s0">, </span><span class="s4">'=mq-pfifo-limit=' </span><span class="s1">+ size] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqRate(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">rate=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pcq rate in b/s 
+        :param name: pcq-download-default, pcq-upload-default 
+        :param rate: 0 default 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-rate=' </span><span class="s1">+ rate] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqLimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;50&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pcq limit 
+        :param name:  pcq-download-default, pcq-upload-default 
+        :param limit: def 50 KB 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqTotalLImit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;2000&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pcq total limit 
+        :param name: 
+        :param limit: 2000 KB 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-total-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqBurstSize(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">rate=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set burst size 
+        :param name: 
+        :param rate: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-burst-rate=' </span><span class="s1">+ rate] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def  </span><span class="s1">setPcqBurstThreshold(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">threshold=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set burst threshold 
+        :param name: 
+        :param threshold: def 0 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-burst-threshold='</span><span class="s1"> 
+                                   + threshold] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqBurstTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methdd will set pcq burst time 
+        :param name: 
+        :param time: def 00:00:10 s 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-burst-time=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqSrcAddressClassifier(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address classifier 
+        :param name: 
+        :param classifier: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-classifier=src-address'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqDstAddressClassifier(self</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address classifier 
+        :param name: 
+        :param classifier: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-classifier=dst-address'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqSrcPortClassifier(self</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address classifier 
+        :param name: 
+        :param classifier: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-classifier=src-port'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqDstPortClassifier(self</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address classifier 
+        :param name: 
+        :param classifier: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-classifier=dst-port'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqSrcAddressMaskLength(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">length=</span><span class="s4">&quot;32&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pcq src address length in bits 
+        :param name: 
+        :param length: max 32 def 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-src-address-mask='</span><span class="s1">+length] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqDstAddressMaskLength(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">length=</span><span class="s4">&quot;32&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pcq src address length in bits 
+        :param name: 
+        :param length: max 32 def 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-dst-address-mask=' </span><span class="s1">+ length] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqSrcAddress6MaskLength(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">length=</span><span class="s4">&quot;128&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pcq src address length in bits 
+        :param name: 
+        :param length: max 32 def 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-src-address6-mask=' </span><span class="s1">+ length] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPcqDstAddress6MaskLength(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">length=</span><span class="s4">&quot;128&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pcq src address length in bits 
+        :param name: 
+        :param length: max 32 def 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=kind=pcq'</span><span class="s0">, </span><span class="s4">'=pcq-dst-address6-mask=' </span><span class="s1">+ length] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedQueueSize(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">size=</span><span class="s4">&quot;60&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set red queue size 
+        :param name: synchronous-default 
+        :param size: 60 packets def 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/type/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=red-limit='</span><span class="s1">+size]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedMinimalThreshold(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">hold=</span><span class="s4">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set minimal threshold in packets 
+        :param name: synchronous-default 
+        :param hold: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=red-min-threshold=' </span><span class="s1">+ hold] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedMaximumThreshold(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">hold=</span><span class="s4">&quot;50&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set maximum threshold 
+        :param name: 
+        :param hold: 50 packets default 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=red-max-threshold=' </span><span class="s1">+ hold] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedBurst(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">burst=</span><span class="s4">&quot;20&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set default red burst 
+        :param name: 
+        :param burst: 20 packets default 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=red-burst=' </span><span class="s1">+ burst] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedAveragePacketSize(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">packetSize=</span><span class="s4">&quot;1000&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set packet size 
+        :param name: 
+        :param packetSize: def 1000 bytes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=red-avg-packet=' </span><span class="s1">+ packetSize] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setBfifoSize(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">QueueSize=</span><span class="s4">&quot;1500&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bfifo size 
+        :param name: 
+        :param QueueSize: def 1500 bytes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=bfifo-limit=' </span><span class="s1">+ QueueSize] ) 
+        </span><span class="s0">return </span><span class="s1">queue</span></pre>
+</body>
+</html>

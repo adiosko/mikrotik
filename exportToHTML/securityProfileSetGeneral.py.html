@@ -1,0 +1,199 @@
+<html>
+<head>
+<title>securityProfileSetGeneral.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+securityProfileSetGeneral.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">securityProfileSetGeneral: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lrename profile 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newName]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setMode(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mode=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mode 
+        :param name: 
+        :param mode:none,static-keys-optional,static-keys-required 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=mode='</span><span class="s1">+mode]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setDynamicKeysMode(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=mode=dynamic-keys'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthenticationTypes(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">auth=</span><span class="s4">&quot;wpa2-psk&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set authentication types 
+        :param name: 
+        :param auth:wpa-eap,wpa-psk,wpa2-eap,wpa2-psk 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.setDynamicKeysMode(name) 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=authentication-types='</span><span class="s1">+auth]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setUnicastCipher(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">cipher=</span><span class="s4">&quot;aes-com&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set unicast cipher 
+        :param name: 
+        :param cipher: aes-com,tkip 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.setDynamicKeysMode(name) 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=unicast-ciphers='</span><span class="s1">+cipher]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setGroupCiphers(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">cipher=</span><span class="s4">&quot;aes-com&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set group cipher 
+        :param name: 
+        :param cipher: aes-com,tkip 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.setDynamicKeysMode(name) 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=group-ciphers='</span><span class="s1">+cipher]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableWpaPsk(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set wpa psk 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.setDynamicKeysMode(name) 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=authentication-types=wpa-psk'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableWpa2Psk(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable wpa2 psk 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.setDynamicKeysMode( name ) 
+        wifi = self.client.talk( 
+            [</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=authentication-types=wpa2-psk'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setWpaPresharedKey(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param password: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.setDynamicKeysMode(name) 
+        self.enableWpaPsk(name) 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=wpa-pre-shared-key=' </span><span class="s1">+ password] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setWpa2Psk(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set wpa2 psk 
+        :param name: 
+        :param password: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.setDynamicKeysMode( name ) 
+        self.enableWpaPsk( name ) 
+        wifi = self.client.talk( 
+            [</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=wpa2-pre-shared-key=' </span><span class="s1">+ password] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setGroupKeyUpdate(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">group=</span><span class="s4">&quot;00:05:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set group key update 
+        :param name: 
+        :param group: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=group-key-update='</span><span class="s1">+group]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableManagementProtection(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mode=</span><span class="s4">&quot;allowed&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Metho will enable management protection 
+        :param name: 
+        :param mode: allowed,required 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( 
+            [</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=management-protection=' </span><span class="s1">+ mode] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">disableManagementProtection(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( 
+            [</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=management-protection=disabled'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setManagementProtectionKey(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset mgmt key 
+        :param name: 
+        :param password: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.enableManagementProtection(name) 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=management-protection-key='</span><span class="s1">+password]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableEap(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable wpa2 psk 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.setDynamicKeysMode( name ) 
+        wifi = self.client.talk( 
+            [</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=authentication-types=wpa2-eap,wpa-eap'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableStaticKeyOptional(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=mode=static-keys-optional'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">wifi</span></pre>
+</body>
+</html>

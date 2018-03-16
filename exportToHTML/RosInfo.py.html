@@ -1,0 +1,463 @@
+<html>
+<head>
+<title>RosInfo.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+RosInfo.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">RosInfo: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listRosResources(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will print ros resource info 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ros = self.client.talk([</span><span class="s4">'/dude/ros/resource/print'</span><span class="s1">]) 
+        print(ros) 
+        </span><span class="s0">return </span><span class="s1">ros 
+ 
+    </span><span class="s0">def </span><span class="s1">listRouterboard(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list routerboard info 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ros = self.client.talk([</span><span class="s4">'/dude/ros/routerboard/print'</span><span class="s1">]) 
+        print(ros) 
+        </span><span class="s0">return </span><span class="s1">ros 
+ 
+    </span><span class="s0">def </span><span class="s1">listHealthStatus(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list health status of remote device 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ros = self.client.talk([</span><span class="s4">'/dude/ros/health/print'</span><span class="s1">]) 
+        print(ros) 
+ 
+    </span><span class="s0">def </span><span class="s1">setHealthDevice(self</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">fanMode</span><span class="s0">,</span><span class="s1">useFan): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set connected device 
+        :param device: device name f.e Mikrotik 
+        :param fanMode: manual/auto 
+        :param useFan: auxilary/main 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        fan = self.client.talk([</span><span class="s4">'/dude/ros/health/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=fan-mode='</span><span class="s1">+fanMode</span><span class="s0">,</span><span class="s4">'=use-fan='</span><span class="s1"> 
+                                                                                                                 +useFan]) 
+        </span><span class="s0">return </span><span class="s1">fan 
+ 
+    </span><span class="s0">def </span><span class="s1">listInterfaces(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all interfaces for Dude 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/dude/ros/interface/print'</span><span class="s1">]) 
+        print(iface) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mtu</span><span class="s0">,</span><span class="s1">l2mtu</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">disabled): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interfaces on Dude 
+        :param name: name of iface 
+        :param mtu: auto 
+        :param l2mtu: l2mtu 
+        :param device: device name f.e Mikrotik 
+        :param disabled: yes/no 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/dude/ros/interface/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=mtu='</span><span class="s1">+mtu</span><span class="s0">,</span><span class="s4">'=l2mtu='</span><span class="s1">+l2mtu</span><span class="s0">,</span><span class="s1"> 
+                                  </span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=disabled='</span><span class="s1">+disabled]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">listAddresses(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list addresses 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        addr = self.client.talk([</span><span class="s4">'/dude/ros/address/print'</span><span class="s1">]) 
+        print(addr) 
+        </span><span class="s0">return </span><span class="s1">addr 
+ 
+    </span><span class="s0">def </span><span class="s1">addAddress(self</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">network</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add dude address 
+        :param device: Mikrotik 
+        :param address: address of device 
+        :param network: network of device 
+        :param interface: interface to apply 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        addr = self.client.talk([</span><span class="s4">'/dude/ros/address/add'</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+address</span><span class="s0">,</span><span class="s4">'=network='</span><span class="s1">+network 
+                                 </span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">addr 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">network</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set Address which exists 
+        :param number: order no 
+        :param device: device name f.re Mikrotik 
+        :param address: address of device 
+        :param network: network of device 
+        :param interface: interface of device 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        addr = self.client.talk([</span><span class="s4">'/dude/ros/address/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">, </span><span class="s4">'=device=' </span><span class="s1">+ device</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">,</span><span class="s1"> 
+                                 </span><span class="s4">'=network=' </span><span class="s1">+ network</span><span class="s0">,</span><span class="s4">'=interface=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">addr 
+ 
+    </span><span class="s0">def </span><span class="s1">removeAddress(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove address by its number 
+        :param number: number of order 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        addr = self.client.talk([</span><span class="s4">'/dude/ros/address/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">addr 
+ 
+    </span><span class="s0">def </span><span class="s1">listArp(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all arp records 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        arp = self.client.talk([</span><span class="s4">'/dude/ros/arp/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">arp == {}: 
+            print(</span><span class="s4">&quot;Nothing to show&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">arp: 
+                print(arp) 
+        </span><span class="s0">return </span><span class="s1">arp 
+    </span><span class="s0">def </span><span class="s1">addArp(self</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">IP</span><span class="s0">,</span><span class="s1">MAC</span><span class="s0">,</span><span class="s1">Interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add arp of device 
+        :param device: device name 
+        :param IP: IP address 
+        :param MAC: MAC address 
+        :param Interface: interface o apply 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        arp = self.client.talk([</span><span class="s4">'/dude/ros/arp/add'</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+Interface</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+IP</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s4">'=mac-address='</span><span class="s1">+MAC]) 
+        </span><span class="s0">return </span><span class="s1">arp 
+ 
+    </span><span class="s0">def </span><span class="s1">setArp(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">IP</span><span class="s0">,</span><span class="s1">MAC</span><span class="s0">,</span><span class="s1">Interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set existing arp record 
+        :param number: number of record to set 
+        :param device: Mikrotik 
+        :param IP:IP 
+        :param MAC:MAC 
+        :param Interface: Interface to apply 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        arp = self.client.talk([</span><span class="s4">'/dude/ros/arp/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+Interface</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s4">'=address='</span><span class="s1">+IP</span><span class="s0">,</span><span class="s4">'=mac-address='</span><span class="s1">+MAC]) 
+        </span><span class="s0">return </span><span class="s1">arp 
+ 
+    </span><span class="s0">def </span><span class="s1">removeArpRecord(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove ARP record 
+        :param number:  number to delete 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        arp = self.client.talk([</span><span class="s4">'/dude/ros/arp/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">arp 
+ 
+    </span><span class="s0">def </span><span class="s1">enableArp(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable arp record 
+        :param number: numbe rof device 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        arp = self.client.talk([</span><span class="s4">'/dude/ros/arp/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">arp 
+ 
+    </span><span class="s0">def </span><span class="s1">disableArp(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable arp record 
+        :param number: list 
+        :return:list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        arp = self.client.talk([</span><span class="s4">'/dude/ros/arp/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">arp 
+ 
+    </span><span class="s0">def </span><span class="s1">listNeighbors(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all neighbors 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        neg= self.client.talk([</span><span class="s4">'/dude/ros/neighbor/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">neg == {}: 
+            print(</span><span class="s4">&quot;No neighbor found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">neg: 
+                print(neg) 
+        </span><span class="s0">return </span><span class="s1">neg 
+ 
+    </span><span class="s0">def </span><span class="s1">setNeighbor(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">device): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set  neighbor 
+        :param number: number of neighbor 
+        :param device: device name 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        neg = self.client.talk([</span><span class="s4">'/dude/ros/neighbor/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device]) 
+        </span><span class="s0">return </span><span class="s1">neg 
+ 
+    </span><span class="s0">def </span><span class="s1">listQueues(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all Queues 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        que = self.client.talk([</span><span class="s4">'/dude/ros/queue/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">que == {}: 
+            print(</span><span class="s4">&quot;No queue found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">que: 
+                print(que) 
+        </span><span class="s0">return </span><span class="s1">que 
+ 
+    </span><span class="s0">def </span><span class="s1">addQueue(self</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">target</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add Queue (simple) 
+        :param device: device to setup  queue 
+        :param target: list of targets 
+        :param name: name of rule 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        que = self.client.talk([</span><span class="s4">'/dude/ros/queue/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=target='</span><span class="s1">+target]) 
+        </span><span class="s0">return </span><span class="s1">que 
+ 
+    </span><span class="s0">def </span><span class="s1">setQueue(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">target): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set existing queue by name 
+        :param name: name of queue 
+        :param device: dev name 
+        :param target: target to 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        que = self.client.talk([</span><span class="s4">'/dude/ros/queue/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=target='</span><span class="s1">+target]) 
+        </span><span class="s0">return </span><span class="s1">que 
+ 
+    </span><span class="s0">def </span><span class="s1">removeQueue(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove queue by name 
+        :param name: name to remove 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        que = self.client.talk([</span><span class="s4">'/dude/ros/queue/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">que 
+ 
+    </span><span class="s0">def </span><span class="s1">enableQueue(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable existing rule 
+        :param name: name to enable 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        que = self.client.talk([</span><span class="s4">'/dude/ros/queue/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">que 
+ 
+    </span><span class="s0">def </span><span class="s1">disableQueue(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable existing rule 
+        :param name: name of rule to disable 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        que = self.client.talk([</span><span class="s4">'/dude/ros/queue/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">que 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetQueue(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set queue 
+        :param name: name of rule 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        que = self.client.talk([</span><span class="s4">'/dude/ros/queue/unset'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">que 
+ 
+    </span><span class="s0">def </span><span class="s1">listRoutes(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all Dude routes 
+        :return:list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rtr = self.client.talk([</span><span class="s4">'/dude/ros/route/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">rtr == {}: 
+            print(</span><span class="s4">&quot;No route found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">rtr: 
+                print(rtr) 
+        </span><span class="s0">return </span><span class="s1">rtr 
+ 
+    </span><span class="s0">def </span><span class="s1">addRoute(self</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">dst</span><span class="s0">,</span><span class="s1">gw): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add route to dude 
+        :param device: device name Mikrotik 
+        :param dst: dest address/network 
+        :param gw: ip next hop address 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rtr = self.client.talk([</span><span class="s4">'/dude/ros/route/add'</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=dst-address='</span><span class="s1">+dst</span><span class="s0">,</span><span class="s4">'=gateway='</span><span class="s1">+gw]) 
+        </span><span class="s0">return </span><span class="s1">rtr 
+ 
+    </span><span class="s0">def </span><span class="s1">setRoute(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">dst</span><span class="s0">,</span><span class="s1">gw): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set existing route 
+        :param number: number of route 
+        :param device: device name MIkrotik 
+        :param dst: dst network 
+        :param gw: IP 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rtr = self.client.talk([</span><span class="s4">'/dude/ros/route/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=dst-address='</span><span class="s1">+dst</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s4">'=gateway='</span><span class="s1">+gw]) 
+        </span><span class="s0">return </span><span class="s1">rtr 
+ 
+    </span><span class="s0">def </span><span class="s1">removeRoute(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove route 
+        :param name: number of route 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rtr = self.client.talk([</span><span class="s4">'/dude/ros/route/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">rtr 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetRoute(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will unset existing route 
+        :param name: name of route 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rtr = self.client.talk([</span><span class="s4">'/dude/ros/route/unset'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">rtr 
+ 
+    </span><span class="s0">def </span><span class="s1">enableRoute(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable disabled route 
+        :param name: name of route 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rtr = self.client.talk([</span><span class="s4">'/dude/ros/route/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">rtr 
+ 
+    </span><span class="s0">def </span><span class="s1">disableRoute(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable enabled route 
+        :param name: name 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rtr = self.client.talk([</span><span class="s4">'/dude/ros/route/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">rtr 
+ 
+    </span><span class="s0">def </span><span class="s1">listRegistrationTable(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list wireless registration table 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/dude/ros/registration-table/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">wifi == {}: 
+            print(</span><span class="s4">&quot;No registration record found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">wifi: 
+                print(wifi) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">removeRegistrationRecord(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove record from registration table 
+        :param name: name of record to remove 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/dude/ros/registration-table/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">listDhcpLeases(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all DHCP leases 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dhcp = self.client.talk([</span><span class="s4">'/dude/ros/lease/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">dhcp == {}: 
+            print(</span><span class="s4">&quot;No lease found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">dhcp: 
+                print(dhcp) 
+        </span><span class="s0">return </span><span class="s1">dhcp 
+ 
+    </span><span class="s0">def </span><span class="s1">addDhcpRecord(self</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">MAC): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add DHCP lease record 
+        :param device: device Mikrotik 
+        :param address: IP 
+        :param MAC: MAC 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dhcp = self.client.talk([</span><span class="s4">'/dude/ros/lease/add'</span><span class="s0">,</span><span class="s4">'=device='</span><span class="s1">+device</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+address</span><span class="s0">,</span><span class="s4">'=mac-address='</span><span class="s1">+MAC]) 
+        </span><span class="s0">return </span><span class="s1">dhcp 
+ 
+    </span><span class="s0">def </span><span class="s1">setDhcpRecord(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">device</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">MAC): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set existing record 
+        :param name: name of device 
+        :param device: device name f.e Mikrotik 
+        :param address: IP 
+        :param MAC: MAC 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dhcp = self.client.talk([</span><span class="s4">'/dude/ros/lease/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=device=' </span><span class="s1">+ device</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">,</span><span class="s1"> 
+                                 </span><span class="s4">'=mac-address=' </span><span class="s1">+ MAC] ) 
+        </span><span class="s0">return </span><span class="s1">dhcp 
+ 
+    </span><span class="s0">def </span><span class="s1">unSetDhcpRecord(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will unset record 
+        :param name: name of device 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dhcp = self.client.talk([</span><span class="s4">'/dude/ros/lease/unset'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">dhcp 
+ 
+    </span><span class="s0">def </span><span class="s1">enableLease(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable rule by name 
+        :param name: name of lease to enable 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dhcp = self.client.talk([</span><span class="s4">'/dude/ros/lease/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">dhcp 
+ 
+    </span><span class="s0">def </span><span class="s1">disableLease(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable current name 
+        :param name: name to disable 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dhcp = self.client.talk([</span><span class="s4">'/dude/ros/lease/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">dhcp 
+ 
+    </span><span class="s0">def </span><span class="s1">removeLeases(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove Leashes from DHCP 
+        :param name: name to remove 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dhcp = self.client.talk([</span><span class="s4">'/dude/ros/lease/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">dhcp</span></pre>
+</body>
+</html>

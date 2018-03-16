@@ -1,0 +1,202 @@
+<html>
+<head>
+<title>stat.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(104,151,187); }
+.s4 { color: rgb(204,120,50); }
+.s5 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+stat.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Constants/functions for interpreting results of os.stat() and os.lstat(). 
+ 
+Suggested usage: from stat import * 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2"># Indices for stat struct members in the tuple returned by os.stat()</span><span class="s1"> 
+ 
+ST_MODE  = </span><span class="s3">0</span><span class="s1"> 
+ST_INO   = </span><span class="s3">1</span><span class="s1"> 
+ST_DEV   = </span><span class="s3">2</span><span class="s1"> 
+ST_NLINK = </span><span class="s3">3</span><span class="s1"> 
+ST_UID   = </span><span class="s3">4</span><span class="s1"> 
+ST_GID   = </span><span class="s3">5</span><span class="s1"> 
+ST_SIZE  = </span><span class="s3">6</span><span class="s1"> 
+ST_ATIME = </span><span class="s3">7</span><span class="s1"> 
+ST_MTIME = </span><span class="s3">8</span><span class="s1"> 
+ST_CTIME = </span><span class="s3">9</span><span class="s1"> 
+ 
+</span><span class="s2"># Extract bits from the mode</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">S_IMODE(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Return the portion of the file's mode that can be set by 
+    os.chmod(). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">mode &amp; </span><span class="s3">0o7777</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">S_IFMT(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Return the portion of the file's mode that describes the 
+    file type. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">mode &amp; </span><span class="s3">0o170000</span><span class="s1"> 
+ 
+</span><span class="s2"># Constants used as S_IFMT() for various file types</span><span class="s1"> 
+</span><span class="s2"># (not all are implemented on all systems)</span><span class="s1"> 
+ 
+S_IFDIR  = </span><span class="s3">0o040000  </span><span class="s2"># directory</span><span class="s1"> 
+S_IFCHR  = </span><span class="s3">0o020000  </span><span class="s2"># character device</span><span class="s1"> 
+S_IFBLK  = </span><span class="s3">0o060000  </span><span class="s2"># block device</span><span class="s1"> 
+S_IFREG  = </span><span class="s3">0o100000  </span><span class="s2"># regular file</span><span class="s1"> 
+S_IFIFO  = </span><span class="s3">0o010000  </span><span class="s2"># fifo (named pipe)</span><span class="s1"> 
+S_IFLNK  = </span><span class="s3">0o120000  </span><span class="s2"># symbolic link</span><span class="s1"> 
+S_IFSOCK = </span><span class="s3">0o140000  </span><span class="s2"># socket file</span><span class="s1"> 
+ 
+</span><span class="s2"># Functions to test for each file type</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">S_ISDIR(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Return True if mode is from a directory.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">S_IFMT(mode) == S_IFDIR 
+ 
+</span><span class="s4">def </span><span class="s1">S_ISCHR(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Return True if mode is from a character special device file.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">S_IFMT(mode) == S_IFCHR 
+ 
+</span><span class="s4">def </span><span class="s1">S_ISBLK(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Return True if mode is from a block special device file.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">S_IFMT(mode) == S_IFBLK 
+ 
+</span><span class="s4">def </span><span class="s1">S_ISREG(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Return True if mode is from a regular file.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">S_IFMT(mode) == S_IFREG 
+ 
+</span><span class="s4">def </span><span class="s1">S_ISFIFO(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Return True if mode is from a FIFO (named pipe).&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">S_IFMT(mode) == S_IFIFO 
+ 
+</span><span class="s4">def </span><span class="s1">S_ISLNK(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Return True if mode is from a symbolic link.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">S_IFMT(mode) == S_IFLNK 
+ 
+</span><span class="s4">def </span><span class="s1">S_ISSOCK(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Return True if mode is from a socket.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">S_IFMT(mode) == S_IFSOCK 
+ 
+</span><span class="s2"># Names for permission bits</span><span class="s1"> 
+ 
+S_ISUID = </span><span class="s3">0o4000  </span><span class="s2"># set UID bit</span><span class="s1"> 
+S_ISGID = </span><span class="s3">0o2000  </span><span class="s2"># set GID bit</span><span class="s1"> 
+S_ENFMT = S_ISGID </span><span class="s2"># file locking enforcement</span><span class="s1"> 
+S_ISVTX = </span><span class="s3">0o1000  </span><span class="s2"># sticky bit</span><span class="s1"> 
+S_IREAD = </span><span class="s3">0o0400  </span><span class="s2"># Unix V7 synonym for S_IRUSR</span><span class="s1"> 
+S_IWRITE = </span><span class="s3">0o0200 </span><span class="s2"># Unix V7 synonym for S_IWUSR</span><span class="s1"> 
+S_IEXEC = </span><span class="s3">0o0100  </span><span class="s2"># Unix V7 synonym for S_IXUSR</span><span class="s1"> 
+S_IRWXU = </span><span class="s3">0o0700  </span><span class="s2"># mask for owner permissions</span><span class="s1"> 
+S_IRUSR = </span><span class="s3">0o0400  </span><span class="s2"># read by owner</span><span class="s1"> 
+S_IWUSR = </span><span class="s3">0o0200  </span><span class="s2"># write by owner</span><span class="s1"> 
+S_IXUSR = </span><span class="s3">0o0100  </span><span class="s2"># execute by owner</span><span class="s1"> 
+S_IRWXG = </span><span class="s3">0o0070  </span><span class="s2"># mask for group permissions</span><span class="s1"> 
+S_IRGRP = </span><span class="s3">0o0040  </span><span class="s2"># read by group</span><span class="s1"> 
+S_IWGRP = </span><span class="s3">0o0020  </span><span class="s2"># write by group</span><span class="s1"> 
+S_IXGRP = </span><span class="s3">0o0010  </span><span class="s2"># execute by group</span><span class="s1"> 
+S_IRWXO = </span><span class="s3">0o0007  </span><span class="s2"># mask for others (not in group) permissions</span><span class="s1"> 
+S_IROTH = </span><span class="s3">0o0004  </span><span class="s2"># read by others</span><span class="s1"> 
+S_IWOTH = </span><span class="s3">0o0002  </span><span class="s2"># write by others</span><span class="s1"> 
+S_IXOTH = </span><span class="s3">0o0001  </span><span class="s2"># execute by others</span><span class="s1"> 
+ 
+</span><span class="s2"># Names for file flags</span><span class="s1"> 
+ 
+UF_NODUMP    = </span><span class="s3">0x00000001  </span><span class="s2"># do not dump file</span><span class="s1"> 
+UF_IMMUTABLE = </span><span class="s3">0x00000002  </span><span class="s2"># file may not be changed</span><span class="s1"> 
+UF_APPEND    = </span><span class="s3">0x00000004  </span><span class="s2"># file may only be appended to</span><span class="s1"> 
+UF_OPAQUE    = </span><span class="s3">0x00000008  </span><span class="s2"># directory is opaque when viewed through a union stack</span><span class="s1"> 
+UF_NOUNLINK  = </span><span class="s3">0x00000010  </span><span class="s2"># file may not be renamed or deleted</span><span class="s1"> 
+UF_COMPRESSED = </span><span class="s3">0x00000020 </span><span class="s2"># OS X: file is hfs-compressed</span><span class="s1"> 
+UF_HIDDEN    = </span><span class="s3">0x00008000  </span><span class="s2"># OS X: file should not be displayed</span><span class="s1"> 
+SF_ARCHIVED  = </span><span class="s3">0x00010000  </span><span class="s2"># file may be archived</span><span class="s1"> 
+SF_IMMUTABLE = </span><span class="s3">0x00020000  </span><span class="s2"># file may not be changed</span><span class="s1"> 
+SF_APPEND    = </span><span class="s3">0x00040000  </span><span class="s2"># file may only be appended to</span><span class="s1"> 
+SF_NOUNLINK  = </span><span class="s3">0x00100000  </span><span class="s2"># file may not be renamed or deleted</span><span class="s1"> 
+SF_SNAPSHOT  = </span><span class="s3">0x00200000  </span><span class="s2"># file is a snapshot file</span><span class="s1"> 
+ 
+ 
+_filemode_table = ( 
+    ((S_IFLNK</span><span class="s4">,         </span><span class="s5">&quot;l&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_IFREG</span><span class="s4">,         </span><span class="s5">&quot;-&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_IFBLK</span><span class="s4">,         </span><span class="s5">&quot;b&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_IFDIR</span><span class="s4">,         </span><span class="s5">&quot;d&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_IFCHR</span><span class="s4">,         </span><span class="s5">&quot;c&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_IFIFO</span><span class="s4">,         </span><span class="s5">&quot;p&quot;</span><span class="s1">))</span><span class="s4">,</span><span class="s1"> 
+ 
+    ((S_IRUSR</span><span class="s4">,         </span><span class="s5">&quot;r&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+    ((S_IWUSR</span><span class="s4">,         </span><span class="s5">&quot;w&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+    ((S_IXUSR|S_ISUID</span><span class="s4">, </span><span class="s5">&quot;s&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_ISUID</span><span class="s4">,         </span><span class="s5">&quot;S&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_IXUSR</span><span class="s4">,         </span><span class="s5">&quot;x&quot;</span><span class="s1">))</span><span class="s4">,</span><span class="s1"> 
+ 
+    ((S_IRGRP</span><span class="s4">,         </span><span class="s5">&quot;r&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+    ((S_IWGRP</span><span class="s4">,         </span><span class="s5">&quot;w&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+    ((S_IXGRP|S_ISGID</span><span class="s4">, </span><span class="s5">&quot;s&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_ISGID</span><span class="s4">,         </span><span class="s5">&quot;S&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_IXGRP</span><span class="s4">,         </span><span class="s5">&quot;x&quot;</span><span class="s1">))</span><span class="s4">,</span><span class="s1"> 
+ 
+    ((S_IROTH</span><span class="s4">,         </span><span class="s5">&quot;r&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+    ((S_IWOTH</span><span class="s4">,         </span><span class="s5">&quot;w&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+    ((S_IXOTH|S_ISVTX</span><span class="s4">, </span><span class="s5">&quot;t&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_ISVTX</span><span class="s4">,         </span><span class="s5">&quot;T&quot;</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+     (S_IXOTH</span><span class="s4">,         </span><span class="s5">&quot;x&quot;</span><span class="s1">)) 
+) 
+ 
+</span><span class="s4">def </span><span class="s1">filemode(mode): 
+    </span><span class="s0">&quot;&quot;&quot;Convert a file's mode to a string of the form '-rwxrwxrwx'.&quot;&quot;&quot;</span><span class="s1"> 
+    perm = [] 
+    </span><span class="s4">for </span><span class="s1">table </span><span class="s4">in </span><span class="s1">_filemode_table: 
+        </span><span class="s4">for </span><span class="s1">bit</span><span class="s4">, </span><span class="s1">char </span><span class="s4">in </span><span class="s1">table: 
+            </span><span class="s4">if </span><span class="s1">mode &amp; bit == bit: 
+                perm.append(char) 
+                </span><span class="s4">break</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            perm.append(</span><span class="s5">&quot;-&quot;</span><span class="s1">) 
+    </span><span class="s4">return </span><span class="s5">&quot;&quot;</span><span class="s1">.join(perm) 
+ 
+ 
+</span><span class="s2"># Windows FILE_ATTRIBUTE constants for interpreting os.stat()'s</span><span class="s1"> 
+</span><span class="s2"># &quot;st_file_attributes&quot; member</span><span class="s1"> 
+ 
+FILE_ATTRIBUTE_ARCHIVE = </span><span class="s3">32</span><span class="s1"> 
+FILE_ATTRIBUTE_COMPRESSED = </span><span class="s3">2048</span><span class="s1"> 
+FILE_ATTRIBUTE_DEVICE = </span><span class="s3">64</span><span class="s1"> 
+FILE_ATTRIBUTE_DIRECTORY = </span><span class="s3">16</span><span class="s1"> 
+FILE_ATTRIBUTE_ENCRYPTED = </span><span class="s3">16384</span><span class="s1"> 
+FILE_ATTRIBUTE_HIDDEN = </span><span class="s3">2</span><span class="s1"> 
+FILE_ATTRIBUTE_INTEGRITY_STREAM = </span><span class="s3">32768</span><span class="s1"> 
+FILE_ATTRIBUTE_NORMAL = </span><span class="s3">128</span><span class="s1"> 
+FILE_ATTRIBUTE_NOT_CONTENT_INDEXED = </span><span class="s3">8192</span><span class="s1"> 
+FILE_ATTRIBUTE_NO_SCRUB_DATA = </span><span class="s3">131072</span><span class="s1"> 
+FILE_ATTRIBUTE_OFFLINE = </span><span class="s3">4096</span><span class="s1"> 
+FILE_ATTRIBUTE_READONLY = </span><span class="s3">1</span><span class="s1"> 
+FILE_ATTRIBUTE_REPARSE_POINT = </span><span class="s3">1024</span><span class="s1"> 
+FILE_ATTRIBUTE_SPARSE_FILE = </span><span class="s3">512</span><span class="s1"> 
+FILE_ATTRIBUTE_SYSTEM = </span><span class="s3">4</span><span class="s1"> 
+FILE_ATTRIBUTE_TEMPORARY = </span><span class="s3">256</span><span class="s1"> 
+FILE_ATTRIBUTE_VIRTUAL = </span><span class="s3">65536</span><span class="s1"> 
+ 
+ 
+</span><span class="s2"># If available, use C implementation</span><span class="s1"> 
+</span><span class="s4">try</span><span class="s1">: 
+    </span><span class="s4">from </span><span class="s1">_stat </span><span class="s4">import </span><span class="s1">* 
+</span><span class="s4">except </span><span class="s1">ImportError: 
+    </span><span class="s4">pass</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

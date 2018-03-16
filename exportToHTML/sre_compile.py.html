@@ -1,0 +1,579 @@
+<html>
+<head>
+<title>sre_compile.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+sre_compile.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># Secret Labs' Regular Expression Engine</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># convert template to internal format</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># Copyright (c) 1997-2001 by Secret Labs AB.  All rights reserved.</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># See the sre.py file for information on usage and redistribution.</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+ 
+</span><span class="s2">&quot;&quot;&quot;Internal support module for sre&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s3">import </span><span class="s1">_sre 
+</span><span class="s3">import </span><span class="s1">sre_parse 
+</span><span class="s3">from </span><span class="s1">sre_constants </span><span class="s3">import </span><span class="s1">* 
+ 
+</span><span class="s3">assert </span><span class="s1">_sre.MAGIC == MAGIC</span><span class="s3">, </span><span class="s4">&quot;SRE module mismatch&quot;</span><span class="s1"> 
+ 
+_LITERAL_CODES = {LITERAL</span><span class="s3">, </span><span class="s1">NOT_LITERAL} 
+_REPEATING_CODES = {REPEAT</span><span class="s3">, </span><span class="s1">MIN_REPEAT</span><span class="s3">, </span><span class="s1">MAX_REPEAT} 
+_SUCCESS_CODES = {SUCCESS</span><span class="s3">, </span><span class="s1">FAILURE} 
+_ASSERT_CODES = {ASSERT</span><span class="s3">, </span><span class="s1">ASSERT_NOT} 
+ 
+</span><span class="s0"># Sets of lowercase characters which have the same uppercase.</span><span class="s1"> 
+_equivalences = ( 
+    </span><span class="s0"># LATIN SMALL LETTER I, LATIN SMALL LETTER DOTLESS I</span><span class="s1"> 
+    (</span><span class="s5">0x69</span><span class="s3">, </span><span class="s5">0x131</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># iı</span><span class="s1"> 
+    </span><span class="s0"># LATIN SMALL LETTER S, LATIN SMALL LETTER LONG S</span><span class="s1"> 
+    (</span><span class="s5">0x73</span><span class="s3">, </span><span class="s5">0x17f</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># sſ</span><span class="s1"> 
+    </span><span class="s0"># MICRO SIGN, GREEK SMALL LETTER MU</span><span class="s1"> 
+    (</span><span class="s5">0xb5</span><span class="s3">, </span><span class="s5">0x3bc</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># µμ</span><span class="s1"> 
+    </span><span class="s0"># COMBINING GREEK YPOGEGRAMMENI, GREEK SMALL LETTER IOTA, GREEK PROSGEGRAMMENI</span><span class="s1"> 
+    (</span><span class="s5">0x345</span><span class="s3">, </span><span class="s5">0x3b9</span><span class="s3">, </span><span class="s5">0x1fbe</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># \u0345ιι</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS, GREEK SMALL LETTER IOTA WITH DIALYTIKA AND OXIA</span><span class="s1"> 
+    (</span><span class="s5">0x390</span><span class="s3">, </span><span class="s5">0x1fd3</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># ΐΐ</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND TONOS, GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND OXIA</span><span class="s1"> 
+    (</span><span class="s5">0x3b0</span><span class="s3">, </span><span class="s5">0x1fe3</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># ΰΰ</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER BETA, GREEK BETA SYMBOL</span><span class="s1"> 
+    (</span><span class="s5">0x3b2</span><span class="s3">, </span><span class="s5">0x3d0</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># βϐ</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER EPSILON, GREEK LUNATE EPSILON SYMBOL</span><span class="s1"> 
+    (</span><span class="s5">0x3b5</span><span class="s3">, </span><span class="s5">0x3f5</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># εϵ</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER THETA, GREEK THETA SYMBOL</span><span class="s1"> 
+    (</span><span class="s5">0x3b8</span><span class="s3">, </span><span class="s5">0x3d1</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># θϑ</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER KAPPA, GREEK KAPPA SYMBOL</span><span class="s1"> 
+    (</span><span class="s5">0x3ba</span><span class="s3">, </span><span class="s5">0x3f0</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># κϰ</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER PI, GREEK PI SYMBOL</span><span class="s1"> 
+    (</span><span class="s5">0x3c0</span><span class="s3">, </span><span class="s5">0x3d6</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># πϖ</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER RHO, GREEK RHO SYMBOL</span><span class="s1"> 
+    (</span><span class="s5">0x3c1</span><span class="s3">, </span><span class="s5">0x3f1</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># ρϱ</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER FINAL SIGMA, GREEK SMALL LETTER SIGMA</span><span class="s1"> 
+    (</span><span class="s5">0x3c2</span><span class="s3">, </span><span class="s5">0x3c3</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># ςσ</span><span class="s1"> 
+    </span><span class="s0"># GREEK SMALL LETTER PHI, GREEK PHI SYMBOL</span><span class="s1"> 
+    (</span><span class="s5">0x3c6</span><span class="s3">, </span><span class="s5">0x3d5</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># φϕ</span><span class="s1"> 
+    </span><span class="s0"># LATIN SMALL LETTER S WITH DOT ABOVE, LATIN SMALL LETTER LONG S WITH DOT ABOVE</span><span class="s1"> 
+    (</span><span class="s5">0x1e61</span><span class="s3">, </span><span class="s5">0x1e9b</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># ṡẛ</span><span class="s1"> 
+    </span><span class="s0"># LATIN SMALL LIGATURE LONG S T, LATIN SMALL LIGATURE ST</span><span class="s1"> 
+    (</span><span class="s5">0xfb05</span><span class="s3">, </span><span class="s5">0xfb06</span><span class="s1">)</span><span class="s3">, </span><span class="s0"># ﬅﬆ</span><span class="s1"> 
+) 
+ 
+</span><span class="s0"># Maps the lowercase code to lowercase codes which have the same uppercase.</span><span class="s1"> 
+_ignorecase_fixes = {i: tuple(j </span><span class="s3">for </span><span class="s1">j </span><span class="s3">in </span><span class="s1">t </span><span class="s3">if </span><span class="s1">i != j) 
+                     </span><span class="s3">for </span><span class="s1">t </span><span class="s3">in </span><span class="s1">_equivalences </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">t} 
+ 
+</span><span class="s3">def </span><span class="s1">_compile(code</span><span class="s3">, </span><span class="s1">pattern</span><span class="s3">, </span><span class="s1">flags): 
+    </span><span class="s0"># internal: compile a (sub)pattern</span><span class="s1"> 
+    emit = code.append 
+    _len = len 
+    LITERAL_CODES = _LITERAL_CODES 
+    REPEATING_CODES = _REPEATING_CODES 
+    SUCCESS_CODES = _SUCCESS_CODES 
+    ASSERT_CODES = _ASSERT_CODES 
+    </span><span class="s3">if </span><span class="s1">(flags &amp; SRE_FLAG_IGNORECASE </span><span class="s3">and</span><span class="s1"> 
+            </span><span class="s3">not </span><span class="s1">(flags &amp; SRE_FLAG_LOCALE) </span><span class="s3">and</span><span class="s1"> 
+            flags &amp; SRE_FLAG_UNICODE): 
+        fixes = _ignorecase_fixes 
+    </span><span class="s3">else</span><span class="s1">: 
+        fixes = </span><span class="s3">None</span><span class="s1"> 
+    </span><span class="s3">for </span><span class="s1">op</span><span class="s3">, </span><span class="s1">av </span><span class="s3">in </span><span class="s1">pattern: 
+        </span><span class="s3">if </span><span class="s1">op </span><span class="s3">in </span><span class="s1">LITERAL_CODES: 
+            </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_IGNORECASE: 
+                lo = _sre.getlower(av</span><span class="s3">, </span><span class="s1">flags) 
+                </span><span class="s3">if </span><span class="s1">fixes </span><span class="s3">and </span><span class="s1">lo </span><span class="s3">in </span><span class="s1">fixes: 
+                    emit(IN_IGNORE) 
+                    skip = _len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+                    </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">NOT_LITERAL: 
+                        emit(NEGATE) 
+                    </span><span class="s3">for </span><span class="s1">k </span><span class="s3">in </span><span class="s1">(lo</span><span class="s3">,</span><span class="s1">) + fixes[lo]: 
+                        emit(LITERAL) 
+                        emit(k) 
+                    emit(FAILURE) 
+                    code[skip] = _len(code) - skip 
+                </span><span class="s3">else</span><span class="s1">: 
+                    emit(OP_IGNORE[op]) 
+                    emit(lo) 
+            </span><span class="s3">else</span><span class="s1">: 
+                emit(op) 
+                emit(av) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">IN: 
+            </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_IGNORECASE: 
+                emit(OP_IGNORE[op]) 
+                </span><span class="s3">def </span><span class="s1">fixup(literal</span><span class="s3">, </span><span class="s1">flags=flags): 
+                    </span><span class="s3">return </span><span class="s1">_sre.getlower(literal</span><span class="s3">, </span><span class="s1">flags) 
+            </span><span class="s3">else</span><span class="s1">: 
+                emit(op) 
+                fixup = </span><span class="s3">None</span><span class="s1"> 
+            skip = _len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+            _compile_charset(av</span><span class="s3">, </span><span class="s1">flags</span><span class="s3">, </span><span class="s1">code</span><span class="s3">, </span><span class="s1">fixup</span><span class="s3">, </span><span class="s1">fixes) 
+            code[skip] = _len(code) - skip 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">ANY: 
+            </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_DOTALL: 
+                emit(ANY_ALL) 
+            </span><span class="s3">else</span><span class="s1">: 
+                emit(ANY) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">in </span><span class="s1">REPEATING_CODES: 
+            </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_TEMPLATE: 
+                </span><span class="s3">raise </span><span class="s1">error(</span><span class="s4">&quot;internal: unsupported template operator %r&quot; </span><span class="s1">% (op</span><span class="s3">,</span><span class="s1">)) 
+            </span><span class="s3">elif </span><span class="s1">_simple(av) </span><span class="s3">and </span><span class="s1">op </span><span class="s3">is not </span><span class="s1">REPEAT: 
+                </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">MAX_REPEAT: 
+                    emit(REPEAT_ONE) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    emit(MIN_REPEAT_ONE) 
+                skip = _len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+                emit(av[</span><span class="s5">0</span><span class="s1">]) 
+                emit(av[</span><span class="s5">1</span><span class="s1">]) 
+                _compile(code</span><span class="s3">, </span><span class="s1">av[</span><span class="s5">2</span><span class="s1">]</span><span class="s3">, </span><span class="s1">flags) 
+                emit(SUCCESS) 
+                code[skip] = _len(code) - skip 
+            </span><span class="s3">else</span><span class="s1">: 
+                emit(REPEAT) 
+                skip = _len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+                emit(av[</span><span class="s5">0</span><span class="s1">]) 
+                emit(av[</span><span class="s5">1</span><span class="s1">]) 
+                _compile(code</span><span class="s3">, </span><span class="s1">av[</span><span class="s5">2</span><span class="s1">]</span><span class="s3">, </span><span class="s1">flags) 
+                code[skip] = _len(code) - skip 
+                </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">MAX_REPEAT: 
+                    emit(MAX_UNTIL) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    emit(MIN_UNTIL) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">SUBPATTERN: 
+            </span><span class="s3">if </span><span class="s1">av[</span><span class="s5">0</span><span class="s1">]: 
+                emit(MARK) 
+                emit((av[</span><span class="s5">0</span><span class="s1">]-</span><span class="s5">1</span><span class="s1">)*</span><span class="s5">2</span><span class="s1">) 
+            </span><span class="s0"># _compile_info(code, av[1], flags)</span><span class="s1"> 
+            _compile(code</span><span class="s3">, </span><span class="s1">av[</span><span class="s5">1</span><span class="s1">]</span><span class="s3">, </span><span class="s1">flags) 
+            </span><span class="s3">if </span><span class="s1">av[</span><span class="s5">0</span><span class="s1">]: 
+                emit(MARK) 
+                emit((av[</span><span class="s5">0</span><span class="s1">]-</span><span class="s5">1</span><span class="s1">)*</span><span class="s5">2</span><span class="s1">+</span><span class="s5">1</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">in </span><span class="s1">SUCCESS_CODES: 
+            emit(op) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">in </span><span class="s1">ASSERT_CODES: 
+            emit(op) 
+            skip = _len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+            </span><span class="s3">if </span><span class="s1">av[</span><span class="s5">0</span><span class="s1">] &gt;= </span><span class="s5">0</span><span class="s1">: 
+                emit(</span><span class="s5">0</span><span class="s1">) </span><span class="s0"># look ahead</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                lo</span><span class="s3">, </span><span class="s1">hi = av[</span><span class="s5">1</span><span class="s1">].getwidth() 
+                </span><span class="s3">if </span><span class="s1">lo != hi: 
+                    </span><span class="s3">raise </span><span class="s1">error(</span><span class="s4">&quot;look-behind requires fixed-width pattern&quot;</span><span class="s1">) 
+                emit(lo) </span><span class="s0"># look behind</span><span class="s1"> 
+            _compile(code</span><span class="s3">, </span><span class="s1">av[</span><span class="s5">1</span><span class="s1">]</span><span class="s3">, </span><span class="s1">flags) 
+            emit(SUCCESS) 
+            code[skip] = _len(code) - skip 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">CALL: 
+            emit(op) 
+            skip = _len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+            _compile(code</span><span class="s3">, </span><span class="s1">av</span><span class="s3">, </span><span class="s1">flags) 
+            emit(SUCCESS) 
+            code[skip] = _len(code) - skip 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">AT: 
+            emit(op) 
+            </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_MULTILINE: 
+                av = AT_MULTILINE.get(av</span><span class="s3">, </span><span class="s1">av) 
+            </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_LOCALE: 
+                av = AT_LOCALE.get(av</span><span class="s3">, </span><span class="s1">av) 
+            </span><span class="s3">elif </span><span class="s1">flags &amp; SRE_FLAG_UNICODE: 
+                av = AT_UNICODE.get(av</span><span class="s3">, </span><span class="s1">av) 
+            emit(av) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">BRANCH: 
+            emit(op) 
+            tail = [] 
+            tailappend = tail.append 
+            </span><span class="s3">for </span><span class="s1">av </span><span class="s3">in </span><span class="s1">av[</span><span class="s5">1</span><span class="s1">]: 
+                skip = _len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+                </span><span class="s0"># _compile_info(code, av, flags)</span><span class="s1"> 
+                _compile(code</span><span class="s3">, </span><span class="s1">av</span><span class="s3">, </span><span class="s1">flags) 
+                emit(JUMP) 
+                tailappend(_len(code)); emit(</span><span class="s5">0</span><span class="s1">) 
+                code[skip] = _len(code) - skip 
+            emit(FAILURE) </span><span class="s0"># end of branch</span><span class="s1"> 
+            </span><span class="s3">for </span><span class="s1">tail </span><span class="s3">in </span><span class="s1">tail: 
+                code[tail] = _len(code) - tail 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">CATEGORY: 
+            emit(op) 
+            </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_LOCALE: 
+                av = CH_LOCALE[av] 
+            </span><span class="s3">elif </span><span class="s1">flags &amp; SRE_FLAG_UNICODE: 
+                av = CH_UNICODE[av] 
+            emit(av) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">GROUPREF: 
+            </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_IGNORECASE: 
+                emit(OP_IGNORE[op]) 
+            </span><span class="s3">else</span><span class="s1">: 
+                emit(op) 
+            emit(av-</span><span class="s5">1</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">GROUPREF_EXISTS: 
+            emit(op) 
+            emit(av[</span><span class="s5">0</span><span class="s1">]-</span><span class="s5">1</span><span class="s1">) 
+            skipyes = _len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+            _compile(code</span><span class="s3">, </span><span class="s1">av[</span><span class="s5">1</span><span class="s1">]</span><span class="s3">, </span><span class="s1">flags) 
+            </span><span class="s3">if </span><span class="s1">av[</span><span class="s5">2</span><span class="s1">]: 
+                emit(JUMP) 
+                skipno = _len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+                code[skipyes] = _len(code) - skipyes + </span><span class="s5">1</span><span class="s1"> 
+                _compile(code</span><span class="s3">, </span><span class="s1">av[</span><span class="s5">2</span><span class="s1">]</span><span class="s3">, </span><span class="s1">flags) 
+                code[skipno] = _len(code) - skipno 
+            </span><span class="s3">else</span><span class="s1">: 
+                code[skipyes] = _len(code) - skipyes + </span><span class="s5">1</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">error(</span><span class="s4">&quot;internal: unsupported operand type %r&quot; </span><span class="s1">% (op</span><span class="s3">,</span><span class="s1">)) 
+ 
+</span><span class="s3">def </span><span class="s1">_compile_charset(charset</span><span class="s3">, </span><span class="s1">flags</span><span class="s3">, </span><span class="s1">code</span><span class="s3">, </span><span class="s1">fixup=</span><span class="s3">None, </span><span class="s1">fixes=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0"># compile charset subprogram</span><span class="s1"> 
+    emit = code.append 
+    </span><span class="s3">for </span><span class="s1">op</span><span class="s3">, </span><span class="s1">av </span><span class="s3">in </span><span class="s1">_optimize_charset(charset</span><span class="s3">, </span><span class="s1">fixup</span><span class="s3">, </span><span class="s1">fixes): 
+        emit(op) 
+        </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">NEGATE: 
+            </span><span class="s3">pass</span><span class="s1"> 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">LITERAL: 
+            emit(av) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">RANGE </span><span class="s3">or </span><span class="s1">op </span><span class="s3">is </span><span class="s1">RANGE_IGNORE: 
+            emit(av[</span><span class="s5">0</span><span class="s1">]) 
+            emit(av[</span><span class="s5">1</span><span class="s1">]) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">CHARSET: 
+            code.extend(av) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">BIGCHARSET: 
+            code.extend(av) 
+        </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">CATEGORY: 
+            </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_LOCALE: 
+                emit(CH_LOCALE[av]) 
+            </span><span class="s3">elif </span><span class="s1">flags &amp; SRE_FLAG_UNICODE: 
+                emit(CH_UNICODE[av]) 
+            </span><span class="s3">else</span><span class="s1">: 
+                emit(av) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">error(</span><span class="s4">&quot;internal: unsupported set operator %r&quot; </span><span class="s1">% (op</span><span class="s3">,</span><span class="s1">)) 
+    emit(FAILURE) 
+ 
+</span><span class="s3">def </span><span class="s1">_optimize_charset(charset</span><span class="s3">, </span><span class="s1">fixup</span><span class="s3">, </span><span class="s1">fixes): 
+    </span><span class="s0"># internal: optimize character set</span><span class="s1"> 
+    out = [] 
+    tail = [] 
+    charmap = bytearray(</span><span class="s5">256</span><span class="s1">) 
+    </span><span class="s3">for </span><span class="s1">op</span><span class="s3">, </span><span class="s1">av </span><span class="s3">in </span><span class="s1">charset: 
+        </span><span class="s3">while True</span><span class="s1">: 
+            </span><span class="s3">try</span><span class="s1">: 
+                </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">LITERAL: 
+                    </span><span class="s3">if </span><span class="s1">fixup: 
+                        lo = fixup(av) 
+                        charmap[lo] = </span><span class="s5">1</span><span class="s1"> 
+                        </span><span class="s3">if </span><span class="s1">fixes </span><span class="s3">and </span><span class="s1">lo </span><span class="s3">in </span><span class="s1">fixes: 
+                            </span><span class="s3">for </span><span class="s1">k </span><span class="s3">in </span><span class="s1">fixes[lo]: 
+                                charmap[k] = </span><span class="s5">1</span><span class="s1"> 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        charmap[av] = </span><span class="s5">1</span><span class="s1"> 
+                </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">RANGE: 
+                    r = range(av[</span><span class="s5">0</span><span class="s1">]</span><span class="s3">, </span><span class="s1">av[</span><span class="s5">1</span><span class="s1">]+</span><span class="s5">1</span><span class="s1">) 
+                    </span><span class="s3">if </span><span class="s1">fixup: 
+                        r = map(fixup</span><span class="s3">, </span><span class="s1">r) 
+                    </span><span class="s3">if </span><span class="s1">fixup </span><span class="s3">and </span><span class="s1">fixes: 
+                        </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">r: 
+                            charmap[i] = </span><span class="s5">1</span><span class="s1"> 
+                            </span><span class="s3">if </span><span class="s1">i </span><span class="s3">in </span><span class="s1">fixes: 
+                                </span><span class="s3">for </span><span class="s1">k </span><span class="s3">in </span><span class="s1">fixes[i]: 
+                                    charmap[k] = </span><span class="s5">1</span><span class="s1"> 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">r: 
+                            charmap[i] = </span><span class="s5">1</span><span class="s1"> 
+                </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">NEGATE: 
+                    out.append((op</span><span class="s3">, </span><span class="s1">av)) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    tail.append((op</span><span class="s3">, </span><span class="s1">av)) 
+            </span><span class="s3">except </span><span class="s1">IndexError: 
+                </span><span class="s3">if </span><span class="s1">len(charmap) == </span><span class="s5">256</span><span class="s1">: 
+                    </span><span class="s0"># character set contains non-UCS1 character codes</span><span class="s1"> 
+                    charmap += </span><span class="s6">b'</span><span class="s3">\0</span><span class="s6">' </span><span class="s1">* </span><span class="s5">0xff00</span><span class="s1"> 
+                    </span><span class="s3">continue</span><span class="s1"> 
+                </span><span class="s0"># Character set contains non-BMP character codes.</span><span class="s1"> 
+                </span><span class="s0"># There are only two ranges of cased non-BMP characters:</span><span class="s1"> 
+                </span><span class="s0"># 10400-1044F (Deseret) and 118A0-118DF (Warang Citi),</span><span class="s1"> 
+                </span><span class="s0"># and for both ranges RANGE_IGNORE works.</span><span class="s1"> 
+                </span><span class="s3">if </span><span class="s1">fixup </span><span class="s3">and </span><span class="s1">op </span><span class="s3">is </span><span class="s1">RANGE: 
+                    op = RANGE_IGNORE 
+                tail.append((op</span><span class="s3">, </span><span class="s1">av)) 
+            </span><span class="s3">break</span><span class="s1"> 
+ 
+    </span><span class="s0"># compress character map</span><span class="s1"> 
+    runs = [] 
+    q = </span><span class="s5">0</span><span class="s1"> 
+    </span><span class="s3">while True</span><span class="s1">: 
+        p = charmap.find(</span><span class="s5">1</span><span class="s3">, </span><span class="s1">q) 
+        </span><span class="s3">if </span><span class="s1">p &lt; </span><span class="s5">0</span><span class="s1">: 
+            </span><span class="s3">break</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">len(runs) &gt;= </span><span class="s5">2</span><span class="s1">: 
+            runs = </span><span class="s3">None</span><span class="s1"> 
+            </span><span class="s3">break</span><span class="s1"> 
+        q = charmap.find(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">p) 
+        </span><span class="s3">if </span><span class="s1">q &lt; </span><span class="s5">0</span><span class="s1">: 
+            runs.append((p</span><span class="s3">, </span><span class="s1">len(charmap))) 
+            </span><span class="s3">break</span><span class="s1"> 
+        runs.append((p</span><span class="s3">, </span><span class="s1">q)) 
+    </span><span class="s3">if </span><span class="s1">runs </span><span class="s3">is not None</span><span class="s1">: 
+        </span><span class="s0"># use literal/range</span><span class="s1"> 
+        </span><span class="s3">for </span><span class="s1">p</span><span class="s3">, </span><span class="s1">q </span><span class="s3">in </span><span class="s1">runs: 
+            </span><span class="s3">if </span><span class="s1">q - p == </span><span class="s5">1</span><span class="s1">: 
+                out.append((LITERAL</span><span class="s3">, </span><span class="s1">p)) 
+            </span><span class="s3">else</span><span class="s1">: 
+                out.append((RANGE</span><span class="s3">, </span><span class="s1">(p</span><span class="s3">, </span><span class="s1">q - </span><span class="s5">1</span><span class="s1">))) 
+        out += tail 
+        </span><span class="s0"># if the case was changed or new representation is more compact</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">fixup </span><span class="s3">or </span><span class="s1">len(out) &lt; len(charset): 
+            </span><span class="s3">return </span><span class="s1">out 
+        </span><span class="s0"># else original character set is good enough</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">charset 
+ 
+    </span><span class="s0"># use bitmap</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">len(charmap) == </span><span class="s5">256</span><span class="s1">: 
+        data = _mk_bitmap(charmap) 
+        out.append((CHARSET</span><span class="s3">, </span><span class="s1">data)) 
+        out += tail 
+        </span><span class="s3">return </span><span class="s1">out 
+ 
+    </span><span class="s0"># To represent a big charset, first a bitmap of all characters in the</span><span class="s1"> 
+    </span><span class="s0"># set is constructed. Then, this bitmap is sliced into chunks of 256</span><span class="s1"> 
+    </span><span class="s0"># characters, duplicate chunks are eliminated, and each chunk is</span><span class="s1"> 
+    </span><span class="s0"># given a number. In the compiled expression, the charset is</span><span class="s1"> 
+    </span><span class="s0"># represented by a 32-bit word sequence, consisting of one word for</span><span class="s1"> 
+    </span><span class="s0"># the number of different chunks, a sequence of 256 bytes (64 words)</span><span class="s1"> 
+    </span><span class="s0"># of chunk numbers indexed by their original chunk position, and a</span><span class="s1"> 
+    </span><span class="s0"># sequence of 256-bit chunks (8 words each).</span><span class="s1"> 
+ 
+    </span><span class="s0"># Compression is normally good: in a typical charset, large ranges of</span><span class="s1"> 
+    </span><span class="s0"># Unicode will be either completely excluded (e.g. if only cyrillic</span><span class="s1"> 
+    </span><span class="s0"># letters are to be matched), or completely included (e.g. if large</span><span class="s1"> 
+    </span><span class="s0"># subranges of Kanji match). These ranges will be represented by</span><span class="s1"> 
+    </span><span class="s0"># chunks of all one-bits or all zero-bits.</span><span class="s1"> 
+ 
+    </span><span class="s0"># Matching can be also done efficiently: the more significant byte of</span><span class="s1"> 
+    </span><span class="s0"># the Unicode character is an index into the chunk number, and the</span><span class="s1"> 
+    </span><span class="s0"># less significant byte is a bit index in the chunk (just like the</span><span class="s1"> 
+    </span><span class="s0"># CHARSET matching).</span><span class="s1"> 
+ 
+    charmap = bytes(charmap) </span><span class="s0"># should be hashable</span><span class="s1"> 
+    comps = {} 
+    mapping = bytearray(</span><span class="s5">256</span><span class="s1">) 
+    block = </span><span class="s5">0</span><span class="s1"> 
+    data = bytearray() 
+    </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">65536</span><span class="s3">, </span><span class="s5">256</span><span class="s1">): 
+        chunk = charmap[i: i + </span><span class="s5">256</span><span class="s1">] 
+        </span><span class="s3">if </span><span class="s1">chunk </span><span class="s3">in </span><span class="s1">comps: 
+            mapping[i // </span><span class="s5">256</span><span class="s1">] = comps[chunk] 
+        </span><span class="s3">else</span><span class="s1">: 
+            mapping[i // </span><span class="s5">256</span><span class="s1">] = comps[chunk] = block 
+            block += </span><span class="s5">1</span><span class="s1"> 
+            data += chunk 
+    data = _mk_bitmap(data) 
+    data[</span><span class="s5">0</span><span class="s1">:</span><span class="s5">0</span><span class="s1">] = [block] + _bytes_to_codes(mapping) 
+    out.append((BIGCHARSET</span><span class="s3">, </span><span class="s1">data)) 
+    out += tail 
+    </span><span class="s3">return </span><span class="s1">out 
+ 
+_CODEBITS = _sre.CODESIZE * </span><span class="s5">8</span><span class="s1"> 
+MAXCODE = (</span><span class="s5">1 </span><span class="s1">&lt;&lt; _CODEBITS) - </span><span class="s5">1</span><span class="s1"> 
+_BITS_TRANS = </span><span class="s6">b'0' </span><span class="s1">+ </span><span class="s6">b'1' </span><span class="s1">* </span><span class="s5">255</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">_mk_bitmap(bits</span><span class="s3">, </span><span class="s1">_CODEBITS=_CODEBITS</span><span class="s3">, </span><span class="s1">_int=int): 
+    s = bits.translate(_BITS_TRANS)[::-</span><span class="s5">1</span><span class="s1">] 
+    </span><span class="s3">return </span><span class="s1">[_int(s[i - _CODEBITS: i]</span><span class="s3">, </span><span class="s5">2</span><span class="s1">) 
+            </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(len(s)</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s1">-_CODEBITS)] 
+ 
+</span><span class="s3">def </span><span class="s1">_bytes_to_codes(b): 
+    </span><span class="s0"># Convert block indices to word array</span><span class="s1"> 
+    a = memoryview(b).cast(</span><span class="s4">'I'</span><span class="s1">) 
+    </span><span class="s3">assert </span><span class="s1">a.itemsize == _sre.CODESIZE 
+    </span><span class="s3">assert </span><span class="s1">len(a) * a.itemsize == len(b) 
+    </span><span class="s3">return </span><span class="s1">a.tolist() 
+ 
+</span><span class="s3">def </span><span class="s1">_simple(av): 
+    </span><span class="s0"># check if av is a &quot;simple&quot; operator</span><span class="s1"> 
+    lo</span><span class="s3">, </span><span class="s1">hi = av[</span><span class="s5">2</span><span class="s1">].getwidth() 
+    </span><span class="s3">return </span><span class="s1">lo == hi == </span><span class="s5">1 </span><span class="s3">and </span><span class="s1">av[</span><span class="s5">2</span><span class="s1">][</span><span class="s5">0</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] != SUBPATTERN 
+ 
+</span><span class="s3">def </span><span class="s1">_generate_overlap_table(prefix): 
+    </span><span class="s2">&quot;&quot;&quot; 
+    Generate an overlap table for the following prefix. 
+    An overlap table is a table of the same size as the prefix which 
+    informs about the potential self-overlap for each index in the prefix: 
+    - if overlap[i] == 0, prefix[i:] can't overlap prefix[0:...] 
+    - if overlap[i] == k with 0 &lt; k &lt;= i, prefix[i-k+1:i+1] overlaps with 
+      prefix[0:k] 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    table = [</span><span class="s5">0</span><span class="s1">] * len(prefix) 
+    </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">1</span><span class="s3">, </span><span class="s1">len(prefix)): 
+        idx = table[i - </span><span class="s5">1</span><span class="s1">] 
+        </span><span class="s3">while </span><span class="s1">prefix[i] != prefix[idx]: 
+            </span><span class="s3">if </span><span class="s1">idx == </span><span class="s5">0</span><span class="s1">: 
+                table[i] = </span><span class="s5">0</span><span class="s1"> 
+                </span><span class="s3">break</span><span class="s1"> 
+            idx = table[idx - </span><span class="s5">1</span><span class="s1">] 
+        </span><span class="s3">else</span><span class="s1">: 
+            table[i] = idx + </span><span class="s5">1</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">table 
+ 
+</span><span class="s3">def </span><span class="s1">_compile_info(code</span><span class="s3">, </span><span class="s1">pattern</span><span class="s3">, </span><span class="s1">flags): 
+    </span><span class="s0"># internal: compile an info block.  in the current version,</span><span class="s1"> 
+    </span><span class="s0"># this contains min/max pattern width, and an optional literal</span><span class="s1"> 
+    </span><span class="s0"># prefix or a character map</span><span class="s1"> 
+    lo</span><span class="s3">, </span><span class="s1">hi = pattern.getwidth() 
+    </span><span class="s3">if </span><span class="s1">hi &gt; MAXCODE: 
+        hi = MAXCODE 
+    </span><span class="s3">if </span><span class="s1">lo == </span><span class="s5">0</span><span class="s1">: 
+        code.extend([INFO</span><span class="s3">, </span><span class="s5">4</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s1">lo</span><span class="s3">, </span><span class="s1">hi]) 
+        </span><span class="s3">return</span><span class="s1"> 
+    </span><span class="s0"># look for a literal prefix</span><span class="s1"> 
+    prefix = [] 
+    prefixappend = prefix.append 
+    prefix_skip = </span><span class="s5">0</span><span class="s1"> 
+    charset = [] </span><span class="s0"># not used</span><span class="s1"> 
+    charsetappend = charset.append 
+    </span><span class="s3">if not </span><span class="s1">(flags &amp; SRE_FLAG_IGNORECASE): 
+        </span><span class="s0"># look for literal prefix</span><span class="s1"> 
+        </span><span class="s3">for </span><span class="s1">op</span><span class="s3">, </span><span class="s1">av </span><span class="s3">in </span><span class="s1">pattern.data: 
+            </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">LITERAL: 
+                </span><span class="s3">if </span><span class="s1">len(prefix) == prefix_skip: 
+                    prefix_skip = prefix_skip + </span><span class="s5">1</span><span class="s1"> 
+                prefixappend(av) 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">SUBPATTERN </span><span class="s3">and </span><span class="s1">len(av[</span><span class="s5">1</span><span class="s1">]) == </span><span class="s5">1</span><span class="s1">: 
+                op</span><span class="s3">, </span><span class="s1">av = av[</span><span class="s5">1</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] 
+                </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">LITERAL: 
+                    prefixappend(av) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    </span><span class="s3">break</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">break</span><span class="s1"> 
+        </span><span class="s0"># if no prefix, look for charset prefix</span><span class="s1"> 
+        </span><span class="s3">if not </span><span class="s1">prefix </span><span class="s3">and </span><span class="s1">pattern.data: 
+            op</span><span class="s3">, </span><span class="s1">av = pattern.data[</span><span class="s5">0</span><span class="s1">] 
+            </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">SUBPATTERN </span><span class="s3">and </span><span class="s1">av[</span><span class="s5">1</span><span class="s1">]: 
+                op</span><span class="s3">, </span><span class="s1">av = av[</span><span class="s5">1</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] 
+                </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">LITERAL: 
+                    charsetappend((op</span><span class="s3">, </span><span class="s1">av)) 
+                </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">BRANCH: 
+                    c = [] 
+                    cappend = c.append 
+                    </span><span class="s3">for </span><span class="s1">p </span><span class="s3">in </span><span class="s1">av[</span><span class="s5">1</span><span class="s1">]: 
+                        </span><span class="s3">if not </span><span class="s1">p: 
+                            </span><span class="s3">break</span><span class="s1"> 
+                        op</span><span class="s3">, </span><span class="s1">av = p[</span><span class="s5">0</span><span class="s1">] 
+                        </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">LITERAL: 
+                            cappend((op</span><span class="s3">, </span><span class="s1">av)) 
+                        </span><span class="s3">else</span><span class="s1">: 
+                            </span><span class="s3">break</span><span class="s1"> 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        charset = c 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">BRANCH: 
+                c = [] 
+                cappend = c.append 
+                </span><span class="s3">for </span><span class="s1">p </span><span class="s3">in </span><span class="s1">av[</span><span class="s5">1</span><span class="s1">]: 
+                    </span><span class="s3">if not </span><span class="s1">p: 
+                        </span><span class="s3">break</span><span class="s1"> 
+                    op</span><span class="s3">, </span><span class="s1">av = p[</span><span class="s5">0</span><span class="s1">] 
+                    </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">LITERAL: 
+                        cappend((op</span><span class="s3">, </span><span class="s1">av)) 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        </span><span class="s3">break</span><span class="s1"> 
+                </span><span class="s3">else</span><span class="s1">: 
+                    charset = c 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">IN: 
+                charset = av 
+</span><span class="s0">##     if prefix:</span><span class="s1"> 
+</span><span class="s0">##         print(&quot;*** PREFIX&quot;, prefix, prefix_skip)</span><span class="s1"> 
+</span><span class="s0">##     if charset:</span><span class="s1"> 
+</span><span class="s0">##         print(&quot;*** CHARSET&quot;, charset)</span><span class="s1"> 
+    </span><span class="s0"># add an info block</span><span class="s1"> 
+    emit = code.append 
+    emit(INFO) 
+    skip = len(code); emit(</span><span class="s5">0</span><span class="s1">) 
+    </span><span class="s0"># literal flag</span><span class="s1"> 
+    mask = </span><span class="s5">0</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">prefix: 
+        mask = SRE_INFO_PREFIX 
+        </span><span class="s3">if </span><span class="s1">len(prefix) == prefix_skip == len(pattern.data): 
+            mask = mask | SRE_INFO_LITERAL 
+    </span><span class="s3">elif </span><span class="s1">charset: 
+        mask = mask | SRE_INFO_CHARSET 
+    emit(mask) 
+    </span><span class="s0"># pattern length</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">lo &lt; MAXCODE: 
+        emit(lo) 
+    </span><span class="s3">else</span><span class="s1">: 
+        emit(MAXCODE) 
+        prefix = prefix[:MAXCODE] 
+    emit(min(hi</span><span class="s3">, </span><span class="s1">MAXCODE)) 
+    </span><span class="s0"># add literal prefix</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">prefix: 
+        emit(len(prefix)) </span><span class="s0"># length</span><span class="s1"> 
+        emit(prefix_skip) </span><span class="s0"># skip</span><span class="s1"> 
+        code.extend(prefix) 
+        </span><span class="s0"># generate overlap table</span><span class="s1"> 
+        code.extend(_generate_overlap_table(prefix)) 
+    </span><span class="s3">elif </span><span class="s1">charset: 
+        _compile_charset(charset</span><span class="s3">, </span><span class="s1">flags</span><span class="s3">, </span><span class="s1">code) 
+    code[skip] = len(code) - skip 
+ 
+</span><span class="s3">def </span><span class="s1">isstring(obj): 
+    </span><span class="s3">return </span><span class="s1">isinstance(obj</span><span class="s3">, </span><span class="s1">(str</span><span class="s3">, </span><span class="s1">bytes)) 
+ 
+</span><span class="s3">def </span><span class="s1">_code(p</span><span class="s3">, </span><span class="s1">flags): 
+ 
+    flags = p.pattern.flags | flags 
+    code = [] 
+ 
+    </span><span class="s0"># compile info block</span><span class="s1"> 
+    _compile_info(code</span><span class="s3">, </span><span class="s1">p</span><span class="s3">, </span><span class="s1">flags) 
+ 
+    </span><span class="s0"># compile the pattern</span><span class="s1"> 
+    _compile(code</span><span class="s3">, </span><span class="s1">p.data</span><span class="s3">, </span><span class="s1">flags) 
+ 
+    code.append(SUCCESS) 
+ 
+    </span><span class="s3">return </span><span class="s1">code 
+ 
+</span><span class="s3">def </span><span class="s1">compile(p</span><span class="s3">, </span><span class="s1">flags=</span><span class="s5">0</span><span class="s1">): 
+    </span><span class="s0"># internal: convert pattern list to internal format</span><span class="s1"> 
+ 
+    </span><span class="s3">if </span><span class="s1">isstring(p): 
+        pattern = p 
+        p = sre_parse.parse(p</span><span class="s3">, </span><span class="s1">flags) 
+    </span><span class="s3">else</span><span class="s1">: 
+        pattern = </span><span class="s3">None</span><span class="s1"> 
+ 
+    code = _code(p</span><span class="s3">, </span><span class="s1">flags) 
+ 
+    </span><span class="s0"># print(code)</span><span class="s1"> 
+ 
+    </span><span class="s0"># map in either direction</span><span class="s1"> 
+    groupindex = p.pattern.groupdict 
+    indexgroup = [</span><span class="s3">None</span><span class="s1">] * p.pattern.groups 
+    </span><span class="s3">for </span><span class="s1">k</span><span class="s3">, </span><span class="s1">i </span><span class="s3">in </span><span class="s1">groupindex.items(): 
+        indexgroup[i] = k 
+ 
+    </span><span class="s3">return </span><span class="s1">_sre.compile( 
+        pattern</span><span class="s3">, </span><span class="s1">flags | p.pattern.flags</span><span class="s3">, </span><span class="s1">code</span><span class="s3">,</span><span class="s1"> 
+        p.pattern.groups-</span><span class="s5">1</span><span class="s3">,</span><span class="s1"> 
+        groupindex</span><span class="s3">, </span><span class="s1">indexgroup 
+        ) 
+</span></pre>
+</body>
+</html>

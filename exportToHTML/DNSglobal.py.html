@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>DNSglobal.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+DNSglobal.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">DNSglobal: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setServers(self</span><span class="s0">,</span><span class="s1">server=</span><span class="s3">&quot;8.8.8.8,8.8.4.4&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set dns servers 
+        :param server: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk([</span><span class="s3">'/ip/dns/set'</span><span class="s0">,</span><span class="s3">'=servers='</span><span class="s1">+server]) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">allowRemoteRequests(self</span><span class="s0">,</span><span class="s1">rq=</span><span class="s3">&quot;yes&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set remote peers for dns (domain f.e) 
+        :param rq: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s3">'/ip/dns/set'</span><span class="s0">, </span><span class="s3">'=allow-remote-requests='</span><span class="s1">+rq] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxUdpDatagram(self</span><span class="s0">,</span><span class="s1">maxim=</span><span class="s3">&quot;4096&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set max datagram 
+        :param maxim: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s3">'/ip/dns/set'</span><span class="s0">, </span><span class="s3">'=max-udp-packet-size=' </span><span class="s1">+ maxim] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">setQueryServerTimeout(self</span><span class="s0">,</span><span class="s1">time=</span><span class="s3">&quot;2000&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set timeout 
+        :param time: in secs 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s3">'/ip/dns/set'</span><span class="s0">, </span><span class="s3">'=query-server-timeout=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">setQueryTotalTimeout(self</span><span class="s0">,</span><span class="s1">time=</span><span class="s3">&quot;10000&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set total timeout 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s3">'/ip/dns/set'</span><span class="s0">, </span><span class="s3">'=query-total-timeout=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">setCacheSize(self</span><span class="s0">,</span><span class="s1">casize=</span><span class="s3">&quot;2048&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set cache buffer size 
+        :param casize: in kB 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s3">'/ip/dns/set'</span><span class="s0">, </span><span class="s3">'=cache-size=' </span><span class="s1">+ casize] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">setCacheMaxTtl(self</span><span class="s0">,</span><span class="s1">ttl=</span><span class="s3">&quot;7d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set max ttl 
+        :param ttl: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s3">'/ip/dns/set'</span><span class="s0">, </span><span class="s3">'=cache-max-ttl=' </span><span class="s1">+ ttl] ) 
+        </span><span class="s0">return </span><span class="s1">dns</span></pre>
+</body>
+</html>

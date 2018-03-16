@@ -1,0 +1,434 @@
+<html>
+<head>
+<title>bgpPeer.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+bgpPeer.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">bgpPeer: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listPeers(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Mewthod will list peers 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk([</span><span class="s4">'/routing/bgp/peer/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">peer == {}: 
+            print(</span><span class="s4">&quot;No peer set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;NAme</span><span class="s0">\t</span><span class="s4">Instance</span><span class="s0">\t</span><span class="s4">remote address</span><span class="s0">\t</span><span class="s4">remote as</span><span class="s0">\t</span><span class="s4">multihop</span><span class="s0">\t</span><span class="s4">route-reflect</span><span class="s0">\t</span><span class="s4">ttl</span><span class="s0">\t</span><span class="s4">&quot;&quot;state&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">peer: 
+                </span><span class="s5">#print(peer)</span><span class="s1"> 
+                print(peer[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+peer[i][</span><span class="s4">'instance'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+peer[i][</span><span class="s4">'remote-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+peer[i][</span><span class="s4">'remote-as'</span><span class="s1">]+ 
+                      </span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+peer[i][</span><span class="s4">'multihop'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+peer[i][</span><span class="s4">'route-reflect'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+peer[i][</span><span class="s4">'ttl'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1"> 
+                      +</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+peer[i][</span><span class="s4">'state'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">addPeer(self</span><span class="s0">,</span><span class="s1">remAddress</span><span class="s0">,</span><span class="s1">remAS</span><span class="s0">,</span><span class="s1">instance): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil ladd new peer 
+        :param remAddress: 
+        :param remAS: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk([</span><span class="s4">'/routing/bgp/peer/add'</span><span class="s0">,</span><span class="s4">'=remote-address='</span><span class="s1">+remAddress</span><span class="s0">,</span><span class="s4">'=remote-as='</span><span class="s1">+remAS</span><span class="s0">,</span><span class="s4">'=instance='</span><span class="s1"> 
+                                 +instance]) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">removePeer(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove peer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk([</span><span class="s4">&quot;/routing/bgp/peer/remove&quot;</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">disablePeer(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable peer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/disable&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">enablePeer(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable peer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/enable&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">commentPeer(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment peer 
+        :param name: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/comment&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">refreshPeer(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will refresh single peer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/refresh&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">refreshPeers(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will refresh all peers 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/refresh-all&quot;</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">resendPeer(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will resend single peer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/resend&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">resendAll(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will resend all peers 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/resend-all&quot;</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setPeerName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newNAme): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename peer 
+        :param name: 
+        :param newNAme: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newNAme] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setPeerInstance(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">instance): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set peer instance 
+        :param name: 
+        :param instance: default,bgp,etc. 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=instance='</span><span class="s1">+instance] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setPeerRemoteAddress(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set peer remote addtess 
+        :param name: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=remote-address='</span><span class="s1">+address] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setPeerPort(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set port of remote address 
+        :param name: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=remote-port='</span><span class="s1">+port] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setPeerRemoteAS(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">AS): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set remote as 
+        :param name: 
+        :param AS: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=remote-as='</span><span class="s1">+AS] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setPeerMD5Key(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">key): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set md5 key 
+        :param name: 
+        :param key: key value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=tcp-md5-key='</span><span class="s1">+key] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setNextHopChoice(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">choice): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set next hop choice 
+        :param name: 
+        :param choice: default, force-self,propagate 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=nexthop-choice='</span><span class="s1">+choice] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">enableMultihop(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable multihop 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=multihop=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">enableROuteReflect(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable route reflect 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=route-reflect=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setHoldTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">hold=</span><span class="s4">&quot;180&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set holdtime 
+        :param name: 
+        :param hold: 180s or infinity 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=hold-time='</span><span class="s1">+hold] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setKeepAliveTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set keepalive time 
+        :param name: 
+        :param time: in secs 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=keepalive-time='</span><span class="s1">+time] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setMAxPrefixLimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">prefix): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max prefix 
+        :param name: 
+        :param prefix: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=max-prefix-limit='</span><span class="s1">+prefix] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxPrefixRestartTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">time): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set restart time of prefix 
+        :param name: 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=max-prefix-restart-time='</span><span class="s1">+time] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setInFilter(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">filter): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set inpout filter 
+        :param name: 
+        :param filter: rip-in,rip-out,conencted-in,dynamic-in 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=in-filter='</span><span class="s1">+filter] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutFilter(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">filter): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set out filter 
+        :param name: 
+        :param filter: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=out-filter='</span><span class="s1">+filter] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setAllowAS(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">AS=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set allowed AS 
+        :param name: 
+        :param AS: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=allow-as-in='</span><span class="s1">+AS] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setRemoveASPrivate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove private AS 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=remove-private-as=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetRemoveAsPrivate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will unset AS private 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=remove-private-as=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setASOveride(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set overiding AS 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=as-override=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetAsOveride(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wll unset as override 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=as-override=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setDefaultOriginate(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">origin=</span><span class="s4">&quot;never&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set originate 
+        :param name: 
+        :param origin: never, always, if-installed 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=default-originate='</span><span class="s1">+origin] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassive(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passive peer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=passive=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetPassive(self</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passive peer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=passive=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setUSeBFD(self</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passive peer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=use-bfd=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetUSeBFD(self</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passive peer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=use-bfd=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setIPAddressFamily(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set IP as addess family 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=address-families=ip'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setIPv6AddressFamily(self</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set IP as addess family 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=address-families=ipv6'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setl2vpn(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set l2vpn 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=address-families=l2vpn'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setVpn4(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set vpn4 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=address-families=vpnv4'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setCiscoL2vp(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set l2vpn from cisco 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=address-families=l2vpn-cisco'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setUpdateSource(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set source inerface 
+        :param name: 
+        :param interface: none or interface 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=update-source='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">peer 
+ 
+    </span><span class="s0">def </span><span class="s1">setCiscoVPLSLength(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">length=</span><span class="s4">&quot;auto-bits&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set cisco vpls length 
+        :param name: 
+        :param length:  auto-bites, auto-bytes, bites, bytes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        peer = self.client.talk( [</span><span class="s4">&quot;/routing/bgp/peer/set&quot;</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=cisco-vpls-nlri-len-fmt='</span><span class="s1">+length] ) 
+        </span><span class="s0">return </span><span class="s1">peer</span></pre>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<html>
+<head>
+<title>WebProxyDirect.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+WebProxyDirect.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">WebProxyDirect: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listdirect(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list directes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk([</span><span class="s4">'/ip/proxy/direct/print'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Src address</span><span class="s0">\t</span><span class="s4">Dst address</span><span class="s0">\t</span><span class="s4">Dst port</span><span class="s0">\t</span><span class="s4">action&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">proxy: 
+            print(proxy[i][</span><span class="s4">'src-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+proxy[i][</span><span class="s4">'dst-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+proxy[i][</span><span class="s4">'dst-port'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+proxy[i][</span><span class="s4">'action'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">adddirect(self</span><span class="s0">,</span><span class="s1">dstPort</span><span class="s0">,</span><span class="s1">action=</span><span class="s4">&quot;allow&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add new direct 
+        :param dstPort: 
+        :param action: allow deny 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk([</span><span class="s4">'/ip/proxy/direct/add'</span><span class="s0">,</span><span class="s4">'=dst-port='</span><span class="s1">+dstPort</span><span class="s0">,</span><span class="s4">'=action='</span><span class="s1">+action]) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">removedirect(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove direct 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk([</span><span class="s4">'/ip/proxy/direct/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">enabledirect(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove direct 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">disabledirect(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove direct 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">commentdirect(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment direct 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will se tsrc address 
+        :param number: 
+        :param address: !,src address 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=src-address=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will setdst address 
+        :param number: 
+        :param address: !, address 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dst-address=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstPort(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dst port 
+        :param number: 
+        :param port:!,port 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dst-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setLocalPort(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set local port 
+        :param number: 
+        :param port: !,port 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=local-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstHost(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">host): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dst host 
+        :param number: 
+        :param host:!,IP 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dst-host=' </span><span class="s1">+ host] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setPath(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">path): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set path 
+        :param number: 
+        :param path: !,path = fiepath dirpath 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=path=' </span><span class="s1">+ path] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setMethod(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">method=</span><span class="s4">&quot;CONNECT&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set method 
+        :param number: 
+        :param method: !, CONNECT, DELETE, GET, HEAD, OPTIONS,POST,PUT,TRACE 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=method=' </span><span class="s1">+ method] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setAction(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">action=</span><span class="s4">&quot;allow&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set action 
+        :param number: 
+        :param action: allow,deny 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=' </span><span class="s1">+ action] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">resetCounters(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reset counters 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk([</span><span class="s4">'/ip/proxy/direct/reset-counters'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">resetAllCounters(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reset all counters 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/direct/reset-counters-all'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy</span></pre>
+</body>
+</html>

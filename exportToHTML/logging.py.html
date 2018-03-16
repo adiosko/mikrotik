@@ -1,0 +1,154 @@
+<html>
+<head>
+<title>logging.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(104,151,187); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+logging.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">import </span><span class="s1">contextlib 
+</span><span class="s0">import </span><span class="s1">logging 
+</span><span class="s0">import </span><span class="s1">logging.handlers 
+</span><span class="s0">import </span><span class="s1">os 
+ 
+</span><span class="s0">try</span><span class="s1">: 
+    </span><span class="s0">import </span><span class="s1">threading 
+</span><span class="s0">except </span><span class="s1">ImportError: 
+    </span><span class="s0">import </span><span class="s1">dummy_threading </span><span class="s0">as </span><span class="s1">threading 
+ 
+</span><span class="s0">from </span><span class="s1">pip.compat </span><span class="s0">import </span><span class="s1">WINDOWS 
+</span><span class="s0">from </span><span class="s1">pip.utils </span><span class="s0">import </span><span class="s1">ensure_dir 
+ 
+</span><span class="s0">try</span><span class="s1">: 
+    </span><span class="s0">from </span><span class="s1">pip._vendor </span><span class="s0">import </span><span class="s1">colorama 
+</span><span class="s2"># Lots of different errors can come from this, including SystemError and</span><span class="s1"> 
+</span><span class="s2"># ImportError.</span><span class="s1"> 
+</span><span class="s0">except </span><span class="s1">Exception: 
+    colorama = </span><span class="s0">None</span><span class="s1"> 
+ 
+ 
+_log_state = threading.local() 
+_log_state.indentation = </span><span class="s3">0</span><span class="s1"> 
+ 
+ 
+@contextlib.contextmanager 
+</span><span class="s0">def </span><span class="s1">indent_log(num=</span><span class="s3">2</span><span class="s1">): 
+    </span><span class="s4">&quot;&quot;&quot; 
+    A context manager which will cause the log output to be indented for any 
+    log messages emitted inside it. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    _log_state.indentation += num 
+    </span><span class="s0">try</span><span class="s1">: 
+        </span><span class="s0">yield</span><span class="s1"> 
+    </span><span class="s0">finally</span><span class="s1">: 
+        _log_state.indentation -= num 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">get_indentation(): 
+    </span><span class="s0">return </span><span class="s1">getattr(_log_state</span><span class="s0">, </span><span class="s5">'indentation'</span><span class="s0">, </span><span class="s3">0</span><span class="s1">) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">IndentingFormatter(logging.Formatter): 
+ 
+    </span><span class="s0">def </span><span class="s1">format(self</span><span class="s0">, </span><span class="s1">record): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Calls the standard formatter, but will indent all of the log messages 
+        by our current indentation level. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        formatted = logging.Formatter.format(self</span><span class="s0">, </span><span class="s1">record) 
+        formatted = </span><span class="s5">&quot;&quot;</span><span class="s1">.join([ 
+            (</span><span class="s5">&quot; &quot; </span><span class="s1">* get_indentation()) + line 
+            </span><span class="s0">for </span><span class="s1">line </span><span class="s0">in </span><span class="s1">formatted.splitlines(</span><span class="s0">True</span><span class="s1">) 
+        ]) 
+        </span><span class="s0">return </span><span class="s1">formatted 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">_color_wrap(*colors): 
+    </span><span class="s0">def </span><span class="s1">wrapped(inp): 
+        </span><span class="s0">return </span><span class="s5">&quot;&quot;</span><span class="s1">.join(list(colors) + [inp</span><span class="s0">, </span><span class="s1">colorama.Style.RESET_ALL]) 
+    </span><span class="s0">return </span><span class="s1">wrapped 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">ColorizedStreamHandler(logging.StreamHandler): 
+ 
+    </span><span class="s2"># Don't build up a list of colors if we don't have colorama</span><span class="s1"> 
+    </span><span class="s0">if </span><span class="s1">colorama: 
+        COLORS = [ 
+            </span><span class="s2"># This needs to be in order from highest logging level to lowest.</span><span class="s1"> 
+            (logging.ERROR</span><span class="s0">, </span><span class="s1">_color_wrap(colorama.Fore.RED))</span><span class="s0">,</span><span class="s1"> 
+            (logging.WARNING</span><span class="s0">, </span><span class="s1">_color_wrap(colorama.Fore.YELLOW))</span><span class="s0">,</span><span class="s1"> 
+        ] 
+    </span><span class="s0">else</span><span class="s1">: 
+        COLORS = [] 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">stream=</span><span class="s0">None</span><span class="s1">): 
+        logging.StreamHandler.__init__(self</span><span class="s0">, </span><span class="s1">stream) 
+ 
+        </span><span class="s0">if </span><span class="s1">WINDOWS </span><span class="s0">and </span><span class="s1">colorama: 
+            self.stream = colorama.AnsiToWin32(self.stream) 
+ 
+    </span><span class="s0">def </span><span class="s1">should_color(self): 
+        </span><span class="s2"># Don't colorize things if we do not have colorama</span><span class="s1"> 
+        </span><span class="s0">if not </span><span class="s1">colorama: 
+            </span><span class="s0">return False</span><span class="s1"> 
+ 
+        real_stream = ( 
+            self.stream </span><span class="s0">if not </span><span class="s1">isinstance(self.stream</span><span class="s0">, </span><span class="s1">colorama.AnsiToWin32) 
+            </span><span class="s0">else </span><span class="s1">self.stream.wrapped 
+        ) 
+ 
+        </span><span class="s2"># If the stream is a tty we should color it</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">hasattr(real_stream</span><span class="s0">, </span><span class="s5">&quot;isatty&quot;</span><span class="s1">) </span><span class="s0">and </span><span class="s1">real_stream.isatty(): 
+            </span><span class="s0">return True</span><span class="s1"> 
+ 
+        </span><span class="s2"># If we have an ASNI term we should color it</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">os.environ.get(</span><span class="s5">&quot;TERM&quot;</span><span class="s1">) == </span><span class="s5">&quot;ANSI&quot;</span><span class="s1">: 
+            </span><span class="s0">return True</span><span class="s1"> 
+ 
+        </span><span class="s2"># If anything else we should not color it</span><span class="s1"> 
+        </span><span class="s0">return False</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">format(self</span><span class="s0">, </span><span class="s1">record): 
+        msg = logging.StreamHandler.format(self</span><span class="s0">, </span><span class="s1">record) 
+ 
+        </span><span class="s0">if </span><span class="s1">self.should_color(): 
+            </span><span class="s0">for </span><span class="s1">level</span><span class="s0">, </span><span class="s1">color </span><span class="s0">in </span><span class="s1">self.COLORS: 
+                </span><span class="s0">if </span><span class="s1">record.levelno &gt;= level: 
+                    msg = color(msg) 
+                    </span><span class="s0">break</span><span class="s1"> 
+ 
+        </span><span class="s0">return </span><span class="s1">msg 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">BetterRotatingFileHandler(logging.handlers.RotatingFileHandler): 
+ 
+    </span><span class="s0">def </span><span class="s1">_open(self): 
+        ensure_dir(os.path.dirname(self.baseFilename)) 
+        </span><span class="s0">return </span><span class="s1">logging.handlers.RotatingFileHandler._open(self) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">MaxLevelFilter(logging.Filter): 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">level): 
+        self.level = level 
+ 
+    </span><span class="s0">def </span><span class="s1">filter(self</span><span class="s0">, </span><span class="s1">record): 
+        </span><span class="s0">return </span><span class="s1">record.levelno &lt; self.level 
+</span></pre>
+</body>
+</html>

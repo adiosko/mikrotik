@@ -1,0 +1,262 @@
+<html>
+<head>
+<title>punycode.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(104,151,187); }
+.s5 { color: rgb(165,194,97); }
+.s6 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+punycode.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; Codec for the Punicode encoding, as specified in RFC 3492 
+ 
+Written by Martin v. Löwis. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">codecs 
+ 
+</span><span class="s3">##################### Encoding #####################################</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">segregate(str): 
+    </span><span class="s0">&quot;&quot;&quot;3.1 Basic code point segregation&quot;&quot;&quot;</span><span class="s1"> 
+    base = bytearray() 
+    extended = set() 
+    </span><span class="s2">for </span><span class="s1">c </span><span class="s2">in </span><span class="s1">str: 
+        </span><span class="s2">if </span><span class="s1">ord(c) &lt; </span><span class="s4">128</span><span class="s1">: 
+            base.append(ord(c)) 
+        </span><span class="s2">else</span><span class="s1">: 
+            extended.add(c) 
+    extended = sorted(extended) 
+    </span><span class="s2">return </span><span class="s1">bytes(base)</span><span class="s2">, </span><span class="s1">extended 
+ 
+</span><span class="s2">def </span><span class="s1">selective_len(str</span><span class="s2">, </span><span class="s1">max): 
+    </span><span class="s0">&quot;&quot;&quot;Return the length of str, considering only characters below max.&quot;&quot;&quot;</span><span class="s1"> 
+    res = </span><span class="s4">0</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">c </span><span class="s2">in </span><span class="s1">str: 
+        </span><span class="s2">if </span><span class="s1">ord(c) &lt; max: 
+            res += </span><span class="s4">1</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">res 
+ 
+</span><span class="s2">def </span><span class="s1">selective_find(str</span><span class="s2">, </span><span class="s1">char</span><span class="s2">, </span><span class="s1">index</span><span class="s2">, </span><span class="s1">pos): 
+    </span><span class="s0">&quot;&quot;&quot;Return a pair (index, pos), indicating the next occurrence of 
+    char in str. index is the position of the character considering 
+    only ordinals up to and including char, and pos is the position in 
+    the full string. index/pos is the starting position in the full 
+    string.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    l = len(str) 
+    </span><span class="s2">while </span><span class="s4">1</span><span class="s1">: 
+        pos += </span><span class="s4">1</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">pos == l: 
+            </span><span class="s2">return </span><span class="s1">(-</span><span class="s4">1</span><span class="s2">, </span><span class="s1">-</span><span class="s4">1</span><span class="s1">) 
+        c = str[pos] 
+        </span><span class="s2">if </span><span class="s1">c == char: 
+            </span><span class="s2">return </span><span class="s1">index+</span><span class="s4">1</span><span class="s2">, </span><span class="s1">pos 
+        </span><span class="s2">elif </span><span class="s1">c &lt; char: 
+            index += </span><span class="s4">1</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">insertion_unsort(str</span><span class="s2">, </span><span class="s1">extended): 
+    </span><span class="s0">&quot;&quot;&quot;3.2 Insertion unsort coding&quot;&quot;&quot;</span><span class="s1"> 
+    oldchar = </span><span class="s4">0x80</span><span class="s1"> 
+    result = [] 
+    oldindex = -</span><span class="s4">1</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">c </span><span class="s2">in </span><span class="s1">extended: 
+        index = pos = -</span><span class="s4">1</span><span class="s1"> 
+        char = ord(c) 
+        curlen = selective_len(str</span><span class="s2">, </span><span class="s1">char) 
+        delta = (curlen+</span><span class="s4">1</span><span class="s1">) * (char - oldchar) 
+        </span><span class="s2">while </span><span class="s4">1</span><span class="s1">: 
+            index</span><span class="s2">,</span><span class="s1">pos = selective_find(str</span><span class="s2">,</span><span class="s1">c</span><span class="s2">,</span><span class="s1">index</span><span class="s2">,</span><span class="s1">pos) 
+            </span><span class="s2">if </span><span class="s1">index == -</span><span class="s4">1</span><span class="s1">: 
+                </span><span class="s2">break</span><span class="s1"> 
+            delta += index - oldindex 
+            result.append(delta-</span><span class="s4">1</span><span class="s1">) 
+            oldindex = index 
+            delta = </span><span class="s4">0</span><span class="s1"> 
+        oldchar = char 
+ 
+    </span><span class="s2">return </span><span class="s1">result 
+ 
+</span><span class="s2">def </span><span class="s1">T(j</span><span class="s2">, </span><span class="s1">bias): 
+    </span><span class="s3"># Punycode parameters: tmin = 1, tmax = 26, base = 36</span><span class="s1"> 
+    res = </span><span class="s4">36 </span><span class="s1">* (j + </span><span class="s4">1</span><span class="s1">) - bias 
+    </span><span class="s2">if </span><span class="s1">res &lt; </span><span class="s4">1</span><span class="s1">: </span><span class="s2">return </span><span class="s4">1</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">res &gt; </span><span class="s4">26</span><span class="s1">: </span><span class="s2">return </span><span class="s4">26</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">res 
+ 
+digits = </span><span class="s5">b&quot;abcdefghijklmnopqrstuvwxyz0123456789&quot;</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">generate_generalized_integer(N</span><span class="s2">, </span><span class="s1">bias): 
+    </span><span class="s0">&quot;&quot;&quot;3.3 Generalized variable-length integers&quot;&quot;&quot;</span><span class="s1"> 
+    result = bytearray() 
+    j = </span><span class="s4">0</span><span class="s1"> 
+    </span><span class="s2">while </span><span class="s4">1</span><span class="s1">: 
+        t = T(j</span><span class="s2">, </span><span class="s1">bias) 
+        </span><span class="s2">if </span><span class="s1">N &lt; t: 
+            result.append(digits[N]) 
+            </span><span class="s2">return </span><span class="s1">bytes(result) 
+        result.append(digits[t + ((N - t) % (</span><span class="s4">36 </span><span class="s1">- t))]) 
+        N = (N - t) // (</span><span class="s4">36 </span><span class="s1">- t) 
+        j += </span><span class="s4">1</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">adapt(delta</span><span class="s2">, </span><span class="s1">first</span><span class="s2">, </span><span class="s1">numchars): 
+    </span><span class="s2">if </span><span class="s1">first: 
+        delta //= </span><span class="s4">700</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        delta //= </span><span class="s4">2</span><span class="s1"> 
+    delta += delta // numchars 
+    </span><span class="s3"># ((base - tmin) * tmax) // 2 == 455</span><span class="s1"> 
+    divisions = </span><span class="s4">0</span><span class="s1"> 
+    </span><span class="s2">while </span><span class="s1">delta &gt; </span><span class="s4">455</span><span class="s1">: 
+        delta = delta // </span><span class="s4">35 </span><span class="s3"># base - tmin</span><span class="s1"> 
+        divisions += </span><span class="s4">36</span><span class="s1"> 
+    bias = divisions + (</span><span class="s4">36 </span><span class="s1">* delta // (delta + </span><span class="s4">38</span><span class="s1">)) 
+    </span><span class="s2">return </span><span class="s1">bias 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">generate_integers(baselen</span><span class="s2">, </span><span class="s1">deltas): 
+    </span><span class="s0">&quot;&quot;&quot;3.4 Bias adaptation&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3"># Punycode parameters: initial bias = 72, damp = 700, skew = 38</span><span class="s1"> 
+    result = bytearray() 
+    bias = </span><span class="s4">72</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">points</span><span class="s2">, </span><span class="s1">delta </span><span class="s2">in </span><span class="s1">enumerate(deltas): 
+        s = generate_generalized_integer(delta</span><span class="s2">, </span><span class="s1">bias) 
+        result.extend(s) 
+        bias = adapt(delta</span><span class="s2">, </span><span class="s1">points==</span><span class="s4">0</span><span class="s2">, </span><span class="s1">baselen+points+</span><span class="s4">1</span><span class="s1">) 
+    </span><span class="s2">return </span><span class="s1">bytes(result) 
+ 
+</span><span class="s2">def </span><span class="s1">punycode_encode(text): 
+    base</span><span class="s2">, </span><span class="s1">extended = segregate(text) 
+    deltas = insertion_unsort(text</span><span class="s2">, </span><span class="s1">extended) 
+    extended = generate_integers(len(base)</span><span class="s2">, </span><span class="s1">deltas) 
+    </span><span class="s2">if </span><span class="s1">base: 
+        </span><span class="s2">return </span><span class="s1">base + </span><span class="s5">b&quot;-&quot; </span><span class="s1">+ extended 
+    </span><span class="s2">return </span><span class="s1">extended 
+ 
+</span><span class="s3">##################### Decoding #####################################</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">decode_generalized_number(extended</span><span class="s2">, </span><span class="s1">extpos</span><span class="s2">, </span><span class="s1">bias</span><span class="s2">, </span><span class="s1">errors): 
+    </span><span class="s0">&quot;&quot;&quot;3.3 Generalized variable-length integers&quot;&quot;&quot;</span><span class="s1"> 
+    result = </span><span class="s4">0</span><span class="s1"> 
+    w = </span><span class="s4">1</span><span class="s1"> 
+    j = </span><span class="s4">0</span><span class="s1"> 
+    </span><span class="s2">while </span><span class="s4">1</span><span class="s1">: 
+        </span><span class="s2">try</span><span class="s1">: 
+            char = ord(extended[extpos]) 
+        </span><span class="s2">except </span><span class="s1">IndexError: 
+            </span><span class="s2">if </span><span class="s1">errors == </span><span class="s6">&quot;strict&quot;</span><span class="s1">: 
+                </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s6">&quot;incomplete punicode string&quot;</span><span class="s1">) 
+            </span><span class="s2">return </span><span class="s1">extpos + </span><span class="s4">1</span><span class="s2">, None</span><span class="s1"> 
+        extpos += </span><span class="s4">1</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s4">0x41 </span><span class="s1">&lt;= char &lt;= </span><span class="s4">0x5A</span><span class="s1">: </span><span class="s3"># A-Z</span><span class="s1"> 
+            digit = char - </span><span class="s4">0x41</span><span class="s1"> 
+        </span><span class="s2">elif </span><span class="s4">0x30 </span><span class="s1">&lt;= char &lt;= </span><span class="s4">0x39</span><span class="s1">: 
+            digit = char - </span><span class="s4">22 </span><span class="s3"># 0x30-26</span><span class="s1"> 
+        </span><span class="s2">elif </span><span class="s1">errors == </span><span class="s6">&quot;strict&quot;</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s6">&quot;Invalid extended code point '%s'&quot;</span><span class="s1"> 
+                               % extended[extpos]) 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">extpos</span><span class="s2">, None</span><span class="s1"> 
+        t = T(j</span><span class="s2">, </span><span class="s1">bias) 
+        result += digit * w 
+        </span><span class="s2">if </span><span class="s1">digit &lt; t: 
+            </span><span class="s2">return </span><span class="s1">extpos</span><span class="s2">, </span><span class="s1">result 
+        w = w * (</span><span class="s4">36 </span><span class="s1">- t) 
+        j += </span><span class="s4">1</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">insertion_sort(base</span><span class="s2">, </span><span class="s1">extended</span><span class="s2">, </span><span class="s1">errors): 
+    </span><span class="s0">&quot;&quot;&quot;3.2 Insertion unsort coding&quot;&quot;&quot;</span><span class="s1"> 
+    char = </span><span class="s4">0x80</span><span class="s1"> 
+    pos = -</span><span class="s4">1</span><span class="s1"> 
+    bias = </span><span class="s4">72</span><span class="s1"> 
+    extpos = </span><span class="s4">0</span><span class="s1"> 
+    </span><span class="s2">while </span><span class="s1">extpos &lt; len(extended): 
+        newpos</span><span class="s2">, </span><span class="s1">delta = decode_generalized_number(extended</span><span class="s2">, </span><span class="s1">extpos</span><span class="s2">,</span><span class="s1"> 
+                                                  bias</span><span class="s2">, </span><span class="s1">errors) 
+        </span><span class="s2">if </span><span class="s1">delta </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s3"># There was an error in decoding. We can't continue because</span><span class="s1"> 
+            </span><span class="s3"># synchronization is lost.</span><span class="s1"> 
+            </span><span class="s2">return </span><span class="s1">base 
+        pos += delta+</span><span class="s4">1</span><span class="s1"> 
+        char += pos // (len(base) + </span><span class="s4">1</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">char &gt; </span><span class="s4">0x10FFFF</span><span class="s1">: 
+            </span><span class="s2">if </span><span class="s1">errors == </span><span class="s6">&quot;strict&quot;</span><span class="s1">: 
+                </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s6">&quot;Invalid character U+%x&quot; </span><span class="s1">% char) 
+            char = ord(</span><span class="s6">'?'</span><span class="s1">) 
+        pos = pos % (len(base) + </span><span class="s4">1</span><span class="s1">) 
+        base = base[:pos] + chr(char) + base[pos:] 
+        bias = adapt(delta</span><span class="s2">, </span><span class="s1">(extpos == </span><span class="s4">0</span><span class="s1">)</span><span class="s2">, </span><span class="s1">len(base)) 
+        extpos = newpos 
+    </span><span class="s2">return </span><span class="s1">base 
+ 
+</span><span class="s2">def </span><span class="s1">punycode_decode(text</span><span class="s2">, </span><span class="s1">errors): 
+    </span><span class="s2">if </span><span class="s1">isinstance(text</span><span class="s2">, </span><span class="s1">str): 
+        text = text.encode(</span><span class="s6">&quot;ascii&quot;</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">isinstance(text</span><span class="s2">, </span><span class="s1">memoryview): 
+        text = bytes(text) 
+    pos = text.rfind(</span><span class="s5">b&quot;-&quot;</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">pos == -</span><span class="s4">1</span><span class="s1">: 
+        base = </span><span class="s6">&quot;&quot;</span><span class="s1"> 
+        extended = str(text</span><span class="s2">, </span><span class="s6">&quot;ascii&quot;</span><span class="s1">).upper() 
+    </span><span class="s2">else</span><span class="s1">: 
+        base = str(text[:pos]</span><span class="s2">, </span><span class="s6">&quot;ascii&quot;</span><span class="s2">, </span><span class="s1">errors) 
+        extended = str(text[pos+</span><span class="s4">1</span><span class="s1">:]</span><span class="s2">, </span><span class="s6">&quot;ascii&quot;</span><span class="s1">).upper() 
+    </span><span class="s2">return </span><span class="s1">insertion_sort(base</span><span class="s2">, </span><span class="s1">extended</span><span class="s2">, </span><span class="s1">errors) 
+ 
+</span><span class="s3">### Codec APIs</span><span class="s1"> 
+ 
+</span><span class="s2">class </span><span class="s1">Codec(codecs.Codec): 
+ 
+    </span><span class="s2">def </span><span class="s1">encode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">errors=</span><span class="s6">'strict'</span><span class="s1">): 
+        res = punycode_encode(input) 
+        </span><span class="s2">return </span><span class="s1">res</span><span class="s2">, </span><span class="s1">len(input) 
+ 
+    </span><span class="s2">def </span><span class="s1">decode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">errors=</span><span class="s6">'strict'</span><span class="s1">): 
+        </span><span class="s2">if </span><span class="s1">errors </span><span class="s2">not in </span><span class="s1">(</span><span class="s6">'strict'</span><span class="s2">, </span><span class="s6">'replace'</span><span class="s2">, </span><span class="s6">'ignore'</span><span class="s1">): 
+            </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s6">&quot;Unsupported error handling &quot;</span><span class="s1">+errors) 
+        res = punycode_decode(input</span><span class="s2">, </span><span class="s1">errors) 
+        </span><span class="s2">return </span><span class="s1">res</span><span class="s2">, </span><span class="s1">len(input) 
+ 
+</span><span class="s2">class </span><span class="s1">IncrementalEncoder(codecs.IncrementalEncoder): 
+    </span><span class="s2">def </span><span class="s1">encode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">final=</span><span class="s2">False</span><span class="s1">): 
+        </span><span class="s2">return </span><span class="s1">punycode_encode(input) 
+ 
+</span><span class="s2">class </span><span class="s1">IncrementalDecoder(codecs.IncrementalDecoder): 
+    </span><span class="s2">def </span><span class="s1">decode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">final=</span><span class="s2">False</span><span class="s1">): 
+        </span><span class="s2">if </span><span class="s1">self.errors </span><span class="s2">not in </span><span class="s1">(</span><span class="s6">'strict'</span><span class="s2">, </span><span class="s6">'replace'</span><span class="s2">, </span><span class="s6">'ignore'</span><span class="s1">): 
+            </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s6">&quot;Unsupported error handling &quot;</span><span class="s1">+self.errors) 
+        </span><span class="s2">return </span><span class="s1">punycode_decode(input</span><span class="s2">, </span><span class="s1">self.errors) 
+ 
+</span><span class="s2">class </span><span class="s1">StreamWriter(Codec</span><span class="s2">,</span><span class="s1">codecs.StreamWriter): 
+    </span><span class="s2">pass</span><span class="s1"> 
+ 
+</span><span class="s2">class </span><span class="s1">StreamReader(Codec</span><span class="s2">,</span><span class="s1">codecs.StreamReader): 
+    </span><span class="s2">pass</span><span class="s1"> 
+ 
+</span><span class="s3">### encodings module API</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">getregentry(): 
+    </span><span class="s2">return </span><span class="s1">codecs.CodecInfo( 
+        name=</span><span class="s6">'punycode'</span><span class="s2">,</span><span class="s1"> 
+        encode=Codec().encode</span><span class="s2">,</span><span class="s1"> 
+        decode=Codec().decode</span><span class="s2">,</span><span class="s1"> 
+        incrementalencoder=IncrementalEncoder</span><span class="s2">,</span><span class="s1"> 
+        incrementaldecoder=IncrementalDecoder</span><span class="s2">,</span><span class="s1"> 
+        streamwriter=StreamWriter</span><span class="s2">,</span><span class="s1"> 
+        streamreader=StreamReader</span><span class="s2">,</span><span class="s1"> 
+    ) 
+</span></pre>
+</body>
+</html>

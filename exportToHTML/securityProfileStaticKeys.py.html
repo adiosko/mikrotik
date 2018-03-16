@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>securityProfileStaticKeys.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+securityProfileStaticKeys.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+</span><span class="s0">from </span><span class="s1">wireless </span><span class="s0">import </span><span class="s1">securityProfileSetGeneral 
+ 
+</span><span class="s0">class </span><span class="s1">securityProfileSetStaticKeys: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setKey0(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">keyValue</span><span class="s0">,</span><span class="s1">value): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset value 
+        :param name: 
+        :param keyValue: none,40-bit-wep,104bit-wep,aes-com,none,tkip 
+        :param value: hexa value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=static-algo0='</span><span class="s1">+keyValue</span><span class="s0">,</span><span class="s4">'=static-key-0='</span><span class="s1">+value]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setKey1(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">keyValue</span><span class="s0">,</span><span class="s1">value): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset value 
+        :param name: 
+        :param keyValue: none,40-bit-wep,104bit-wep,aes-com,none,tkip 
+        :param value: hexa value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=static-algo1='</span><span class="s1">+keyValue</span><span class="s0">,</span><span class="s4">'=static-key-1='</span><span class="s1">+value]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setKey2(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">keyValue</span><span class="s0">,</span><span class="s1">value): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset value 
+        :param name: 
+        :param keyValue: none,40-bit-wep,104bit-wep,aes-com,none,tkip 
+        :param value: hexa value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=static-algo2='</span><span class="s1">+keyValue</span><span class="s0">,</span><span class="s4">'=static-key-2='</span><span class="s1">+value]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setKey3(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">keyValue</span><span class="s0">,</span><span class="s1">value): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset value 
+        :param name: 
+        :param keyValue: none,40-bit-wep,104bit-wep,aes-com,none,tkip 
+        :param value: hexa value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=static-algo3='</span><span class="s1">+keyValue</span><span class="s0">,</span><span class="s4">'=static-key-3='</span><span class="s1">+value]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setTransmitKey(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">key=</span><span class="s4">&quot;key-0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param key:key-0,key-1,key-2,key-3 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( 
+            [</span><span class="s4">'/interface/wireless/security-profiles/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=static-transmit-key='</span><span class="s1">+key] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrivateKey(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">algo</span><span class="s0">,</span><span class="s1">value): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set private key 
+        :param name: 
+        :param algo: 
+        :param value: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/security-profile/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=static-sta-private-algo='</span><span class="s1">+algo</span><span class="s0">,</span><span class="s4">'=static-sta-private-key='</span><span class="s1">+value]) 
+        </span><span class="s0">return </span><span class="s1">wifi</span></pre>
+</body>
+</html>

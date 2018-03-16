@@ -1,0 +1,76 @@
+<html>
+<head>
+<title>WatchDog.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+WatchDog.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">WatchDog: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">, </span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">listWatchdogs(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all watchdogs 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wdg = self.client.talk([</span><span class="s4">'/system/watchdog/print'</span><span class="s1">]) 
+        print(wdg) 
+        </span><span class="s0">return </span><span class="s1">wdg 
+ 
+    </span><span class="s0">def </span><span class="s1">setWatchdog(self</span><span class="s0">,</span><span class="s1">watchAddr=</span><span class="s0">None,</span><span class="s1">watchTimer=</span><span class="s0">None,</span><span class="s1">NoPingDelay=</span><span class="s0">None,</span><span class="s1">autoSupport=</span><span class="s0">None,</span><span class="s1">autoSuppOut=</span><span class="s0">None</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set watchdogs 
+        :param watchAddr: address of watchdogs 
+        :param watchTimer: def yes yes/no 
+        :param NoPingDelay: def 5s 
+        :param autoSupport: yes def 
+        :param autoSuppOut: no default 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">watchAddr==</span><span class="s0">None or </span><span class="s1">watchTimer==</span><span class="s0">None or </span><span class="s1">NoPingDelay == </span><span class="s0">None or </span><span class="s1">autoSupport == </span><span class="s0">None or </span><span class="s1">autoSuppOut == </span><span class="s0">None</span><span class="s1">: 
+            print(</span><span class="s4">&quot;No parameter to setup&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            wdg = self.client.talk([</span><span class="s4">'/system/watchdog/set'</span><span class="s0">,</span><span class="s4">'=watch-address='</span><span class="s1">+watchAddr</span><span class="s0">,</span><span class="s4">'=watchdog-timer='</span><span class="s1">+watchTimer 
+                                    </span><span class="s0">,</span><span class="s4">'=no-ping-delay='</span><span class="s1">+NoPingDelay</span><span class="s0">,</span><span class="s4">'=automatic-supout='</span><span class="s1">+autoSupport</span><span class="s0">,</span><span class="s4">'=auto-send-supout='</span><span class="s1">+ 
+                                    autoSuppOut]) 
+        </span><span class="s0">return </span><span class="s1">wdg 
+ 
+    </span><span class="s0">def </span><span class="s1">setWatchdogEmail(self</span><span class="s0">,</span><span class="s1">EmailTo</span><span class="s0">,</span><span class="s1">EmailFrom): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will setup watchdog mail 
+        :param EmailTo: email to 
+        :param EmailFrom: email from 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wdg = self.client.talk([</span><span class="s4">'/system/watchdog/set'</span><span class="s0">,</span><span class="s4">'=send-email-to='</span><span class="s1">+EmailTo</span><span class="s0">,</span><span class="s4">'=send-email-from='</span><span class="s1">+EmailFrom]) 
+        </span><span class="s0">return </span><span class="s1">wdg 
+ 
+    </span><span class="s0">def </span><span class="s1">setSMTPServer(self</span><span class="s0">,</span><span class="s1">smtpServer): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will setup SNMP server 
+        :param snmpServer: IP of server 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wdg = self.client.talk([</span><span class="s4">'/system/watchdog/set'</span><span class="s0">,</span><span class="s4">'=send-smtp-server='</span><span class="s1">+smtpServer]) 
+        </span><span class="s0">return </span><span class="s1">wdg 
+</span></pre>
+</body>
+</html>

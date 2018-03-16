@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>ImDib.h</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ImDib.h</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">/* 
+ * The Python Imaging Library 
+ * $Id$ 
+ * 
+ * Windows DIB specifics 
+ * 
+ * Copyright (c) Secret Labs AB 1997-98. 
+ * Copyright (c) Fredrik Lundh 1996. 
+ * 
+ * See the README file for information on usage and redistribution. 
+ */</span><span class="s1"> 
+ 
+</span><span class="s2">#ifdef </span><span class="s1">_WIN32 
+ 
+</span><span class="s2">#include </span><span class="s3">&quot;ImPlatform.h&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">#if </span><span class="s1">defined(__cplusplus) 
+</span><span class="s2">extern </span><span class="s3">&quot;C&quot; </span><span class="s1">{ 
+</span><span class="s2">#endif</span><span class="s1"> 
+ 
+</span><span class="s2">struct </span><span class="s1">ImagingDIBInstance { 
+    </span><span class="s0">/* Windows interface */</span><span class="s1"> 
+    HDC dc; 
+    HBITMAP bitmap; 
+    HGDIOBJ old_bitmap; 
+    BITMAPINFO *info; 
+    UINT8 *bits; 
+    HPALETTE palette; 
+    </span><span class="s0">/* Used by cut and paste */</span><span class="s1"> 
+    </span><span class="s2">char </span><span class="s1">mode[</span><span class="s4">4</span><span class="s1">]; 
+    </span><span class="s2">int </span><span class="s1">xsize, ysize; 
+    </span><span class="s2">int </span><span class="s1">pixelsize; 
+    </span><span class="s2">int </span><span class="s1">linesize; 
+    ImagingShuffler pack; 
+    ImagingShuffler unpack; 
+}; 
+ 
+</span><span class="s2">typedef struct </span><span class="s1">ImagingDIBInstance* ImagingDIB; 
+ 
+</span><span class="s2">extern char</span><span class="s1">* ImagingGetModeDIB(</span><span class="s2">int </span><span class="s1">size_out[</span><span class="s4">2</span><span class="s1">]); 
+ 
+</span><span class="s2">extern </span><span class="s1">ImagingDIB ImagingNewDIB(</span><span class="s2">const char </span><span class="s1">*mode, </span><span class="s2">int </span><span class="s1">xsize, </span><span class="s2">int </span><span class="s1">ysize); 
+ 
+</span><span class="s2">extern void </span><span class="s1">ImagingDeleteDIB(ImagingDIB im); 
+ 
+</span><span class="s2">extern void </span><span class="s1">ImagingDrawDIB(ImagingDIB dib, </span><span class="s2">void </span><span class="s1">*dc, </span><span class="s2">int </span><span class="s1">dst[</span><span class="s4">4</span><span class="s1">], </span><span class="s2">int </span><span class="s1">src[</span><span class="s4">4</span><span class="s1">]); 
+</span><span class="s2">extern void </span><span class="s1">ImagingExposeDIB(ImagingDIB dib, </span><span class="s2">void </span><span class="s1">*dc); 
+ 
+</span><span class="s2">extern int </span><span class="s1">ImagingQueryPaletteDIB(ImagingDIB dib, </span><span class="s2">void </span><span class="s1">*dc); 
+ 
+</span><span class="s2">extern void </span><span class="s1">ImagingPasteDIB(ImagingDIB dib, Imaging im, </span><span class="s2">int </span><span class="s1">xy[</span><span class="s4">4</span><span class="s1">]); 
+ 
+</span><span class="s2">#if </span><span class="s1">defined(__cplusplus) 
+} 
+</span><span class="s2">#endif</span><span class="s1"> 
+ 
+</span><span class="s2">#endif</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<html>
+<head>
+<title>RoMon.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+RoMon.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">RoMon: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setSecrets(self</span><span class="s0">,</span><span class="s1">secret): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set romon secrte 
+        :param secret: password to romon 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/set'</span><span class="s0">,</span><span class="s4">'=secrets='</span><span class="s1">+secret</span><span class="s0">,</span><span class="s4">'=enabled=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">setId(self</span><span class="s0">,</span><span class="s1">ID): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable romon mode with id MAC address 
+        :param ID: mac address 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk( [</span><span class="s4">'/tool/romon/set'</span><span class="s0">, </span><span class="s4">'=secrets=' </span><span class="s1">+ ID</span><span class="s0">, </span><span class="s4">'=enabled=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">disableRomon(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable romon mode 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/set'</span><span class="s0">,</span><span class="s4">'=enabled=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">listRomon(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list romon settings 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/print'</span><span class="s1">]) 
+        print(romon) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">listRomonPorts(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list romon ports 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/port/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">romon == {}: 
+            print(</span><span class="s4">&quot;No romon port set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">forbid</span><span class="s0">\t</span><span class="s4">cost&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">romon: 
+                print(romon[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+romon[i][</span><span class="s4">'forbid'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+romon[i][</span><span class="s4">'cost'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">addRomonPort(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">forbid</span><span class="s0">,</span><span class="s1">cost): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set romon port 
+        :param interface: interface to set 
+        :param forbid: def no otherwise yes 
+        :param cost: 100 def 
+        :param secret: optional 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/port/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface</span><span class="s0">,</span><span class="s4">'=forbid='</span><span class="s1">+forbid 
+                                  </span><span class="s0">,</span><span class="s4">'=cost='</span><span class="s1">+cost]) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">addRomonPortWithPassword(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">forbid</span><span class="s0">,</span><span class="s1">cost</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add romon port with password 
+        :param interface: interface to set 
+        :param forbid: yes/no 
+        :param cost: cost of port 
+        :param password: password 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/port/add'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=forbid=' </span><span class="s1">+ forbid</span><span class="s0">, </span><span class="s4">'=cost=' </span><span class="s1">+ cost 
+                </span><span class="s0">, </span><span class="s4">'=secret=' </span><span class="s1">+ password] ) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">removeRomonPort(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove romon port 
+        :param number: mum,ber of port 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/port/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">enableRomonPort(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable romon port 
+        :param number: number of romon port 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/port/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">disableROmonPort(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable romon port 
+        :param number: numbe rof port in use 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk( [</span><span class="s4">'/tool/romon/port/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">commentPortSetup(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment romon port config 
+        :param number: number in order 
+        :param comment: comment 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/port/comment'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment]) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">listRomonDiscoveryDevices(self</span><span class="s0">,</span><span class="s1">duration): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        To run this method romon must be running 
+        :param duration: length of discovery 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/discover'</span><span class="s0">,</span><span class="s4">'=duration='</span><span class="s1">+duration]) 
+        </span><span class="s0">if </span><span class="s1">romon == {}: 
+            print(</span><span class="s4">&quot;No romon device found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(romon) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+    </span><span class="s0">def </span><span class="s1">romonMacPing(self</span><span class="s0">,</span><span class="s1">ID</span><span class="s0">,</span><span class="s1">packetSize</span><span class="s0">,</span><span class="s1">intervalInMilis</span><span class="s0">,</span><span class="s1">count): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will use macping to verify connectivity of device 
+        :param ID: mac address of device 
+        :param packetSize: packet size normaly 32 b 
+        :param intervalInMilis: normally 1000 ms 
+        :param count: number of packets 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        romon = self.client.talk([</span><span class="s4">'/tool/romon/ping'</span><span class="s0">,</span><span class="s4">'=id='</span><span class="s1">+ID</span><span class="s0">,</span><span class="s4">'=size='</span><span class="s1">+packetSize</span><span class="s0">,</span><span class="s4">'=interval='</span><span class="s1">+intervalInMilis 
+                                  </span><span class="s0">,</span><span class="s4">'=count='</span><span class="s1">+count]) 
+        </span><span class="s0">return </span><span class="s1">romon 
+ 
+</span></pre>
+</body>
+</html>

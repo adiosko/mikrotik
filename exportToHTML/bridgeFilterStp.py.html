@@ -1,0 +1,154 @@
+<html>
+<head>
+<title>bridgeFilterStp.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+bridgeFilterStp.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">bridgeNatStp: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setType(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">stp=</span><span class="s3">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set type of stp 
+        :param number: 
+        :param stp:config,tcn 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk([</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s3">'=stp-type='</span><span class="s1">+stp]) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+    </span><span class="s0">def </span><span class="s1">setFlags(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">stp=</span><span class="s3">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set type of stp 
+        :param number: 
+        :param stp:config,tcn 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk( [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-flags=' </span><span class="s1">+ stp] ) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+    </span><span class="s0">def </span><span class="s1">setArpRootAddress(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">mac</span><span class="s0">, </span><span class="s1">mask): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set arp hw type 
+        :param number: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        arp = self.client.talk( 
+            [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-root-address=' </span><span class="s1">+ mac + </span><span class="s3">&quot;/&quot; </span><span class="s1">+ mask] ) 
+        </span><span class="s0">return </span><span class="s1">arp 
+ 
+    </span><span class="s0">def </span><span class="s1">setRootCost(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">cost=</span><span class="s3">&quot;0-4294967295&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset root cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk( [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-root-cost=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+    </span><span class="s0">def </span><span class="s1">setStpSenderAddress(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">mac</span><span class="s0">, </span><span class="s1">mask): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set arp hw type 
+        :param number: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        arp = self.client.talk( 
+            [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-sender-address=' </span><span class="s1">+ mac + </span><span class="s3">&quot;/&quot; </span><span class="s1">+ mask] ) 
+        </span><span class="s0">return </span><span class="s1">arp 
+ 
+    </span><span class="s0">def </span><span class="s1">setStpPort(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">cost=</span><span class="s3">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset root cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk( [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-port=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+    </span><span class="s0">def </span><span class="s1">setStpRootPriority(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">cost=</span><span class="s3">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset root cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk( [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-root-priority=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+    </span><span class="s0">def </span><span class="s1">setStpSenderPriority(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">cost=</span><span class="s3">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset root cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk( [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-sender-priority=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+    </span><span class="s0">def </span><span class="s1">setStpMsgAge(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">cost=</span><span class="s3">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset root cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk( [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-msg-age=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+    </span><span class="s0">def </span><span class="s1">setStpMaxAge(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">cost=</span><span class="s3">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset root cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk( [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-max-age=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+    </span><span class="s0">def </span><span class="s1">setStpHelloInterval(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">cost=</span><span class="s3">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset root cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk( [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-hello-time=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+    </span><span class="s0">def </span><span class="s1">setStpForwardDelay(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">cost=</span><span class="s3">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset root cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        stp = self.client.talk( [</span><span class="s3">'/interface/bridge/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=stp-forward-delay=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">stp 
+ 
+ 
+</span></pre>
+</body>
+</html>

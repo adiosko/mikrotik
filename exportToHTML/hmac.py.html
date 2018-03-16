@@ -1,0 +1,169 @@
+<html>
+<head>
+<title>hmac.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(104,151,187); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(106,135,89); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+hmac.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;HMAC (Keyed-Hashing for Message Authentication) Python module. 
+ 
+Implements the HMAC algorithm as described by RFC 2104. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">warnings </span><span class="s2">as </span><span class="s1">_warnings 
+</span><span class="s2">from </span><span class="s1">_operator </span><span class="s2">import </span><span class="s1">_compare_digest </span><span class="s2">as </span><span class="s1">compare_digest 
+</span><span class="s2">import </span><span class="s1">hashlib </span><span class="s2">as </span><span class="s1">_hashlib 
+ 
+trans_5C = bytes((x ^ </span><span class="s3">0x5C</span><span class="s1">) </span><span class="s2">for </span><span class="s1">x </span><span class="s2">in </span><span class="s1">range(</span><span class="s3">256</span><span class="s1">)) 
+trans_36 = bytes((x ^ </span><span class="s3">0x36</span><span class="s1">) </span><span class="s2">for </span><span class="s1">x </span><span class="s2">in </span><span class="s1">range(</span><span class="s3">256</span><span class="s1">)) 
+ 
+</span><span class="s4"># The size of the digests returned by HMAC depends on the underlying</span><span class="s1"> 
+</span><span class="s4"># hashing module used.  Use digest_size from the instance of HMAC instead.</span><span class="s1"> 
+digest_size = </span><span class="s2">None</span><span class="s1"> 
+ 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">HMAC: 
+    </span><span class="s0">&quot;&quot;&quot;RFC 2104 HMAC class.  Also complies with RFC 4231. 
+ 
+    This supports the API for Cryptographic Hash Functions (PEP 247). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    blocksize = </span><span class="s3">64  </span><span class="s4"># 512-bit HMAC; can be changed in subclasses.</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">msg = </span><span class="s2">None, </span><span class="s1">digestmod = </span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Create a new HMAC object. 
+ 
+        key:       key for the keyed hash object. 
+        msg:       Initial input for the hash, if provided. 
+        digestmod: A module supporting PEP 247.  *OR* 
+                   A hashlib constructor returning a new hash object. *OR* 
+                   A hash name suitable for hashlib.new(). 
+                   Defaults to hashlib.md5. 
+                   Implicit default to hashlib.md5 is deprecated and will be 
+                   removed in Python 3.6. 
+ 
+        Note: key and msg must be a bytes or bytearray objects. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s2">if not </span><span class="s1">isinstance(key</span><span class="s2">, </span><span class="s1">(bytes</span><span class="s2">, </span><span class="s1">bytearray)): 
+            </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s5">&quot;key: expected bytes or bytearray, but got %r&quot; </span><span class="s1">% type(key).__name__) 
+ 
+        </span><span class="s2">if </span><span class="s1">digestmod </span><span class="s2">is None</span><span class="s1">: 
+            _warnings.warn(</span><span class="s5">&quot;HMAC() without an explicit digestmod argument &quot;</span><span class="s1"> 
+                           </span><span class="s5">&quot;is deprecated.&quot;</span><span class="s2">, </span><span class="s1">PendingDeprecationWarning</span><span class="s2">, </span><span class="s3">2</span><span class="s1">) 
+            digestmod = _hashlib.md5 
+ 
+        </span><span class="s2">if </span><span class="s1">callable(digestmod): 
+            self.digest_cons = digestmod 
+        </span><span class="s2">elif </span><span class="s1">isinstance(digestmod</span><span class="s2">, </span><span class="s1">str): 
+            self.digest_cons = </span><span class="s2">lambda </span><span class="s1">d=</span><span class="s6">b''</span><span class="s1">: _hashlib.new(digestmod</span><span class="s2">, </span><span class="s1">d) 
+        </span><span class="s2">else</span><span class="s1">: 
+            self.digest_cons = </span><span class="s2">lambda </span><span class="s1">d=</span><span class="s6">b''</span><span class="s1">: digestmod.new(d) 
+ 
+        self.outer = self.digest_cons() 
+        self.inner = self.digest_cons() 
+        self.digest_size = self.inner.digest_size 
+ 
+        </span><span class="s2">if </span><span class="s1">hasattr(self.inner</span><span class="s2">, </span><span class="s5">'block_size'</span><span class="s1">): 
+            blocksize = self.inner.block_size 
+            </span><span class="s2">if </span><span class="s1">blocksize &lt; </span><span class="s3">16</span><span class="s1">: 
+                _warnings.warn(</span><span class="s5">'block_size of %d seems too small; using our '</span><span class="s1"> 
+                               </span><span class="s5">'default of %d.' </span><span class="s1">% (blocksize</span><span class="s2">, </span><span class="s1">self.blocksize)</span><span class="s2">,</span><span class="s1"> 
+                               RuntimeWarning</span><span class="s2">, </span><span class="s3">2</span><span class="s1">) 
+                blocksize = self.blocksize 
+        </span><span class="s2">else</span><span class="s1">: 
+            _warnings.warn(</span><span class="s5">'No block_size attribute on given digest object; '</span><span class="s1"> 
+                           </span><span class="s5">'Assuming %d.' </span><span class="s1">% (self.blocksize)</span><span class="s2">,</span><span class="s1"> 
+                           RuntimeWarning</span><span class="s2">, </span><span class="s3">2</span><span class="s1">) 
+            blocksize = self.blocksize 
+ 
+        </span><span class="s4"># self.blocksize is the default blocksize. self.block_size is</span><span class="s1"> 
+        </span><span class="s4"># effective block size as well as the public API attribute.</span><span class="s1"> 
+        self.block_size = blocksize 
+ 
+        </span><span class="s2">if </span><span class="s1">len(key) &gt; blocksize: 
+            key = self.digest_cons(key).digest() 
+ 
+        key = key + bytes(blocksize - len(key)) 
+        self.outer.update(key.translate(trans_5C)) 
+        self.inner.update(key.translate(trans_36)) 
+        </span><span class="s2">if </span><span class="s1">msg </span><span class="s2">is not None</span><span class="s1">: 
+            self.update(msg) 
+ 
+    @property 
+    </span><span class="s2">def </span><span class="s1">name(self): 
+        </span><span class="s2">return </span><span class="s5">&quot;hmac-&quot; </span><span class="s1">+ self.inner.name 
+ 
+    </span><span class="s2">def </span><span class="s1">update(self</span><span class="s2">, </span><span class="s1">msg): 
+        </span><span class="s0">&quot;&quot;&quot;Update this hashing object with the string msg. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.inner.update(msg) 
+ 
+    </span><span class="s2">def </span><span class="s1">copy(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return a separate copy of this hashing object. 
+ 
+        An update to this copy won't affect the original object. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4"># Call __new__ directly to avoid the expensive __init__.</span><span class="s1"> 
+        other = self.__class__.__new__(self.__class__) 
+        other.digest_cons = self.digest_cons 
+        other.digest_size = self.digest_size 
+        other.inner = self.inner.copy() 
+        other.outer = self.outer.copy() 
+        </span><span class="s2">return </span><span class="s1">other 
+ 
+    </span><span class="s2">def </span><span class="s1">_current(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return a hash object for the current state. 
+ 
+        To be used only internally with digest() and hexdigest(). 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        h = self.outer.copy() 
+        h.update(self.inner.digest()) 
+        </span><span class="s2">return </span><span class="s1">h 
+ 
+    </span><span class="s2">def </span><span class="s1">digest(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return the hash value of this hashing object. 
+ 
+        This returns a string containing 8-bit data.  The object is 
+        not altered in any way by this function; you can continue 
+        updating the object after calling this function. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        h = self._current() 
+        </span><span class="s2">return </span><span class="s1">h.digest() 
+ 
+    </span><span class="s2">def </span><span class="s1">hexdigest(self): 
+        </span><span class="s0">&quot;&quot;&quot;Like digest(), but returns a string of hexadecimal digits instead. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        h = self._current() 
+        </span><span class="s2">return </span><span class="s1">h.hexdigest() 
+ 
+</span><span class="s2">def </span><span class="s1">new(key</span><span class="s2">, </span><span class="s1">msg = </span><span class="s2">None, </span><span class="s1">digestmod = </span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Create a new hashing object and return it. 
+ 
+    key: The starting key for the hash. 
+    msg: if available, will immediately be hashed into the object's starting 
+    state. 
+ 
+    You can now feed arbitrary strings into the object using its update() 
+    method, and can ask for the hash value at any time by calling its digest() 
+    method. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">HMAC(key</span><span class="s2">, </span><span class="s1">msg</span><span class="s2">, </span><span class="s1">digestmod) 
+</span></pre>
+</body>
+</html>

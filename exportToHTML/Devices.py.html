@@ -1,0 +1,149 @@
+<html>
+<head>
+<title>Devices.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Devices.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Devices: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listDudeDevices(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all dude devices 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dev = self.client.talk([</span><span class="s4">'/dude/device/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">dev == {}: 
+            print(</span><span class="s4">&quot;No dude device found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">dev: 
+                print(dev[i][</span><span class="s4">'name'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">dev 
+ 
+    </span><span class="s0">def </span><span class="s1">addDudeDevice(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add device to Dude by its name 
+        :param name:  name of the device u wanna add 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dev = self.client.talk([</span><span class="s4">'/dude/device/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">dev 
+ 
+    </span><span class="s0">def </span><span class="s1">setDudeDevice(self</span><span class="s0">,</span><span class="s1">orderNoOfDevice</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename DUde device 
+        :param orderNoOfDevice: order Number of device 
+        :param name: new name of device 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dev = self.client.talk([</span><span class="s4">'/dude/device/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+orderNoOfDevice</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">dev 
+ 
+    </span><span class="s0">def </span><span class="s1">removeDevice(self</span><span class="s0">,</span><span class="s1">deviceNumber): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove device by its number 
+        :param deviceNumber: number of device to remove (from bottom 0 to up) 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dev = self.client.talk([</span><span class="s4">'/dude/device/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+deviceNumber]) 
+        </span><span class="s0">return </span><span class="s1">dev 
+ 
+    </span><span class="s0">def </span><span class="s1">listDeviceTypes(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all device types 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dev = self.client.talk([</span><span class="s4">'/dude/device-type/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">dev == {}: 
+            print(</span><span class="s4">&quot;No device type found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">dev: 
+                print(dev[i][</span><span class="s4">'name'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">dev 
+ 
+    </span><span class="s0">def </span><span class="s1">addDeviceType(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add new device type 
+        :param name: name of new type of device 
+        :param image: image name: none or list of images or custom image 
+        :param scale: number (1-N) 
+        :param url: url of image 
+        :param requested: cpu,dik,dns,ftp, gother, hp jedirect, http, imap4, memory, mikrotik, netbios, nntp, ping, pop3, 
+        printer, radius, rnd 50:50, router, routeros-management, smt, ssh, switch, tcp-echo, telnet, time, virtual-memory, 
+        windows 
+        :param allowed:cpu,dik,dns,ftp, gother, hp jedirect, http, imap4, memory, mikrotik, netbios, nntp, ping, pop3, 
+        printer, radius, rnd 50:50, router, routeros-management, smt, ssh, switch, tcp-echo, telnet, time, virtual-memory, 
+        windows 
+        :param ignored:cpu,dik,dns,ftp, gother, hp jedirect, http, imap4, memory, mikrotik, netbios, nntp, ping, pop3, 
+        printer, radius, rnd 50:50, router, routeros-management, smt, ssh, switch, tcp-echo, telnet, time, virtual-memory, 
+        windows 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dev = self.client.talk([</span><span class="s4">'/dude/device-type/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">dev 
+ 
+    </span><span class="s0">def </span><span class="s1">removeDeviceType(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove device by its name 
+        :param name: name of  device type to remove 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dev = self.client.talk([</span><span class="s4">'/dude/device-type/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">dev 
+ 
+    </span><span class="s0">def </span><span class="s1">setDudeDeviceType(self</span><span class="s0">, </span><span class="s1">orderNoOfDevice</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename DUde device-type 
+        :param orderNoOfDevice: order Number of device 
+        :param name: new name of device 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dev = self.client.talk( [</span><span class="s4">'/dude/device-type/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ orderNoOfDevice</span><span class="s0">, </span><span class="s4">'=name=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">dev 
+ 
+    </span><span class="s0">def </span><span class="s1">listDeviceGroup(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list device groups, not aplicable via api 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">pass</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">listMACMapping(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all mac mapping, not aplicable via api 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+</span></pre>
+</body>
+</html>

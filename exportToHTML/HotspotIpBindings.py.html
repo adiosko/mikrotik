@@ -1,0 +1,139 @@
+<html>
+<head>
+<title>HotspotIpBindings.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+HotspotIpBindings.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">HotspotIpBinding: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listBindings(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list ip bindings 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk([</span><span class="s4">'/ip/hotspot/ip-binding/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">hotspot == {}: 
+            print(</span><span class="s4">&quot;No binding found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;MAC</span><span class="s0">\t</span><span class="s4">Server&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">hotspot: 
+                print(hotspot[i][</span><span class="s4">'mac-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+hotspot[i][</span><span class="s4">'address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+hotspot[i][</span><span class="s4">'to-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+hotspot[i][</span><span class="s4">'server'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">addBinding(self</span><span class="s0">,</span><span class="s1">mac): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add binding 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/add'</span><span class="s0">,</span><span class="s4">'=mac-address='</span><span class="s1">+mac] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">removeBinding(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove binding 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">enableBinding(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">disableBinding(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable binding 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">commentBinding(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment binding 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setMac(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mac): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mac address 
+        :param number: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=mac-address='</span><span class="s1">+mac] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address 
+        :param name: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+address] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setToAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set translation address 
+        :param number: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=to-address='</span><span class="s1">+address] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setServer(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">server=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set server 
+        :param name: 
+        :param server: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=server=' </span><span class="s1">+ server] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setType(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">service=</span><span class="s4">&quot;regular&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set type f service 
+        :param number: 
+        :param service:regular,blocked,bypass 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/ip-binding/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=type=' </span><span class="s1">+ service] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+</span></pre>
+</body>
+</html>

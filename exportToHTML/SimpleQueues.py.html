@@ -1,0 +1,335 @@
+<html>
+<head>
+<title>SimpleQueues.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+SimpleQueues.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">SimpleQueues: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listSimpleQueues(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all simple queues 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/simple/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">queue == {}: 
+            print(</span><span class="s4">&quot;No queue found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">Target</span><span class="s0">\t</span><span class="s4">Packet-mark</span><span class="s0">\t</span><span class="s4">Max-limit&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">queue: 
+                print(queue[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+queue[i][</span><span class="s4">'target'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+queue[i][</span><span class="s4">'packet-marks'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1"> 
+                      +queue[i][</span><span class="s4">'max-limit'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">addQueue(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add new simple queue 
+        :param interface: interface to put 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/simple/add'</span><span class="s0">,</span><span class="s4">'=target='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">removeQueue(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove simple queue 
+        :param name: name of queue 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/queue/simple/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">enableQueue(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable simple queue 
+        :param name: name of queue 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">disableQueue(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable queue 
+        :param name: name of queue to disable 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">commentQueue(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment queue 
+        :param name: name of queue to comment 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">Name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set name of current queue 
+        :param name: 
+        :param Name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+Name] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setTarget(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">target): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new target 
+        :param name: 
+        :param target: address or interface 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=target=' </span><span class="s1">+ target] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setDestination(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">destination): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set destionation on queue 
+        :param name: 
+        :param destination: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=dst=' </span><span class="s1">+ destination] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxlimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">download=</span><span class="s4">&quot;unlimited&quot;</span><span class="s0">,</span><span class="s1">uplaod=</span><span class="s4">&quot;unlimited&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max down uplaod 
+        :param name: 
+        :param download: 64k,128k,256k,384k,512k,768k,1M,2M,3M,4M,5M,10M 
+        :param uplaod:64k,128k,256k,384k,512k,768k,1M,2M,3M,4M,5M,10M 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=max-limit=' </span><span class="s1">+ uplaod + </span><span class="s4">&quot;/&quot;</span><span class="s1">+ download] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setBurstLimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">upload=</span><span class="s4">&quot;unlimited&quot;</span><span class="s0">,</span><span class="s1">download=</span><span class="s4">&quot;unlimited&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Merhod will set bust limit uplaod download 
+        :param name: 
+        :param upload: 
+        :param download: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=burst-limit=' </span><span class="s1">+ upload + </span><span class="s4">&quot;/&quot;</span><span class="s1"> 
+                                   + download] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setBurstTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">upload=</span><span class="s4">&quot;0&quot;</span><span class="s0">,</span><span class="s1">download=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set upload and download for burst 
+        :param name: 
+        :param upload: in secs 
+        :param download: in secs 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=burst-time=' </span><span class="s1">+ upload + </span><span class="s4">&quot;/&quot;</span><span class="s1"> 
+                                   + download] ) 
+ 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setBurstThreshold(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">download=</span><span class="s4">&quot;unlimited&quot;</span><span class="s0">,</span><span class="s1">upload=</span><span class="s4">&quot;unlimited&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set burst threshold for download uplaod 
+        :param name: 
+        :param download: 
+        :param upload: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=burst-threshold=' </span><span class="s1">+ upload + </span><span class="s4">&quot;/&quot;</span><span class="s1"> 
+                                   + download] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+    </span><span class="s0">def </span><span class="s1">setTimeandDays(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">days</span><span class="s0">,</span><span class="s1">startTime=</span><span class="s4">&quot;00:00:00&quot;</span><span class="s0">,</span><span class="s1">endTime=</span><span class="s4">&quot;1d00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set queue time 
+        :param name: 
+        :param startTime: 
+        :param endTime: 
+        :param days: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=time=' </span><span class="s1">+ startTime + </span><span class="s4">&quot;-&quot; </span><span class="s1">+ endTime 
+                                   +</span><span class="s4">&quot;,&quot;</span><span class="s1">+days] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s5">#Advanced</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setPacketMArk(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mark): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set packet mark 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=packet-marks=' </span><span class="s1">+ mark] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setLimitAt(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">upload=</span><span class="s4">&quot;unlimited&quot;</span><span class="s0">,</span><span class="s1">download=</span><span class="s4">&quot;unlimited&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set limitations 
+        :param name: 
+        :param upload: 
+        :param download: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=limit-at=' </span><span class="s1">+upload+</span><span class="s4">&quot;/&quot;</span><span class="s1">+download] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriority(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">upload=</span><span class="s4">&quot;8&quot;</span><span class="s0">,</span><span class="s1">download=</span><span class="s4">&quot;8&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set queue priority 
+        :param name: 
+        :param upload: 
+        :param download: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=priority=' </span><span class="s1">+upload+</span><span class="s4">&quot;/&quot;</span><span class="s1">+download] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setBucketSize(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">upload=</span><span class="s4">&quot;0.100&quot;</span><span class="s0">,</span><span class="s1">download=</span><span class="s4">&quot;0.100&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bucket size 
+        :param name: 
+        :param upload: 
+        :param download: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=bucket-size=' </span><span class="s1">+upload+</span><span class="s4">&quot;/&quot;</span><span class="s1">+download] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setQueueType(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">download=</span><span class="s4">&quot;default-small&quot;</span><span class="s0">,</span><span class="s1">upload=</span><span class="s4">&quot;default-small&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set queue type 
+        :param name: 
+        :param download: default,default-small,ethernet-default,hotspot-default, multi-queue-ethernet-default, 
+        only-hardware-queue,pcq-download-default , pcq-upload-default, synchronous-default, wireless-default 
+        :param upload: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=queue=' </span><span class="s1">+ upload + </span><span class="s4">&quot;/&quot; </span><span class="s1">+ download] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setParent(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">parent): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set parent of queue 
+        :param name: 
+        :param parent:  none o r queue name 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=parent=' </span><span class="s1">+ parent] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setTotalLimitAt(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">limit): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set total limux, less then max limit 
+        :param name: 
+        :param limit: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=total-limit-at=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setTotalMaxLimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">limit): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Metjod will set max limit must be bigger then limit at 
+        :param name: 
+        :param limit: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=total-max-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setTotalPriority(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">priority): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set total priority 
+        :param name: 
+        :param priority: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=total-priority=' </span><span class="s1">+ priority] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setTotalBurstTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">time): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set total burst time, must be set before total busrt limit 
+        :param name: 
+        :param time: in secs 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=total-burst-time=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setTotalBurstThreshold(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">threshold): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set total threshold 
+        :param name: 
+        :param threshold: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=total-burst-threshold=' </span><span class="s1">+ threshold] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setTotalBurstLimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">limit): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set total limit, must be more then toal max limit 
+        :param name: 
+        :param limit: max limit 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=total-burst-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">setTotalQueueType(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">type): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set total queue type 
+        :param name: 
+        :param type:default,default-small,ethernet-default,hotspot-default, multi-queue-ethernet-default, 
+        only-hardware-queue,pcq-download-default , pcq-upload-default, synchronous-default, wireless-default 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=total-queue=' </span><span class="s1">+ type] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">resetCounters(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rest counters for simple queue 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/reset-counters'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">resetAllCounters(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reset all counters 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk( [</span><span class="s4">'/queue/simple/reset-counters-all'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">queue</span></pre>
+</body>
+</html>

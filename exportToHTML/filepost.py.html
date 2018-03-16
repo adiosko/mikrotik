@@ -1,0 +1,119 @@
+<html>
+<head>
+<title>filepost.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(104,151,187); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(128,128,128); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+filepost.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+</span><span class="s0">import </span><span class="s1">codecs 
+ 
+</span><span class="s0">from </span><span class="s1">uuid </span><span class="s0">import </span><span class="s1">uuid4 
+</span><span class="s0">from </span><span class="s1">io </span><span class="s0">import </span><span class="s1">BytesIO 
+ 
+</span><span class="s0">from </span><span class="s1">.packages </span><span class="s0">import </span><span class="s1">six 
+</span><span class="s0">from </span><span class="s1">.packages.six </span><span class="s0">import </span><span class="s1">b 
+</span><span class="s0">from </span><span class="s1">.fields </span><span class="s0">import </span><span class="s1">RequestField 
+ 
+writer = codecs.lookup(</span><span class="s2">'utf-8'</span><span class="s1">)[</span><span class="s3">3</span><span class="s1">] 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">choose_boundary(): 
+    </span><span class="s4">&quot;&quot;&quot; 
+    Our embarassingly-simple replacement for mimetools.choose_boundary. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">return </span><span class="s1">uuid4().hex 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">iter_field_objects(fields): 
+    </span><span class="s4">&quot;&quot;&quot; 
+    Iterate over fields. 
+ 
+    Supports list of (k, v) tuples and dicts, and lists of 
+    :class:`~urllib3.fields.RequestField`. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">if </span><span class="s1">isinstance(fields</span><span class="s0">, </span><span class="s1">dict): 
+        i = six.iteritems(fields) 
+    </span><span class="s0">else</span><span class="s1">: 
+        i = iter(fields) 
+ 
+    </span><span class="s0">for </span><span class="s1">field </span><span class="s0">in </span><span class="s1">i: 
+        </span><span class="s0">if </span><span class="s1">isinstance(field</span><span class="s0">, </span><span class="s1">RequestField): 
+            </span><span class="s0">yield </span><span class="s1">field 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">yield </span><span class="s1">RequestField.from_tuples(*field) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">iter_fields(fields): 
+    </span><span class="s4">&quot;&quot;&quot; 
+    .. deprecated:: 1.6 
+ 
+    Iterate over fields. 
+ 
+    The addition of :class:`~urllib3.fields.RequestField` makes this function 
+    obsolete. Instead, use :func:`iter_field_objects`, which returns 
+    :class:`~urllib3.fields.RequestField` objects. 
+ 
+    Supports list of (k, v) tuples and dicts. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">if </span><span class="s1">isinstance(fields</span><span class="s0">, </span><span class="s1">dict): 
+        </span><span class="s0">return </span><span class="s1">((k</span><span class="s0">, </span><span class="s1">v) </span><span class="s0">for </span><span class="s1">k</span><span class="s0">, </span><span class="s1">v </span><span class="s0">in </span><span class="s1">six.iteritems(fields)) 
+ 
+    </span><span class="s0">return </span><span class="s1">((k</span><span class="s0">, </span><span class="s1">v) </span><span class="s0">for </span><span class="s1">k</span><span class="s0">, </span><span class="s1">v </span><span class="s0">in </span><span class="s1">fields) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">encode_multipart_formdata(fields</span><span class="s0">, </span><span class="s1">boundary=</span><span class="s0">None</span><span class="s1">): 
+    </span><span class="s4">&quot;&quot;&quot; 
+    Encode a dictionary of ``fields`` using the multipart/form-data MIME format. 
+ 
+    :param fields: 
+        Dictionary of fields or list of (key, :class:`~urllib3.fields.RequestField`). 
+ 
+    :param boundary: 
+        If not specified, then a random boundary will be generated using 
+        :func:`mimetools.choose_boundary`. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    body = BytesIO() 
+    </span><span class="s0">if </span><span class="s1">boundary </span><span class="s0">is None</span><span class="s1">: 
+        boundary = choose_boundary() 
+ 
+    </span><span class="s0">for </span><span class="s1">field </span><span class="s0">in </span><span class="s1">iter_field_objects(fields): 
+        body.write(b(</span><span class="s2">'--%s</span><span class="s0">\r\n</span><span class="s2">' </span><span class="s1">% (boundary))) 
+ 
+        writer(body).write(field.render_headers()) 
+        data = field.data 
+ 
+        </span><span class="s0">if </span><span class="s1">isinstance(data</span><span class="s0">, </span><span class="s1">int): 
+            data = str(data)  </span><span class="s5"># Backwards compatibility</span><span class="s1"> 
+ 
+        </span><span class="s0">if </span><span class="s1">isinstance(data</span><span class="s0">, </span><span class="s1">six.text_type): 
+            writer(body).write(data) 
+        </span><span class="s0">else</span><span class="s1">: 
+            body.write(data) 
+ 
+        body.write(</span><span class="s6">b'</span><span class="s0">\r\n</span><span class="s6">'</span><span class="s1">) 
+ 
+    body.write(b(</span><span class="s2">'--%s--</span><span class="s0">\r\n</span><span class="s2">' </span><span class="s1">% (boundary))) 
+ 
+    content_type = str(</span><span class="s2">'multipart/form-data; boundary=%s' </span><span class="s1">% boundary) 
+ 
+    </span><span class="s0">return </span><span class="s1">body.getvalue()</span><span class="s0">, </span><span class="s1">content_type 
+</span></pre>
+</body>
+</html>

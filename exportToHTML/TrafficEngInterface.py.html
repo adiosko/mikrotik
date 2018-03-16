@@ -1,0 +1,188 @@
+<html>
+<head>
+<title>TrafficEngInterface.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+TrafficEngInterface.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">TrafficEngInterface: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listInterface(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list interfaces 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk([</span><span class="s4">'/mpls/traffic-eng/interface/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">mpls == {}: 
+            print(</span><span class="s4">&quot;No iface found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">bandwidth</span><span class="s0">\t</span><span class="s4">Metric</span><span class="s0">\t</span><span class="s4">Remaining bw&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">mpls: 
+                print(mpls[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mpls[i][</span><span class="s4">'bandwidth'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mpls[i][</span><span class="s4">'te-metric'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mpls[i][</span><span class="s4">'remaining-bw'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">addInterface(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add interface 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk([</span><span class="s4">'/mpls/traffic-eng/interface/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface 
+        :param number: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setBandwidth(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">bw): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bw 
+        :param number: 
+        :param bw: integer value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=bandwidth='</span><span class="s1">+bw] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setKFactor(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">factor=</span><span class="s4">&quot;3&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill set k factor for bw calculation 
+        :param number: 
+        :param factor: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=bandwidth-k-factor=' </span><span class="s1">+ factor] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setResourceClass(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">rsc=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set resource class 
+        :param number: 
+        :param rsc: hex value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=resource-class=' </span><span class="s1">+ rsc] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setRefreshTime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;30.000&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set refresher 
+        :param number: 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=refresh-time=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">useUdp(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will use udp protocol 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=use-udp=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">blockadeKFactor(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">factor=</span><span class="s4">&quot;3&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set k factor blockade 
+        :param number: 
+        :param factor: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=blockade-k-factor=' </span><span class="s1">+ factor] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setMetric(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">metric=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set te metric 
+        :param number: 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=te-metric=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setIgpFloodPeriod(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">period=</span><span class="s4">&quot;00:03:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set flood period 
+        :param number: 
+        :param period: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=igp-flood-period=' </span><span class="s1">+ period] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setUpFloodThreshold(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">trs=</span><span class="s4">&quot;15,30,45,60,75,80,85,90,95,97,98,99,100&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set threshold 
+        :param number: 
+        :param trs:15,30,45,60,75,80,85,90,95,97,98,99,100 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=up-flood-threshold=' </span><span class="s1">+ trs] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setDownFloodThreshold(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">trs=</span><span class="s4">&quot;15,30,45,60,75,80,85,90,95,97,98,99,100&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set down flood threshold 
+        :param number: 
+        :param trs: 15,30,45,60,75,80,85,90,95,97,98,99,100 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk([</span><span class="s4">'/mpls/traffic-eng/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=down-flood-threshold=' </span><span class="s1">+ trs] ) 
+        </span><span class="s0">return </span><span class="s1">mpls</span></pre>
+</body>
+</html>

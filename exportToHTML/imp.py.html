@@ -1,0 +1,369 @@
+<html>
+<head>
+<title>imp.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+imp.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;This module provides the components needed to build your own __import__ 
+function.  Undocumented functions are obsolete. 
+ 
+In most cases it is preferred you consider using the importlib module's 
+functionality over this module. 
+ 
+&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2"># (Probably) need to stay in _imp</span><span class="s1"> 
+</span><span class="s3">from </span><span class="s1">_imp </span><span class="s3">import </span><span class="s1">(lock_held</span><span class="s3">, </span><span class="s1">acquire_lock</span><span class="s3">, </span><span class="s1">release_lock</span><span class="s3">,</span><span class="s1"> 
+                  get_frozen_object</span><span class="s3">, </span><span class="s1">is_frozen_package</span><span class="s3">,</span><span class="s1"> 
+                  init_frozen</span><span class="s3">, </span><span class="s1">is_builtin</span><span class="s3">, </span><span class="s1">is_frozen</span><span class="s3">,</span><span class="s1"> 
+                  _fix_co_filename) 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s3">from </span><span class="s1">_imp </span><span class="s3">import </span><span class="s1">create_dynamic 
+</span><span class="s3">except </span><span class="s1">ImportError: 
+    </span><span class="s2"># Platform doesn't support dynamic loading.</span><span class="s1"> 
+    create_dynamic = </span><span class="s3">None</span><span class="s1"> 
+ 
+</span><span class="s3">from </span><span class="s1">importlib._bootstrap </span><span class="s3">import </span><span class="s1">_ERR_MSG</span><span class="s3">, </span><span class="s1">_exec</span><span class="s3">, </span><span class="s1">_load</span><span class="s3">, </span><span class="s1">_builtin_from_name 
+</span><span class="s3">from </span><span class="s1">importlib._bootstrap_external </span><span class="s3">import </span><span class="s1">SourcelessFileLoader 
+ 
+</span><span class="s3">from </span><span class="s1">importlib </span><span class="s3">import </span><span class="s1">machinery 
+</span><span class="s3">from </span><span class="s1">importlib </span><span class="s3">import </span><span class="s1">util 
+</span><span class="s3">import </span><span class="s1">importlib 
+</span><span class="s3">import </span><span class="s1">os 
+</span><span class="s3">import </span><span class="s1">sys 
+</span><span class="s3">import </span><span class="s1">tokenize 
+</span><span class="s3">import </span><span class="s1">types 
+</span><span class="s3">import </span><span class="s1">warnings 
+ 
+warnings.warn(</span><span class="s4">&quot;the imp module is deprecated in favour of importlib; &quot;</span><span class="s1"> 
+              </span><span class="s4">&quot;see the module's documentation for alternative uses&quot;</span><span class="s3">,</span><span class="s1"> 
+              PendingDeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">2</span><span class="s1">) 
+ 
+</span><span class="s2"># DEPRECATED</span><span class="s1"> 
+SEARCH_ERROR = </span><span class="s5">0</span><span class="s1"> 
+PY_SOURCE = </span><span class="s5">1</span><span class="s1"> 
+PY_COMPILED = </span><span class="s5">2</span><span class="s1"> 
+C_EXTENSION = </span><span class="s5">3</span><span class="s1"> 
+PY_RESOURCE = </span><span class="s5">4</span><span class="s1"> 
+PKG_DIRECTORY = </span><span class="s5">5</span><span class="s1"> 
+C_BUILTIN = </span><span class="s5">6</span><span class="s1"> 
+PY_FROZEN = </span><span class="s5">7</span><span class="s1"> 
+PY_CODERESOURCE = </span><span class="s5">8</span><span class="s1"> 
+IMP_HOOK = </span><span class="s5">9</span><span class="s1"> 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">new_module(name): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+    Create a new module. 
+ 
+    The module is not entered into sys.modules. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">types.ModuleType(name) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">get_magic(): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+    Return the magic number for .pyc files. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">util.MAGIC_NUMBER 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">get_tag(): 
+    </span><span class="s0">&quot;&quot;&quot;Return the magic tag for .pyc files.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">sys.implementation.cache_tag 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">cache_from_source(path</span><span class="s3">, </span><span class="s1">debug_override=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+    Given the path to a .py file, return the path to its .pyc file. 
+ 
+    The .py file does not need to exist; this simply returns the path to the 
+    .pyc file calculated as if the .py file were imported. 
+ 
+    If debug_override is not None, then it must be a boolean and is used in 
+    place of sys.flags.optimize. 
+ 
+    If sys.implementation.cache_tag is None then NotImplementedError is raised. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">with </span><span class="s1">warnings.catch_warnings(): 
+        warnings.simplefilter(</span><span class="s4">'ignore'</span><span class="s1">) 
+        </span><span class="s3">return </span><span class="s1">util.cache_from_source(path</span><span class="s3">, </span><span class="s1">debug_override) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">source_from_cache(path): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+    Given the path to a .pyc. file, return the path to its .py file. 
+ 
+    The .pyc file does not need to exist; this simply returns the path to 
+    the .py file calculated to correspond to the .pyc file.  If path does 
+    not conform to PEP 3147 format, ValueError will be raised. If 
+    sys.implementation.cache_tag is None then NotImplementedError is raised. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">util.source_from_cache(path) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">get_suffixes(): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED**&quot;&quot;&quot;</span><span class="s1"> 
+    extensions = [(s</span><span class="s3">, </span><span class="s4">'rb'</span><span class="s3">, </span><span class="s1">C_EXTENSION) </span><span class="s3">for </span><span class="s1">s </span><span class="s3">in </span><span class="s1">machinery.EXTENSION_SUFFIXES] 
+    source = [(s</span><span class="s3">, </span><span class="s4">'r'</span><span class="s3">, </span><span class="s1">PY_SOURCE) </span><span class="s3">for </span><span class="s1">s </span><span class="s3">in </span><span class="s1">machinery.SOURCE_SUFFIXES] 
+    bytecode = [(s</span><span class="s3">, </span><span class="s4">'rb'</span><span class="s3">, </span><span class="s1">PY_COMPILED) </span><span class="s3">for </span><span class="s1">s </span><span class="s3">in </span><span class="s1">machinery.BYTECODE_SUFFIXES] 
+ 
+    </span><span class="s3">return </span><span class="s1">extensions + source + bytecode 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">NullImporter: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+    Null import object. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">path): 
+        </span><span class="s3">if </span><span class="s1">path == </span><span class="s4">''</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'empty pathname'</span><span class="s3">, </span><span class="s1">path=</span><span class="s4">''</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">os.path.isdir(path): 
+            </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'existing directory'</span><span class="s3">, </span><span class="s1">path=path) 
+ 
+    </span><span class="s3">def </span><span class="s1">find_module(self</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Always returns None.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return None</span><span class="s1"> 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_HackedGetData: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Compatibility support for 'file' arguments of various load_*() 
+    functions.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">file=</span><span class="s3">None</span><span class="s1">): 
+        super().__init__(fullname</span><span class="s3">, </span><span class="s1">path) 
+        self.file = file 
+ 
+    </span><span class="s3">def </span><span class="s1">get_data(self</span><span class="s3">, </span><span class="s1">path): 
+        </span><span class="s0">&quot;&quot;&quot;Gross hack to contort loader to deal w/ load_*()'s bad API.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">self.file </span><span class="s3">and </span><span class="s1">path == self.path: 
+            </span><span class="s3">if not </span><span class="s1">self.file.closed: 
+                file = self.file 
+            </span><span class="s3">else</span><span class="s1">: 
+                self.file = file = open(self.path</span><span class="s3">, </span><span class="s4">'r'</span><span class="s1">) 
+ 
+            </span><span class="s3">with </span><span class="s1">file: 
+                </span><span class="s2"># Technically should be returning bytes, but</span><span class="s1"> 
+                </span><span class="s2"># SourceLoader.get_code() just passed what is returned to</span><span class="s1"> 
+                </span><span class="s2"># compile() which can handle str. And converting to bytes would</span><span class="s1"> 
+                </span><span class="s2"># require figuring out the encoding to decode to and</span><span class="s1"> 
+                </span><span class="s2"># tokenize.detect_encoding() only accepts bytes.</span><span class="s1"> 
+                </span><span class="s3">return </span><span class="s1">file.read() 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">super().get_data(path) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_LoadSourceCompatibility(_HackedGetData</span><span class="s3">, </span><span class="s1">machinery.SourceFileLoader): 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Compatibility support for implementing load_source().&quot;&quot;&quot;</span><span class="s1"> 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">load_source(name</span><span class="s3">, </span><span class="s1">pathname</span><span class="s3">, </span><span class="s1">file=</span><span class="s3">None</span><span class="s1">): 
+    loader = _LoadSourceCompatibility(name</span><span class="s3">, </span><span class="s1">pathname</span><span class="s3">, </span><span class="s1">file) 
+    spec = util.spec_from_file_location(name</span><span class="s3">, </span><span class="s1">pathname</span><span class="s3">, </span><span class="s1">loader=loader) 
+    </span><span class="s3">if </span><span class="s1">name </span><span class="s3">in </span><span class="s1">sys.modules: 
+        module = _exec(spec</span><span class="s3">, </span><span class="s1">sys.modules[name]) 
+    </span><span class="s3">else</span><span class="s1">: 
+        module = _load(spec) 
+    </span><span class="s2"># To allow reloading to potentially work, use a non-hacked loader which</span><span class="s1"> 
+    </span><span class="s2"># won't rely on a now-closed file object.</span><span class="s1"> 
+    module.__loader__ = machinery.SourceFileLoader(name</span><span class="s3">, </span><span class="s1">pathname) 
+    module.__spec__.loader = module.__loader__ 
+    </span><span class="s3">return </span><span class="s1">module 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_LoadCompiledCompatibility(_HackedGetData</span><span class="s3">, </span><span class="s1">SourcelessFileLoader): 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Compatibility support for implementing load_compiled().&quot;&quot;&quot;</span><span class="s1"> 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">load_compiled(name</span><span class="s3">, </span><span class="s1">pathname</span><span class="s3">, </span><span class="s1">file=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED**&quot;&quot;&quot;</span><span class="s1"> 
+    loader = _LoadCompiledCompatibility(name</span><span class="s3">, </span><span class="s1">pathname</span><span class="s3">, </span><span class="s1">file) 
+    spec = util.spec_from_file_location(name</span><span class="s3">, </span><span class="s1">pathname</span><span class="s3">, </span><span class="s1">loader=loader) 
+    </span><span class="s3">if </span><span class="s1">name </span><span class="s3">in </span><span class="s1">sys.modules: 
+        module = _exec(spec</span><span class="s3">, </span><span class="s1">sys.modules[name]) 
+    </span><span class="s3">else</span><span class="s1">: 
+        module = _load(spec) 
+    </span><span class="s2"># To allow reloading to potentially work, use a non-hacked loader which</span><span class="s1"> 
+    </span><span class="s2"># won't rely on a now-closed file object.</span><span class="s1"> 
+    module.__loader__ = SourcelessFileLoader(name</span><span class="s3">, </span><span class="s1">pathname) 
+    module.__spec__.loader = module.__loader__ 
+    </span><span class="s3">return </span><span class="s1">module 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">load_package(name</span><span class="s3">, </span><span class="s1">path): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED**&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">os.path.isdir(path): 
+        extensions = (machinery.SOURCE_SUFFIXES[:] + 
+                      machinery.BYTECODE_SUFFIXES[:]) 
+        </span><span class="s3">for </span><span class="s1">extension </span><span class="s3">in </span><span class="s1">extensions: 
+            path = os.path.join(path</span><span class="s3">, </span><span class="s4">'__init__'</span><span class="s1">+extension) 
+            </span><span class="s3">if </span><span class="s1">os.path.exists(path): 
+                </span><span class="s3">break</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'{!r} is not a package'</span><span class="s1">.format(path)) 
+    spec = util.spec_from_file_location(name</span><span class="s3">, </span><span class="s1">path</span><span class="s3">,</span><span class="s1"> 
+                                        submodule_search_locations=[]) 
+    </span><span class="s3">if </span><span class="s1">name </span><span class="s3">in </span><span class="s1">sys.modules: 
+        </span><span class="s3">return </span><span class="s1">_exec(spec</span><span class="s3">, </span><span class="s1">sys.modules[name]) 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">_load(spec) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">load_module(name</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">filename</span><span class="s3">, </span><span class="s1">details): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+    Load a module, given information returned by find_module(). 
+ 
+    The module name must include the full package name, if any. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    suffix</span><span class="s3">, </span><span class="s1">mode</span><span class="s3">, </span><span class="s1">type_ = details 
+    </span><span class="s3">if </span><span class="s1">mode </span><span class="s3">and </span><span class="s1">(</span><span class="s3">not </span><span class="s1">mode.startswith((</span><span class="s4">'r'</span><span class="s3">, </span><span class="s4">'U'</span><span class="s1">)) </span><span class="s3">or </span><span class="s4">'+' </span><span class="s3">in </span><span class="s1">mode): 
+        </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'invalid file open mode {!r}'</span><span class="s1">.format(mode)) 
+    </span><span class="s3">elif </span><span class="s1">file </span><span class="s3">is None and </span><span class="s1">type_ </span><span class="s3">in </span><span class="s1">{PY_SOURCE</span><span class="s3">, </span><span class="s1">PY_COMPILED}: 
+        msg = </span><span class="s4">'file object required for import (type code {})'</span><span class="s1">.format(type_) 
+        </span><span class="s3">raise </span><span class="s1">ValueError(msg) 
+    </span><span class="s3">elif </span><span class="s1">type_ == PY_SOURCE: 
+        </span><span class="s3">return </span><span class="s1">load_source(name</span><span class="s3">, </span><span class="s1">filename</span><span class="s3">, </span><span class="s1">file) 
+    </span><span class="s3">elif </span><span class="s1">type_ == PY_COMPILED: 
+        </span><span class="s3">return </span><span class="s1">load_compiled(name</span><span class="s3">, </span><span class="s1">filename</span><span class="s3">, </span><span class="s1">file) 
+    </span><span class="s3">elif </span><span class="s1">type_ == C_EXTENSION </span><span class="s3">and </span><span class="s1">load_dynamic </span><span class="s3">is not None</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">file </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">with </span><span class="s1">open(filename</span><span class="s3">, </span><span class="s4">'rb'</span><span class="s1">) </span><span class="s3">as </span><span class="s1">opened_file: 
+                </span><span class="s3">return </span><span class="s1">load_dynamic(name</span><span class="s3">, </span><span class="s1">filename</span><span class="s3">, </span><span class="s1">opened_file) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">load_dynamic(name</span><span class="s3">, </span><span class="s1">filename</span><span class="s3">, </span><span class="s1">file) 
+    </span><span class="s3">elif </span><span class="s1">type_ == PKG_DIRECTORY: 
+        </span><span class="s3">return </span><span class="s1">load_package(name</span><span class="s3">, </span><span class="s1">filename) 
+    </span><span class="s3">elif </span><span class="s1">type_ == C_BUILTIN: 
+        </span><span class="s3">return </span><span class="s1">init_builtin(name) 
+    </span><span class="s3">elif </span><span class="s1">type_ == PY_FROZEN: 
+        </span><span class="s3">return </span><span class="s1">init_frozen(name) 
+    </span><span class="s3">else</span><span class="s1">: 
+        msg =  </span><span class="s4">&quot;Don't know how to import {} (type code {})&quot;</span><span class="s1">.format(name</span><span class="s3">, </span><span class="s1">type_) 
+        </span><span class="s3">raise </span><span class="s1">ImportError(msg</span><span class="s3">, </span><span class="s1">name=name) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">find_module(name</span><span class="s3">, </span><span class="s1">path=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+    Search for a module. 
+ 
+    If path is omitted or None, search for a built-in, frozen or special 
+    module and continue search in sys.path. The module name cannot 
+    contain '.'; to search for a submodule of a package, pass the 
+    submodule name and the package's __path__. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if not </span><span class="s1">isinstance(name</span><span class="s3">, </span><span class="s1">str): 
+        </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;'name' must be a str, not {}&quot;</span><span class="s1">.format(type(name))) 
+    </span><span class="s3">elif not </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">(type(</span><span class="s3">None</span><span class="s1">)</span><span class="s3">, </span><span class="s1">list)): 
+        </span><span class="s2"># Backwards-compatibility</span><span class="s1"> 
+        </span><span class="s3">raise </span><span class="s1">RuntimeError(</span><span class="s4">&quot;'list' must be None or a list, &quot;</span><span class="s1"> 
+                           </span><span class="s4">&quot;not {}&quot;</span><span class="s1">.format(type(name))) 
+ 
+    </span><span class="s3">if </span><span class="s1">path </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">is_builtin(name): 
+            </span><span class="s3">return None, None, </span><span class="s1">(</span><span class="s4">''</span><span class="s3">, </span><span class="s4">''</span><span class="s3">, </span><span class="s1">C_BUILTIN) 
+        </span><span class="s3">elif </span><span class="s1">is_frozen(name): 
+            </span><span class="s3">return None, None, </span><span class="s1">(</span><span class="s4">''</span><span class="s3">, </span><span class="s4">''</span><span class="s3">, </span><span class="s1">PY_FROZEN) 
+        </span><span class="s3">else</span><span class="s1">: 
+            path = sys.path 
+ 
+    </span><span class="s3">for </span><span class="s1">entry </span><span class="s3">in </span><span class="s1">path: 
+        package_directory = os.path.join(entry</span><span class="s3">, </span><span class="s1">name) 
+        </span><span class="s3">for </span><span class="s1">suffix </span><span class="s3">in </span><span class="s1">[</span><span class="s4">'.py'</span><span class="s3">, </span><span class="s1">machinery.BYTECODE_SUFFIXES[</span><span class="s5">0</span><span class="s1">]]: 
+            package_file_name = </span><span class="s4">'__init__' </span><span class="s1">+ suffix 
+            file_path = os.path.join(package_directory</span><span class="s3">, </span><span class="s1">package_file_name) 
+            </span><span class="s3">if </span><span class="s1">os.path.isfile(file_path): 
+                </span><span class="s3">return None, </span><span class="s1">package_directory</span><span class="s3">, </span><span class="s1">(</span><span class="s4">''</span><span class="s3">, </span><span class="s4">''</span><span class="s3">, </span><span class="s1">PKG_DIRECTORY) 
+        </span><span class="s3">for </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">mode</span><span class="s3">, </span><span class="s1">type_ </span><span class="s3">in </span><span class="s1">get_suffixes(): 
+            file_name = name + suffix 
+            file_path = os.path.join(entry</span><span class="s3">, </span><span class="s1">file_name) 
+            </span><span class="s3">if </span><span class="s1">os.path.isfile(file_path): 
+                </span><span class="s3">break</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">continue</span><span class="s1"> 
+        </span><span class="s3">break  </span><span class="s2"># Break out of outer loop when breaking out of inner loop.</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">raise </span><span class="s1">ImportError(_ERR_MSG.format(name)</span><span class="s3">, </span><span class="s1">name=name) 
+ 
+    encoding = </span><span class="s3">None</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s4">'b' </span><span class="s3">not in </span><span class="s1">mode: 
+        </span><span class="s3">with </span><span class="s1">open(file_path</span><span class="s3">, </span><span class="s4">'rb'</span><span class="s1">) </span><span class="s3">as </span><span class="s1">file: 
+            encoding = tokenize.detect_encoding(file.readline)[</span><span class="s5">0</span><span class="s1">] 
+    file = open(file_path</span><span class="s3">, </span><span class="s1">mode</span><span class="s3">, </span><span class="s1">encoding=encoding) 
+    </span><span class="s3">return </span><span class="s1">file</span><span class="s3">, </span><span class="s1">file_path</span><span class="s3">, </span><span class="s1">(suffix</span><span class="s3">, </span><span class="s1">mode</span><span class="s3">, </span><span class="s1">type_) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">reload(module): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+    Reload the module and return it. 
+ 
+    The module must have been successfully imported before. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">importlib.reload(module) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">init_builtin(name): 
+    </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+    Load and return a built-in module by name, or None is such module doesn't 
+    exist 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">_builtin_from_name(name) 
+    </span><span class="s3">except </span><span class="s1">ImportError: 
+        </span><span class="s3">return None</span><span class="s1"> 
+ 
+ 
+</span><span class="s3">if </span><span class="s1">create_dynamic: 
+    </span><span class="s3">def </span><span class="s1">load_dynamic(name</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">file=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;**DEPRECATED** 
+ 
+        Load an extension module. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">import </span><span class="s1">importlib.machinery 
+        loader = importlib.machinery.ExtensionFileLoader(name</span><span class="s3">, </span><span class="s1">path) 
+ 
+        </span><span class="s2"># Issue #24748: Skip the sys.modules check in _load_module_shim;</span><span class="s1"> 
+        </span><span class="s2"># always load new extension</span><span class="s1"> 
+        spec = importlib.machinery.ModuleSpec( 
+            name=name</span><span class="s3">, </span><span class="s1">loader=loader</span><span class="s3">, </span><span class="s1">origin=path) 
+        </span><span class="s3">return </span><span class="s1">_load(spec) 
+ 
+</span><span class="s3">else</span><span class="s1">: 
+    load_dynamic = </span><span class="s3">None</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

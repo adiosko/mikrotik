@@ -1,0 +1,626 @@
+<html>
+<head>
+<title>base64.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+base64.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">#! /usr/bin/python3.5</span><span class="s1"> 
+ 
+</span><span class="s2">&quot;&quot;&quot;Base16, Base32, Base64 (RFC 3548), Base85 and Ascii85 data encodings&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s0"># Modified 04-Oct-1995 by Jack Jansen to use binascii module</span><span class="s1"> 
+</span><span class="s0"># Modified 30-Dec-2003 by Barry Warsaw to add full RFC 3548 support</span><span class="s1"> 
+</span><span class="s0"># Modified 22-May-2007 by Guido van Rossum to use bytes everywhere</span><span class="s1"> 
+ 
+</span><span class="s3">import </span><span class="s1">re 
+</span><span class="s3">import </span><span class="s1">struct 
+</span><span class="s3">import </span><span class="s1">binascii 
+ 
+ 
+__all__ = [ 
+    </span><span class="s0"># Legacy interface exports traditional RFC 2045 Base64 encodings</span><span class="s1"> 
+    </span><span class="s4">'encode'</span><span class="s3">, </span><span class="s4">'decode'</span><span class="s3">, </span><span class="s4">'encodebytes'</span><span class="s3">, </span><span class="s4">'decodebytes'</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s0"># Generalized interface for other encodings</span><span class="s1"> 
+    </span><span class="s4">'b64encode'</span><span class="s3">, </span><span class="s4">'b64decode'</span><span class="s3">, </span><span class="s4">'b32encode'</span><span class="s3">, </span><span class="s4">'b32decode'</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">'b16encode'</span><span class="s3">, </span><span class="s4">'b16decode'</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s0"># Base85 and Ascii85 encodings</span><span class="s1"> 
+    </span><span class="s4">'b85encode'</span><span class="s3">, </span><span class="s4">'b85decode'</span><span class="s3">, </span><span class="s4">'a85encode'</span><span class="s3">, </span><span class="s4">'a85decode'</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s0"># Standard Base64 encoding</span><span class="s1"> 
+    </span><span class="s4">'standard_b64encode'</span><span class="s3">, </span><span class="s4">'standard_b64decode'</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s0"># Some common Base64 alternatives.  As referenced by RFC 3458, see thread</span><span class="s1"> 
+    </span><span class="s0"># starting at:</span><span class="s1"> 
+    </span><span class="s0">#</span><span class="s1"> 
+    </span><span class="s0"># http://zgp.org/pipermail/p2p-hackers/2001-September/000316.html</span><span class="s1"> 
+    </span><span class="s4">'urlsafe_b64encode'</span><span class="s3">, </span><span class="s4">'urlsafe_b64decode'</span><span class="s3">,</span><span class="s1"> 
+    ] 
+ 
+ 
+bytes_types = (bytes</span><span class="s3">, </span><span class="s1">bytearray)  </span><span class="s0"># Types acceptable as binary data</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">_bytes_from_decode_data(s): 
+    </span><span class="s3">if </span><span class="s1">isinstance(s</span><span class="s3">, </span><span class="s1">str): 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">s.encode(</span><span class="s4">'ascii'</span><span class="s1">) 
+        </span><span class="s3">except </span><span class="s1">UnicodeEncodeError: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'string argument should contain only ASCII characters'</span><span class="s1">) 
+    </span><span class="s3">if </span><span class="s1">isinstance(s</span><span class="s3">, </span><span class="s1">bytes_types): 
+        </span><span class="s3">return </span><span class="s1">s 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">memoryview(s).tobytes() 
+    </span><span class="s3">except </span><span class="s1">TypeError: 
+        </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;argument should be a bytes-like object or ASCII &quot;</span><span class="s1"> 
+                        </span><span class="s4">&quot;string, not %r&quot; </span><span class="s1">% s.__class__.__name__) </span><span class="s3">from None</span><span class="s1"> 
+ 
+ 
+</span><span class="s0"># Base64 encoding/decoding uses binascii</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">b64encode(s</span><span class="s3">, </span><span class="s1">altchars=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s2">&quot;&quot;&quot;Encode the bytes-like object s using Base64 and return a bytes object. 
+ 
+    Optional altchars should be a byte string of length 2 which specifies an 
+    alternative alphabet for the '+' and '/' characters.  This allows an 
+    application to e.g. generate url or filesystem safe Base64 strings. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0"># Strip off the trailing newline</span><span class="s1"> 
+    encoded = binascii.b2a_base64(s)[:-</span><span class="s5">1</span><span class="s1">] 
+    </span><span class="s3">if </span><span class="s1">altchars </span><span class="s3">is not None</span><span class="s1">: 
+        </span><span class="s3">assert </span><span class="s1">len(altchars) == </span><span class="s5">2</span><span class="s3">, </span><span class="s1">repr(altchars) 
+        </span><span class="s3">return </span><span class="s1">encoded.translate(bytes.maketrans(</span><span class="s6">b'+/'</span><span class="s3">, </span><span class="s1">altchars)) 
+    </span><span class="s3">return </span><span class="s1">encoded 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">b64decode(s</span><span class="s3">, </span><span class="s1">altchars=</span><span class="s3">None, </span><span class="s1">validate=</span><span class="s3">False</span><span class="s1">): 
+    </span><span class="s2">&quot;&quot;&quot;Decode the Base64 encoded bytes-like object or ASCII string s. 
+ 
+    Optional altchars must be a bytes-like object or ASCII string of length 2 
+    which specifies the alternative alphabet used instead of the '+' and '/' 
+    characters. 
+ 
+    The result is returned as a bytes object.  A binascii.Error is raised if 
+    s is incorrectly padded. 
+ 
+    If validate is False (the default), characters that are neither in the 
+    normal base-64 alphabet nor the alternative alphabet are discarded prior 
+    to the padding check.  If validate is True, these non-alphabet characters 
+    in the input result in a binascii.Error. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    s = _bytes_from_decode_data(s) 
+    </span><span class="s3">if </span><span class="s1">altchars </span><span class="s3">is not None</span><span class="s1">: 
+        altchars = _bytes_from_decode_data(altchars) 
+        </span><span class="s3">assert </span><span class="s1">len(altchars) == </span><span class="s5">2</span><span class="s3">, </span><span class="s1">repr(altchars) 
+        s = s.translate(bytes.maketrans(altchars</span><span class="s3">, </span><span class="s6">b'+/'</span><span class="s1">)) 
+    </span><span class="s3">if </span><span class="s1">validate </span><span class="s3">and not </span><span class="s1">re.match(</span><span class="s6">b'^[A-Za-z0-9+/]*={0,2}$'</span><span class="s3">, </span><span class="s1">s): 
+        </span><span class="s3">raise </span><span class="s1">binascii.Error(</span><span class="s4">'Non-base64 digit found'</span><span class="s1">) 
+    </span><span class="s3">return </span><span class="s1">binascii.a2b_base64(s) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">standard_b64encode(s): 
+    </span><span class="s2">&quot;&quot;&quot;Encode bytes-like object s using the standard Base64 alphabet. 
+ 
+    The result is returned as a bytes object. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">b64encode(s) 
+ 
+</span><span class="s3">def </span><span class="s1">standard_b64decode(s): 
+    </span><span class="s2">&quot;&quot;&quot;Decode bytes encoded with the standard Base64 alphabet. 
+ 
+    Argument s is a bytes-like object or ASCII string to decode.  The result 
+    is returned as a bytes object.  A binascii.Error is raised if the input 
+    is incorrectly padded.  Characters that are not in the standard alphabet 
+    are discarded prior to the padding check. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">b64decode(s) 
+ 
+ 
+_urlsafe_encode_translation = bytes.maketrans(</span><span class="s6">b'+/'</span><span class="s3">, </span><span class="s6">b'-_'</span><span class="s1">) 
+_urlsafe_decode_translation = bytes.maketrans(</span><span class="s6">b'-_'</span><span class="s3">, </span><span class="s6">b'+/'</span><span class="s1">) 
+ 
+</span><span class="s3">def </span><span class="s1">urlsafe_b64encode(s): 
+    </span><span class="s2">&quot;&quot;&quot;Encode bytes using the URL- and filesystem-safe Base64 alphabet. 
+ 
+    Argument s is a bytes-like object to encode.  The result is returned as a 
+    bytes object.  The alphabet uses '-' instead of '+' and '_' instead of 
+    '/'. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">b64encode(s).translate(_urlsafe_encode_translation) 
+ 
+</span><span class="s3">def </span><span class="s1">urlsafe_b64decode(s): 
+    </span><span class="s2">&quot;&quot;&quot;Decode bytes using the URL- and filesystem-safe Base64 alphabet. 
+ 
+    Argument s is a bytes-like object or ASCII string to decode.  The result 
+    is returned as a bytes object.  A binascii.Error is raised if the input 
+    is incorrectly padded.  Characters that are not in the URL-safe base-64 
+    alphabet, and are not a plus '+' or slash '/', are discarded prior to the 
+    padding check. 
+ 
+    The alphabet uses '-' instead of '+' and '_' instead of '/'. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    s = _bytes_from_decode_data(s) 
+    s = s.translate(_urlsafe_decode_translation) 
+    </span><span class="s3">return </span><span class="s1">b64decode(s) 
+ 
+ 
+ 
+</span><span class="s0"># Base32 encoding/decoding must be done in Python</span><span class="s1"> 
+_b32alphabet = </span><span class="s6">b'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'</span><span class="s1"> 
+_b32tab2 = </span><span class="s3">None</span><span class="s1"> 
+_b32rev = </span><span class="s3">None</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">b32encode(s): 
+    </span><span class="s2">&quot;&quot;&quot;Encode the bytes-like object s using Base32 and return a bytes object. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">global </span><span class="s1">_b32tab2 
+    </span><span class="s0"># Delay the initialization of the table to not waste memory</span><span class="s1"> 
+    </span><span class="s0"># if the function is never called</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">_b32tab2 </span><span class="s3">is None</span><span class="s1">: 
+        b32tab = [bytes((i</span><span class="s3">,</span><span class="s1">)) </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">_b32alphabet] 
+        _b32tab2 = [a + b </span><span class="s3">for </span><span class="s1">a </span><span class="s3">in </span><span class="s1">b32tab </span><span class="s3">for </span><span class="s1">b </span><span class="s3">in </span><span class="s1">b32tab] 
+        b32tab = </span><span class="s3">None</span><span class="s1"> 
+ 
+    </span><span class="s3">if not </span><span class="s1">isinstance(s</span><span class="s3">, </span><span class="s1">bytes_types): 
+        s = memoryview(s).tobytes() 
+    leftover = len(s) % </span><span class="s5">5</span><span class="s1"> 
+    </span><span class="s0"># Pad the last quantum with zero bits if necessary</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">leftover: 
+        s = s + bytes(</span><span class="s5">5 </span><span class="s1">- leftover)  </span><span class="s0"># Don't use += !</span><span class="s1"> 
+    encoded = bytearray() 
+    from_bytes = int.from_bytes 
+    b32tab2 = _b32tab2 
+    </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">len(s)</span><span class="s3">, </span><span class="s5">5</span><span class="s1">): 
+        c = from_bytes(s[i: i + </span><span class="s5">5</span><span class="s1">]</span><span class="s3">, </span><span class="s4">'big'</span><span class="s1">) 
+        encoded += (b32tab2[c &gt;&gt; </span><span class="s5">30</span><span class="s1">] +           </span><span class="s0"># bits 1 - 10</span><span class="s1"> 
+                    b32tab2[(c &gt;&gt; </span><span class="s5">20</span><span class="s1">) &amp; </span><span class="s5">0x3ff</span><span class="s1">] + </span><span class="s0"># bits 11 - 20</span><span class="s1"> 
+                    b32tab2[(c &gt;&gt; </span><span class="s5">10</span><span class="s1">) &amp; </span><span class="s5">0x3ff</span><span class="s1">] + </span><span class="s0"># bits 21 - 30</span><span class="s1"> 
+                    b32tab2[c &amp; </span><span class="s5">0x3ff</span><span class="s1">]           </span><span class="s0"># bits 31 - 40</span><span class="s1"> 
+                   ) 
+    </span><span class="s0"># Adjust for any leftover partial quanta</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">leftover == </span><span class="s5">1</span><span class="s1">: 
+        encoded[-</span><span class="s5">6</span><span class="s1">:] = </span><span class="s6">b'======'</span><span class="s1"> 
+    </span><span class="s3">elif </span><span class="s1">leftover == </span><span class="s5">2</span><span class="s1">: 
+        encoded[-</span><span class="s5">4</span><span class="s1">:] = </span><span class="s6">b'===='</span><span class="s1"> 
+    </span><span class="s3">elif </span><span class="s1">leftover == </span><span class="s5">3</span><span class="s1">: 
+        encoded[-</span><span class="s5">3</span><span class="s1">:] = </span><span class="s6">b'==='</span><span class="s1"> 
+    </span><span class="s3">elif </span><span class="s1">leftover == </span><span class="s5">4</span><span class="s1">: 
+        encoded[-</span><span class="s5">1</span><span class="s1">:] = </span><span class="s6">b'='</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">bytes(encoded) 
+ 
+</span><span class="s3">def </span><span class="s1">b32decode(s</span><span class="s3">, </span><span class="s1">casefold=</span><span class="s3">False, </span><span class="s1">map01=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s2">&quot;&quot;&quot;Decode the Base32 encoded bytes-like object or ASCII string s. 
+ 
+    Optional casefold is a flag specifying whether a lowercase alphabet is 
+    acceptable as input.  For security purposes, the default is False. 
+ 
+    RFC 3548 allows for optional mapping of the digit 0 (zero) to the 
+    letter O (oh), and for optional mapping of the digit 1 (one) to 
+    either the letter I (eye) or letter L (el).  The optional argument 
+    map01 when not None, specifies which letter the digit 1 should be 
+    mapped to (when map01 is not None, the digit 0 is always mapped to 
+    the letter O).  For security purposes the default is None, so that 
+    0 and 1 are not allowed in the input. 
+ 
+    The result is returned as a bytes object.  A binascii.Error is raised if 
+    the input is incorrectly padded or if there are non-alphabet 
+    characters present in the input. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">global </span><span class="s1">_b32rev 
+    </span><span class="s0"># Delay the initialization of the table to not waste memory</span><span class="s1"> 
+    </span><span class="s0"># if the function is never called</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">_b32rev </span><span class="s3">is None</span><span class="s1">: 
+        _b32rev = {v: k </span><span class="s3">for </span><span class="s1">k</span><span class="s3">, </span><span class="s1">v </span><span class="s3">in </span><span class="s1">enumerate(_b32alphabet)} 
+    s = _bytes_from_decode_data(s) 
+    </span><span class="s3">if </span><span class="s1">len(s) % </span><span class="s5">8</span><span class="s1">: 
+        </span><span class="s3">raise </span><span class="s1">binascii.Error(</span><span class="s4">'Incorrect padding'</span><span class="s1">) 
+    </span><span class="s0"># Handle section 2.4 zero and one mapping.  The flag map01 will be either</span><span class="s1"> 
+    </span><span class="s0"># False, or the character to map the digit 1 (one) to.  It should be</span><span class="s1"> 
+    </span><span class="s0"># either L (el) or I (eye).</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">map01 </span><span class="s3">is not None</span><span class="s1">: 
+        map01 = _bytes_from_decode_data(map01) 
+        </span><span class="s3">assert </span><span class="s1">len(map01) == </span><span class="s5">1</span><span class="s3">, </span><span class="s1">repr(map01) 
+        s = s.translate(bytes.maketrans(</span><span class="s6">b'01'</span><span class="s3">, </span><span class="s6">b'O' </span><span class="s1">+ map01)) 
+    </span><span class="s3">if </span><span class="s1">casefold: 
+        s = s.upper() 
+    </span><span class="s0"># Strip off pad characters from the right.  We need to count the pad</span><span class="s1"> 
+    </span><span class="s0"># characters because this will tell us how many null bytes to remove from</span><span class="s1"> 
+    </span><span class="s0"># the end of the decoded string.</span><span class="s1"> 
+    l = len(s) 
+    s = s.rstrip(</span><span class="s6">b'='</span><span class="s1">) 
+    padchars = l - len(s) 
+    </span><span class="s0"># Now decode the full quanta</span><span class="s1"> 
+    decoded = bytearray() 
+    b32rev = _b32rev 
+    </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">len(s)</span><span class="s3">, </span><span class="s5">8</span><span class="s1">): 
+        quanta = s[i: i + </span><span class="s5">8</span><span class="s1">] 
+        acc = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">for </span><span class="s1">c </span><span class="s3">in </span><span class="s1">quanta: 
+                acc = (acc &lt;&lt; </span><span class="s5">5</span><span class="s1">) + b32rev[c] 
+        </span><span class="s3">except </span><span class="s1">KeyError: 
+            </span><span class="s3">raise </span><span class="s1">binascii.Error(</span><span class="s4">'Non-base32 digit found'</span><span class="s1">) </span><span class="s3">from None</span><span class="s1"> 
+        decoded += acc.to_bytes(</span><span class="s5">5</span><span class="s3">, </span><span class="s4">'big'</span><span class="s1">) 
+    </span><span class="s0"># Process the last, partial quanta</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">padchars: 
+        acc &lt;&lt;= </span><span class="s5">5 </span><span class="s1">* padchars 
+        last = acc.to_bytes(</span><span class="s5">5</span><span class="s3">, </span><span class="s4">'big'</span><span class="s1">) 
+        </span><span class="s3">if </span><span class="s1">padchars == </span><span class="s5">1</span><span class="s1">: 
+            decoded[-</span><span class="s5">5</span><span class="s1">:] = last[:-</span><span class="s5">1</span><span class="s1">] 
+        </span><span class="s3">elif </span><span class="s1">padchars == </span><span class="s5">3</span><span class="s1">: 
+            decoded[-</span><span class="s5">5</span><span class="s1">:] = last[:-</span><span class="s5">2</span><span class="s1">] 
+        </span><span class="s3">elif </span><span class="s1">padchars == </span><span class="s5">4</span><span class="s1">: 
+            decoded[-</span><span class="s5">5</span><span class="s1">:] = last[:-</span><span class="s5">3</span><span class="s1">] 
+        </span><span class="s3">elif </span><span class="s1">padchars == </span><span class="s5">6</span><span class="s1">: 
+            decoded[-</span><span class="s5">5</span><span class="s1">:] = last[:-</span><span class="s5">4</span><span class="s1">] 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">binascii.Error(</span><span class="s4">'Incorrect padding'</span><span class="s1">) 
+    </span><span class="s3">return </span><span class="s1">bytes(decoded) 
+ 
+ 
+ 
+</span><span class="s0"># RFC 3548, Base 16 Alphabet specifies uppercase, but hexlify() returns</span><span class="s1"> 
+</span><span class="s0"># lowercase.  The RFC also recommends against accepting input case</span><span class="s1"> 
+</span><span class="s0"># insensitively.</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">b16encode(s): 
+    </span><span class="s2">&quot;&quot;&quot;Encode the bytes-like object s using Base16 and return a bytes object. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">binascii.hexlify(s).upper() 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">b16decode(s</span><span class="s3">, </span><span class="s1">casefold=</span><span class="s3">False</span><span class="s1">): 
+    </span><span class="s2">&quot;&quot;&quot;Decode the Base16 encoded bytes-like object or ASCII string s. 
+ 
+    Optional casefold is a flag specifying whether a lowercase alphabet is 
+    acceptable as input.  For security purposes, the default is False. 
+ 
+    The result is returned as a bytes object.  A binascii.Error is raised if 
+    s is incorrectly padded or if there are non-alphabet characters present 
+    in the input. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    s = _bytes_from_decode_data(s) 
+    </span><span class="s3">if </span><span class="s1">casefold: 
+        s = s.upper() 
+    </span><span class="s3">if </span><span class="s1">re.search(</span><span class="s6">b'[^0-9A-F]'</span><span class="s3">, </span><span class="s1">s): 
+        </span><span class="s3">raise </span><span class="s1">binascii.Error(</span><span class="s4">'Non-base16 digit found'</span><span class="s1">) 
+    </span><span class="s3">return </span><span class="s1">binascii.unhexlify(s) 
+ 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># Ascii85 encoding/decoding</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+ 
+_a85chars = </span><span class="s3">None</span><span class="s1"> 
+_a85chars2 = </span><span class="s3">None</span><span class="s1"> 
+_A85START = </span><span class="s6">b&quot;&lt;~&quot;</span><span class="s1"> 
+_A85END = </span><span class="s6">b&quot;~&gt;&quot;</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">_85encode(b</span><span class="s3">, </span><span class="s1">chars</span><span class="s3">, </span><span class="s1">chars2</span><span class="s3">, </span><span class="s1">pad=</span><span class="s3">False, </span><span class="s1">foldnuls=</span><span class="s3">False, </span><span class="s1">foldspaces=</span><span class="s3">False</span><span class="s1">): 
+    </span><span class="s0"># Helper function for a85encode and b85encode</span><span class="s1"> 
+    </span><span class="s3">if not </span><span class="s1">isinstance(b</span><span class="s3">, </span><span class="s1">bytes_types): 
+        b = memoryview(b).tobytes() 
+ 
+    padding = (-len(b)) % </span><span class="s5">4</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">padding: 
+        b = b + </span><span class="s6">b'</span><span class="s3">\0</span><span class="s6">' </span><span class="s1">* padding 
+    words = struct.Struct(</span><span class="s4">'!%dI' </span><span class="s1">% (len(b) // </span><span class="s5">4</span><span class="s1">)).unpack(b) 
+ 
+    chunks = [</span><span class="s6">b'z' </span><span class="s3">if </span><span class="s1">foldnuls </span><span class="s3">and not </span><span class="s1">word </span><span class="s3">else</span><span class="s1"> 
+              </span><span class="s6">b'y' </span><span class="s3">if </span><span class="s1">foldspaces </span><span class="s3">and </span><span class="s1">word == </span><span class="s5">0x20202020 </span><span class="s3">else</span><span class="s1"> 
+              (chars2[word // </span><span class="s5">614125</span><span class="s1">] + 
+               chars2[word // </span><span class="s5">85 </span><span class="s1">% </span><span class="s5">7225</span><span class="s1">] + 
+               chars[word % </span><span class="s5">85</span><span class="s1">]) 
+              </span><span class="s3">for </span><span class="s1">word </span><span class="s3">in </span><span class="s1">words] 
+ 
+    </span><span class="s3">if </span><span class="s1">padding </span><span class="s3">and not </span><span class="s1">pad: 
+        </span><span class="s3">if </span><span class="s1">chunks[-</span><span class="s5">1</span><span class="s1">] == </span><span class="s6">b'z'</span><span class="s1">: 
+            chunks[-</span><span class="s5">1</span><span class="s1">] = chars[</span><span class="s5">0</span><span class="s1">] * </span><span class="s5">5</span><span class="s1"> 
+        chunks[-</span><span class="s5">1</span><span class="s1">] = chunks[-</span><span class="s5">1</span><span class="s1">][:-padding] 
+ 
+    </span><span class="s3">return </span><span class="s6">b''</span><span class="s1">.join(chunks) 
+ 
+</span><span class="s3">def </span><span class="s1">a85encode(b</span><span class="s3">, </span><span class="s1">*</span><span class="s3">, </span><span class="s1">foldspaces=</span><span class="s3">False, </span><span class="s1">wrapcol=</span><span class="s5">0</span><span class="s3">, </span><span class="s1">pad=</span><span class="s3">False, </span><span class="s1">adobe=</span><span class="s3">False</span><span class="s1">): 
+    </span><span class="s2">&quot;&quot;&quot;Encode bytes-like object b using Ascii85 and return a bytes object. 
+ 
+    foldspaces is an optional flag that uses the special short sequence 'y' 
+    instead of 4 consecutive spaces (ASCII 0x20) as supported by 'btoa'. This 
+    feature is not supported by the &quot;standard&quot; Adobe encoding. 
+ 
+    wrapcol controls whether the output should have newline (b'\\n') characters 
+    added to it. If this is non-zero, each output line will be at most this 
+    many characters long. 
+ 
+    pad controls whether the input is padded to a multiple of 4 before 
+    encoding. Note that the btoa implementation always pads. 
+ 
+    adobe controls whether the encoded byte sequence is framed with &lt;~ and ~&gt;, 
+    which is used by the Adobe implementation. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">global </span><span class="s1">_a85chars</span><span class="s3">, </span><span class="s1">_a85chars2 
+    </span><span class="s0"># Delay the initialization of tables to not waste memory</span><span class="s1"> 
+    </span><span class="s0"># if the function is never called</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">_a85chars </span><span class="s3">is None</span><span class="s1">: 
+        _a85chars = [bytes((i</span><span class="s3">,</span><span class="s1">)) </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">33</span><span class="s3">, </span><span class="s5">118</span><span class="s1">)] 
+        _a85chars2 = [(a + b) </span><span class="s3">for </span><span class="s1">a </span><span class="s3">in </span><span class="s1">_a85chars </span><span class="s3">for </span><span class="s1">b </span><span class="s3">in </span><span class="s1">_a85chars] 
+ 
+    result = _85encode(b</span><span class="s3">, </span><span class="s1">_a85chars</span><span class="s3">, </span><span class="s1">_a85chars2</span><span class="s3">, </span><span class="s1">pad</span><span class="s3">, True, </span><span class="s1">foldspaces) 
+ 
+    </span><span class="s3">if </span><span class="s1">adobe: 
+        result = _A85START + result 
+    </span><span class="s3">if </span><span class="s1">wrapcol: 
+        wrapcol = max(</span><span class="s5">2 </span><span class="s3">if </span><span class="s1">adobe </span><span class="s3">else </span><span class="s5">1</span><span class="s3">, </span><span class="s1">wrapcol) 
+        chunks = [result[i: i + wrapcol] 
+                  </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">len(result)</span><span class="s3">, </span><span class="s1">wrapcol)] 
+        </span><span class="s3">if </span><span class="s1">adobe: 
+            </span><span class="s3">if </span><span class="s1">len(chunks[-</span><span class="s5">1</span><span class="s1">]) + </span><span class="s5">2 </span><span class="s1">&gt; wrapcol: 
+                chunks.append(</span><span class="s6">b''</span><span class="s1">) 
+        result = </span><span class="s6">b'</span><span class="s3">\n</span><span class="s6">'</span><span class="s1">.join(chunks) 
+    </span><span class="s3">if </span><span class="s1">adobe: 
+        result += _A85END 
+ 
+    </span><span class="s3">return </span><span class="s1">result 
+ 
+</span><span class="s3">def </span><span class="s1">a85decode(b</span><span class="s3">, </span><span class="s1">*</span><span class="s3">, </span><span class="s1">foldspaces=</span><span class="s3">False, </span><span class="s1">adobe=</span><span class="s3">False, </span><span class="s1">ignorechars=</span><span class="s6">b' </span><span class="s3">\t\n\r\v</span><span class="s6">'</span><span class="s1">): 
+    </span><span class="s2">&quot;&quot;&quot;Decode the Ascii85 encoded bytes-like object or ASCII string b. 
+ 
+    foldspaces is a flag that specifies whether the 'y' short sequence should be 
+    accepted as shorthand for 4 consecutive spaces (ASCII 0x20). This feature is 
+    not supported by the &quot;standard&quot; Adobe encoding. 
+ 
+    adobe controls whether the input sequence is in Adobe Ascii85 format (i.e. 
+    is framed with &lt;~ and ~&gt;). 
+ 
+    ignorechars should be a byte string containing characters to ignore from the 
+    input. This should only contain whitespace characters, and by default 
+    contains all whitespace characters in ASCII. 
+ 
+    The result is returned as a bytes object. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    b = _bytes_from_decode_data(b) 
+    </span><span class="s3">if </span><span class="s1">adobe: 
+        </span><span class="s3">if not </span><span class="s1">b.endswith(_A85END): 
+            </span><span class="s3">raise </span><span class="s1">ValueError( 
+                </span><span class="s4">&quot;Ascii85 encoded byte sequences must end &quot;</span><span class="s1"> 
+                </span><span class="s4">&quot;with {!r}&quot;</span><span class="s1">.format(_A85END) 
+                ) 
+        </span><span class="s3">if </span><span class="s1">b.startswith(_A85START): 
+            b = b[</span><span class="s5">2</span><span class="s1">:-</span><span class="s5">2</span><span class="s1">]  </span><span class="s0"># Strip off start/end markers</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            b = b[:-</span><span class="s5">2</span><span class="s1">] 
+    </span><span class="s0">#</span><span class="s1"> 
+    </span><span class="s0"># We have to go through this stepwise, so as to ignore spaces and handle</span><span class="s1"> 
+    </span><span class="s0"># special short sequences</span><span class="s1"> 
+    </span><span class="s0">#</span><span class="s1"> 
+    packI = struct.Struct(</span><span class="s4">'!I'</span><span class="s1">).pack 
+    decoded = [] 
+    decoded_append = decoded.append 
+    curr = [] 
+    curr_append = curr.append 
+    curr_clear = curr.clear 
+    </span><span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">b + </span><span class="s6">b'u' </span><span class="s1">* </span><span class="s5">4</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s6">b'!'</span><span class="s1">[</span><span class="s5">0</span><span class="s1">] &lt;= x &lt;= </span><span class="s6">b'u'</span><span class="s1">[</span><span class="s5">0</span><span class="s1">]: 
+            curr_append(x) 
+            </span><span class="s3">if </span><span class="s1">len(curr) == </span><span class="s5">5</span><span class="s1">: 
+                acc = </span><span class="s5">0</span><span class="s1"> 
+                </span><span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">curr: 
+                    acc = </span><span class="s5">85 </span><span class="s1">* acc + (x - </span><span class="s5">33</span><span class="s1">) 
+                </span><span class="s3">try</span><span class="s1">: 
+                    decoded_append(packI(acc)) 
+                </span><span class="s3">except </span><span class="s1">struct.error: 
+                    </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'Ascii85 overflow'</span><span class="s1">) </span><span class="s3">from None</span><span class="s1"> 
+                curr_clear() 
+        </span><span class="s3">elif </span><span class="s1">x == </span><span class="s6">b'z'</span><span class="s1">[</span><span class="s5">0</span><span class="s1">]: 
+            </span><span class="s3">if </span><span class="s1">curr: 
+                </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'z inside Ascii85 5-tuple'</span><span class="s1">) 
+            decoded_append(</span><span class="s6">b'</span><span class="s3">\0\0\0\0</span><span class="s6">'</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">foldspaces </span><span class="s3">and </span><span class="s1">x == </span><span class="s6">b'y'</span><span class="s1">[</span><span class="s5">0</span><span class="s1">]: 
+            </span><span class="s3">if </span><span class="s1">curr: 
+                </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'y inside Ascii85 5-tuple'</span><span class="s1">) 
+            decoded_append(</span><span class="s6">b'</span><span class="s3">\x20\x20\x20\x20</span><span class="s6">'</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">x </span><span class="s3">in </span><span class="s1">ignorechars: 
+            </span><span class="s0"># Skip whitespace</span><span class="s1"> 
+            </span><span class="s3">continue</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'Non-Ascii85 digit found: %c' </span><span class="s1">% x) 
+ 
+    result = </span><span class="s6">b''</span><span class="s1">.join(decoded) 
+    padding = </span><span class="s5">4 </span><span class="s1">- len(curr) 
+    </span><span class="s3">if </span><span class="s1">padding: 
+        </span><span class="s0"># Throw away the extra padding</span><span class="s1"> 
+        result = result[:-padding] 
+    </span><span class="s3">return </span><span class="s1">result 
+ 
+</span><span class="s0"># The following code is originally taken (with permission) from Mercurial</span><span class="s1"> 
+ 
+_b85alphabet = (</span><span class="s6">b&quot;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span><span class="s1"> 
+                </span><span class="s6">b&quot;abcdefghijklmnopqrstuvwxyz!#$%&amp;()*+-;&lt;=&gt;?@^_`{|}~&quot;</span><span class="s1">) 
+_b85chars = </span><span class="s3">None</span><span class="s1"> 
+_b85chars2 = </span><span class="s3">None</span><span class="s1"> 
+_b85dec = </span><span class="s3">None</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">b85encode(b</span><span class="s3">, </span><span class="s1">pad=</span><span class="s3">False</span><span class="s1">): 
+    </span><span class="s2">&quot;&quot;&quot;Encode bytes-like object b in base85 format and return a bytes object. 
+ 
+    If pad is true, the input is padded with b'\\0' so its length is a multiple of 
+    4 bytes before encoding. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">global </span><span class="s1">_b85chars</span><span class="s3">, </span><span class="s1">_b85chars2 
+    </span><span class="s0"># Delay the initialization of tables to not waste memory</span><span class="s1"> 
+    </span><span class="s0"># if the function is never called</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">_b85chars </span><span class="s3">is None</span><span class="s1">: 
+        _b85chars = [bytes((i</span><span class="s3">,</span><span class="s1">)) </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">_b85alphabet] 
+        _b85chars2 = [(a + b) </span><span class="s3">for </span><span class="s1">a </span><span class="s3">in </span><span class="s1">_b85chars </span><span class="s3">for </span><span class="s1">b </span><span class="s3">in </span><span class="s1">_b85chars] 
+    </span><span class="s3">return </span><span class="s1">_85encode(b</span><span class="s3">, </span><span class="s1">_b85chars</span><span class="s3">, </span><span class="s1">_b85chars2</span><span class="s3">, </span><span class="s1">pad) 
+ 
+</span><span class="s3">def </span><span class="s1">b85decode(b): 
+    </span><span class="s2">&quot;&quot;&quot;Decode the base85-encoded bytes-like object or ASCII string b 
+ 
+    The result is returned as a bytes object. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">global </span><span class="s1">_b85dec 
+    </span><span class="s0"># Delay the initialization of tables to not waste memory</span><span class="s1"> 
+    </span><span class="s0"># if the function is never called</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">_b85dec </span><span class="s3">is None</span><span class="s1">: 
+        _b85dec = [</span><span class="s3">None</span><span class="s1">] * </span><span class="s5">256</span><span class="s1"> 
+        </span><span class="s3">for </span><span class="s1">i</span><span class="s3">, </span><span class="s1">c </span><span class="s3">in </span><span class="s1">enumerate(_b85alphabet): 
+            _b85dec[c] = i 
+ 
+    b = _bytes_from_decode_data(b) 
+    padding = (-len(b)) % </span><span class="s5">5</span><span class="s1"> 
+    b = b + </span><span class="s6">b'~' </span><span class="s1">* padding 
+    out = [] 
+    packI = struct.Struct(</span><span class="s4">'!I'</span><span class="s1">).pack 
+    </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">len(b)</span><span class="s3">, </span><span class="s5">5</span><span class="s1">): 
+        chunk = b[i:i + </span><span class="s5">5</span><span class="s1">] 
+        acc = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">for </span><span class="s1">c </span><span class="s3">in </span><span class="s1">chunk: 
+                acc = acc * </span><span class="s5">85 </span><span class="s1">+ _b85dec[c] 
+        </span><span class="s3">except </span><span class="s1">TypeError: 
+            </span><span class="s3">for </span><span class="s1">j</span><span class="s3">, </span><span class="s1">c </span><span class="s3">in </span><span class="s1">enumerate(chunk): 
+                </span><span class="s3">if </span><span class="s1">_b85dec[c] </span><span class="s3">is None</span><span class="s1">: 
+                    </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'bad base85 character at position %d'</span><span class="s1"> 
+                                    % (i + j)) </span><span class="s3">from None</span><span class="s1"> 
+            </span><span class="s3">raise</span><span class="s1"> 
+        </span><span class="s3">try</span><span class="s1">: 
+            out.append(packI(acc)) 
+        </span><span class="s3">except </span><span class="s1">struct.error: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'base85 overflow in hunk starting at byte %d'</span><span class="s1"> 
+                             % i) </span><span class="s3">from None</span><span class="s1"> 
+ 
+    result = </span><span class="s6">b''</span><span class="s1">.join(out) 
+    </span><span class="s3">if </span><span class="s1">padding: 
+        result = result[:-padding] 
+    </span><span class="s3">return </span><span class="s1">result 
+ 
+</span><span class="s0"># Legacy interface.  This code could be cleaned up since I don't believe</span><span class="s1"> 
+</span><span class="s0"># binascii has any line length limitations.  It just doesn't seem worth it</span><span class="s1"> 
+</span><span class="s0"># though.  The files should be opened in binary mode.</span><span class="s1"> 
+ 
+MAXLINESIZE = </span><span class="s5">76 </span><span class="s0"># Excluding the CRLF</span><span class="s1"> 
+MAXBINSIZE = (MAXLINESIZE//</span><span class="s5">4</span><span class="s1">)*</span><span class="s5">3</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">encode(input</span><span class="s3">, </span><span class="s1">output): 
+    </span><span class="s2">&quot;&quot;&quot;Encode a file; input and output are binary files.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">while True</span><span class="s1">: 
+        s = input.read(MAXBINSIZE) 
+        </span><span class="s3">if not </span><span class="s1">s: 
+            </span><span class="s3">break</span><span class="s1"> 
+        </span><span class="s3">while </span><span class="s1">len(s) &lt; MAXBINSIZE: 
+            ns = input.read(MAXBINSIZE-len(s)) 
+            </span><span class="s3">if not </span><span class="s1">ns: 
+                </span><span class="s3">break</span><span class="s1"> 
+            s += ns 
+        line = binascii.b2a_base64(s) 
+        output.write(line) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">decode(input</span><span class="s3">, </span><span class="s1">output): 
+    </span><span class="s2">&quot;&quot;&quot;Decode a file; input and output are binary files.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">while True</span><span class="s1">: 
+        line = input.readline() 
+        </span><span class="s3">if not </span><span class="s1">line: 
+            </span><span class="s3">break</span><span class="s1"> 
+        s = binascii.a2b_base64(line) 
+        output.write(s) 
+ 
+</span><span class="s3">def </span><span class="s1">_input_type_check(s): 
+    </span><span class="s3">try</span><span class="s1">: 
+        m = memoryview(s) 
+    </span><span class="s3">except </span><span class="s1">TypeError </span><span class="s3">as </span><span class="s1">err: 
+        msg = </span><span class="s4">&quot;expected bytes-like object, not %s&quot; </span><span class="s1">% s.__class__.__name__ 
+        </span><span class="s3">raise </span><span class="s1">TypeError(msg) </span><span class="s3">from </span><span class="s1">err 
+    </span><span class="s3">if </span><span class="s1">m.format </span><span class="s3">not in </span><span class="s1">(</span><span class="s4">'c'</span><span class="s3">, </span><span class="s4">'b'</span><span class="s3">, </span><span class="s4">'B'</span><span class="s1">): 
+        msg = (</span><span class="s4">&quot;expected single byte elements, not %r from %s&quot; </span><span class="s1">% 
+                                          (m.format</span><span class="s3">, </span><span class="s1">s.__class__.__name__)) 
+        </span><span class="s3">raise </span><span class="s1">TypeError(msg) 
+    </span><span class="s3">if </span><span class="s1">m.ndim != </span><span class="s5">1</span><span class="s1">: 
+        msg = (</span><span class="s4">&quot;expected 1-D data, not %d-D data from %s&quot; </span><span class="s1">% 
+                                          (m.ndim</span><span class="s3">, </span><span class="s1">s.__class__.__name__)) 
+        </span><span class="s3">raise </span><span class="s1">TypeError(msg) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">encodebytes(s): 
+    </span><span class="s2">&quot;&quot;&quot;Encode a bytestring into a bytes object containing multiple lines 
+    of base-64 data.&quot;&quot;&quot;</span><span class="s1"> 
+    _input_type_check(s) 
+    pieces = [] 
+    </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">len(s)</span><span class="s3">, </span><span class="s1">MAXBINSIZE): 
+        chunk = s[i : i + MAXBINSIZE] 
+        pieces.append(binascii.b2a_base64(chunk)) 
+    </span><span class="s3">return </span><span class="s6">b&quot;&quot;</span><span class="s1">.join(pieces) 
+ 
+</span><span class="s3">def </span><span class="s1">encodestring(s): 
+    </span><span class="s2">&quot;&quot;&quot;Legacy alias of encodebytes().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">import </span><span class="s1">warnings 
+    warnings.warn(</span><span class="s4">&quot;encodestring() is a deprecated alias, use encodebytes()&quot;</span><span class="s3">,</span><span class="s1"> 
+                  DeprecationWarning</span><span class="s3">, </span><span class="s5">2</span><span class="s1">) 
+    </span><span class="s3">return </span><span class="s1">encodebytes(s) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">decodebytes(s): 
+    </span><span class="s2">&quot;&quot;&quot;Decode a bytestring of base-64 data into a bytes object.&quot;&quot;&quot;</span><span class="s1"> 
+    _input_type_check(s) 
+    </span><span class="s3">return </span><span class="s1">binascii.a2b_base64(s) 
+ 
+</span><span class="s3">def </span><span class="s1">decodestring(s): 
+    </span><span class="s2">&quot;&quot;&quot;Legacy alias of decodebytes().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">import </span><span class="s1">warnings 
+    warnings.warn(</span><span class="s4">&quot;decodestring() is a deprecated alias, use decodebytes()&quot;</span><span class="s3">,</span><span class="s1"> 
+                  DeprecationWarning</span><span class="s3">, </span><span class="s5">2</span><span class="s1">) 
+    </span><span class="s3">return </span><span class="s1">decodebytes(s) 
+ 
+ 
+</span><span class="s0"># Usable as a script...</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">main(): 
+    </span><span class="s2">&quot;&quot;&quot;Small main program&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">import </span><span class="s1">sys</span><span class="s3">, </span><span class="s1">getopt 
+    </span><span class="s3">try</span><span class="s1">: 
+        opts</span><span class="s3">, </span><span class="s1">args = getopt.getopt(sys.argv[</span><span class="s5">1</span><span class="s1">:]</span><span class="s3">, </span><span class="s4">'deut'</span><span class="s1">) 
+    </span><span class="s3">except </span><span class="s1">getopt.error </span><span class="s3">as </span><span class="s1">msg: 
+        sys.stdout = sys.stderr 
+        print(msg) 
+        print(</span><span class="s4">&quot;&quot;&quot;usage: %s [-d|-e|-u|-t] [file|-] 
+        -d, -u: decode 
+        -e: encode (default) 
+        -t: encode and decode string 'Aladdin:open sesame'&quot;&quot;&quot;</span><span class="s1">%sys.argv[</span><span class="s5">0</span><span class="s1">]) 
+        sys.exit(</span><span class="s5">2</span><span class="s1">) 
+    func = encode 
+    </span><span class="s3">for </span><span class="s1">o</span><span class="s3">, </span><span class="s1">a </span><span class="s3">in </span><span class="s1">opts: 
+        </span><span class="s3">if </span><span class="s1">o == </span><span class="s4">'-e'</span><span class="s1">: func = encode 
+        </span><span class="s3">if </span><span class="s1">o == </span><span class="s4">'-d'</span><span class="s1">: func = decode 
+        </span><span class="s3">if </span><span class="s1">o == </span><span class="s4">'-u'</span><span class="s1">: func = decode 
+        </span><span class="s3">if </span><span class="s1">o == </span><span class="s4">'-t'</span><span class="s1">: test(); </span><span class="s3">return</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">args </span><span class="s3">and </span><span class="s1">args[</span><span class="s5">0</span><span class="s1">] != </span><span class="s4">'-'</span><span class="s1">: 
+        </span><span class="s3">with </span><span class="s1">open(args[</span><span class="s5">0</span><span class="s1">]</span><span class="s3">, </span><span class="s4">'rb'</span><span class="s1">) </span><span class="s3">as </span><span class="s1">f: 
+            func(f</span><span class="s3">, </span><span class="s1">sys.stdout.buffer) 
+    </span><span class="s3">else</span><span class="s1">: 
+        func(sys.stdin.buffer</span><span class="s3">, </span><span class="s1">sys.stdout.buffer) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">test(): 
+    s0 = </span><span class="s6">b&quot;Aladdin:open sesame&quot;</span><span class="s1"> 
+    print(repr(s0)) 
+    s1 = encodebytes(s0) 
+    print(repr(s1)) 
+    s2 = decodebytes(s1) 
+    print(repr(s2)) 
+    </span><span class="s3">assert </span><span class="s1">s0 == s2 
+ 
+ 
+</span><span class="s3">if </span><span class="s1">__name__ == </span><span class="s4">'__main__'</span><span class="s1">: 
+    main() 
+</span></pre>
+</body>
+</html>

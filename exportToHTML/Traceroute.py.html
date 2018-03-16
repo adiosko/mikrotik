@@ -1,0 +1,151 @@
+<html>
+<head>
+<title>Traceroute.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Traceroute.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Traceroute: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setTraceroute(self</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set traceroute on mikrotik 
+        :param address: address to trace 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk([</span><span class="s4">'/tool/traceroute'</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+address]) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">setPacketSize(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">packet): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will trace with specific  packet size 
+        :param address: address 
+        :param packet: packet size default 56 B 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">,</span><span class="s4">'=size='</span><span class="s1">+packet] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">setTimeout(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">timeout): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set traceroute timeout 
+        :param address: 
+        :param timeout: default 1000 ms 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=timeout=' </span><span class="s1">+  timeout] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtcol(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">, </span><span class="s1">protocol): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set protocol to send 
+        :param address: 
+        :param protocol: 
+        :return: icmp/udp 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=protocol=' </span><span class="s1">+ protocol] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">useDNS(self</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will use dns in traceroute 
+        :param address: address to trace with dns enabled 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=use-dns=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">dontUseDNS(self</span><span class="s0">, </span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will not use dns in traceroute 
+        :param address: address to trace with dns enabled 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=use-dns=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">setPacketCount(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">count): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set count of packets to send 
+        :param address: 
+        :param count: number of count 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">useDNS(self</span><span class="s0">, </span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will use dns in traceroute 
+        :param address: address to trace with dns enabled 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=use-dns=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+    </span><span class="s0">def </span><span class="s1">setMaxHops(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">hops): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max hops on route 
+        :param address: 
+        :param hops: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=max-hops=' </span><span class="s1">+ hops] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">setSourceAddress(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">src): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set source address in trc 
+        :param address: 
+        :param src: ip src address 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=src-address=' </span><span class="s1">+ src] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">setTracertInterface(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tracert interface 
+        :param address: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">setDSCP(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">dscp): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dscp field 
+        :param address: 
+        :param dscp: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=dscp=' </span><span class="s1">+ dscp] ) 
+        </span><span class="s0">return </span><span class="s1">trc 
+ 
+    </span><span class="s0">def </span><span class="s1">setRoutingTable(self</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set routing table on tracetrt dafault is main 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        trc = self.client.talk( [</span><span class="s4">'/tool/traceroute'</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">, </span><span class="s4">'=routing-table=main'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">trc</span></pre>
+</body>
+</html>

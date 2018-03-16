@@ -1,0 +1,361 @@
+<html>
+<head>
+<title>list.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(104,151,187); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+list.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">import </span><span class="s1">json 
+</span><span class="s0">import </span><span class="s1">logging 
+</span><span class="s0">import </span><span class="s1">warnings 
+</span><span class="s0">try</span><span class="s1">: 
+    </span><span class="s0">from </span><span class="s1">itertools </span><span class="s0">import </span><span class="s1">zip_longest 
+</span><span class="s0">except </span><span class="s1">ImportError: 
+    </span><span class="s0">from </span><span class="s1">itertools </span><span class="s0">import </span><span class="s1">izip_longest </span><span class="s0">as </span><span class="s1">zip_longest 
+ 
+</span><span class="s0">from </span><span class="s1">pip._vendor </span><span class="s0">import </span><span class="s1">six 
+ 
+</span><span class="s0">from </span><span class="s1">pip.basecommand </span><span class="s0">import </span><span class="s1">Command 
+</span><span class="s0">from </span><span class="s1">pip.exceptions </span><span class="s0">import </span><span class="s1">CommandError 
+</span><span class="s0">from </span><span class="s1">pip.index </span><span class="s0">import </span><span class="s1">PackageFinder 
+</span><span class="s0">from </span><span class="s1">pip.utils </span><span class="s0">import </span><span class="s1">( 
+    get_installed_distributions</span><span class="s0">, </span><span class="s1">dist_is_editable) 
+</span><span class="s0">from </span><span class="s1">pip.utils.deprecation </span><span class="s0">import </span><span class="s1">RemovedInPip10Warning 
+</span><span class="s0">from </span><span class="s1">pip.cmdoptions </span><span class="s0">import </span><span class="s1">make_option_group</span><span class="s0">, </span><span class="s1">index_group 
+ 
+logger = logging.getLogger(__name__) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">ListCommand(Command): 
+    </span><span class="s2">&quot;&quot;&quot; 
+    List installed packages, including editables. 
+ 
+    Packages are listed in a case-insensitive sorted order. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    name = </span><span class="s3">'list'</span><span class="s1"> 
+    usage = </span><span class="s3">&quot;&quot;&quot; 
+      %prog [options]&quot;&quot;&quot;</span><span class="s1"> 
+    summary = </span><span class="s3">'List installed packages.'</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">*args</span><span class="s0">, </span><span class="s1">**kw): 
+        super(ListCommand</span><span class="s0">, </span><span class="s1">self).__init__(*args</span><span class="s0">, </span><span class="s1">**kw) 
+ 
+        cmd_opts = self.cmd_opts 
+ 
+        cmd_opts.add_option( 
+            </span><span class="s3">'-o'</span><span class="s0">, </span><span class="s3">'--outdated'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'store_true'</span><span class="s0">,</span><span class="s1"> 
+            default=</span><span class="s0">False,</span><span class="s1"> 
+            help=</span><span class="s3">'List outdated packages'</span><span class="s1">) 
+        cmd_opts.add_option( 
+            </span><span class="s3">'-u'</span><span class="s0">, </span><span class="s3">'--uptodate'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'store_true'</span><span class="s0">,</span><span class="s1"> 
+            default=</span><span class="s0">False,</span><span class="s1"> 
+            help=</span><span class="s3">'List uptodate packages'</span><span class="s1">) 
+        cmd_opts.add_option( 
+            </span><span class="s3">'-e'</span><span class="s0">, </span><span class="s3">'--editable'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'store_true'</span><span class="s0">,</span><span class="s1"> 
+            default=</span><span class="s0">False,</span><span class="s1"> 
+            help=</span><span class="s3">'List editable projects.'</span><span class="s1">) 
+        cmd_opts.add_option( 
+            </span><span class="s3">'-l'</span><span class="s0">, </span><span class="s3">'--local'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'store_true'</span><span class="s0">,</span><span class="s1"> 
+            default=</span><span class="s0">False,</span><span class="s1"> 
+            help=(</span><span class="s3">'If in a virtualenv that has global access, do not list '</span><span class="s1"> 
+                  </span><span class="s3">'globally-installed packages.'</span><span class="s1">)</span><span class="s0">,</span><span class="s1"> 
+        ) 
+        self.cmd_opts.add_option( 
+            </span><span class="s3">'--user'</span><span class="s0">,</span><span class="s1"> 
+            dest=</span><span class="s3">'user'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'store_true'</span><span class="s0">,</span><span class="s1"> 
+            default=</span><span class="s0">False,</span><span class="s1"> 
+            help=</span><span class="s3">'Only output packages installed in user-site.'</span><span class="s1">) 
+ 
+        cmd_opts.add_option( 
+            </span><span class="s3">'--pre'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'store_true'</span><span class="s0">,</span><span class="s1"> 
+            default=</span><span class="s0">False,</span><span class="s1"> 
+            help=(</span><span class="s3">&quot;Include pre-release and development versions. By default, &quot;</span><span class="s1"> 
+                  </span><span class="s3">&quot;pip only finds stable versions.&quot;</span><span class="s1">)</span><span class="s0">,</span><span class="s1"> 
+        ) 
+ 
+        cmd_opts.add_option( 
+            </span><span class="s3">'--format'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'store'</span><span class="s0">,</span><span class="s1"> 
+            dest=</span><span class="s3">'list_format'</span><span class="s0">,</span><span class="s1"> 
+            choices=(</span><span class="s3">'legacy'</span><span class="s0">, </span><span class="s3">'columns'</span><span class="s0">, </span><span class="s3">'freeze'</span><span class="s0">, </span><span class="s3">'json'</span><span class="s1">)</span><span class="s0">,</span><span class="s1"> 
+            help=</span><span class="s3">&quot;Select the output format among: legacy (default), columns, &quot;</span><span class="s1"> 
+                 </span><span class="s3">&quot;freeze or json.&quot;</span><span class="s0">,</span><span class="s1"> 
+        ) 
+ 
+        cmd_opts.add_option( 
+            </span><span class="s3">'--not-required'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'store_true'</span><span class="s0">,</span><span class="s1"> 
+            dest=</span><span class="s3">'not_required'</span><span class="s0">,</span><span class="s1"> 
+            help=</span><span class="s3">&quot;List packages that are not dependencies of &quot;</span><span class="s1"> 
+                 </span><span class="s3">&quot;installed packages.&quot;</span><span class="s0">,</span><span class="s1"> 
+        ) 
+ 
+        index_opts = make_option_group(index_group</span><span class="s0">, </span><span class="s1">self.parser) 
+ 
+        self.parser.insert_option_group(</span><span class="s4">0</span><span class="s0">, </span><span class="s1">index_opts) 
+        self.parser.insert_option_group(</span><span class="s4">0</span><span class="s0">, </span><span class="s1">cmd_opts) 
+ 
+    </span><span class="s0">def </span><span class="s1">_build_package_finder(self</span><span class="s0">, </span><span class="s1">options</span><span class="s0">, </span><span class="s1">index_urls</span><span class="s0">, </span><span class="s1">session): 
+        </span><span class="s2">&quot;&quot;&quot; 
+        Create a package finder appropriate to this list command. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">return </span><span class="s1">PackageFinder( 
+            find_links=options.find_links</span><span class="s0">,</span><span class="s1"> 
+            index_urls=index_urls</span><span class="s0">,</span><span class="s1"> 
+            allow_all_prereleases=options.pre</span><span class="s0">,</span><span class="s1"> 
+            trusted_hosts=options.trusted_hosts</span><span class="s0">,</span><span class="s1"> 
+            process_dependency_links=options.process_dependency_links</span><span class="s0">,</span><span class="s1"> 
+            session=session</span><span class="s0">,</span><span class="s1"> 
+        ) 
+ 
+    </span><span class="s0">def </span><span class="s1">run(self</span><span class="s0">, </span><span class="s1">options</span><span class="s0">, </span><span class="s1">args): 
+        </span><span class="s0">if </span><span class="s1">options.allow_external: 
+            warnings.warn( 
+                </span><span class="s3">&quot;--allow-external has been deprecated and will be removed in &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;the future. Due to changes in the repository protocol, it no &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;longer has any effect.&quot;</span><span class="s0">,</span><span class="s1"> 
+                RemovedInPip10Warning</span><span class="s0">,</span><span class="s1"> 
+            ) 
+ 
+        </span><span class="s0">if </span><span class="s1">options.allow_all_external: 
+            warnings.warn( 
+                </span><span class="s3">&quot;--allow-all-external has been deprecated and will be removed &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;in the future. Due to changes in the repository protocol, it &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;no longer has any effect.&quot;</span><span class="s0">,</span><span class="s1"> 
+                RemovedInPip10Warning</span><span class="s0">,</span><span class="s1"> 
+            ) 
+ 
+        </span><span class="s0">if </span><span class="s1">options.allow_unverified: 
+            warnings.warn( 
+                </span><span class="s3">&quot;--allow-unverified has been deprecated and will be removed &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;in the future. Due to changes in the repository protocol, it &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;no longer has any effect.&quot;</span><span class="s0">,</span><span class="s1"> 
+                RemovedInPip10Warning</span><span class="s0">,</span><span class="s1"> 
+            ) 
+ 
+        </span><span class="s0">if </span><span class="s1">options.list_format </span><span class="s0">is None</span><span class="s1">: 
+            warnings.warn( 
+                </span><span class="s3">&quot;The default format will switch to columns in the future. &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;You can use --format=(legacy|columns) (or define a &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;format=(legacy|columns) in your pip.conf under the [list] &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;section) to disable this warning.&quot;</span><span class="s0">,</span><span class="s1"> 
+                RemovedInPip10Warning</span><span class="s0">,</span><span class="s1"> 
+            ) 
+ 
+        </span><span class="s0">if </span><span class="s1">options.outdated </span><span class="s0">and </span><span class="s1">options.uptodate: 
+            </span><span class="s0">raise </span><span class="s1">CommandError( 
+                </span><span class="s3">&quot;Options --outdated and --uptodate cannot be combined.&quot;</span><span class="s1">) 
+ 
+        packages = get_installed_distributions( 
+            local_only=options.local</span><span class="s0">,</span><span class="s1"> 
+            user_only=options.user</span><span class="s0">,</span><span class="s1"> 
+            editables_only=options.editable</span><span class="s0">,</span><span class="s1"> 
+        ) 
+ 
+        </span><span class="s0">if </span><span class="s1">options.outdated: 
+            packages = self.get_outdated(packages</span><span class="s0">, </span><span class="s1">options) 
+        </span><span class="s0">elif </span><span class="s1">options.uptodate: 
+            packages = self.get_uptodate(packages</span><span class="s0">, </span><span class="s1">options) 
+ 
+        </span><span class="s0">if </span><span class="s1">options.not_required: 
+            packages = self.get_not_required(packages</span><span class="s0">, </span><span class="s1">options) 
+ 
+        self.output_package_listing(packages</span><span class="s0">, </span><span class="s1">options) 
+ 
+    </span><span class="s0">def </span><span class="s1">get_outdated(self</span><span class="s0">, </span><span class="s1">packages</span><span class="s0">, </span><span class="s1">options): 
+        </span><span class="s0">return </span><span class="s1">[ 
+            dist </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">self.iter_packages_latest_infos(packages</span><span class="s0">, </span><span class="s1">options) 
+            </span><span class="s0">if </span><span class="s1">dist.latest_version &gt; dist.parsed_version 
+        ] 
+ 
+    </span><span class="s0">def </span><span class="s1">get_uptodate(self</span><span class="s0">, </span><span class="s1">packages</span><span class="s0">, </span><span class="s1">options): 
+        </span><span class="s0">return </span><span class="s1">[ 
+            dist </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">self.iter_packages_latest_infos(packages</span><span class="s0">, </span><span class="s1">options) 
+            </span><span class="s0">if </span><span class="s1">dist.latest_version == dist.parsed_version 
+        ] 
+ 
+    </span><span class="s0">def </span><span class="s1">get_not_required(self</span><span class="s0">, </span><span class="s1">packages</span><span class="s0">, </span><span class="s1">options): 
+        dep_keys = set() 
+        </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">packages: 
+            dep_keys.update(requirement.key </span><span class="s0">for </span><span class="s1">requirement </span><span class="s0">in </span><span class="s1">dist.requires()) 
+        </span><span class="s0">return </span><span class="s1">set(pkg </span><span class="s0">for </span><span class="s1">pkg </span><span class="s0">in </span><span class="s1">packages </span><span class="s0">if </span><span class="s1">pkg.key </span><span class="s0">not in </span><span class="s1">dep_keys) 
+ 
+    </span><span class="s0">def </span><span class="s1">iter_packages_latest_infos(self</span><span class="s0">, </span><span class="s1">packages</span><span class="s0">, </span><span class="s1">options): 
+        index_urls = [options.index_url] + options.extra_index_urls 
+        </span><span class="s0">if </span><span class="s1">options.no_index: 
+            logger.debug(</span><span class="s3">'Ignoring indexes: %s'</span><span class="s0">, </span><span class="s3">','</span><span class="s1">.join(index_urls)) 
+            index_urls = [] 
+ 
+        dependency_links = [] 
+        </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">packages: 
+            </span><span class="s0">if </span><span class="s1">dist.has_metadata(</span><span class="s3">'dependency_links.txt'</span><span class="s1">): 
+                dependency_links.extend( 
+                    dist.get_metadata_lines(</span><span class="s3">'dependency_links.txt'</span><span class="s1">)</span><span class="s0">,</span><span class="s1"> 
+                ) 
+ 
+        </span><span class="s0">with </span><span class="s1">self._build_session(options) </span><span class="s0">as </span><span class="s1">session: 
+            finder = self._build_package_finder(options</span><span class="s0">, </span><span class="s1">index_urls</span><span class="s0">, </span><span class="s1">session) 
+            finder.add_dependency_links(dependency_links) 
+ 
+            </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">packages: 
+                typ = </span><span class="s3">'unknown'</span><span class="s1"> 
+                all_candidates = finder.find_all_candidates(dist.key) 
+                </span><span class="s0">if not </span><span class="s1">options.pre: 
+                    </span><span class="s5"># Remove prereleases</span><span class="s1"> 
+                    all_candidates = [candidate </span><span class="s0">for </span><span class="s1">candidate </span><span class="s0">in </span><span class="s1">all_candidates 
+                                      </span><span class="s0">if not </span><span class="s1">candidate.version.is_prerelease] 
+ 
+                </span><span class="s0">if not </span><span class="s1">all_candidates: 
+                    </span><span class="s0">continue</span><span class="s1"> 
+                best_candidate = max(all_candidates</span><span class="s0">,</span><span class="s1"> 
+                                     key=finder._candidate_sort_key) 
+                remote_version = best_candidate.version 
+                </span><span class="s0">if </span><span class="s1">best_candidate.location.is_wheel: 
+                    typ = </span><span class="s3">'wheel'</span><span class="s1"> 
+                </span><span class="s0">else</span><span class="s1">: 
+                    typ = </span><span class="s3">'sdist'</span><span class="s1"> 
+                </span><span class="s5"># This is dirty but makes the rest of the code much cleaner</span><span class="s1"> 
+                dist.latest_version = remote_version 
+                dist.latest_filetype = typ 
+                </span><span class="s0">yield </span><span class="s1">dist 
+ 
+    </span><span class="s0">def </span><span class="s1">output_legacy(self</span><span class="s0">, </span><span class="s1">dist): 
+        </span><span class="s0">if </span><span class="s1">dist_is_editable(dist): 
+            </span><span class="s0">return </span><span class="s3">'%s (%s, %s)' </span><span class="s1">% ( 
+                dist.project_name</span><span class="s0">,</span><span class="s1"> 
+                dist.version</span><span class="s0">,</span><span class="s1"> 
+                dist.location</span><span class="s0">,</span><span class="s1"> 
+            ) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">return </span><span class="s3">'%s (%s)' </span><span class="s1">% (dist.project_name</span><span class="s0">, </span><span class="s1">dist.version) 
+ 
+    </span><span class="s0">def </span><span class="s1">output_legacy_latest(self</span><span class="s0">, </span><span class="s1">dist): 
+        </span><span class="s0">return </span><span class="s3">'%s - Latest: %s [%s]' </span><span class="s1">% ( 
+            self.output_legacy(dist)</span><span class="s0">,</span><span class="s1"> 
+            dist.latest_version</span><span class="s0">,</span><span class="s1"> 
+            dist.latest_filetype</span><span class="s0">,</span><span class="s1"> 
+        ) 
+ 
+    </span><span class="s0">def </span><span class="s1">output_package_listing(self</span><span class="s0">, </span><span class="s1">packages</span><span class="s0">, </span><span class="s1">options): 
+        packages = sorted( 
+            packages</span><span class="s0">,</span><span class="s1"> 
+            key=</span><span class="s0">lambda </span><span class="s1">dist: dist.project_name.lower()</span><span class="s0">,</span><span class="s1"> 
+        ) 
+        </span><span class="s0">if </span><span class="s1">options.list_format == </span><span class="s3">'columns' </span><span class="s0">and </span><span class="s1">packages: 
+            data</span><span class="s0">, </span><span class="s1">header = format_for_columns(packages</span><span class="s0">, </span><span class="s1">options) 
+            self.output_package_listing_columns(data</span><span class="s0">, </span><span class="s1">header) 
+        </span><span class="s0">elif </span><span class="s1">options.list_format == </span><span class="s3">'freeze'</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">packages: 
+                logger.info(</span><span class="s3">&quot;%s==%s&quot;</span><span class="s0">, </span><span class="s1">dist.project_name</span><span class="s0">, </span><span class="s1">dist.version) 
+        </span><span class="s0">elif </span><span class="s1">options.list_format == </span><span class="s3">'json'</span><span class="s1">: 
+            logger.info(format_for_json(packages</span><span class="s0">, </span><span class="s1">options)) 
+        </span><span class="s0">else</span><span class="s1">:  </span><span class="s5"># legacy</span><span class="s1"> 
+            </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">packages: 
+                </span><span class="s0">if </span><span class="s1">options.outdated: 
+                    logger.info(self.output_legacy_latest(dist)) 
+                </span><span class="s0">else</span><span class="s1">: 
+                    logger.info(self.output_legacy(dist)) 
+ 
+    </span><span class="s0">def </span><span class="s1">output_package_listing_columns(self</span><span class="s0">, </span><span class="s1">data</span><span class="s0">, </span><span class="s1">header): 
+        </span><span class="s5"># insert the header first: we need to know the size of column names</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">len(data) &gt; </span><span class="s4">0</span><span class="s1">: 
+            data.insert(</span><span class="s4">0</span><span class="s0">, </span><span class="s1">header) 
+ 
+        pkg_strings</span><span class="s0">, </span><span class="s1">sizes = tabulate(data) 
+ 
+        </span><span class="s5"># Create and add a separator.</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">len(data) &gt; </span><span class="s4">0</span><span class="s1">: 
+            pkg_strings.insert(</span><span class="s4">1</span><span class="s0">, </span><span class="s3">&quot; &quot;</span><span class="s1">.join(map(</span><span class="s0">lambda </span><span class="s1">x: </span><span class="s3">'-' </span><span class="s1">* x</span><span class="s0">, </span><span class="s1">sizes))) 
+ 
+        </span><span class="s0">for </span><span class="s1">val </span><span class="s0">in </span><span class="s1">pkg_strings: 
+            logger.info(val) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">tabulate(vals): 
+    </span><span class="s5"># From pfmoore on GitHub:</span><span class="s1"> 
+    </span><span class="s5"># https://github.com/pypa/pip/issues/3651#issuecomment-216932564</span><span class="s1"> 
+    </span><span class="s0">assert </span><span class="s1">len(vals) &gt; </span><span class="s4">0</span><span class="s1"> 
+ 
+    sizes = [</span><span class="s4">0</span><span class="s1">] * max(len(x) </span><span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">vals) 
+    </span><span class="s0">for </span><span class="s1">row </span><span class="s0">in </span><span class="s1">vals: 
+        sizes = [max(s</span><span class="s0">, </span><span class="s1">len(str(c))) </span><span class="s0">for </span><span class="s1">s</span><span class="s0">, </span><span class="s1">c </span><span class="s0">in </span><span class="s1">zip_longest(sizes</span><span class="s0">, </span><span class="s1">row)] 
+ 
+    result = [] 
+    </span><span class="s0">for </span><span class="s1">row </span><span class="s0">in </span><span class="s1">vals: 
+        display = </span><span class="s3">&quot; &quot;</span><span class="s1">.join([str(c).ljust(s) </span><span class="s0">if </span><span class="s1">c </span><span class="s0">is not None else </span><span class="s3">''</span><span class="s1"> 
+                            </span><span class="s0">for </span><span class="s1">s</span><span class="s0">, </span><span class="s1">c </span><span class="s0">in </span><span class="s1">zip_longest(sizes</span><span class="s0">, </span><span class="s1">row)]) 
+        result.append(display) 
+ 
+    </span><span class="s0">return </span><span class="s1">result</span><span class="s0">, </span><span class="s1">sizes 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">format_for_columns(pkgs</span><span class="s0">, </span><span class="s1">options): 
+    </span><span class="s2">&quot;&quot;&quot; 
+    Convert the package data into something usable 
+    by output_package_listing_columns. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    running_outdated = options.outdated 
+    </span><span class="s5"># Adjust the header for the `pip list --outdated` case.</span><span class="s1"> 
+    </span><span class="s0">if </span><span class="s1">running_outdated: 
+        header = [</span><span class="s3">&quot;Package&quot;</span><span class="s0">, </span><span class="s3">&quot;Version&quot;</span><span class="s0">, </span><span class="s3">&quot;Latest&quot;</span><span class="s0">, </span><span class="s3">&quot;Type&quot;</span><span class="s1">] 
+    </span><span class="s0">else</span><span class="s1">: 
+        header = [</span><span class="s3">&quot;Package&quot;</span><span class="s0">, </span><span class="s3">&quot;Version&quot;</span><span class="s1">] 
+ 
+    data = [] 
+    </span><span class="s0">if </span><span class="s1">any(dist_is_editable(x) </span><span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">pkgs): 
+        header.append(</span><span class="s3">&quot;Location&quot;</span><span class="s1">) 
+ 
+    </span><span class="s0">for </span><span class="s1">proj </span><span class="s0">in </span><span class="s1">pkgs: 
+        </span><span class="s5"># if we're working on the 'outdated' list, separate out the</span><span class="s1"> 
+        </span><span class="s5"># latest_version and type</span><span class="s1"> 
+        row = [proj.project_name</span><span class="s0">, </span><span class="s1">proj.version] 
+ 
+        </span><span class="s0">if </span><span class="s1">running_outdated: 
+            row.append(proj.latest_version) 
+            row.append(proj.latest_filetype) 
+ 
+        </span><span class="s0">if </span><span class="s1">dist_is_editable(proj): 
+            row.append(proj.location) 
+ 
+        data.append(row) 
+ 
+    </span><span class="s0">return </span><span class="s1">data</span><span class="s0">, </span><span class="s1">header 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">format_for_json(packages</span><span class="s0">, </span><span class="s1">options): 
+    data = [] 
+    </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">packages: 
+        info = { 
+            </span><span class="s3">'name'</span><span class="s1">: dist.project_name</span><span class="s0">,</span><span class="s1"> 
+            </span><span class="s3">'version'</span><span class="s1">: six.text_type(dist.version)</span><span class="s0">,</span><span class="s1"> 
+        } 
+        </span><span class="s0">if </span><span class="s1">options.outdated: 
+            info[</span><span class="s3">'latest_version'</span><span class="s1">] = six.text_type(dist.latest_version) 
+            info[</span><span class="s3">'latest_filetype'</span><span class="s1">] = dist.latest_filetype 
+        data.append(info) 
+    </span><span class="s0">return </span><span class="s1">json.dumps(data) 
+</span></pre>
+</body>
+</html>

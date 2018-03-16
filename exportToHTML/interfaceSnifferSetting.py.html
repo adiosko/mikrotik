@@ -1,0 +1,148 @@
+<html>
+<head>
+<title>interfaceSnifferSetting.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+interfaceSnifferSetting.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">interfaceWirelessSmiffer: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">enableMultipleChannels(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">,</span><span class="s4">'=multiple-channels=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">disableMultipleChannels(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">,</span><span class="s4">'=multiple-channels=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableOnlyHeaders(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=only-headers=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">disableOnlyHeaders(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=only-headers=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableReceiveErrors(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=receive-errors=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">disableReceiveErrors(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=receive-errors=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setChannelTime(self</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:00:20&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param time: in secs 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=channel-time='</span><span class="s1">+time] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setMemoryLimit(self</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param limit: in KiB 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=memory-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setFileName(self</span><span class="s0">,</span><span class="s1">fileName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param fileName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=file-name=' </span><span class="s1">+ fileName] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setFileLimit(self</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param limit: KiB 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=file-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableStreaming(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable sreaming 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=streaming-enabled=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">disableStreaming(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=streaming-enabled=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setStreamingServer(self</span><span class="s0">,</span><span class="s1">server=</span><span class="s4">&quot;0.0.0.0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param server: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.enableStreaming() 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=streaming-server='</span><span class="s1">+server] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setStreamingMaxRate(self</span><span class="s0">,</span><span class="s1">pps): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param pps: pakcet per second 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/sniffer/set'</span><span class="s0">, </span><span class="s4">'=streaming-max-rate='</span><span class="s1">+pps] ) 
+        </span><span class="s0">return </span><span class="s1">wifi</span></pre>
+</body>
+</html>

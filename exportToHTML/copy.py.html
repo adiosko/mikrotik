@@ -1,0 +1,354 @@
+<html>
+<head>
+<title>copy.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+copy.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Generic (shallow and deep) copying operations. 
+ 
+Interface summary: 
+ 
+        import copy 
+ 
+        x = copy.copy(y)        # make a shallow copy of y 
+        x = copy.deepcopy(y)    # make a deep copy of y 
+ 
+For module specific errors, copy.Error is raised. 
+ 
+The difference between shallow and deep copying is only relevant for 
+compound objects (objects that contain other objects, like lists or 
+class instances). 
+ 
+- A shallow copy constructs a new compound object and then (to the 
+  extent possible) inserts *the same objects* into it that the 
+  original contains. 
+ 
+- A deep copy constructs a new compound object and then, recursively, 
+  inserts *copies* into it of the objects found in the original. 
+ 
+Two problems often exist with deep copy operations that don't exist 
+with shallow copy operations: 
+ 
+ a) recursive objects (compound objects that, directly or indirectly, 
+    contain a reference to themselves) may cause a recursive loop 
+ 
+ b) because deep copy copies *everything* it may copy too much, e.g. 
+    administrative data structures that should be shared even between 
+    copies 
+ 
+Python's deep copy operation avoids these problems by: 
+ 
+ a) keeping a table of objects already copied during the current 
+    copying pass 
+ 
+ b) letting user-defined classes override the copying operation or the 
+    set of components copied 
+ 
+This version does not copy types like module, class, function, method, 
+nor stack trace, stack frame, nor file, socket, window, nor array, nor 
+any similar types. 
+ 
+Classes can use the same interfaces to control copying that they use 
+to control pickling: they can define methods called __getinitargs__(), 
+__getstate__() and __setstate__().  See the documentation for module 
+&quot;pickle&quot; for information on these methods. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">types 
+</span><span class="s2">import </span><span class="s1">weakref 
+</span><span class="s2">from </span><span class="s1">copyreg </span><span class="s2">import </span><span class="s1">dispatch_table 
+</span><span class="s2">import </span><span class="s1">builtins 
+ 
+</span><span class="s2">class </span><span class="s1">Error(Exception): 
+    </span><span class="s2">pass</span><span class="s1"> 
+error = Error   </span><span class="s3"># backward compatibility</span><span class="s1"> 
+ 
+</span><span class="s2">try</span><span class="s1">: 
+    </span><span class="s2">from </span><span class="s1">org.python.core </span><span class="s2">import </span><span class="s1">PyStringMap 
+</span><span class="s2">except </span><span class="s1">ImportError: 
+    PyStringMap = </span><span class="s2">None</span><span class="s1"> 
+ 
+__all__ = [</span><span class="s4">&quot;Error&quot;</span><span class="s2">, </span><span class="s4">&quot;copy&quot;</span><span class="s2">, </span><span class="s4">&quot;deepcopy&quot;</span><span class="s1">] 
+ 
+</span><span class="s2">def </span><span class="s1">copy(x): 
+    </span><span class="s0">&quot;&quot;&quot;Shallow copy operation on arbitrary Python objects. 
+ 
+    See the module's __doc__ string for more info. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    cls = type(x) 
+ 
+    copier = _copy_dispatch.get(cls) 
+    </span><span class="s2">if </span><span class="s1">copier: 
+        </span><span class="s2">return </span><span class="s1">copier(x) 
+ 
+    </span><span class="s2">try</span><span class="s1">: 
+        issc = issubclass(cls</span><span class="s2">, </span><span class="s1">type) 
+    </span><span class="s2">except </span><span class="s1">TypeError: </span><span class="s3"># cls is not a class</span><span class="s1"> 
+        issc = </span><span class="s2">False</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">issc: 
+        </span><span class="s3"># treat it as a regular class:</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">_copy_immutable(x) 
+ 
+    copier = getattr(cls</span><span class="s2">, </span><span class="s4">&quot;__copy__&quot;</span><span class="s2">, None</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">copier: 
+        </span><span class="s2">return </span><span class="s1">copier(x) 
+ 
+    reductor = dispatch_table.get(cls) 
+    </span><span class="s2">if </span><span class="s1">reductor: 
+        rv = reductor(x) 
+    </span><span class="s2">else</span><span class="s1">: 
+        reductor = getattr(x</span><span class="s2">, </span><span class="s4">&quot;__reduce_ex__&quot;</span><span class="s2">, None</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">reductor: 
+            rv = reductor(</span><span class="s5">4</span><span class="s1">) 
+        </span><span class="s2">else</span><span class="s1">: 
+            reductor = getattr(x</span><span class="s2">, </span><span class="s4">&quot;__reduce__&quot;</span><span class="s2">, None</span><span class="s1">) 
+            </span><span class="s2">if </span><span class="s1">reductor: 
+                rv = reductor() 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">raise </span><span class="s1">Error(</span><span class="s4">&quot;un(shallow)copyable object of type %s&quot; </span><span class="s1">% cls) 
+ 
+    </span><span class="s2">return </span><span class="s1">_reconstruct(x</span><span class="s2">, </span><span class="s1">rv</span><span class="s2">, </span><span class="s5">0</span><span class="s1">) 
+ 
+ 
+_copy_dispatch = d = {} 
+ 
+</span><span class="s2">def </span><span class="s1">_copy_immutable(x): 
+    </span><span class="s2">return </span><span class="s1">x 
+</span><span class="s2">for </span><span class="s1">t </span><span class="s2">in </span><span class="s1">(type(</span><span class="s2">None</span><span class="s1">)</span><span class="s2">, </span><span class="s1">int</span><span class="s2">, </span><span class="s1">float</span><span class="s2">, </span><span class="s1">bool</span><span class="s2">, </span><span class="s1">str</span><span class="s2">, </span><span class="s1">tuple</span><span class="s2">,</span><span class="s1"> 
+          bytes</span><span class="s2">, </span><span class="s1">frozenset</span><span class="s2">, </span><span class="s1">type</span><span class="s2">, </span><span class="s1">range</span><span class="s2">,</span><span class="s1"> 
+          types.BuiltinFunctionType</span><span class="s2">, </span><span class="s1">type(Ellipsis)</span><span class="s2">,</span><span class="s1"> 
+          types.FunctionType</span><span class="s2">, </span><span class="s1">weakref.ref): 
+    d[t] = _copy_immutable 
+t = getattr(types</span><span class="s2">, </span><span class="s4">&quot;CodeType&quot;</span><span class="s2">, None</span><span class="s1">) 
+</span><span class="s2">if </span><span class="s1">t </span><span class="s2">is not None</span><span class="s1">: 
+    d[t] = _copy_immutable 
+</span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">(</span><span class="s4">&quot;complex&quot;</span><span class="s2">, </span><span class="s4">&quot;unicode&quot;</span><span class="s1">): 
+    t = getattr(builtins</span><span class="s2">, </span><span class="s1">name</span><span class="s2">, None</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">t </span><span class="s2">is not None</span><span class="s1">: 
+        d[t] = _copy_immutable 
+ 
+</span><span class="s2">def </span><span class="s1">_copy_with_constructor(x): 
+    </span><span class="s2">return </span><span class="s1">type(x)(x) 
+</span><span class="s2">for </span><span class="s1">t </span><span class="s2">in </span><span class="s1">(list</span><span class="s2">, </span><span class="s1">dict</span><span class="s2">, </span><span class="s1">set): 
+    d[t] = _copy_with_constructor 
+ 
+</span><span class="s2">def </span><span class="s1">_copy_with_copy_method(x): 
+    </span><span class="s2">return </span><span class="s1">x.copy() 
+</span><span class="s2">if </span><span class="s1">PyStringMap </span><span class="s2">is not None</span><span class="s1">: 
+    d[PyStringMap] = _copy_with_copy_method 
+ 
+</span><span class="s2">del </span><span class="s1">d 
+ 
+</span><span class="s2">def </span><span class="s1">deepcopy(x</span><span class="s2">, </span><span class="s1">memo=</span><span class="s2">None, </span><span class="s1">_nil=[]): 
+    </span><span class="s0">&quot;&quot;&quot;Deep copy operation on arbitrary Python objects. 
+ 
+    See the module's __doc__ string for more info. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">if </span><span class="s1">memo </span><span class="s2">is None</span><span class="s1">: 
+        memo = {} 
+ 
+    d = id(x) 
+    y = memo.get(d</span><span class="s2">, </span><span class="s1">_nil) 
+    </span><span class="s2">if </span><span class="s1">y </span><span class="s2">is not </span><span class="s1">_nil: 
+        </span><span class="s2">return </span><span class="s1">y 
+ 
+    cls = type(x) 
+ 
+    copier = _deepcopy_dispatch.get(cls) 
+    </span><span class="s2">if </span><span class="s1">copier: 
+        y = copier(x</span><span class="s2">, </span><span class="s1">memo) 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s2">try</span><span class="s1">: 
+            issc = issubclass(cls</span><span class="s2">, </span><span class="s1">type) 
+        </span><span class="s2">except </span><span class="s1">TypeError: </span><span class="s3"># cls is not a class (old Boost; see SF #502085)</span><span class="s1"> 
+            issc = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">issc: 
+            y = _deepcopy_atomic(x</span><span class="s2">, </span><span class="s1">memo) 
+        </span><span class="s2">else</span><span class="s1">: 
+            copier = getattr(x</span><span class="s2">, </span><span class="s4">&quot;__deepcopy__&quot;</span><span class="s2">, None</span><span class="s1">) 
+            </span><span class="s2">if </span><span class="s1">copier: 
+                y = copier(memo) 
+            </span><span class="s2">else</span><span class="s1">: 
+                reductor = dispatch_table.get(cls) 
+                </span><span class="s2">if </span><span class="s1">reductor: 
+                    rv = reductor(x) 
+                </span><span class="s2">else</span><span class="s1">: 
+                    reductor = getattr(x</span><span class="s2">, </span><span class="s4">&quot;__reduce_ex__&quot;</span><span class="s2">, None</span><span class="s1">) 
+                    </span><span class="s2">if </span><span class="s1">reductor: 
+                        rv = reductor(</span><span class="s5">4</span><span class="s1">) 
+                    </span><span class="s2">else</span><span class="s1">: 
+                        reductor = getattr(x</span><span class="s2">, </span><span class="s4">&quot;__reduce__&quot;</span><span class="s2">, None</span><span class="s1">) 
+                        </span><span class="s2">if </span><span class="s1">reductor: 
+                            rv = reductor() 
+                        </span><span class="s2">else</span><span class="s1">: 
+                            </span><span class="s2">raise </span><span class="s1">Error( 
+                                </span><span class="s4">&quot;un(deep)copyable object of type %s&quot; </span><span class="s1">% cls) 
+                y = _reconstruct(x</span><span class="s2">, </span><span class="s1">rv</span><span class="s2">, </span><span class="s5">1</span><span class="s2">, </span><span class="s1">memo) 
+ 
+    </span><span class="s3"># If is its own copy, don't memoize.</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">y </span><span class="s2">is not </span><span class="s1">x: 
+        memo[d] = y 
+        _keep_alive(x</span><span class="s2">, </span><span class="s1">memo) </span><span class="s3"># Make sure x lives at least as long as d</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">y 
+ 
+_deepcopy_dispatch = d = {} 
+ 
+</span><span class="s2">def </span><span class="s1">_deepcopy_atomic(x</span><span class="s2">, </span><span class="s1">memo): 
+    </span><span class="s2">return </span><span class="s1">x 
+d[type(</span><span class="s2">None</span><span class="s1">)] = _deepcopy_atomic 
+d[type(Ellipsis)] = _deepcopy_atomic 
+d[int] = _deepcopy_atomic 
+d[float] = _deepcopy_atomic 
+d[bool] = _deepcopy_atomic 
+</span><span class="s2">try</span><span class="s1">: 
+    d[complex] = _deepcopy_atomic 
+</span><span class="s2">except </span><span class="s1">NameError: 
+    </span><span class="s2">pass</span><span class="s1"> 
+d[bytes] = _deepcopy_atomic 
+d[str] = _deepcopy_atomic 
+</span><span class="s2">try</span><span class="s1">: 
+    d[types.CodeType] = _deepcopy_atomic 
+</span><span class="s2">except </span><span class="s1">AttributeError: 
+    </span><span class="s2">pass</span><span class="s1"> 
+d[type] = _deepcopy_atomic 
+d[types.BuiltinFunctionType] = _deepcopy_atomic 
+d[types.FunctionType] = _deepcopy_atomic 
+d[weakref.ref] = _deepcopy_atomic 
+ 
+</span><span class="s2">def </span><span class="s1">_deepcopy_list(x</span><span class="s2">, </span><span class="s1">memo): 
+    y = [] 
+    memo[id(x)] = y 
+    </span><span class="s2">for </span><span class="s1">a </span><span class="s2">in </span><span class="s1">x: 
+        y.append(deepcopy(a</span><span class="s2">, </span><span class="s1">memo)) 
+    </span><span class="s2">return </span><span class="s1">y 
+d[list] = _deepcopy_list 
+ 
+</span><span class="s2">def </span><span class="s1">_deepcopy_tuple(x</span><span class="s2">, </span><span class="s1">memo): 
+    y = [deepcopy(a</span><span class="s2">, </span><span class="s1">memo) </span><span class="s2">for </span><span class="s1">a </span><span class="s2">in </span><span class="s1">x] 
+    </span><span class="s3"># We're not going to put the tuple in the memo, but it's still important we</span><span class="s1"> 
+    </span><span class="s3"># check for it, in case the tuple contains recursive mutable structures.</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        </span><span class="s2">return </span><span class="s1">memo[id(x)] 
+    </span><span class="s2">except </span><span class="s1">KeyError: 
+        </span><span class="s2">pass</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">k</span><span class="s2">, </span><span class="s1">j </span><span class="s2">in </span><span class="s1">zip(x</span><span class="s2">, </span><span class="s1">y): 
+        </span><span class="s2">if </span><span class="s1">k </span><span class="s2">is not </span><span class="s1">j: 
+            y = tuple(y) 
+            </span><span class="s2">break</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        y = x 
+    </span><span class="s2">return </span><span class="s1">y 
+d[tuple] = _deepcopy_tuple 
+ 
+</span><span class="s2">def </span><span class="s1">_deepcopy_dict(x</span><span class="s2">, </span><span class="s1">memo): 
+    y = {} 
+    memo[id(x)] = y 
+    </span><span class="s2">for </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value </span><span class="s2">in </span><span class="s1">x.items(): 
+        y[deepcopy(key</span><span class="s2">, </span><span class="s1">memo)] = deepcopy(value</span><span class="s2">, </span><span class="s1">memo) 
+    </span><span class="s2">return </span><span class="s1">y 
+d[dict] = _deepcopy_dict 
+</span><span class="s2">if </span><span class="s1">PyStringMap </span><span class="s2">is not None</span><span class="s1">: 
+    d[PyStringMap] = _deepcopy_dict 
+ 
+</span><span class="s2">def </span><span class="s1">_deepcopy_method(x</span><span class="s2">, </span><span class="s1">memo): </span><span class="s3"># Copy instance methods</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">type(x)(x.__func__</span><span class="s2">, </span><span class="s1">deepcopy(x.__self__</span><span class="s2">, </span><span class="s1">memo)) 
+_deepcopy_dispatch[types.MethodType] = _deepcopy_method 
+ 
+</span><span class="s2">def </span><span class="s1">_keep_alive(x</span><span class="s2">, </span><span class="s1">memo): 
+    </span><span class="s0">&quot;&quot;&quot;Keeps a reference to the object x in the memo. 
+ 
+    Because we remember objects by their id, we have 
+    to assure that possibly temporary objects are kept 
+    alive by referencing them. 
+    We store a reference at the id of the memo, which should 
+    normally not be used unless someone tries to deepcopy 
+    the memo itself... 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        memo[id(memo)].append(x) 
+    </span><span class="s2">except </span><span class="s1">KeyError: 
+        </span><span class="s3"># aha, this is the first one :-)</span><span class="s1"> 
+        memo[id(memo)]=[x] 
+ 
+</span><span class="s2">def </span><span class="s1">_reconstruct(x</span><span class="s2">, </span><span class="s1">info</span><span class="s2">, </span><span class="s1">deep</span><span class="s2">, </span><span class="s1">memo=</span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s2">if </span><span class="s1">isinstance(info</span><span class="s2">, </span><span class="s1">str): 
+        </span><span class="s2">return </span><span class="s1">x 
+    </span><span class="s2">assert </span><span class="s1">isinstance(info</span><span class="s2">, </span><span class="s1">tuple) 
+    </span><span class="s2">if </span><span class="s1">memo </span><span class="s2">is None</span><span class="s1">: 
+        memo = {} 
+    n = len(info) 
+    </span><span class="s2">assert </span><span class="s1">n </span><span class="s2">in </span><span class="s1">(</span><span class="s5">2</span><span class="s2">, </span><span class="s5">3</span><span class="s2">, </span><span class="s5">4</span><span class="s2">, </span><span class="s5">5</span><span class="s1">) 
+    callable</span><span class="s2">, </span><span class="s1">args = info[:</span><span class="s5">2</span><span class="s1">] 
+    </span><span class="s2">if </span><span class="s1">n &gt; </span><span class="s5">2</span><span class="s1">: 
+        state = info[</span><span class="s5">2</span><span class="s1">] 
+    </span><span class="s2">else</span><span class="s1">: 
+        state = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">n &gt; </span><span class="s5">3</span><span class="s1">: 
+        listiter = info[</span><span class="s5">3</span><span class="s1">] 
+    </span><span class="s2">else</span><span class="s1">: 
+        listiter = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">n &gt; </span><span class="s5">4</span><span class="s1">: 
+        dictiter = info[</span><span class="s5">4</span><span class="s1">] 
+    </span><span class="s2">else</span><span class="s1">: 
+        dictiter = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">deep: 
+        args = deepcopy(args</span><span class="s2">, </span><span class="s1">memo) 
+    y = callable(*args) 
+    memo[id(x)] = y 
+ 
+    </span><span class="s2">if </span><span class="s1">state </span><span class="s2">is not None</span><span class="s1">: 
+        </span><span class="s2">if </span><span class="s1">deep: 
+            state = deepcopy(state</span><span class="s2">, </span><span class="s1">memo) 
+        </span><span class="s2">if </span><span class="s1">hasattr(y</span><span class="s2">, </span><span class="s4">'__setstate__'</span><span class="s1">): 
+            y.__setstate__(state) 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">if </span><span class="s1">isinstance(state</span><span class="s2">, </span><span class="s1">tuple) </span><span class="s2">and </span><span class="s1">len(state) == </span><span class="s5">2</span><span class="s1">: 
+                state</span><span class="s2">, </span><span class="s1">slotstate = state 
+            </span><span class="s2">else</span><span class="s1">: 
+                slotstate = </span><span class="s2">None</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">state </span><span class="s2">is not None</span><span class="s1">: 
+                y.__dict__.update(state) 
+            </span><span class="s2">if </span><span class="s1">slotstate </span><span class="s2">is not None</span><span class="s1">: 
+                </span><span class="s2">for </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value </span><span class="s2">in </span><span class="s1">slotstate.items(): 
+                    setattr(y</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value) 
+ 
+    </span><span class="s2">if </span><span class="s1">listiter </span><span class="s2">is not None</span><span class="s1">: 
+        </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">listiter: 
+            </span><span class="s2">if </span><span class="s1">deep: 
+                item = deepcopy(item</span><span class="s2">, </span><span class="s1">memo) 
+            y.append(item) 
+    </span><span class="s2">if </span><span class="s1">dictiter </span><span class="s2">is not None</span><span class="s1">: 
+        </span><span class="s2">for </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value </span><span class="s2">in </span><span class="s1">dictiter: 
+            </span><span class="s2">if </span><span class="s1">deep: 
+                key = deepcopy(key</span><span class="s2">, </span><span class="s1">memo) 
+                value = deepcopy(value</span><span class="s2">, </span><span class="s1">memo) 
+            y[key] = value 
+    </span><span class="s2">return </span><span class="s1">y 
+ 
+</span><span class="s2">del </span><span class="s1">d 
+ 
+</span><span class="s2">del </span><span class="s1">types 
+ 
+</span><span class="s3"># Helper for instance creation without calling __init__</span><span class="s1"> 
+</span><span class="s2">class </span><span class="s1">_EmptyClass: 
+    </span><span class="s2">pass</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

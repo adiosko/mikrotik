@@ -1,0 +1,219 @@
+<html>
+<head>
+<title>_weakrefset.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+_weakrefset.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># Access WeakSet through the weakref module.</span><span class="s1"> 
+</span><span class="s0"># This code is separated-out because it is needed</span><span class="s1"> 
+</span><span class="s0"># by abc.py to load everything else at startup.</span><span class="s1"> 
+ 
+</span><span class="s2">from </span><span class="s1">_weakref </span><span class="s2">import </span><span class="s1">ref 
+ 
+__all__ = [</span><span class="s3">'WeakSet'</span><span class="s1">] 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">_IterationGuard: 
+    </span><span class="s0"># This context manager registers itself in the current iterators of the</span><span class="s1"> 
+    </span><span class="s0"># weak container, such as to delay all removals until the context manager</span><span class="s1"> 
+    </span><span class="s0"># exits.</span><span class="s1"> 
+    </span><span class="s0"># This technique should be relatively thread-safe (since sets are).</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">weakcontainer): 
+        </span><span class="s0"># Don't create cycles</span><span class="s1"> 
+        self.weakcontainer = ref(weakcontainer) 
+ 
+    </span><span class="s2">def </span><span class="s1">__enter__(self): 
+        w = self.weakcontainer() 
+        </span><span class="s2">if </span><span class="s1">w </span><span class="s2">is not None</span><span class="s1">: 
+            w._iterating.add(self) 
+        </span><span class="s2">return </span><span class="s1">self 
+ 
+    </span><span class="s2">def </span><span class="s1">__exit__(self</span><span class="s2">, </span><span class="s1">e</span><span class="s2">, </span><span class="s1">t</span><span class="s2">, </span><span class="s1">b): 
+        w = self.weakcontainer() 
+        </span><span class="s2">if </span><span class="s1">w </span><span class="s2">is not None</span><span class="s1">: 
+            s = w._iterating 
+            s.remove(self) 
+            </span><span class="s2">if not </span><span class="s1">s: 
+                w._commit_removals() 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">WeakSet: 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">data=</span><span class="s2">None</span><span class="s1">): 
+        self.data = set() 
+        </span><span class="s2">def </span><span class="s1">_remove(item</span><span class="s2">, </span><span class="s1">selfref=ref(self)): 
+            self = selfref() 
+            </span><span class="s2">if </span><span class="s1">self </span><span class="s2">is not None</span><span class="s1">: 
+                </span><span class="s2">if </span><span class="s1">self._iterating: 
+                    self._pending_removals.append(item) 
+                </span><span class="s2">else</span><span class="s1">: 
+                    self.data.discard(item) 
+        self._remove = _remove 
+        </span><span class="s0"># A list of keys to be removed</span><span class="s1"> 
+        self._pending_removals = [] 
+        self._iterating = set() 
+        </span><span class="s2">if </span><span class="s1">data </span><span class="s2">is not None</span><span class="s1">: 
+            self.update(data) 
+ 
+    </span><span class="s2">def </span><span class="s1">_commit_removals(self): 
+        l = self._pending_removals 
+        discard = self.data.discard 
+        </span><span class="s2">while </span><span class="s1">l: 
+            discard(l.pop()) 
+ 
+    </span><span class="s2">def </span><span class="s1">__iter__(self): 
+        </span><span class="s2">with </span><span class="s1">_IterationGuard(self): 
+            </span><span class="s2">for </span><span class="s1">itemref </span><span class="s2">in </span><span class="s1">self.data: 
+                item = itemref() 
+                </span><span class="s2">if </span><span class="s1">item </span><span class="s2">is not None</span><span class="s1">: 
+                    </span><span class="s0"># Caveat: the iterator will keep a strong reference to</span><span class="s1"> 
+                    </span><span class="s0"># `item` until it is resumed or closed.</span><span class="s1"> 
+                    </span><span class="s2">yield </span><span class="s1">item 
+ 
+    </span><span class="s2">def </span><span class="s1">__len__(self): 
+        </span><span class="s2">return </span><span class="s1">len(self.data) - len(self._pending_removals) 
+ 
+    </span><span class="s2">def </span><span class="s1">__contains__(self</span><span class="s2">, </span><span class="s1">item): 
+        </span><span class="s2">try</span><span class="s1">: 
+            wr = ref(item) 
+        </span><span class="s2">except </span><span class="s1">TypeError: 
+            </span><span class="s2">return False</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">wr </span><span class="s2">in </span><span class="s1">self.data 
+ 
+    </span><span class="s2">def </span><span class="s1">__reduce__(self): 
+        </span><span class="s2">return </span><span class="s1">(self.__class__</span><span class="s2">, </span><span class="s1">(list(self)</span><span class="s2">,</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                getattr(self</span><span class="s2">, </span><span class="s3">'__dict__'</span><span class="s2">, None</span><span class="s1">)) 
+ 
+    </span><span class="s2">def </span><span class="s1">add(self</span><span class="s2">, </span><span class="s1">item): 
+        </span><span class="s2">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        self.data.add(ref(item</span><span class="s2">, </span><span class="s1">self._remove)) 
+ 
+    </span><span class="s2">def </span><span class="s1">clear(self): 
+        </span><span class="s2">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        self.data.clear() 
+ 
+    </span><span class="s2">def </span><span class="s1">copy(self): 
+        </span><span class="s2">return </span><span class="s1">self.__class__(self) 
+ 
+    </span><span class="s2">def </span><span class="s1">pop(self): 
+        </span><span class="s2">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        </span><span class="s2">while True</span><span class="s1">: 
+            </span><span class="s2">try</span><span class="s1">: 
+                itemref = self.data.pop() 
+            </span><span class="s2">except </span><span class="s1">KeyError: 
+                </span><span class="s2">raise </span><span class="s1">KeyError(</span><span class="s3">'pop from empty WeakSet'</span><span class="s1">) 
+            item = itemref() 
+            </span><span class="s2">if </span><span class="s1">item </span><span class="s2">is not None</span><span class="s1">: 
+                </span><span class="s2">return </span><span class="s1">item 
+ 
+    </span><span class="s2">def </span><span class="s1">remove(self</span><span class="s2">, </span><span class="s1">item): 
+        </span><span class="s2">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        self.data.remove(ref(item)) 
+ 
+    </span><span class="s2">def </span><span class="s1">discard(self</span><span class="s2">, </span><span class="s1">item): 
+        </span><span class="s2">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        self.data.discard(ref(item)) 
+ 
+    </span><span class="s2">def </span><span class="s1">update(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        </span><span class="s2">for </span><span class="s1">element </span><span class="s2">in </span><span class="s1">other: 
+            self.add(element) 
+ 
+    </span><span class="s2">def </span><span class="s1">__ior__(self</span><span class="s2">, </span><span class="s1">other): 
+        self.update(other) 
+        </span><span class="s2">return </span><span class="s1">self 
+ 
+    </span><span class="s2">def </span><span class="s1">difference(self</span><span class="s2">, </span><span class="s1">other): 
+        newset = self.copy() 
+        newset.difference_update(other) 
+        </span><span class="s2">return </span><span class="s1">newset 
+    __sub__ = difference 
+ 
+    </span><span class="s2">def </span><span class="s1">difference_update(self</span><span class="s2">, </span><span class="s1">other): 
+        self.__isub__(other) 
+    </span><span class="s2">def </span><span class="s1">__isub__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        </span><span class="s2">if </span><span class="s1">self </span><span class="s2">is </span><span class="s1">other: 
+            self.data.clear() 
+        </span><span class="s2">else</span><span class="s1">: 
+            self.data.difference_update(ref(item) </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">other) 
+        </span><span class="s2">return </span><span class="s1">self 
+ 
+    </span><span class="s2">def </span><span class="s1">intersection(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return </span><span class="s1">self.__class__(item </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">other </span><span class="s2">if </span><span class="s1">item </span><span class="s2">in </span><span class="s1">self) 
+    __and__ = intersection 
+ 
+    </span><span class="s2">def </span><span class="s1">intersection_update(self</span><span class="s2">, </span><span class="s1">other): 
+        self.__iand__(other) 
+    </span><span class="s2">def </span><span class="s1">__iand__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        self.data.intersection_update(ref(item) </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">other) 
+        </span><span class="s2">return </span><span class="s1">self 
+ 
+    </span><span class="s2">def </span><span class="s1">issubset(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return </span><span class="s1">self.data.issubset(ref(item) </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">other) 
+    __le__ = issubset 
+ 
+    </span><span class="s2">def </span><span class="s1">__lt__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return </span><span class="s1">self.data &lt; set(ref(item) </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">other) 
+ 
+    </span><span class="s2">def </span><span class="s1">issuperset(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return </span><span class="s1">self.data.issuperset(ref(item) </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">other) 
+    __ge__ = issuperset 
+ 
+    </span><span class="s2">def </span><span class="s1">__gt__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return </span><span class="s1">self.data &gt; set(ref(item) </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">other) 
+ 
+    </span><span class="s2">def </span><span class="s1">__eq__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">if not </span><span class="s1">isinstance(other</span><span class="s2">, </span><span class="s1">self.__class__): 
+            </span><span class="s2">return </span><span class="s1">NotImplemented 
+        </span><span class="s2">return </span><span class="s1">self.data == set(ref(item) </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">other) 
+ 
+    </span><span class="s2">def </span><span class="s1">symmetric_difference(self</span><span class="s2">, </span><span class="s1">other): 
+        newset = self.copy() 
+        newset.symmetric_difference_update(other) 
+        </span><span class="s2">return </span><span class="s1">newset 
+    __xor__ = symmetric_difference 
+ 
+    </span><span class="s2">def </span><span class="s1">symmetric_difference_update(self</span><span class="s2">, </span><span class="s1">other): 
+        self.__ixor__(other) 
+    </span><span class="s2">def </span><span class="s1">__ixor__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        </span><span class="s2">if </span><span class="s1">self </span><span class="s2">is </span><span class="s1">other: 
+            self.data.clear() 
+        </span><span class="s2">else</span><span class="s1">: 
+            self.data.symmetric_difference_update(ref(item</span><span class="s2">, </span><span class="s1">self._remove) </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">other) 
+        </span><span class="s2">return </span><span class="s1">self 
+ 
+    </span><span class="s2">def </span><span class="s1">union(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return </span><span class="s1">self.__class__(e </span><span class="s2">for </span><span class="s1">s </span><span class="s2">in </span><span class="s1">(self</span><span class="s2">, </span><span class="s1">other) </span><span class="s2">for </span><span class="s1">e </span><span class="s2">in </span><span class="s1">s) 
+    __or__ = union 
+ 
+    </span><span class="s2">def </span><span class="s1">isdisjoint(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return </span><span class="s1">len(self.intersection(other)) == </span><span class="s4">0</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

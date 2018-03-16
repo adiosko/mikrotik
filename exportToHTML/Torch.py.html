@@ -1,0 +1,140 @@
+<html>
+<head>
+<title>Torch.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Torch.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Torch: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setTorchInterface(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">duration): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set torch interface with time limit 
+        :param interface: interface to use 
+        :param duration: time limit 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk([</span><span class="s4">'/tool/torch'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface</span><span class="s0">,</span><span class="s4">'=duration='</span><span class="s1">+duration]) 
+        print(torch) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+    </span><span class="s0">def </span><span class="s1">setTorchFreezeTime(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">time): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set freeze time 
+        :param interface: interface to use 
+        :param time: timne to freeze 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=freeze-frame-time='</span><span class="s1">+time] ) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+    </span><span class="s0">def </span><span class="s1">setSourceIpv4Address(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set source address 
+        :param interface: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=src-address=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+    </span><span class="s0">def </span><span class="s1">setDestinationIpv4(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dst address 
+        :param interface: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=dst-address=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">setSourceIpv6(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set source ipv6 address 
+        :param interface: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=src-address6=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpv6Destination(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set Ipv6 dst address 
+        :param interface: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=dst-address6=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+    </span><span class="s0">def </span><span class="s1">setMacProtocol(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">protocol): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mac protocol 
+        :param interface: 
+        :param protocol: all, arp, ip, ipv6,  ipx, loop, pppoe,pppoe-discovery, rarp, vlan 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=mac-protocol=' </span><span class="s1">+ protocol] ) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtocol(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">, </span><span class="s1">protocol): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set protocol 
+        :param interface: 
+        :param protocol: egp, ggp, icmp, igmp, ip-encap, ipsec,ospf, pup,tcp,udp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=ip-protocol=' </span><span class="s1">+ protocol] ) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+    </span><span class="s0">def </span><span class="s1">setDSCP(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dscp field def any 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=dscp=any'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+    </span><span class="s0">def </span><span class="s1">setPort(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set port to monitor 
+        :param interface: 
+        :param port: f.e auth, asia, bdp, etc 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">torch 
+ 
+    </span><span class="s0">def </span><span class="s1">setVlanId(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">Vlan): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set vlan id 
+        :param interface: 
+        :param Vlan: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        torch = self.client.talk( [</span><span class="s4">'/tool/torch'</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=vlan-id=' </span><span class="s1">+ Vlan] ) 
+        </span><span class="s0">return </span><span class="s1">torch</span></pre>
+</body>
+</html>

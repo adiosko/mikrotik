@@ -1,0 +1,246 @@
+<html>
+<head>
+<title>MME.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+MME.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">MME: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listMmeInterface(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list mme interfaces 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk([</span><span class="s4">'/routing/mme/interface/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">mme == {}: 
+            print(</span><span class="s4">&quot;No mme iface fset&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">Passive</span><span class="s0">\t</span><span class="s4">Primary</span><span class="s0">\t</span><span class="s4">Tx/Rx&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">mme: 
+                print(mme[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mme[i][</span><span class="s4">'passive'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mme[i][</span><span class="s4">'primary'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mme[i][</span><span class="s4">'messages-tx'</span><span class="s1">]+</span><span class="s4">&quot;/&quot;</span><span class="s1"> 
+                      +mme[i][</span><span class="s4">'messages-rx'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">addInterface(self</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add mme interface 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk([</span><span class="s4">'/routing/mme/interface/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/interface/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disbale iface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/interface/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable iface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/interface/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassiveInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passive iface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=passive=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetPassiveInterface(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passive iface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=passive=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrimaryInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set primary interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=primary=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetPrimaryInterface(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set primary interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=primary=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setMmeOriginInterval(self</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;00:00:05&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set origin interval 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/set'</span><span class="s0">, </span><span class="s4">'=origination-interval='</span><span class="s1">+interval] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setMmmeTimeout(self</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:01:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set timeout 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/set'</span><span class="s0">, </span><span class="s4">'=timeout=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setBidirectionalTimeout(self</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:00:02&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bidirectoional timeout 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/set'</span><span class="s0">, </span><span class="s4">'=bidirectional-timeout=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setTtl(self</span><span class="s0">,</span><span class="s1">ttl=</span><span class="s4">&quot;50&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set default ttl 
+        :param ttl: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/set'</span><span class="s0">, </span><span class="s4">'=ttl=' </span><span class="s1">+ ttl] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setGatewayClass(self</span><span class="s0">,</span><span class="s1">clas=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set gw class 
+        :param clas: 1-MBit,2-MBit,3-MBit,5-MBit,6-MBit,56-KBit,64-KBit,128-KBit,256-KBit,512-KBit,&gt;6-MBit 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/set'</span><span class="s0">, </span><span class="s4">'=gateway-class=' </span><span class="s1">+ clas] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setGwSelection(self</span><span class="s0">,</span><span class="s1">gw=</span><span class="s4">&quot;no-gateway&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will gw selection 
+        :param gw:  no-gateway,best-statistic,best-adjusted 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/set'</span><span class="s0">, </span><span class="s4">'=gateway-selection=' </span><span class="s1">+ gw] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setGwKeepalive(self</span><span class="s0">,</span><span class="s1">keep=</span><span class="s4">&quot;00:01:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set keeepalive for gw 
+        :param keep: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/set'</span><span class="s0">, </span><span class="s4">'=gateway-keepalive=' </span><span class="s1">+ keep] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">setPreferredGw(self</span><span class="s0">,</span><span class="s1">gw=</span><span class="s4">&quot;0.0.0.0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set preferred gw 
+        :param gw: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/set'</span><span class="s0">, </span><span class="s4">'=preferred-gateway=' </span><span class="s1">+ gw] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">listNetworks(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list mme networks 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/network/print'</span><span class="s1">] ) 
+        </span><span class="s0">if </span><span class="s1">mme =={}: 
+            print(</span><span class="s4">&quot;No network set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Network&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">mme: 
+                print(mme[i][</span><span class="s4">'network'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">addNetwork(self</span><span class="s0">,</span><span class="s1">net=</span><span class="s4">&quot;0.0.0.0/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add mme net 
+        :param net: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/network/add'</span><span class="s0">,</span><span class="s4">'=network='</span><span class="s1">+net] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">removeNetwork(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove network 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/network/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">disableNetwork(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable net 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/network/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">enableNetwork(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable net 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/network/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mme 
+ 
+    </span><span class="s0">def </span><span class="s1">listOriginators(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all originators 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mme = self.client.talk( [</span><span class="s4">'/routing/mme/originators/print'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mme</span></pre>
+</body>
+</html>

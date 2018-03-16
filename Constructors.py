@@ -59,14 +59,15 @@ from wireless import interfaceVirtualApbridgeSet,interfaceVirtualBridgeSet,inter
 from wireless import interfaceVirtualNstreamDualSlave,interfaceVirtualStation,interfaceVirtualStationBridge
 from wireless import interfaceVirtualStationPseudobridge, interfaceVirtualStationPseudoBridgeClone, interfaceVirtualWds
 from wireless import interfaceVirtualWds, interfaceVirtualWdsSlave
+from interfaces import  interfaces
 
 class Mikrotik:
     def __init__(self,username,password,address):
         self.username = "admin"
         self.password = 'admin'
         self.login = LoginManager.LoginManager( username, password )
-        self.address = "172.16.53.2"
-        self.interface = Interfaces.InterfaceManager( address, username, password )
+        self.address = "192.168.1.1"
+        #self.interface = Interfaces.InterfaceManager( address, username, password )
         self.users = Users.Users( address, username, password )
         self.services = Services.Services( address, username, password )
         self.filesmanager = Files.Files( address, username, password )
@@ -383,7 +384,7 @@ class Mikrotik:
         self.sniffer = interfaceSnifferSetting.interfaceWirelessSmiffer(address,username,password)
         self.snooper = wirelessSnooper.interfaceWirelessSnooper(address,username,password)
         self.virt = interfaceVirtual.interfaceVirtual(address,username,password)
-        self,virtwireless = interfaceVirtualWirelessSet.interfaceVirtualWirelessAllignmentOnlySet(address,username,password)
+        self.virtwireless = interfaceVirtualWirelessSet.interfaceVirtualWirelessAllignmentOnlySet(address,username,password)
         self.virtaligngen = interfaceVirtualGeneralSet.interfaceVirtualGeneralSet(address,username,password)
         self.virtapbridge = interfaceVirtualApbridgeSet.interfaceVirtualApbridgeSet(address,username,password)
         self.virtbridge = interfaceVirtualBridgeSet.interfaceVirtualBridgeSet(address,username,password)
@@ -396,3 +397,4 @@ class Mikrotik:
         self.virtwds = interfaceVirtualWds.interfaceVirtualWds(address,username,password)
         self.wds = interfaceVirtualWds.interfaceVirtualWds(address,username,password)
         self.wdsslave = interfaceVirtualWdsSlave.interfaceVirtualWdsSLave(address,username,password)
+        self.ifacelist = interfaces.interfaces(address,username,password)

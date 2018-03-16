@@ -1,0 +1,130 @@
+<html>
+<head>
+<title>MplsAcceptFilter.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+MplsAcceptFilter.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">MplsLdpAcceptFilter: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listFilter(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list accept filter 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk([</span><span class="s4">'/mpls/ldp/accept-filter/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">mpls == {}: 
+            print(</span><span class="s4">&quot;No filter found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Prefix</span><span class="s0">\t</span><span class="s4">Neighbor</span><span class="s0">\t</span><span class="s4">Accept&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">mpls: 
+                print(mpls[i][</span><span class="s4">'prefix'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mpls[i][</span><span class="s4">'neighbor'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mpls[i][</span><span class="s4">'accept'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">addFilter(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add  filter 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk([</span><span class="s4">'/mpls/ldp/accept-filter/add'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">removeFilter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove filter 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/ldp/accept-filter/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">enableFilter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable filter 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/ldp/accept-filter/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">disableFilter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable filter 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/ldp/accept-filter/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">commentFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment filter 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/ldp/accept-filter/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefix(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefix=</span><span class="s4">&quot;0.0.0.0/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prefix 
+        :param number: 
+        :param prefix: subnet/prefix 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/ldp/accept-filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=prefix=' </span><span class="s1">+ prefix] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setNeighbor(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">neighbor): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set enighbor IP 
+        :param number: 
+        :param neighbor: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/ldp/accept-filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=neighbor=' </span><span class="s1">+ neighbor] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">acceptRule(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept the rule 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/ldp/accept-filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=accept=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">denyRule(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will deny rule 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/mpls/ldp/accept-filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=accept=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+ 
+ 
+</span></pre>
+</body>
+</html>

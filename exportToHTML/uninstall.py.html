@@ -1,0 +1,99 @@
+<html>
+<head>
+<title>uninstall.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+uninstall.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">import </span><span class="s1">pip 
+</span><span class="s0">from </span><span class="s1">pip.wheel </span><span class="s0">import </span><span class="s1">WheelCache 
+</span><span class="s0">from </span><span class="s1">pip.req </span><span class="s0">import </span><span class="s1">InstallRequirement</span><span class="s0">, </span><span class="s1">RequirementSet</span><span class="s0">, </span><span class="s1">parse_requirements 
+</span><span class="s0">from </span><span class="s1">pip.basecommand </span><span class="s0">import </span><span class="s1">Command 
+</span><span class="s0">from </span><span class="s1">pip.exceptions </span><span class="s0">import </span><span class="s1">InstallationError 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">UninstallCommand(Command): 
+    </span><span class="s2">&quot;&quot;&quot; 
+    Uninstall packages. 
+ 
+    pip is able to uninstall most installed packages. Known exceptions are: 
+ 
+    - Pure distutils packages installed with ``python setup.py install``, which 
+      leave behind no metadata to determine what files were installed. 
+    - Script wrappers installed by ``python setup.py develop``. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    name = </span><span class="s3">'uninstall'</span><span class="s1"> 
+    usage = </span><span class="s3">&quot;&quot;&quot; 
+      %prog [options] &lt;package&gt; ... 
+      %prog [options] -r &lt;requirements file&gt; ...&quot;&quot;&quot;</span><span class="s1"> 
+    summary = </span><span class="s3">'Uninstall packages.'</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">*args</span><span class="s0">, </span><span class="s1">**kw): 
+        super(UninstallCommand</span><span class="s0">, </span><span class="s1">self).__init__(*args</span><span class="s0">, </span><span class="s1">**kw) 
+        self.cmd_opts.add_option( 
+            </span><span class="s3">'-r'</span><span class="s0">, </span><span class="s3">'--requirement'</span><span class="s0">,</span><span class="s1"> 
+            dest=</span><span class="s3">'requirements'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'append'</span><span class="s0">,</span><span class="s1"> 
+            default=[]</span><span class="s0">,</span><span class="s1"> 
+            metavar=</span><span class="s3">'file'</span><span class="s0">,</span><span class="s1"> 
+            help=</span><span class="s3">'Uninstall all the packages listed in the given requirements '</span><span class="s1"> 
+                 </span><span class="s3">'file.  This option can be used multiple times.'</span><span class="s0">,</span><span class="s1"> 
+        ) 
+        self.cmd_opts.add_option( 
+            </span><span class="s3">'-y'</span><span class="s0">, </span><span class="s3">'--yes'</span><span class="s0">,</span><span class="s1"> 
+            dest=</span><span class="s3">'yes'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s3">'store_true'</span><span class="s0">,</span><span class="s1"> 
+            help=</span><span class="s3">&quot;Don't ask for confirmation of uninstall deletions.&quot;</span><span class="s1">) 
+ 
+        self.parser.insert_option_group(</span><span class="s4">0</span><span class="s0">, </span><span class="s1">self.cmd_opts) 
+ 
+    </span><span class="s0">def </span><span class="s1">run(self</span><span class="s0">, </span><span class="s1">options</span><span class="s0">, </span><span class="s1">args): 
+        </span><span class="s0">with </span><span class="s1">self._build_session(options) </span><span class="s0">as </span><span class="s1">session: 
+            format_control = pip.index.FormatControl(set()</span><span class="s0">, </span><span class="s1">set()) 
+            wheel_cache = WheelCache(options.cache_dir</span><span class="s0">, </span><span class="s1">format_control) 
+            requirement_set = RequirementSet( 
+                build_dir=</span><span class="s0">None,</span><span class="s1"> 
+                src_dir=</span><span class="s0">None,</span><span class="s1"> 
+                download_dir=</span><span class="s0">None,</span><span class="s1"> 
+                isolated=options.isolated_mode</span><span class="s0">,</span><span class="s1"> 
+                session=session</span><span class="s0">,</span><span class="s1"> 
+                wheel_cache=wheel_cache</span><span class="s0">,</span><span class="s1"> 
+            ) 
+            </span><span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">args: 
+                requirement_set.add_requirement( 
+                    InstallRequirement.from_line( 
+                        name</span><span class="s0">, </span><span class="s1">isolated=options.isolated_mode</span><span class="s0">,</span><span class="s1"> 
+                        wheel_cache=wheel_cache 
+                    ) 
+                ) 
+            </span><span class="s0">for </span><span class="s1">filename </span><span class="s0">in </span><span class="s1">options.requirements: 
+                </span><span class="s0">for </span><span class="s1">req </span><span class="s0">in </span><span class="s1">parse_requirements( 
+                        filename</span><span class="s0">,</span><span class="s1"> 
+                        options=options</span><span class="s0">,</span><span class="s1"> 
+                        session=session</span><span class="s0">,</span><span class="s1"> 
+                        wheel_cache=wheel_cache): 
+                    requirement_set.add_requirement(req) 
+            </span><span class="s0">if not </span><span class="s1">requirement_set.has_requirements: 
+                </span><span class="s0">raise </span><span class="s1">InstallationError( 
+                    </span><span class="s3">'You must give at least one requirement to %(name)s (see '</span><span class="s1"> 
+                    </span><span class="s3">'&quot;pip help %(name)s&quot;)' </span><span class="s1">% dict(name=self.name) 
+                ) 
+            requirement_set.uninstall(auto_confirm=options.yes) 
+</span></pre>
+</body>
+</html>

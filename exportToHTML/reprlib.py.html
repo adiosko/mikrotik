@@ -1,0 +1,188 @@
+<html>
+<head>
+<title>reprlib.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+reprlib.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Redo the builtin repr() (representation) but with limits on most sizes.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+__all__ = [</span><span class="s2">&quot;Repr&quot;</span><span class="s3">, </span><span class="s2">&quot;repr&quot;</span><span class="s3">, </span><span class="s2">&quot;recursive_repr&quot;</span><span class="s1">] 
+ 
+</span><span class="s3">import </span><span class="s1">builtins 
+</span><span class="s3">from </span><span class="s1">itertools </span><span class="s3">import </span><span class="s1">islice 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s3">from </span><span class="s1">_thread </span><span class="s3">import </span><span class="s1">get_ident 
+</span><span class="s3">except </span><span class="s1">ImportError: 
+    </span><span class="s3">from </span><span class="s1">_dummy_thread </span><span class="s3">import </span><span class="s1">get_ident 
+ 
+</span><span class="s3">def </span><span class="s1">recursive_repr(fillvalue=</span><span class="s2">'...'</span><span class="s1">): 
+    </span><span class="s0">'Decorator to make a repr function return fillvalue for a recursive call'</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">decorating_function(user_function): 
+        repr_running = set() 
+ 
+        </span><span class="s3">def </span><span class="s1">wrapper(self): 
+            key = id(self)</span><span class="s3">, </span><span class="s1">get_ident() 
+            </span><span class="s3">if </span><span class="s1">key </span><span class="s3">in </span><span class="s1">repr_running: 
+                </span><span class="s3">return </span><span class="s1">fillvalue 
+            repr_running.add(key) 
+            </span><span class="s3">try</span><span class="s1">: 
+                result = user_function(self) 
+            </span><span class="s3">finally</span><span class="s1">: 
+                repr_running.discard(key) 
+            </span><span class="s3">return </span><span class="s1">result 
+ 
+        </span><span class="s4"># Can't use functools.wraps() here because of bootstrap issues</span><span class="s1"> 
+        wrapper.__module__ = getattr(user_function</span><span class="s3">, </span><span class="s2">'__module__'</span><span class="s1">) 
+        wrapper.__doc__ = getattr(user_function</span><span class="s3">, </span><span class="s2">'__doc__'</span><span class="s1">) 
+        wrapper.__name__ = getattr(user_function</span><span class="s3">, </span><span class="s2">'__name__'</span><span class="s1">) 
+        wrapper.__qualname__ = getattr(user_function</span><span class="s3">, </span><span class="s2">'__qualname__'</span><span class="s1">) 
+        wrapper.__annotations__ = getattr(user_function</span><span class="s3">, </span><span class="s2">'__annotations__'</span><span class="s3">, </span><span class="s1">{}) 
+        </span><span class="s3">return </span><span class="s1">wrapper 
+ 
+    </span><span class="s3">return </span><span class="s1">decorating_function 
+ 
+</span><span class="s3">class </span><span class="s1">Repr: 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self): 
+        self.maxlevel = </span><span class="s5">6</span><span class="s1"> 
+        self.maxtuple = </span><span class="s5">6</span><span class="s1"> 
+        self.maxlist = </span><span class="s5">6</span><span class="s1"> 
+        self.maxarray = </span><span class="s5">5</span><span class="s1"> 
+        self.maxdict = </span><span class="s5">4</span><span class="s1"> 
+        self.maxset = </span><span class="s5">6</span><span class="s1"> 
+        self.maxfrozenset = </span><span class="s5">6</span><span class="s1"> 
+        self.maxdeque = </span><span class="s5">6</span><span class="s1"> 
+        self.maxstring = </span><span class="s5">30</span><span class="s1"> 
+        self.maxlong = </span><span class="s5">40</span><span class="s1"> 
+        self.maxother = </span><span class="s5">30</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">repr(self</span><span class="s3">, </span><span class="s1">x): 
+        </span><span class="s3">return </span><span class="s1">self.repr1(x</span><span class="s3">, </span><span class="s1">self.maxlevel) 
+ 
+    </span><span class="s3">def </span><span class="s1">repr1(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        typename = type(x).__name__ 
+        </span><span class="s3">if </span><span class="s2">' ' </span><span class="s3">in </span><span class="s1">typename: 
+            parts = typename.split() 
+            typename = </span><span class="s2">'_'</span><span class="s1">.join(parts) 
+        </span><span class="s3">if </span><span class="s1">hasattr(self</span><span class="s3">, </span><span class="s2">'repr_' </span><span class="s1">+ typename): 
+            </span><span class="s3">return </span><span class="s1">getattr(self</span><span class="s3">, </span><span class="s2">'repr_' </span><span class="s1">+ typename)(x</span><span class="s3">, </span><span class="s1">level) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">self.repr_instance(x</span><span class="s3">, </span><span class="s1">level) 
+ 
+    </span><span class="s3">def </span><span class="s1">_repr_iterable(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level</span><span class="s3">, </span><span class="s1">left</span><span class="s3">, </span><span class="s1">right</span><span class="s3">, </span><span class="s1">maxiter</span><span class="s3">, </span><span class="s1">trail=</span><span class="s2">''</span><span class="s1">): 
+        n = len(x) 
+        </span><span class="s3">if </span><span class="s1">level &lt;= </span><span class="s5">0 </span><span class="s3">and </span><span class="s1">n: 
+            s = </span><span class="s2">'...'</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            newlevel = level - </span><span class="s5">1</span><span class="s1"> 
+            repr1 = self.repr1 
+            pieces = [repr1(elem</span><span class="s3">, </span><span class="s1">newlevel) </span><span class="s3">for </span><span class="s1">elem </span><span class="s3">in </span><span class="s1">islice(x</span><span class="s3">, </span><span class="s1">maxiter)] 
+            </span><span class="s3">if </span><span class="s1">n &gt; maxiter:  pieces.append(</span><span class="s2">'...'</span><span class="s1">) 
+            s = </span><span class="s2">', '</span><span class="s1">.join(pieces) 
+            </span><span class="s3">if </span><span class="s1">n == </span><span class="s5">1 </span><span class="s3">and </span><span class="s1">trail:  right = trail + right 
+        </span><span class="s3">return </span><span class="s2">'%s%s%s' </span><span class="s1">% (left</span><span class="s3">, </span><span class="s1">s</span><span class="s3">, </span><span class="s1">right) 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_tuple(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        </span><span class="s3">return </span><span class="s1">self._repr_iterable(x</span><span class="s3">, </span><span class="s1">level</span><span class="s3">, </span><span class="s2">'('</span><span class="s3">, </span><span class="s2">')'</span><span class="s3">, </span><span class="s1">self.maxtuple</span><span class="s3">, </span><span class="s2">','</span><span class="s1">) 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_list(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        </span><span class="s3">return </span><span class="s1">self._repr_iterable(x</span><span class="s3">, </span><span class="s1">level</span><span class="s3">, </span><span class="s2">'['</span><span class="s3">, </span><span class="s2">']'</span><span class="s3">, </span><span class="s1">self.maxlist) 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_array(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        </span><span class="s3">if not </span><span class="s1">x: 
+            </span><span class="s3">return </span><span class="s2">&quot;array('%s')&quot; </span><span class="s1">% x.typecode 
+        header = </span><span class="s2">&quot;array('%s', [&quot; </span><span class="s1">% x.typecode 
+        </span><span class="s3">return </span><span class="s1">self._repr_iterable(x</span><span class="s3">, </span><span class="s1">level</span><span class="s3">, </span><span class="s1">header</span><span class="s3">, </span><span class="s2">'])'</span><span class="s3">, </span><span class="s1">self.maxarray) 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_set(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        </span><span class="s3">if not </span><span class="s1">x: 
+            </span><span class="s3">return </span><span class="s2">'set()'</span><span class="s1"> 
+        x = _possibly_sorted(x) 
+        </span><span class="s3">return </span><span class="s1">self._repr_iterable(x</span><span class="s3">, </span><span class="s1">level</span><span class="s3">, </span><span class="s2">'{'</span><span class="s3">, </span><span class="s2">'}'</span><span class="s3">, </span><span class="s1">self.maxset) 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_frozenset(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        </span><span class="s3">if not </span><span class="s1">x: 
+            </span><span class="s3">return </span><span class="s2">'frozenset()'</span><span class="s1"> 
+        x = _possibly_sorted(x) 
+        </span><span class="s3">return </span><span class="s1">self._repr_iterable(x</span><span class="s3">, </span><span class="s1">level</span><span class="s3">, </span><span class="s2">'frozenset({'</span><span class="s3">, </span><span class="s2">'})'</span><span class="s3">,</span><span class="s1"> 
+                                   self.maxfrozenset) 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_deque(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        </span><span class="s3">return </span><span class="s1">self._repr_iterable(x</span><span class="s3">, </span><span class="s1">level</span><span class="s3">, </span><span class="s2">'deque(['</span><span class="s3">, </span><span class="s2">'])'</span><span class="s3">, </span><span class="s1">self.maxdeque) 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_dict(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        n = len(x) 
+        </span><span class="s3">if </span><span class="s1">n == </span><span class="s5">0</span><span class="s1">: </span><span class="s3">return </span><span class="s2">'{}'</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">level &lt;= </span><span class="s5">0</span><span class="s1">: </span><span class="s3">return </span><span class="s2">'{...}'</span><span class="s1"> 
+        newlevel = level - </span><span class="s5">1</span><span class="s1"> 
+        repr1 = self.repr1 
+        pieces = [] 
+        </span><span class="s3">for </span><span class="s1">key </span><span class="s3">in </span><span class="s1">islice(_possibly_sorted(x)</span><span class="s3">, </span><span class="s1">self.maxdict): 
+            keyrepr = repr1(key</span><span class="s3">, </span><span class="s1">newlevel) 
+            valrepr = repr1(x[key]</span><span class="s3">, </span><span class="s1">newlevel) 
+            pieces.append(</span><span class="s2">'%s: %s' </span><span class="s1">% (keyrepr</span><span class="s3">, </span><span class="s1">valrepr)) 
+        </span><span class="s3">if </span><span class="s1">n &gt; self.maxdict: pieces.append(</span><span class="s2">'...'</span><span class="s1">) 
+        s = </span><span class="s2">', '</span><span class="s1">.join(pieces) 
+        </span><span class="s3">return </span><span class="s2">'{%s}' </span><span class="s1">% (s</span><span class="s3">,</span><span class="s1">) 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_str(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        s = builtins.repr(x[:self.maxstring]) 
+        </span><span class="s3">if </span><span class="s1">len(s) &gt; self.maxstring: 
+            i = max(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">(self.maxstring-</span><span class="s5">3</span><span class="s1">)//</span><span class="s5">2</span><span class="s1">) 
+            j = max(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">self.maxstring-</span><span class="s5">3</span><span class="s1">-i) 
+            s = builtins.repr(x[:i] + x[len(x)-j:]) 
+            s = s[:i] + </span><span class="s2">'...' </span><span class="s1">+ s[len(s)-j:] 
+        </span><span class="s3">return </span><span class="s1">s 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_int(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        s = builtins.repr(x) </span><span class="s4"># XXX Hope this isn't too slow...</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">len(s) &gt; self.maxlong: 
+            i = max(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">(self.maxlong-</span><span class="s5">3</span><span class="s1">)//</span><span class="s5">2</span><span class="s1">) 
+            j = max(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">self.maxlong-</span><span class="s5">3</span><span class="s1">-i) 
+            s = s[:i] + </span><span class="s2">'...' </span><span class="s1">+ s[len(s)-j:] 
+        </span><span class="s3">return </span><span class="s1">s 
+ 
+    </span><span class="s3">def </span><span class="s1">repr_instance(self</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">level): 
+        </span><span class="s3">try</span><span class="s1">: 
+            s = builtins.repr(x) 
+            </span><span class="s4"># Bugs in x.__repr__() can cause arbitrary</span><span class="s1"> 
+            </span><span class="s4"># exceptions -- then make up something</span><span class="s1"> 
+        </span><span class="s3">except </span><span class="s1">Exception: 
+            </span><span class="s3">return </span><span class="s2">'&lt;%s instance at %#x&gt;' </span><span class="s1">% (x.__class__.__name__</span><span class="s3">, </span><span class="s1">id(x)) 
+        </span><span class="s3">if </span><span class="s1">len(s) &gt; self.maxother: 
+            i = max(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">(self.maxother-</span><span class="s5">3</span><span class="s1">)//</span><span class="s5">2</span><span class="s1">) 
+            j = max(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">self.maxother-</span><span class="s5">3</span><span class="s1">-i) 
+            s = s[:i] + </span><span class="s2">'...' </span><span class="s1">+ s[len(s)-j:] 
+        </span><span class="s3">return </span><span class="s1">s 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_possibly_sorted(x): 
+    </span><span class="s4"># Since not all sequences of items can be sorted and comparison</span><span class="s1"> 
+    </span><span class="s4"># functions may raise arbitrary exceptions, return an unsorted</span><span class="s1"> 
+    </span><span class="s4"># sequence in that case.</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">sorted(x) 
+    </span><span class="s3">except </span><span class="s1">Exception: 
+        </span><span class="s3">return </span><span class="s1">list(x) 
+ 
+aRepr = Repr() 
+repr = aRepr.repr 
+</span></pre>
+</body>
+</html>

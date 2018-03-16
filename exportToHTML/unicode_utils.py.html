@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>unicode_utils.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+unicode_utils.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">import </span><span class="s1">unicodedata 
+</span><span class="s0">import </span><span class="s1">sys 
+ 
+</span><span class="s0">from </span><span class="s1">setuptools.extern </span><span class="s0">import </span><span class="s1">six 
+ 
+ 
+</span><span class="s2"># HFS Plus uses decomposed UTF-8</span><span class="s1"> 
+</span><span class="s0">def </span><span class="s1">decompose(path): 
+    </span><span class="s0">if </span><span class="s1">isinstance(path</span><span class="s0">, </span><span class="s1">six.text_type): 
+        </span><span class="s0">return </span><span class="s1">unicodedata.normalize(</span><span class="s3">'NFD'</span><span class="s0">, </span><span class="s1">path) 
+    </span><span class="s0">try</span><span class="s1">: 
+        path = path.decode(</span><span class="s3">'utf-8'</span><span class="s1">) 
+        path = unicodedata.normalize(</span><span class="s3">'NFD'</span><span class="s0">, </span><span class="s1">path) 
+        path = path.encode(</span><span class="s3">'utf-8'</span><span class="s1">) 
+    </span><span class="s0">except </span><span class="s1">UnicodeError: 
+        </span><span class="s0">pass  </span><span class="s2"># Not UTF-8</span><span class="s1"> 
+    </span><span class="s0">return </span><span class="s1">path 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">filesys_decode(path): 
+    </span><span class="s4">&quot;&quot;&quot; 
+    Ensure that the given path is decoded, 
+    NONE when no expected encoding works 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">if </span><span class="s1">isinstance(path</span><span class="s0">, </span><span class="s1">six.text_type): 
+        </span><span class="s0">return </span><span class="s1">path 
+ 
+    fs_enc = sys.getfilesystemencoding() </span><span class="s0">or </span><span class="s3">'utf-8'</span><span class="s1"> 
+    candidates = fs_enc</span><span class="s0">, </span><span class="s3">'utf-8'</span><span class="s1"> 
+ 
+    </span><span class="s0">for </span><span class="s1">enc </span><span class="s0">in </span><span class="s1">candidates: 
+        </span><span class="s0">try</span><span class="s1">: 
+            </span><span class="s0">return </span><span class="s1">path.decode(enc) 
+        </span><span class="s0">except </span><span class="s1">UnicodeDecodeError: 
+            </span><span class="s0">continue</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">try_encode(string</span><span class="s0">, </span><span class="s1">enc): 
+    </span><span class="s4">&quot;turn unicode encoding into a functional routine&quot;</span><span class="s1"> 
+    </span><span class="s0">try</span><span class="s1">: 
+        </span><span class="s0">return </span><span class="s1">string.encode(enc) 
+    </span><span class="s0">except </span><span class="s1">UnicodeEncodeError: 
+        </span><span class="s0">return None</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>BwTest.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+BwTest.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">BwTest: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def  </span><span class="s1">setTcpBwTest(self</span><span class="s0">,</span><span class="s1">testTo</span><span class="s0">,</span><span class="s1">direction</span><span class="s0">,</span><span class="s1">TcpConnectionCount</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password</span><span class="s0">,</span><span class="s1">duration): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will test TCP bandwidth 
+        :param testTo: IP address of destination server 
+        :param direction: both/receive/send 
+        :param TcpConnectionCount: 20 default 
+        :param duration: duration of test 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bwt = self.client.talk([</span><span class="s4">'/tool/bandwidth-test'</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+testTo</span><span class="s0">,</span><span class="s4">'=protocol=tcp'</span><span class="s0">,</span><span class="s4">'=direction='</span><span class="s1">+direction</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s4">'=tcp-connection-count='</span><span class="s1">+TcpConnectionCount</span><span class="s0">,</span><span class="s4">'=user='</span><span class="s1">+username</span><span class="s0">,</span><span class="s4">'=password='</span><span class="s1">+password 
+                                </span><span class="s0">,</span><span class="s4">'=duration='</span><span class="s1">+duration]) 
+        </span><span class="s0">return </span><span class="s1">bwt 
+ 
+    </span><span class="s0">def </span><span class="s1">setUdpBwTest(self</span><span class="s0">,</span><span class="s1">testTo</span><span class="s0">,</span><span class="s1">LocalTx</span><span class="s0">,</span><span class="s1">RemoteTx</span><span class="s0">,</span><span class="s1">direction</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password</span><span class="s0">,</span><span class="s1">duration): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will test UDP bw test 
+        :param testTo: IP of remote server 
+        :param LocalTx: default 1500 
+        :param RemoteTx: def 1500 
+        :param direction: both/receive/send 
+        :param username: username of device 
+        :param password: password of device 
+        :param duration: length of test 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bwt = self.client.talk([</span><span class="s4">'/tool/bandwidth-test'</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+testTo</span><span class="s0">,</span><span class="s4">'=protocol=udp'</span><span class="s0">,</span><span class="s4">'=local-tx-speed='</span><span class="s1">+LocalTx</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s4">'=remote-tx-speed='</span><span class="s1">+RemoteTx</span><span class="s0">,</span><span class="s4">'=direction='</span><span class="s1">+direction</span><span class="s0">,</span><span class="s4">'=user='</span><span class="s1">+username</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s4">'=password='</span><span class="s1">+password</span><span class="s0">,</span><span class="s4">'=duration='</span><span class="s1">+duration]) 
+        print(bwt) 
+        </span><span class="s0">return </span><span class="s1">bwt</span></pre>
+</body>
+</html>

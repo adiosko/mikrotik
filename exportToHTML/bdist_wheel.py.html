@@ -1,0 +1,506 @@
+<html>
+<head>
+<title>bdist_wheel.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(104,151,187); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+bdist_wheel.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; 
+Create a wheel (.whl) distribution. 
+ 
+A wheel is a built archive format. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">csv 
+</span><span class="s2">import </span><span class="s1">hashlib 
+</span><span class="s2">import </span><span class="s1">os 
+</span><span class="s2">import </span><span class="s1">subprocess 
+</span><span class="s2">import </span><span class="s1">warnings 
+</span><span class="s2">import </span><span class="s1">shutil 
+</span><span class="s2">import </span><span class="s1">json 
+</span><span class="s2">import </span><span class="s1">sys 
+</span><span class="s2">import </span><span class="s1">re 
+</span><span class="s2">from </span><span class="s1">email.generator </span><span class="s2">import </span><span class="s1">Generator 
+</span><span class="s2">from </span><span class="s1">distutils.core </span><span class="s2">import </span><span class="s1">Command 
+</span><span class="s2">from </span><span class="s1">distutils.sysconfig </span><span class="s2">import </span><span class="s1">get_python_version 
+</span><span class="s2">from </span><span class="s1">distutils </span><span class="s2">import </span><span class="s1">log </span><span class="s2">as </span><span class="s1">logger 
+</span><span class="s2">from </span><span class="s1">shutil </span><span class="s2">import </span><span class="s1">rmtree 
+ 
+</span><span class="s2">import </span><span class="s1">pkg_resources 
+ 
+</span><span class="s2">from </span><span class="s1">.pep425tags </span><span class="s2">import </span><span class="s1">get_abbr_impl</span><span class="s2">, </span><span class="s1">get_impl_ver</span><span class="s2">, </span><span class="s1">get_abi_tag</span><span class="s2">, </span><span class="s1">get_platform 
+</span><span class="s2">from </span><span class="s1">.util </span><span class="s2">import </span><span class="s1">native</span><span class="s2">, </span><span class="s1">open_for_csv 
+</span><span class="s2">from </span><span class="s1">.archive </span><span class="s2">import </span><span class="s1">archive_wheelfile 
+</span><span class="s2">from </span><span class="s1">.pkginfo </span><span class="s2">import </span><span class="s1">read_pkg_info</span><span class="s2">, </span><span class="s1">write_pkg_info 
+</span><span class="s2">from </span><span class="s1">.metadata </span><span class="s2">import </span><span class="s1">pkginfo_to_dict 
+</span><span class="s2">from </span><span class="s1">. </span><span class="s2">import </span><span class="s1">pep425tags</span><span class="s2">, </span><span class="s1">metadata 
+</span><span class="s2">from </span><span class="s1">. </span><span class="s2">import </span><span class="s1">__version__ </span><span class="s2">as </span><span class="s1">wheel_version 
+ 
+ 
+safe_name = pkg_resources.safe_name 
+safe_version = pkg_resources.safe_version 
+ 
+PY_LIMITED_API_PATTERN = </span><span class="s3">r'cp3\d'</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">safer_name(name): 
+    </span><span class="s2">return </span><span class="s1">safe_name(name).replace(</span><span class="s3">'-'</span><span class="s2">, </span><span class="s3">'_'</span><span class="s1">) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">safer_version(version): 
+    </span><span class="s2">return </span><span class="s1">safe_version(version).replace(</span><span class="s3">'-'</span><span class="s2">, </span><span class="s3">'_'</span><span class="s1">) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">bdist_wheel(Command): 
+ 
+    description = </span><span class="s3">'create a wheel distribution'</span><span class="s1"> 
+ 
+    user_options = [(</span><span class="s3">'bdist-dir='</span><span class="s2">, </span><span class="s3">'b'</span><span class="s2">,</span><span class="s1"> 
+                     </span><span class="s3">&quot;temporary directory for creating the distribution&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'plat-name='</span><span class="s2">, </span><span class="s3">'p'</span><span class="s2">,</span><span class="s1"> 
+                     </span><span class="s3">&quot;platform name to embed in generated filenames &quot;</span><span class="s1"> 
+                     </span><span class="s3">&quot;(default: %s)&quot; </span><span class="s1">% get_platform())</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'keep-temp'</span><span class="s2">, </span><span class="s3">'k'</span><span class="s2">,</span><span class="s1"> 
+                     </span><span class="s3">&quot;keep the pseudo-installation tree around after &quot; </span><span class="s1">+ 
+                     </span><span class="s3">&quot;creating the distribution archive&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'dist-dir='</span><span class="s2">, </span><span class="s3">'d'</span><span class="s2">,</span><span class="s1"> 
+                     </span><span class="s3">&quot;directory to put final built distributions in&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'skip-build'</span><span class="s2">, None,</span><span class="s1"> 
+                     </span><span class="s3">&quot;skip rebuilding everything (for testing/debugging)&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'relative'</span><span class="s2">, None,</span><span class="s1"> 
+                     </span><span class="s3">&quot;build the archive using relative paths&quot;</span><span class="s1"> 
+                     </span><span class="s3">&quot;(default: false)&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'owner='</span><span class="s2">, </span><span class="s3">'u'</span><span class="s2">,</span><span class="s1"> 
+                     </span><span class="s3">&quot;Owner name used when creating a tar file&quot;</span><span class="s1"> 
+                     </span><span class="s3">&quot; [default: current user]&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'group='</span><span class="s2">, </span><span class="s3">'g'</span><span class="s2">,</span><span class="s1"> 
+                     </span><span class="s3">&quot;Group name used when creating a tar file&quot;</span><span class="s1"> 
+                     </span><span class="s3">&quot; [default: current group]&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'universal'</span><span class="s2">, None,</span><span class="s1"> 
+                     </span><span class="s3">&quot;make a universal wheel&quot;</span><span class="s1"> 
+                     </span><span class="s3">&quot; (default: false)&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'python-tag='</span><span class="s2">, None,</span><span class="s1"> 
+                     </span><span class="s3">&quot;Python implementation compatibility tag&quot;</span><span class="s1"> 
+                     </span><span class="s3">&quot; (default: py%s)&quot; </span><span class="s1">% get_impl_ver()[</span><span class="s4">0</span><span class="s1">])</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'build-number='</span><span class="s2">, None,</span><span class="s1"> 
+                     </span><span class="s3">&quot;Build number for this particular version. &quot;</span><span class="s1"> 
+                     </span><span class="s3">&quot;As specified in PEP-0427, this must start with a digit. &quot;</span><span class="s1"> 
+                     </span><span class="s3">&quot;[default: None]&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    (</span><span class="s3">'py-limited-api='</span><span class="s2">, None,</span><span class="s1"> 
+                     </span><span class="s3">&quot;Python tag (cp32|cp33|cpNN) for abi3 wheel tag&quot;</span><span class="s1"> 
+                     </span><span class="s3">&quot; (default: false)&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                    ] 
+ 
+    boolean_options = [</span><span class="s3">'keep-temp'</span><span class="s2">, </span><span class="s3">'skip-build'</span><span class="s2">, </span><span class="s3">'relative'</span><span class="s2">, </span><span class="s3">'universal'</span><span class="s1">] 
+ 
+    </span><span class="s2">def </span><span class="s1">initialize_options(self): 
+        self.bdist_dir = </span><span class="s2">None</span><span class="s1"> 
+        self.data_dir = </span><span class="s2">None</span><span class="s1"> 
+        self.plat_name = </span><span class="s2">None</span><span class="s1"> 
+        self.plat_tag = </span><span class="s2">None</span><span class="s1"> 
+        self.format = </span><span class="s3">'zip'</span><span class="s1"> 
+        self.keep_temp = </span><span class="s2">False</span><span class="s1"> 
+        self.dist_dir = </span><span class="s2">None</span><span class="s1"> 
+        self.distinfo_dir = </span><span class="s2">None</span><span class="s1"> 
+        self.egginfo_dir = </span><span class="s2">None</span><span class="s1"> 
+        self.root_is_pure = </span><span class="s2">None</span><span class="s1"> 
+        self.skip_build = </span><span class="s2">None</span><span class="s1"> 
+        self.relative = </span><span class="s2">False</span><span class="s1"> 
+        self.owner = </span><span class="s2">None</span><span class="s1"> 
+        self.group = </span><span class="s2">None</span><span class="s1"> 
+        self.universal = </span><span class="s2">False</span><span class="s1"> 
+        self.python_tag = </span><span class="s3">'py' </span><span class="s1">+ get_impl_ver()[</span><span class="s4">0</span><span class="s1">] 
+        self.build_number = </span><span class="s2">None</span><span class="s1"> 
+        self.py_limited_api = </span><span class="s2">False</span><span class="s1"> 
+        self.plat_name_supplied = </span><span class="s2">False</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">finalize_options(self): 
+        </span><span class="s2">if </span><span class="s1">self.bdist_dir </span><span class="s2">is None</span><span class="s1">: 
+            bdist_base = self.get_finalized_command(</span><span class="s3">'bdist'</span><span class="s1">).bdist_base 
+            self.bdist_dir = os.path.join(bdist_base</span><span class="s2">, </span><span class="s3">'wheel'</span><span class="s1">) 
+ 
+        self.data_dir = self.wheel_dist_name + </span><span class="s3">'.data'</span><span class="s1"> 
+        self.plat_name_supplied = self.plat_name </span><span class="s2">is not None</span><span class="s1"> 
+ 
+        need_options = (</span><span class="s3">'dist_dir'</span><span class="s2">, </span><span class="s3">'plat_name'</span><span class="s2">, </span><span class="s3">'skip_build'</span><span class="s1">) 
+ 
+        self.set_undefined_options(</span><span class="s3">'bdist'</span><span class="s2">,</span><span class="s1"> 
+                                   *zip(need_options</span><span class="s2">, </span><span class="s1">need_options)) 
+ 
+        self.root_is_pure = </span><span class="s2">not </span><span class="s1">(self.distribution.has_ext_modules() 
+                                 </span><span class="s2">or </span><span class="s1">self.distribution.has_c_libraries()) 
+ 
+        </span><span class="s2">if </span><span class="s1">self.py_limited_api </span><span class="s2">and not </span><span class="s1">re.match(PY_LIMITED_API_PATTERN</span><span class="s2">, </span><span class="s1">self.py_limited_api): 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;py-limited-api must match '%s'&quot; </span><span class="s1">% PY_LIMITED_API_PATTERN) 
+ 
+        </span><span class="s5"># Support legacy [wheel] section for setting universal</span><span class="s1"> 
+        wheel = self.distribution.get_option_dict(</span><span class="s3">'wheel'</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s3">'universal' </span><span class="s2">in </span><span class="s1">wheel: 
+            </span><span class="s5"># please don't define this in your global configs</span><span class="s1"> 
+            val = wheel[</span><span class="s3">'universal'</span><span class="s1">][</span><span class="s4">1</span><span class="s1">].strip() 
+            </span><span class="s2">if </span><span class="s1">val.lower() </span><span class="s2">in </span><span class="s1">(</span><span class="s3">'1'</span><span class="s2">, </span><span class="s3">'true'</span><span class="s2">, </span><span class="s3">'yes'</span><span class="s1">): 
+                self.universal = </span><span class="s2">True</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">self.build_number </span><span class="s2">is not None and not </span><span class="s1">self.build_number[:</span><span class="s4">1</span><span class="s1">].isdigit(): 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;Build tag (build-number) must start with a digit.&quot;</span><span class="s1">) 
+ 
+    @property 
+    </span><span class="s2">def </span><span class="s1">wheel_dist_name(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return distribution full name with - replaced with _&quot;&quot;&quot;</span><span class="s1"> 
+        components = (safer_name(self.distribution.get_name())</span><span class="s2">,</span><span class="s1"> 
+                      safer_version(self.distribution.get_version())) 
+        </span><span class="s2">if </span><span class="s1">self.build_number: 
+            components += (self.build_number</span><span class="s2">,</span><span class="s1">) 
+        </span><span class="s2">return </span><span class="s3">'-'</span><span class="s1">.join(components) 
+ 
+    </span><span class="s2">def </span><span class="s1">get_tag(self): 
+        </span><span class="s5"># bdist sets self.plat_name if unset, we should only use it for purepy</span><span class="s1"> 
+        </span><span class="s5"># wheels if the user supplied it.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">self.plat_name_supplied: 
+            plat_name = self.plat_name 
+        </span><span class="s2">elif </span><span class="s1">self.root_is_pure: 
+            plat_name = </span><span class="s3">'any'</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            plat_name = self.plat_name </span><span class="s2">or </span><span class="s1">get_platform() 
+            </span><span class="s2">if </span><span class="s1">plat_name </span><span class="s2">in </span><span class="s1">(</span><span class="s3">'linux-x86_64'</span><span class="s2">, </span><span class="s3">'linux_x86_64'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">sys.maxsize == </span><span class="s4">2147483647</span><span class="s1">: 
+                plat_name = </span><span class="s3">'linux_i686'</span><span class="s1"> 
+        plat_name = plat_name.replace(</span><span class="s3">'-'</span><span class="s2">, </span><span class="s3">'_'</span><span class="s1">).replace(</span><span class="s3">'.'</span><span class="s2">, </span><span class="s3">'_'</span><span class="s1">) 
+ 
+        </span><span class="s2">if </span><span class="s1">self.root_is_pure: 
+            </span><span class="s2">if </span><span class="s1">self.universal: 
+                impl = </span><span class="s3">'py2.py3'</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                impl = self.python_tag 
+            tag = (impl</span><span class="s2">, </span><span class="s3">'none'</span><span class="s2">, </span><span class="s1">plat_name) 
+        </span><span class="s2">else</span><span class="s1">: 
+            impl_name = get_abbr_impl() 
+            impl_ver = get_impl_ver() 
+            impl = impl_name + impl_ver 
+            </span><span class="s5"># We don't work on CPython 3.1, 3.0.</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">self.py_limited_api </span><span class="s2">and </span><span class="s1">(impl_name + impl_ver).startswith(</span><span class="s3">'cp3'</span><span class="s1">): 
+                impl = self.py_limited_api 
+                abi_tag = </span><span class="s3">'abi3'</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                abi_tag = str(get_abi_tag()).lower() 
+            tag = (impl</span><span class="s2">, </span><span class="s1">abi_tag</span><span class="s2">, </span><span class="s1">plat_name) 
+            supported_tags = pep425tags.get_supported( 
+                supplied_platform=plat_name </span><span class="s2">if </span><span class="s1">self.plat_name_supplied </span><span class="s2">else None</span><span class="s1">) 
+            </span><span class="s5"># XXX switch to this alternate implementation for non-pure:</span><span class="s1"> 
+            </span><span class="s2">if not </span><span class="s1">self.py_limited_api: 
+                </span><span class="s2">assert </span><span class="s1">tag == supported_tags[</span><span class="s4">0</span><span class="s1">]</span><span class="s2">, </span><span class="s3">&quot;%s != %s&quot; </span><span class="s1">% (tag</span><span class="s2">, </span><span class="s1">supported_tags[</span><span class="s4">0</span><span class="s1">]) 
+            </span><span class="s2">assert </span><span class="s1">tag </span><span class="s2">in </span><span class="s1">supported_tags</span><span class="s2">, </span><span class="s3">&quot;would build wheel with unsupported tag {}&quot;</span><span class="s1">.format(tag) 
+        </span><span class="s2">return </span><span class="s1">tag 
+ 
+    </span><span class="s2">def </span><span class="s1">get_archive_basename(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return archive name without extension&quot;&quot;&quot;</span><span class="s1"> 
+ 
+        impl_tag</span><span class="s2">, </span><span class="s1">abi_tag</span><span class="s2">, </span><span class="s1">plat_tag = self.get_tag() 
+ 
+        archive_basename = </span><span class="s3">&quot;%s-%s-%s-%s&quot; </span><span class="s1">% ( 
+            self.wheel_dist_name</span><span class="s2">,</span><span class="s1"> 
+            impl_tag</span><span class="s2">,</span><span class="s1"> 
+            abi_tag</span><span class="s2">,</span><span class="s1"> 
+            plat_tag) 
+        </span><span class="s2">return </span><span class="s1">archive_basename 
+ 
+    </span><span class="s2">def </span><span class="s1">run(self): 
+        build_scripts = self.reinitialize_command(</span><span class="s3">'build_scripts'</span><span class="s1">) 
+        build_scripts.executable = </span><span class="s3">'python'</span><span class="s1"> 
+ 
+        </span><span class="s2">if not </span><span class="s1">self.skip_build: 
+            self.run_command(</span><span class="s3">'build'</span><span class="s1">) 
+ 
+        install = self.reinitialize_command(</span><span class="s3">'install'</span><span class="s2">,</span><span class="s1"> 
+                                            reinit_subcommands=</span><span class="s2">True</span><span class="s1">) 
+        install.root = self.bdist_dir 
+        install.compile = </span><span class="s2">False</span><span class="s1"> 
+        install.skip_build = self.skip_build 
+        install.warn_dir = </span><span class="s2">False</span><span class="s1"> 
+ 
+        </span><span class="s5"># A wheel without setuptools scripts is more cross-platform.</span><span class="s1"> 
+        </span><span class="s5"># Use the (undocumented) `no_ep` option to setuptools'</span><span class="s1"> 
+        </span><span class="s5"># install_scripts command to avoid creating entry point scripts.</span><span class="s1"> 
+        install_scripts = self.reinitialize_command(</span><span class="s3">'install_scripts'</span><span class="s1">) 
+        install_scripts.no_ep = </span><span class="s2">True</span><span class="s1"> 
+ 
+        </span><span class="s5"># Use a custom scheme for the archive, because we have to decide</span><span class="s1"> 
+        </span><span class="s5"># at installation time which scheme to use.</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">key </span><span class="s2">in </span><span class="s1">(</span><span class="s3">'headers'</span><span class="s2">, </span><span class="s3">'scripts'</span><span class="s2">, </span><span class="s3">'data'</span><span class="s2">, </span><span class="s3">'purelib'</span><span class="s2">, </span><span class="s3">'platlib'</span><span class="s1">): 
+            setattr(install</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">'install_' </span><span class="s1">+ key</span><span class="s2">,</span><span class="s1"> 
+                    os.path.join(self.data_dir</span><span class="s2">, </span><span class="s1">key)) 
+ 
+        basedir_observed = </span><span class="s3">''</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">os.name == </span><span class="s3">'nt'</span><span class="s1">: 
+            </span><span class="s5"># win32 barfs if any of these are ''; could be '.'?</span><span class="s1"> 
+            </span><span class="s5"># (distutils.command.install:change_roots bug)</span><span class="s1"> 
+            basedir_observed = os.path.normpath(os.path.join(self.data_dir</span><span class="s2">, </span><span class="s3">'..'</span><span class="s1">)) 
+            self.install_libbase = self.install_lib = basedir_observed 
+ 
+        setattr(install</span><span class="s2">,</span><span class="s1"> 
+                </span><span class="s3">'install_purelib' </span><span class="s2">if </span><span class="s1">self.root_is_pure </span><span class="s2">else </span><span class="s3">'install_platlib'</span><span class="s2">,</span><span class="s1"> 
+                basedir_observed) 
+ 
+        logger.info(</span><span class="s3">&quot;installing to %s&quot;</span><span class="s2">, </span><span class="s1">self.bdist_dir) 
+ 
+        self.run_command(</span><span class="s3">'install'</span><span class="s1">) 
+ 
+        archive_basename = self.get_archive_basename() 
+ 
+        pseudoinstall_root = os.path.join(self.dist_dir</span><span class="s2">, </span><span class="s1">archive_basename) 
+        </span><span class="s2">if not </span><span class="s1">self.relative: 
+            archive_root = self.bdist_dir 
+        </span><span class="s2">else</span><span class="s1">: 
+            archive_root = os.path.join( 
+                self.bdist_dir</span><span class="s2">,</span><span class="s1"> 
+                self._ensure_relative(install.install_base)) 
+ 
+        self.set_undefined_options( 
+            </span><span class="s3">'install_egg_info'</span><span class="s2">, </span><span class="s1">(</span><span class="s3">'target'</span><span class="s2">, </span><span class="s3">'egginfo_dir'</span><span class="s1">)) 
+        self.distinfo_dir = os.path.join(self.bdist_dir</span><span class="s2">,</span><span class="s1"> 
+                                         </span><span class="s3">'%s.dist-info' </span><span class="s1">% self.wheel_dist_name) 
+        self.egg2dist(self.egginfo_dir</span><span class="s2">,</span><span class="s1"> 
+                      self.distinfo_dir) 
+ 
+        self.write_wheelfile(self.distinfo_dir) 
+ 
+        self.write_record(self.bdist_dir</span><span class="s2">, </span><span class="s1">self.distinfo_dir) 
+ 
+        </span><span class="s5"># Make the archive</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">os.path.exists(self.dist_dir): 
+            os.makedirs(self.dist_dir) 
+        wheel_name = archive_wheelfile(pseudoinstall_root</span><span class="s2">, </span><span class="s1">archive_root) 
+ 
+        </span><span class="s5"># Sign the archive</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s3">'WHEEL_TOOL' </span><span class="s2">in </span><span class="s1">os.environ: 
+            subprocess.call([os.environ[</span><span class="s3">'WHEEL_TOOL'</span><span class="s1">]</span><span class="s2">, </span><span class="s3">'sign'</span><span class="s2">, </span><span class="s1">wheel_name]) 
+ 
+        </span><span class="s5"># Add to 'Distribution.dist_files' so that the &quot;upload&quot; command works</span><span class="s1"> 
+        getattr(self.distribution</span><span class="s2">, </span><span class="s3">'dist_files'</span><span class="s2">, </span><span class="s1">[]).append( 
+            (</span><span class="s3">'bdist_wheel'</span><span class="s2">, </span><span class="s1">get_python_version()</span><span class="s2">, </span><span class="s1">wheel_name)) 
+ 
+        </span><span class="s2">if not </span><span class="s1">self.keep_temp: 
+            </span><span class="s2">if </span><span class="s1">self.dry_run: 
+                logger.info(</span><span class="s3">'removing %s'</span><span class="s2">, </span><span class="s1">self.bdist_dir) 
+            </span><span class="s2">else</span><span class="s1">: 
+                rmtree(self.bdist_dir) 
+ 
+    </span><span class="s2">def </span><span class="s1">write_wheelfile(self</span><span class="s2">, </span><span class="s1">wheelfile_base</span><span class="s2">, </span><span class="s1">generator=</span><span class="s3">'bdist_wheel (' </span><span class="s1">+ wheel_version + </span><span class="s3">')'</span><span class="s1">): 
+        </span><span class="s2">from </span><span class="s1">email.message </span><span class="s2">import </span><span class="s1">Message 
+        msg = Message() 
+        msg[</span><span class="s3">'Wheel-Version'</span><span class="s1">] = </span><span class="s3">'1.0'  </span><span class="s5"># of the spec</span><span class="s1"> 
+        msg[</span><span class="s3">'Generator'</span><span class="s1">] = generator 
+        msg[</span><span class="s3">'Root-Is-Purelib'</span><span class="s1">] = str(self.root_is_pure).lower() 
+        </span><span class="s2">if </span><span class="s1">self.build_number </span><span class="s2">is not None</span><span class="s1">: 
+            msg[</span><span class="s3">'Build'</span><span class="s1">] = self.build_number 
+ 
+        </span><span class="s5"># Doesn't work for bdist_wininst</span><span class="s1"> 
+        impl_tag</span><span class="s2">, </span><span class="s1">abi_tag</span><span class="s2">, </span><span class="s1">plat_tag = self.get_tag() 
+        </span><span class="s2">for </span><span class="s1">impl </span><span class="s2">in </span><span class="s1">impl_tag.split(</span><span class="s3">'.'</span><span class="s1">): 
+            </span><span class="s2">for </span><span class="s1">abi </span><span class="s2">in </span><span class="s1">abi_tag.split(</span><span class="s3">'.'</span><span class="s1">): 
+                </span><span class="s2">for </span><span class="s1">plat </span><span class="s2">in </span><span class="s1">plat_tag.split(</span><span class="s3">'.'</span><span class="s1">): 
+                    msg[</span><span class="s3">'Tag'</span><span class="s1">] = </span><span class="s3">'-'</span><span class="s1">.join((impl</span><span class="s2">, </span><span class="s1">abi</span><span class="s2">, </span><span class="s1">plat)) 
+ 
+        wheelfile_path = os.path.join(wheelfile_base</span><span class="s2">, </span><span class="s3">'WHEEL'</span><span class="s1">) 
+        logger.info(</span><span class="s3">'creating %s'</span><span class="s2">, </span><span class="s1">wheelfile_path) 
+        </span><span class="s2">with </span><span class="s1">open(wheelfile_path</span><span class="s2">, </span><span class="s3">'w'</span><span class="s1">) </span><span class="s2">as </span><span class="s1">f: 
+            Generator(f</span><span class="s2">, </span><span class="s1">maxheaderlen=</span><span class="s4">0</span><span class="s1">).flatten(msg) 
+ 
+    </span><span class="s2">def </span><span class="s1">_ensure_relative(self</span><span class="s2">, </span><span class="s1">path): 
+        </span><span class="s5"># copied from dir_util, deleted</span><span class="s1"> 
+        drive</span><span class="s2">, </span><span class="s1">path = os.path.splitdrive(path) 
+        </span><span class="s2">if </span><span class="s1">path[</span><span class="s4">0</span><span class="s1">:</span><span class="s4">1</span><span class="s1">] == os.sep: 
+            path = drive + path[</span><span class="s4">1</span><span class="s1">:] 
+        </span><span class="s2">return </span><span class="s1">path 
+ 
+    </span><span class="s2">def </span><span class="s1">_pkginfo_to_metadata(self</span><span class="s2">, </span><span class="s1">egg_info_path</span><span class="s2">, </span><span class="s1">pkginfo_path): 
+        </span><span class="s2">return </span><span class="s1">metadata.pkginfo_to_metadata(egg_info_path</span><span class="s2">, </span><span class="s1">pkginfo_path) 
+ 
+    </span><span class="s2">def </span><span class="s1">license_file(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return license filename from a license-file key in setup.cfg, or None.&quot;&quot;&quot;</span><span class="s1"> 
+        metadata = self.distribution.get_option_dict(</span><span class="s3">'metadata'</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s3">'license_file' </span><span class="s2">not in </span><span class="s1">metadata: 
+            </span><span class="s2">return None</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">metadata[</span><span class="s3">'license_file'</span><span class="s1">][</span><span class="s4">1</span><span class="s1">] 
+ 
+    </span><span class="s2">def </span><span class="s1">setupcfg_requirements(self): 
+        </span><span class="s0">&quot;&quot;&quot;Generate requirements from setup.cfg as 
+        ('Requires-Dist', 'requirement; qualifier') tuples. From a metadata 
+        section in setup.cfg: 
+ 
+        [metadata] 
+        provides-extra = extra1 
+            extra2 
+        requires-dist = requirement; qualifier 
+            another; qualifier2 
+            unqualified 
+ 
+        Yields 
+ 
+        ('Provides-Extra', 'extra1'), 
+        ('Provides-Extra', 'extra2'), 
+        ('Requires-Dist', 'requirement; qualifier'), 
+        ('Requires-Dist', 'another; qualifier2'), 
+        ('Requires-Dist', 'unqualified') 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        metadata = self.distribution.get_option_dict(</span><span class="s3">'metadata'</span><span class="s1">) 
+ 
+        </span><span class="s5"># our .ini parser folds - to _ in key names:</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">key</span><span class="s2">, </span><span class="s1">title </span><span class="s2">in </span><span class="s1">((</span><span class="s3">'provides_extra'</span><span class="s2">, </span><span class="s3">'Provides-Extra'</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                           (</span><span class="s3">'requires_dist'</span><span class="s2">, </span><span class="s3">'Requires-Dist'</span><span class="s1">)): 
+            </span><span class="s2">if </span><span class="s1">key </span><span class="s2">not in </span><span class="s1">metadata: 
+                </span><span class="s2">continue</span><span class="s1"> 
+            field = metadata[key] 
+            </span><span class="s2">for </span><span class="s1">line </span><span class="s2">in </span><span class="s1">field[</span><span class="s4">1</span><span class="s1">].splitlines(): 
+                line = line.strip() 
+                </span><span class="s2">if not </span><span class="s1">line: 
+                    </span><span class="s2">continue</span><span class="s1"> 
+                </span><span class="s2">yield </span><span class="s1">(title</span><span class="s2">, </span><span class="s1">line) 
+ 
+    </span><span class="s2">def </span><span class="s1">add_requirements(self</span><span class="s2">, </span><span class="s1">metadata_path): 
+        </span><span class="s0">&quot;&quot;&quot;Add additional requirements from setup.cfg to file metadata_path&quot;&quot;&quot;</span><span class="s1"> 
+        additional = list(self.setupcfg_requirements()) 
+        </span><span class="s2">if not </span><span class="s1">additional: 
+            </span><span class="s2">return</span><span class="s1"> 
+ 
+        pkg_info = read_pkg_info(metadata_path) 
+        </span><span class="s2">if </span><span class="s3">'Provides-Extra' </span><span class="s2">in </span><span class="s1">pkg_info </span><span class="s2">or </span><span class="s3">'Requires-Dist' </span><span class="s2">in </span><span class="s1">pkg_info: 
+            warnings.warn(</span><span class="s3">'setup.cfg requirements overwrite values from setup.py'</span><span class="s1">) 
+            </span><span class="s2">del </span><span class="s1">pkg_info[</span><span class="s3">'Provides-Extra'</span><span class="s1">] 
+            </span><span class="s2">del </span><span class="s1">pkg_info[</span><span class="s3">'Requires-Dist'</span><span class="s1">] 
+        </span><span class="s2">for </span><span class="s1">k</span><span class="s2">, </span><span class="s1">v </span><span class="s2">in </span><span class="s1">additional: 
+            pkg_info[k] = v 
+        write_pkg_info(metadata_path</span><span class="s2">, </span><span class="s1">pkg_info) 
+ 
+    </span><span class="s2">def </span><span class="s1">egg2dist(self</span><span class="s2">, </span><span class="s1">egginfo_path</span><span class="s2">, </span><span class="s1">distinfo_path): 
+        </span><span class="s0">&quot;&quot;&quot;Convert an .egg-info directory into a .dist-info directory&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">def </span><span class="s1">adios(p): 
+            </span><span class="s0">&quot;&quot;&quot;Appropriately delete directory, file or link.&quot;&quot;&quot;</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">os.path.exists(p) </span><span class="s2">and not </span><span class="s1">os.path.islink(p) </span><span class="s2">and </span><span class="s1">os.path.isdir(p): 
+                shutil.rmtree(p) 
+            </span><span class="s2">elif </span><span class="s1">os.path.exists(p): 
+                os.unlink(p) 
+ 
+        adios(distinfo_path) 
+ 
+        </span><span class="s2">if not </span><span class="s1">os.path.exists(egginfo_path): 
+            </span><span class="s5"># There is no egg-info. This is probably because the egg-info</span><span class="s1"> 
+            </span><span class="s5"># file/directory is not named matching the distribution name used</span><span class="s1"> 
+            </span><span class="s5"># to name the archive file. Check for this case and report</span><span class="s1"> 
+            </span><span class="s5"># accordingly.</span><span class="s1"> 
+            </span><span class="s2">import </span><span class="s1">glob 
+            pat = os.path.join(os.path.dirname(egginfo_path)</span><span class="s2">, </span><span class="s3">'*.egg-info'</span><span class="s1">) 
+            possible = glob.glob(pat) 
+            err = </span><span class="s3">&quot;Egg metadata expected at %s but not found&quot; </span><span class="s1">% (egginfo_path</span><span class="s2">,</span><span class="s1">) 
+            </span><span class="s2">if </span><span class="s1">possible: 
+                alt = os.path.basename(possible[</span><span class="s4">0</span><span class="s1">]) 
+                err += </span><span class="s3">&quot; (%s found - possible misnamed archive file?)&quot; </span><span class="s1">% (alt</span><span class="s2">,</span><span class="s1">) 
+ 
+            </span><span class="s2">raise </span><span class="s1">ValueError(err) 
+ 
+        </span><span class="s2">if </span><span class="s1">os.path.isfile(egginfo_path): 
+            </span><span class="s5"># .egg-info is a single file</span><span class="s1"> 
+            pkginfo_path = egginfo_path 
+            pkg_info = self._pkginfo_to_metadata(egginfo_path</span><span class="s2">, </span><span class="s1">egginfo_path) 
+            os.mkdir(distinfo_path) 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s5"># .egg-info is a directory</span><span class="s1"> 
+            pkginfo_path = os.path.join(egginfo_path</span><span class="s2">, </span><span class="s3">'PKG-INFO'</span><span class="s1">) 
+            pkg_info = self._pkginfo_to_metadata(egginfo_path</span><span class="s2">, </span><span class="s1">pkginfo_path) 
+ 
+            </span><span class="s5"># ignore common egg metadata that is useless to wheel</span><span class="s1"> 
+            shutil.copytree(egginfo_path</span><span class="s2">, </span><span class="s1">distinfo_path</span><span class="s2">,</span><span class="s1"> 
+                            ignore=</span><span class="s2">lambda </span><span class="s1">x</span><span class="s2">, </span><span class="s1">y: {</span><span class="s3">'PKG-INFO'</span><span class="s2">, </span><span class="s3">'requires.txt'</span><span class="s2">, </span><span class="s3">'SOURCES.txt'</span><span class="s2">,</span><span class="s1"> 
+                                                 </span><span class="s3">'not-zip-safe'</span><span class="s1">} 
+                            ) 
+ 
+            </span><span class="s5"># delete dependency_links if it is only whitespace</span><span class="s1"> 
+            dependency_links_path = os.path.join(distinfo_path</span><span class="s2">, </span><span class="s3">'dependency_links.txt'</span><span class="s1">) 
+            </span><span class="s2">with </span><span class="s1">open(dependency_links_path</span><span class="s2">, </span><span class="s3">'r'</span><span class="s1">) </span><span class="s2">as </span><span class="s1">dependency_links_file: 
+                dependency_links = dependency_links_file.read().strip() 
+            </span><span class="s2">if not </span><span class="s1">dependency_links: 
+                adios(dependency_links_path) 
+ 
+        write_pkg_info(os.path.join(distinfo_path</span><span class="s2">, </span><span class="s3">'METADATA'</span><span class="s1">)</span><span class="s2">, </span><span class="s1">pkg_info) 
+ 
+        </span><span class="s5"># XXX deprecated. Still useful for current distribute/setuptools.</span><span class="s1"> 
+        metadata_path = os.path.join(distinfo_path</span><span class="s2">, </span><span class="s3">'METADATA'</span><span class="s1">) 
+        self.add_requirements(metadata_path) 
+ 
+        </span><span class="s5"># XXX intentionally a different path than the PEP.</span><span class="s1"> 
+        metadata_json_path = os.path.join(distinfo_path</span><span class="s2">, </span><span class="s3">'metadata.json'</span><span class="s1">) 
+        pymeta = pkginfo_to_dict(metadata_path</span><span class="s2">,</span><span class="s1"> 
+                                 distribution=self.distribution) 
+ 
+        </span><span class="s2">if </span><span class="s3">'description' </span><span class="s2">in </span><span class="s1">pymeta: 
+            description_filename = </span><span class="s3">'DESCRIPTION.rst'</span><span class="s1"> 
+            description_text = pymeta.pop(</span><span class="s3">'description'</span><span class="s1">) 
+            description_path = os.path.join(distinfo_path</span><span class="s2">,</span><span class="s1"> 
+                                            description_filename) 
+            </span><span class="s2">with </span><span class="s1">open(description_path</span><span class="s2">, </span><span class="s3">&quot;wb&quot;</span><span class="s1">) </span><span class="s2">as </span><span class="s1">description_file: 
+                description_file.write(description_text.encode(</span><span class="s3">'utf-8'</span><span class="s1">)) 
+            pymeta[</span><span class="s3">'extensions'</span><span class="s1">][</span><span class="s3">'python.details'</span><span class="s1">][</span><span class="s3">'document_names'</span><span class="s1">][</span><span class="s3">'description'</span><span class="s1">] = \ 
+                description_filename 
+ 
+        </span><span class="s5"># XXX heuristically copy any LICENSE/LICENSE.txt?</span><span class="s1"> 
+        license = self.license_file() 
+        </span><span class="s2">if </span><span class="s1">license: 
+            license_filename = </span><span class="s3">'LICENSE.txt'</span><span class="s1"> 
+            shutil.copy(license</span><span class="s2">, </span><span class="s1">os.path.join(self.distinfo_dir</span><span class="s2">, </span><span class="s1">license_filename)) 
+            pymeta[</span><span class="s3">'extensions'</span><span class="s1">][</span><span class="s3">'python.details'</span><span class="s1">][</span><span class="s3">'document_names'</span><span class="s1">][</span><span class="s3">'license'</span><span class="s1">] = license_filename 
+ 
+        </span><span class="s2">with </span><span class="s1">open(metadata_json_path</span><span class="s2">, </span><span class="s3">&quot;w&quot;</span><span class="s1">) </span><span class="s2">as </span><span class="s1">metadata_json: 
+            json.dump(pymeta</span><span class="s2">, </span><span class="s1">metadata_json</span><span class="s2">, </span><span class="s1">sort_keys=</span><span class="s2">True</span><span class="s1">) 
+ 
+        adios(egginfo_path) 
+ 
+    </span><span class="s2">def </span><span class="s1">write_record(self</span><span class="s2">, </span><span class="s1">bdist_dir</span><span class="s2">, </span><span class="s1">distinfo_dir): 
+        </span><span class="s2">from </span><span class="s1">.util </span><span class="s2">import </span><span class="s1">urlsafe_b64encode 
+ 
+        record_path = os.path.join(distinfo_dir</span><span class="s2">, </span><span class="s3">'RECORD'</span><span class="s1">) 
+        record_relpath = os.path.relpath(record_path</span><span class="s2">, </span><span class="s1">bdist_dir) 
+ 
+        </span><span class="s2">def </span><span class="s1">walk(): 
+            </span><span class="s2">for </span><span class="s1">dir</span><span class="s2">, </span><span class="s1">dirs</span><span class="s2">, </span><span class="s1">files </span><span class="s2">in </span><span class="s1">os.walk(bdist_dir): 
+                dirs.sort() 
+                </span><span class="s2">for </span><span class="s1">f </span><span class="s2">in </span><span class="s1">sorted(files): 
+                    </span><span class="s2">yield </span><span class="s1">os.path.join(dir</span><span class="s2">, </span><span class="s1">f) 
+ 
+        </span><span class="s2">def </span><span class="s1">skip(path): 
+            </span><span class="s0">&quot;&quot;&quot;Wheel hashes every possible file.&quot;&quot;&quot;</span><span class="s1"> 
+            </span><span class="s2">return </span><span class="s1">(path == record_relpath) 
+ 
+        </span><span class="s2">with </span><span class="s1">open_for_csv(record_path</span><span class="s2">, </span><span class="s3">'w+'</span><span class="s1">) </span><span class="s2">as </span><span class="s1">record_file: 
+            writer = csv.writer(record_file) 
+            </span><span class="s2">for </span><span class="s1">path </span><span class="s2">in </span><span class="s1">walk(): 
+                relpath = os.path.relpath(path</span><span class="s2">, </span><span class="s1">bdist_dir) 
+                </span><span class="s2">if </span><span class="s1">skip(relpath): 
+                    hash = </span><span class="s3">''</span><span class="s1"> 
+                    size = </span><span class="s3">''</span><span class="s1"> 
+                </span><span class="s2">else</span><span class="s1">: 
+                    </span><span class="s2">with </span><span class="s1">open(path</span><span class="s2">, </span><span class="s3">'rb'</span><span class="s1">) </span><span class="s2">as </span><span class="s1">f: 
+                        data = f.read() 
+                    digest = hashlib.sha256(data).digest() 
+                    hash = </span><span class="s3">'sha256=' </span><span class="s1">+ native(urlsafe_b64encode(digest)) 
+                    size = len(data) 
+                record_path = os.path.relpath( 
+                    path</span><span class="s2">, </span><span class="s1">bdist_dir).replace(os.path.sep</span><span class="s2">, </span><span class="s3">'/'</span><span class="s1">) 
+                writer.writerow((record_path</span><span class="s2">, </span><span class="s1">hash</span><span class="s2">, </span><span class="s1">size)) 
+</span></pre>
+</body>
+</html>

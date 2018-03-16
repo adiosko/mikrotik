@@ -1,0 +1,775 @@
+<html>
+<head>
+<title>functools.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(204,120,50); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+functools.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;functools.py - Tools for working with functions and callable objects 
+&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2"># Python module wrapper for _functools C module</span><span class="s1"> 
+</span><span class="s2"># to allow utilities written in Python to be added</span><span class="s1"> 
+</span><span class="s2"># to the functools module.</span><span class="s1"> 
+</span><span class="s2"># Written by Nick Coghlan &lt;ncoghlan at gmail.com&gt;,</span><span class="s1"> 
+</span><span class="s2"># Raymond Hettinger &lt;python at rcn.com&gt;,</span><span class="s1"> 
+</span><span class="s2"># and Łukasz Langa &lt;lukasz at langa.pl&gt;.</span><span class="s1"> 
+</span><span class="s2">#   Copyright (C) 2006-2013 Python Software Foundation.</span><span class="s1"> 
+</span><span class="s2"># See C source code for _functools credits/copyright</span><span class="s1"> 
+ 
+__all__ = [</span><span class="s3">'update_wrapper'</span><span class="s4">, </span><span class="s3">'wraps'</span><span class="s4">, </span><span class="s3">'WRAPPER_ASSIGNMENTS'</span><span class="s4">, </span><span class="s3">'WRAPPER_UPDATES'</span><span class="s4">,</span><span class="s1"> 
+           </span><span class="s3">'total_ordering'</span><span class="s4">, </span><span class="s3">'cmp_to_key'</span><span class="s4">, </span><span class="s3">'lru_cache'</span><span class="s4">, </span><span class="s3">'reduce'</span><span class="s4">, </span><span class="s3">'partial'</span><span class="s4">,</span><span class="s1"> 
+           </span><span class="s3">'partialmethod'</span><span class="s4">, </span><span class="s3">'singledispatch'</span><span class="s1">] 
+ 
+</span><span class="s4">try</span><span class="s1">: 
+    </span><span class="s4">from </span><span class="s1">_functools </span><span class="s4">import </span><span class="s1">reduce 
+</span><span class="s4">except </span><span class="s1">ImportError: 
+    </span><span class="s4">pass</span><span class="s1"> 
+</span><span class="s4">from </span><span class="s1">abc </span><span class="s4">import </span><span class="s1">get_cache_token 
+</span><span class="s4">from </span><span class="s1">collections </span><span class="s4">import </span><span class="s1">namedtuple 
+</span><span class="s4">from </span><span class="s1">types </span><span class="s4">import </span><span class="s1">MappingProxyType 
+</span><span class="s4">from </span><span class="s1">weakref </span><span class="s4">import </span><span class="s1">WeakKeyDictionary 
+</span><span class="s4">try</span><span class="s1">: 
+    </span><span class="s4">from </span><span class="s1">_thread </span><span class="s4">import </span><span class="s1">RLock 
+</span><span class="s4">except </span><span class="s1">ImportError: 
+    </span><span class="s4">class </span><span class="s1">RLock: 
+        </span><span class="s0">'Dummy reentrant lock for builds without threads'</span><span class="s1"> 
+        </span><span class="s4">def </span><span class="s1">__enter__(self): </span><span class="s4">pass</span><span class="s1"> 
+        </span><span class="s4">def </span><span class="s1">__exit__(self</span><span class="s4">, </span><span class="s1">exctype</span><span class="s4">, </span><span class="s1">excinst</span><span class="s4">, </span><span class="s1">exctb): </span><span class="s4">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+</span><span class="s2">### update_wrapper() and wraps() decorator</span><span class="s1"> 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+ 
+</span><span class="s2"># update_wrapper() and wraps() are tools to help write</span><span class="s1"> 
+</span><span class="s2"># wrapper functions that can handle naive introspection</span><span class="s1"> 
+ 
+WRAPPER_ASSIGNMENTS = (</span><span class="s3">'__module__'</span><span class="s4">, </span><span class="s3">'__name__'</span><span class="s4">, </span><span class="s3">'__qualname__'</span><span class="s4">, </span><span class="s3">'__doc__'</span><span class="s4">,</span><span class="s1"> 
+                       </span><span class="s3">'__annotations__'</span><span class="s1">) 
+WRAPPER_UPDATES = (</span><span class="s3">'__dict__'</span><span class="s4">,</span><span class="s1">) 
+</span><span class="s4">def </span><span class="s1">update_wrapper(wrapper</span><span class="s4">,</span><span class="s1"> 
+                   wrapped</span><span class="s4">,</span><span class="s1"> 
+                   assigned = WRAPPER_ASSIGNMENTS</span><span class="s4">,</span><span class="s1"> 
+                   updated = WRAPPER_UPDATES): 
+    </span><span class="s0">&quot;&quot;&quot;Update a wrapper function to look like the wrapped function 
+ 
+       wrapper is the function to be updated 
+       wrapped is the original function 
+       assigned is a tuple naming the attributes assigned directly 
+       from the wrapped function to the wrapper function (defaults to 
+       functools.WRAPPER_ASSIGNMENTS) 
+       updated is a tuple naming the attributes of the wrapper that 
+       are updated with the corresponding attribute from the wrapped 
+       function (defaults to functools.WRAPPER_UPDATES) 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">for </span><span class="s1">attr </span><span class="s4">in </span><span class="s1">assigned: 
+        </span><span class="s4">try</span><span class="s1">: 
+            value = getattr(wrapped</span><span class="s4">, </span><span class="s1">attr) 
+        </span><span class="s4">except </span><span class="s1">AttributeError: 
+            </span><span class="s4">pass</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            setattr(wrapper</span><span class="s4">, </span><span class="s1">attr</span><span class="s4">, </span><span class="s1">value) 
+    </span><span class="s4">for </span><span class="s1">attr </span><span class="s4">in </span><span class="s1">updated: 
+        getattr(wrapper</span><span class="s4">, </span><span class="s1">attr).update(getattr(wrapped</span><span class="s4">, </span><span class="s1">attr</span><span class="s4">, </span><span class="s1">{})) 
+    </span><span class="s2"># Issue #17482: set __wrapped__ last so we don't inadvertently copy it</span><span class="s1"> 
+    </span><span class="s2"># from the wrapped function when updating __dict__</span><span class="s1"> 
+    wrapper.__wrapped__ = wrapped 
+    </span><span class="s2"># Return the wrapper so this can be used as a decorator via partial()</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">wrapper 
+ 
+</span><span class="s4">def </span><span class="s1">wraps(wrapped</span><span class="s4">,</span><span class="s1"> 
+          assigned = WRAPPER_ASSIGNMENTS</span><span class="s4">,</span><span class="s1"> 
+          updated = WRAPPER_UPDATES): 
+    </span><span class="s0">&quot;&quot;&quot;Decorator factory to apply update_wrapper() to a wrapper function 
+ 
+       Returns a decorator that invokes update_wrapper() with the decorated 
+       function as the wrapper argument and the arguments to wraps() as the 
+       remaining arguments. Default arguments are as for update_wrapper(). 
+       This is a convenience function to simplify applying partial() to 
+       update_wrapper(). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">partial(update_wrapper</span><span class="s4">, </span><span class="s1">wrapped=wrapped</span><span class="s4">,</span><span class="s1"> 
+                   assigned=assigned</span><span class="s4">, </span><span class="s1">updated=updated) 
+ 
+ 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+</span><span class="s2">### total_ordering class decorator</span><span class="s1"> 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+ 
+</span><span class="s2"># The total ordering functions all invoke the root magic method directly</span><span class="s1"> 
+</span><span class="s2"># rather than using the corresponding operator.  This avoids possible</span><span class="s1"> 
+</span><span class="s2"># infinite recursion that could occur when the operator dispatch logic</span><span class="s1"> 
+</span><span class="s2"># detects a NotImplemented result and then calls a reflected method.</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">_gt_from_lt(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &gt; b.  Computed by @total_ordering from (not a &lt; b) and (a != b).'</span><span class="s1"> 
+    op_result = self.__lt__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return not </span><span class="s1">op_result </span><span class="s4">and </span><span class="s1">self != other 
+ 
+</span><span class="s4">def </span><span class="s1">_le_from_lt(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &lt;= b.  Computed by @total_ordering from (a &lt; b) or (a == b).'</span><span class="s1"> 
+    op_result = self.__lt__(other) 
+    </span><span class="s4">return </span><span class="s1">op_result </span><span class="s4">or </span><span class="s1">self == other 
+ 
+</span><span class="s4">def </span><span class="s1">_ge_from_lt(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &gt;= b.  Computed by @total_ordering from (not a &lt; b).'</span><span class="s1"> 
+    op_result = self.__lt__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return not </span><span class="s1">op_result 
+ 
+</span><span class="s4">def </span><span class="s1">_ge_from_le(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &gt;= b.  Computed by @total_ordering from (not a &lt;= b) or (a == b).'</span><span class="s1"> 
+    op_result = self.__le__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return not </span><span class="s1">op_result </span><span class="s4">or </span><span class="s1">self == other 
+ 
+</span><span class="s4">def </span><span class="s1">_lt_from_le(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &lt; b.  Computed by @total_ordering from (a &lt;= b) and (a != b).'</span><span class="s1"> 
+    op_result = self.__le__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return </span><span class="s1">op_result </span><span class="s4">and </span><span class="s1">self != other 
+ 
+</span><span class="s4">def </span><span class="s1">_gt_from_le(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &gt; b.  Computed by @total_ordering from (not a &lt;= b).'</span><span class="s1"> 
+    op_result = self.__le__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return not </span><span class="s1">op_result 
+ 
+</span><span class="s4">def </span><span class="s1">_lt_from_gt(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &lt; b.  Computed by @total_ordering from (not a &gt; b) and (a != b).'</span><span class="s1"> 
+    op_result = self.__gt__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return not </span><span class="s1">op_result </span><span class="s4">and </span><span class="s1">self != other 
+ 
+</span><span class="s4">def </span><span class="s1">_ge_from_gt(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &gt;= b.  Computed by @total_ordering from (a &gt; b) or (a == b).'</span><span class="s1"> 
+    op_result = self.__gt__(other) 
+    </span><span class="s4">return </span><span class="s1">op_result </span><span class="s4">or </span><span class="s1">self == other 
+ 
+</span><span class="s4">def </span><span class="s1">_le_from_gt(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &lt;= b.  Computed by @total_ordering from (not a &gt; b).'</span><span class="s1"> 
+    op_result = self.__gt__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return not </span><span class="s1">op_result 
+ 
+</span><span class="s4">def </span><span class="s1">_le_from_ge(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &lt;= b.  Computed by @total_ordering from (not a &gt;= b) or (a == b).'</span><span class="s1"> 
+    op_result = self.__ge__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return not </span><span class="s1">op_result </span><span class="s4">or </span><span class="s1">self == other 
+ 
+</span><span class="s4">def </span><span class="s1">_gt_from_ge(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &gt; b.  Computed by @total_ordering from (a &gt;= b) and (a != b).'</span><span class="s1"> 
+    op_result = self.__ge__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return </span><span class="s1">op_result </span><span class="s4">and </span><span class="s1">self != other 
+ 
+</span><span class="s4">def </span><span class="s1">_lt_from_ge(self</span><span class="s4">, </span><span class="s1">other</span><span class="s4">, </span><span class="s1">NotImplemented=NotImplemented): 
+    </span><span class="s0">'Return a &lt; b.  Computed by @total_ordering from (not a &gt;= b).'</span><span class="s1"> 
+    op_result = self.__ge__(other) 
+    </span><span class="s4">if </span><span class="s1">op_result </span><span class="s4">is </span><span class="s1">NotImplemented: 
+        </span><span class="s4">return </span><span class="s1">op_result 
+    </span><span class="s4">return not </span><span class="s1">op_result 
+ 
+_convert = { 
+    </span><span class="s3">'__lt__'</span><span class="s1">: [(</span><span class="s3">'__gt__'</span><span class="s4">, </span><span class="s1">_gt_from_lt)</span><span class="s4">,</span><span class="s1"> 
+               (</span><span class="s3">'__le__'</span><span class="s4">, </span><span class="s1">_le_from_lt)</span><span class="s4">,</span><span class="s1"> 
+               (</span><span class="s3">'__ge__'</span><span class="s4">, </span><span class="s1">_ge_from_lt)]</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'__le__'</span><span class="s1">: [(</span><span class="s3">'__ge__'</span><span class="s4">, </span><span class="s1">_ge_from_le)</span><span class="s4">,</span><span class="s1"> 
+               (</span><span class="s3">'__lt__'</span><span class="s4">, </span><span class="s1">_lt_from_le)</span><span class="s4">,</span><span class="s1"> 
+               (</span><span class="s3">'__gt__'</span><span class="s4">, </span><span class="s1">_gt_from_le)]</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'__gt__'</span><span class="s1">: [(</span><span class="s3">'__lt__'</span><span class="s4">, </span><span class="s1">_lt_from_gt)</span><span class="s4">,</span><span class="s1"> 
+               (</span><span class="s3">'__ge__'</span><span class="s4">, </span><span class="s1">_ge_from_gt)</span><span class="s4">,</span><span class="s1"> 
+               (</span><span class="s3">'__le__'</span><span class="s4">, </span><span class="s1">_le_from_gt)]</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'__ge__'</span><span class="s1">: [(</span><span class="s3">'__le__'</span><span class="s4">, </span><span class="s1">_le_from_ge)</span><span class="s4">,</span><span class="s1"> 
+               (</span><span class="s3">'__gt__'</span><span class="s4">, </span><span class="s1">_gt_from_ge)</span><span class="s4">,</span><span class="s1"> 
+               (</span><span class="s3">'__lt__'</span><span class="s4">, </span><span class="s1">_lt_from_ge)] 
+} 
+ 
+</span><span class="s4">def </span><span class="s1">total_ordering(cls): 
+    </span><span class="s0">&quot;&quot;&quot;Class decorator that fills in missing ordering methods&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2"># Find user-defined comparisons (not those inherited from object).</span><span class="s1"> 
+    roots = [op </span><span class="s4">for </span><span class="s1">op </span><span class="s4">in </span><span class="s1">_convert </span><span class="s4">if </span><span class="s1">getattr(cls</span><span class="s4">, </span><span class="s1">op</span><span class="s4">, None</span><span class="s1">) </span><span class="s4">is not </span><span class="s1">getattr(object</span><span class="s4">, </span><span class="s1">op</span><span class="s4">, None</span><span class="s1">)] 
+    </span><span class="s4">if not </span><span class="s1">roots: 
+        </span><span class="s4">raise </span><span class="s1">ValueError(</span><span class="s3">'must define at least one ordering operation: &lt; &gt; &lt;= &gt;='</span><span class="s1">) 
+    root = max(roots)       </span><span class="s2"># prefer __lt__ to __le__ to __gt__ to __ge__</span><span class="s1"> 
+    </span><span class="s4">for </span><span class="s1">opname</span><span class="s4">, </span><span class="s1">opfunc </span><span class="s4">in </span><span class="s1">_convert[root]: 
+        </span><span class="s4">if </span><span class="s1">opname </span><span class="s4">not in </span><span class="s1">roots: 
+            opfunc.__name__ = opname 
+            setattr(cls</span><span class="s4">, </span><span class="s1">opname</span><span class="s4">, </span><span class="s1">opfunc) 
+    </span><span class="s4">return </span><span class="s1">cls 
+ 
+ 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+</span><span class="s2">### cmp_to_key() function converter</span><span class="s1"> 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">cmp_to_key(mycmp): 
+    </span><span class="s0">&quot;&quot;&quot;Convert a cmp= function into a key= function&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">class </span><span class="s1">K(object): 
+        __slots__ = [</span><span class="s3">'obj'</span><span class="s1">] 
+        </span><span class="s4">def </span><span class="s1">__init__(self</span><span class="s4">, </span><span class="s1">obj): 
+            self.obj = obj 
+        </span><span class="s4">def </span><span class="s1">__lt__(self</span><span class="s4">, </span><span class="s1">other): 
+            </span><span class="s4">return </span><span class="s1">mycmp(self.obj</span><span class="s4">, </span><span class="s1">other.obj) &lt; </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s4">def </span><span class="s1">__gt__(self</span><span class="s4">, </span><span class="s1">other): 
+            </span><span class="s4">return </span><span class="s1">mycmp(self.obj</span><span class="s4">, </span><span class="s1">other.obj) &gt; </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s4">def </span><span class="s1">__eq__(self</span><span class="s4">, </span><span class="s1">other): 
+            </span><span class="s4">return </span><span class="s1">mycmp(self.obj</span><span class="s4">, </span><span class="s1">other.obj) == </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s4">def </span><span class="s1">__le__(self</span><span class="s4">, </span><span class="s1">other): 
+            </span><span class="s4">return </span><span class="s1">mycmp(self.obj</span><span class="s4">, </span><span class="s1">other.obj) &lt;= </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s4">def </span><span class="s1">__ge__(self</span><span class="s4">, </span><span class="s1">other): 
+            </span><span class="s4">return </span><span class="s1">mycmp(self.obj</span><span class="s4">, </span><span class="s1">other.obj) &gt;= </span><span class="s5">0</span><span class="s1"> 
+        __hash__ = </span><span class="s4">None</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">K 
+ 
+</span><span class="s4">try</span><span class="s1">: 
+    </span><span class="s4">from </span><span class="s1">_functools </span><span class="s4">import </span><span class="s1">cmp_to_key 
+</span><span class="s4">except </span><span class="s1">ImportError: 
+    </span><span class="s4">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+</span><span class="s2">### partial() argument application</span><span class="s1"> 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+ 
+</span><span class="s2"># Purely functional, no descriptor behaviour</span><span class="s1"> 
+</span><span class="s4">def </span><span class="s1">partial(func</span><span class="s4">, </span><span class="s1">*args</span><span class="s4">, </span><span class="s1">**keywords): 
+    </span><span class="s0">&quot;&quot;&quot;New function with partial application of the given arguments 
+    and keywords. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">hasattr(func</span><span class="s4">, </span><span class="s3">'func'</span><span class="s1">): 
+        args = func.args + args 
+        tmpkw = func.keywords.copy() 
+        tmpkw.update(keywords) 
+        keywords = tmpkw 
+        </span><span class="s4">del </span><span class="s1">tmpkw 
+        func = func.func 
+ 
+    </span><span class="s4">def </span><span class="s1">newfunc(*fargs</span><span class="s4">, </span><span class="s1">**fkeywords): 
+        newkeywords = keywords.copy() 
+        newkeywords.update(fkeywords) 
+        </span><span class="s4">return </span><span class="s1">func(*(args + fargs)</span><span class="s4">, </span><span class="s1">**newkeywords) 
+    newfunc.func = func 
+    newfunc.args = args 
+    newfunc.keywords = keywords 
+    </span><span class="s4">return </span><span class="s1">newfunc 
+ 
+</span><span class="s4">try</span><span class="s1">: 
+    </span><span class="s4">from </span><span class="s1">_functools </span><span class="s4">import </span><span class="s1">partial 
+</span><span class="s4">except </span><span class="s1">ImportError: 
+    </span><span class="s4">pass</span><span class="s1"> 
+ 
+</span><span class="s2"># Descriptor version</span><span class="s1"> 
+</span><span class="s4">class </span><span class="s1">partialmethod(object): 
+    </span><span class="s0">&quot;&quot;&quot;Method descriptor with partial application of the given arguments 
+    and keywords. 
+ 
+    Supports wrapping existing descriptors and handles non-descriptor 
+    callables as instance methods. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">__init__(self</span><span class="s4">, </span><span class="s1">func</span><span class="s4">, </span><span class="s1">*args</span><span class="s4">, </span><span class="s1">**keywords): 
+        </span><span class="s4">if not </span><span class="s1">callable(func) </span><span class="s4">and not </span><span class="s1">hasattr(func</span><span class="s4">, </span><span class="s3">&quot;__get__&quot;</span><span class="s1">): 
+            </span><span class="s4">raise </span><span class="s1">TypeError(</span><span class="s3">&quot;{!r} is not callable or a descriptor&quot;</span><span class="s1"> 
+                                 .format(func)) 
+ 
+        </span><span class="s2"># func could be a descriptor like classmethod which isn't callable,</span><span class="s1"> 
+        </span><span class="s2"># so we can't inherit from partial (it verifies func is callable)</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">isinstance(func</span><span class="s4">, </span><span class="s1">partialmethod): 
+            </span><span class="s2"># flattening is mandatory in order to place cls/self before all</span><span class="s1"> 
+            </span><span class="s2"># other arguments</span><span class="s1"> 
+            </span><span class="s2"># it's also more efficient since only one function will be called</span><span class="s1"> 
+            self.func = func.func 
+            self.args = func.args + args 
+            self.keywords = func.keywords.copy() 
+            self.keywords.update(keywords) 
+        </span><span class="s4">else</span><span class="s1">: 
+            self.func = func 
+            self.args = args 
+            self.keywords = keywords 
+ 
+    </span><span class="s4">def </span><span class="s1">__repr__(self): 
+        args = </span><span class="s3">&quot;, &quot;</span><span class="s1">.join(map(repr</span><span class="s4">, </span><span class="s1">self.args)) 
+        keywords = </span><span class="s3">&quot;, &quot;</span><span class="s1">.join(</span><span class="s3">&quot;{}={!r}&quot;</span><span class="s1">.format(k</span><span class="s4">, </span><span class="s1">v) 
+                                 </span><span class="s4">for </span><span class="s1">k</span><span class="s4">, </span><span class="s1">v </span><span class="s4">in </span><span class="s1">self.keywords.items()) 
+        format_string = </span><span class="s3">&quot;{module}.{cls}({func}, {args}, {keywords})&quot;</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">format_string.format(module=self.__class__.__module__</span><span class="s4">,</span><span class="s1"> 
+                                    cls=self.__class__.__qualname__</span><span class="s4">,</span><span class="s1"> 
+                                    func=self.func</span><span class="s4">,</span><span class="s1"> 
+                                    args=args</span><span class="s4">,</span><span class="s1"> 
+                                    keywords=keywords) 
+ 
+    </span><span class="s4">def </span><span class="s1">_make_unbound_method(self): 
+        </span><span class="s4">def </span><span class="s1">_method(*args</span><span class="s4">, </span><span class="s1">**keywords): 
+            call_keywords = self.keywords.copy() 
+            call_keywords.update(keywords) 
+            cls_or_self</span><span class="s4">, </span><span class="s1">*rest = args 
+            call_args = (cls_or_self</span><span class="s4">,</span><span class="s1">) + self.args + tuple(rest) 
+            </span><span class="s4">return </span><span class="s1">self.func(*call_args</span><span class="s4">, </span><span class="s1">**call_keywords) 
+        _method.__isabstractmethod__ = self.__isabstractmethod__ 
+        _method._partialmethod = self 
+        </span><span class="s4">return </span><span class="s1">_method 
+ 
+    </span><span class="s4">def </span><span class="s1">__get__(self</span><span class="s4">, </span><span class="s1">obj</span><span class="s4">, </span><span class="s1">cls): 
+        get = getattr(self.func</span><span class="s4">, </span><span class="s3">&quot;__get__&quot;</span><span class="s4">, None</span><span class="s1">) 
+        result = </span><span class="s4">None</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">get </span><span class="s4">is not None</span><span class="s1">: 
+            new_func = get(obj</span><span class="s4">, </span><span class="s1">cls) 
+            </span><span class="s4">if </span><span class="s1">new_func </span><span class="s4">is not </span><span class="s1">self.func: 
+                </span><span class="s2"># Assume __get__ returning something new indicates the</span><span class="s1"> 
+                </span><span class="s2"># creation of an appropriate callable</span><span class="s1"> 
+                result = partial(new_func</span><span class="s4">, </span><span class="s1">*self.args</span><span class="s4">, </span><span class="s1">**self.keywords) 
+                </span><span class="s4">try</span><span class="s1">: 
+                    result.__self__ = new_func.__self__ 
+                </span><span class="s4">except </span><span class="s1">AttributeError: 
+                    </span><span class="s4">pass</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">result </span><span class="s4">is None</span><span class="s1">: 
+            </span><span class="s2"># If the underlying descriptor didn't do anything, treat this</span><span class="s1"> 
+            </span><span class="s2"># like an instance method</span><span class="s1"> 
+            result = self._make_unbound_method().__get__(obj</span><span class="s4">, </span><span class="s1">cls) 
+        </span><span class="s4">return </span><span class="s1">result 
+ 
+    @property 
+    </span><span class="s4">def </span><span class="s1">__isabstractmethod__(self): 
+        </span><span class="s4">return </span><span class="s1">getattr(self.func</span><span class="s4">, </span><span class="s3">&quot;__isabstractmethod__&quot;</span><span class="s4">, False</span><span class="s1">) 
+ 
+ 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+</span><span class="s2">### LRU Cache function decorator</span><span class="s1"> 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+ 
+_CacheInfo = namedtuple(</span><span class="s3">&quot;CacheInfo&quot;</span><span class="s4">, </span><span class="s1">[</span><span class="s3">&quot;hits&quot;</span><span class="s4">, </span><span class="s3">&quot;misses&quot;</span><span class="s4">, </span><span class="s3">&quot;maxsize&quot;</span><span class="s4">, </span><span class="s3">&quot;currsize&quot;</span><span class="s1">]) 
+ 
+</span><span class="s4">class </span><span class="s1">_HashedSeq(list): 
+    </span><span class="s0">&quot;&quot;&quot; This class guarantees that hash() will be called no more than once 
+        per element.  This is important because the lru_cache() will hash 
+        the key multiple times on a cache miss. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    __slots__ = </span><span class="s3">'hashvalue'</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">__init__(self</span><span class="s4">, </span><span class="s1">tup</span><span class="s4">, </span><span class="s1">hash=hash): 
+        self[:] = tup 
+        self.hashvalue = hash(tup) 
+ 
+    </span><span class="s4">def </span><span class="s1">__hash__(self): 
+        </span><span class="s4">return </span><span class="s1">self.hashvalue 
+ 
+</span><span class="s4">def </span><span class="s1">_make_key(args</span><span class="s4">, </span><span class="s1">kwds</span><span class="s4">, </span><span class="s1">typed</span><span class="s4">,</span><span class="s1"> 
+             kwd_mark = (object()</span><span class="s4">,</span><span class="s1">)</span><span class="s4">,</span><span class="s1"> 
+             fasttypes = {int</span><span class="s4">, </span><span class="s1">str</span><span class="s4">, </span><span class="s1">frozenset</span><span class="s4">, </span><span class="s1">type(</span><span class="s4">None</span><span class="s1">)}</span><span class="s4">,</span><span class="s1"> 
+             sorted=sorted</span><span class="s4">, </span><span class="s1">tuple=tuple</span><span class="s4">, </span><span class="s1">type=type</span><span class="s4">, </span><span class="s1">len=len): 
+    </span><span class="s0">&quot;&quot;&quot;Make a cache key from optionally typed positional and keyword arguments 
+ 
+    The key is constructed in a way that is flat as possible rather than 
+    as a nested structure that would take more memory. 
+ 
+    If there is only a single argument and its data type is known to cache 
+    its hash value, then that argument is returned without a wrapper.  This 
+    saves space and improves lookup speed. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    key = args 
+    </span><span class="s4">if </span><span class="s1">kwds: 
+        sorted_items = sorted(kwds.items()) 
+        key += kwd_mark 
+        </span><span class="s4">for </span><span class="s1">item </span><span class="s4">in </span><span class="s1">sorted_items: 
+            key += item 
+    </span><span class="s4">if </span><span class="s1">typed: 
+        key += tuple(type(v) </span><span class="s4">for </span><span class="s1">v </span><span class="s4">in </span><span class="s1">args) 
+        </span><span class="s4">if </span><span class="s1">kwds: 
+            key += tuple(type(v) </span><span class="s4">for </span><span class="s1">k</span><span class="s4">, </span><span class="s1">v </span><span class="s4">in </span><span class="s1">sorted_items) 
+    </span><span class="s4">elif </span><span class="s1">len(key) == </span><span class="s5">1 </span><span class="s4">and </span><span class="s1">type(key[</span><span class="s5">0</span><span class="s1">]) </span><span class="s4">in </span><span class="s1">fasttypes: 
+        </span><span class="s4">return </span><span class="s1">key[</span><span class="s5">0</span><span class="s1">] 
+    </span><span class="s4">return </span><span class="s1">_HashedSeq(key) 
+ 
+</span><span class="s4">def </span><span class="s1">lru_cache(maxsize=</span><span class="s5">128</span><span class="s4">, </span><span class="s1">typed=</span><span class="s4">False</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Least-recently-used cache decorator. 
+ 
+    If *maxsize* is set to None, the LRU features are disabled and the cache 
+    can grow without bound. 
+ 
+    If *typed* is True, arguments of different types will be cached separately. 
+    For example, f(3.0) and f(3) will be treated as distinct calls with 
+    distinct results. 
+ 
+    Arguments to the cached function must be hashable. 
+ 
+    View the cache statistics named tuple (hits, misses, maxsize, currsize) 
+    with f.cache_info().  Clear the cache and statistics with f.cache_clear(). 
+    Access the underlying function with f.__wrapped__. 
+ 
+    See:  http://en.wikipedia.org/wiki/Cache_algorithms#Least_Recently_Used 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2"># Users should only access the lru_cache through its public API:</span><span class="s1"> 
+    </span><span class="s2">#       cache_info, cache_clear, and f.__wrapped__</span><span class="s1"> 
+    </span><span class="s2"># The internals of the lru_cache are encapsulated for thread safety and</span><span class="s1"> 
+    </span><span class="s2"># to allow the implementation to change (including a possible C version).</span><span class="s1"> 
+ 
+    </span><span class="s2"># Early detection of an erroneous call to @lru_cache without any arguments</span><span class="s1"> 
+    </span><span class="s2"># resulting in the inner function being passed to maxsize instead of an</span><span class="s1"> 
+    </span><span class="s2"># integer or None.</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">maxsize </span><span class="s4">is not None and not </span><span class="s1">isinstance(maxsize</span><span class="s4">, </span><span class="s1">int): 
+        </span><span class="s4">raise </span><span class="s1">TypeError(</span><span class="s3">'Expected maxsize to be an integer or None'</span><span class="s1">) 
+ 
+    </span><span class="s4">def </span><span class="s1">decorating_function(user_function): 
+        wrapper = _lru_cache_wrapper(user_function</span><span class="s4">, </span><span class="s1">maxsize</span><span class="s4">, </span><span class="s1">typed</span><span class="s4">, </span><span class="s1">_CacheInfo) 
+        </span><span class="s4">return </span><span class="s1">update_wrapper(wrapper</span><span class="s4">, </span><span class="s1">user_function) 
+ 
+    </span><span class="s4">return </span><span class="s1">decorating_function 
+ 
+</span><span class="s4">def </span><span class="s1">_lru_cache_wrapper(user_function</span><span class="s4">, </span><span class="s1">maxsize</span><span class="s4">, </span><span class="s1">typed</span><span class="s4">, </span><span class="s1">_CacheInfo): 
+    </span><span class="s2"># Constants shared by all lru cache instances:</span><span class="s1"> 
+    sentinel = object()          </span><span class="s2"># unique object used to signal cache misses</span><span class="s1"> 
+    make_key = _make_key         </span><span class="s2"># build a key from the function arguments</span><span class="s1"> 
+    PREV</span><span class="s4">, </span><span class="s1">NEXT</span><span class="s4">, </span><span class="s1">KEY</span><span class="s4">, </span><span class="s1">RESULT = </span><span class="s5">0</span><span class="s4">, </span><span class="s5">1</span><span class="s4">, </span><span class="s5">2</span><span class="s4">, </span><span class="s5">3   </span><span class="s2"># names for the link fields</span><span class="s1"> 
+ 
+    cache = {} 
+    hits = misses = </span><span class="s5">0</span><span class="s1"> 
+    full = </span><span class="s4">False</span><span class="s1"> 
+    cache_get = cache.get    </span><span class="s2"># bound method to lookup a key or return None</span><span class="s1"> 
+    lock = RLock()           </span><span class="s2"># because linkedlist updates aren't threadsafe</span><span class="s1"> 
+    root = []                </span><span class="s2"># root of the circular doubly linked list</span><span class="s1"> 
+    root[:] = [root</span><span class="s4">, </span><span class="s1">root</span><span class="s4">, None, None</span><span class="s1">]     </span><span class="s2"># initialize by pointing to self</span><span class="s1"> 
+ 
+    </span><span class="s4">if </span><span class="s1">maxsize == </span><span class="s5">0</span><span class="s1">: 
+ 
+        </span><span class="s4">def </span><span class="s1">wrapper(*args</span><span class="s4">, </span><span class="s1">**kwds): 
+            </span><span class="s2"># No caching -- just a statistics update after a successful call</span><span class="s1"> 
+            </span><span class="s4">nonlocal </span><span class="s1">misses 
+            result = user_function(*args</span><span class="s4">, </span><span class="s1">**kwds) 
+            misses += </span><span class="s5">1</span><span class="s1"> 
+            </span><span class="s4">return </span><span class="s1">result 
+ 
+    </span><span class="s4">elif </span><span class="s1">maxsize </span><span class="s4">is None</span><span class="s1">: 
+ 
+        </span><span class="s4">def </span><span class="s1">wrapper(*args</span><span class="s4">, </span><span class="s1">**kwds): 
+            </span><span class="s2"># Simple caching without ordering or size limit</span><span class="s1"> 
+            </span><span class="s4">nonlocal </span><span class="s1">hits</span><span class="s4">, </span><span class="s1">misses 
+            key = make_key(args</span><span class="s4">, </span><span class="s1">kwds</span><span class="s4">, </span><span class="s1">typed) 
+            result = cache_get(key</span><span class="s4">, </span><span class="s1">sentinel) 
+            </span><span class="s4">if </span><span class="s1">result </span><span class="s4">is not </span><span class="s1">sentinel: 
+                hits += </span><span class="s5">1</span><span class="s1"> 
+                </span><span class="s4">return </span><span class="s1">result 
+            result = user_function(*args</span><span class="s4">, </span><span class="s1">**kwds) 
+            cache[key] = result 
+            misses += </span><span class="s5">1</span><span class="s1"> 
+            </span><span class="s4">return </span><span class="s1">result 
+ 
+    </span><span class="s4">else</span><span class="s1">: 
+ 
+        </span><span class="s4">def </span><span class="s1">wrapper(*args</span><span class="s4">, </span><span class="s1">**kwds): 
+            </span><span class="s2"># Size limited caching that tracks accesses by recency</span><span class="s1"> 
+            </span><span class="s4">nonlocal </span><span class="s1">root</span><span class="s4">, </span><span class="s1">hits</span><span class="s4">, </span><span class="s1">misses</span><span class="s4">, </span><span class="s1">full 
+            key = make_key(args</span><span class="s4">, </span><span class="s1">kwds</span><span class="s4">, </span><span class="s1">typed) 
+            </span><span class="s4">with </span><span class="s1">lock: 
+                link = cache_get(key) 
+                </span><span class="s4">if </span><span class="s1">link </span><span class="s4">is not None</span><span class="s1">: 
+                    </span><span class="s2"># Move the link to the front of the circular queue</span><span class="s1"> 
+                    link_prev</span><span class="s4">, </span><span class="s1">link_next</span><span class="s4">, </span><span class="s1">_key</span><span class="s4">, </span><span class="s1">result = link 
+                    link_prev[NEXT] = link_next 
+                    link_next[PREV] = link_prev 
+                    last = root[PREV] 
+                    last[NEXT] = root[PREV] = link 
+                    link[PREV] = last 
+                    link[NEXT] = root 
+                    hits += </span><span class="s5">1</span><span class="s1"> 
+                    </span><span class="s4">return </span><span class="s1">result 
+            result = user_function(*args</span><span class="s4">, </span><span class="s1">**kwds) 
+            </span><span class="s4">with </span><span class="s1">lock: 
+                </span><span class="s4">if </span><span class="s1">key </span><span class="s4">in </span><span class="s1">cache: 
+                    </span><span class="s2"># Getting here means that this same key was added to the</span><span class="s1"> 
+                    </span><span class="s2"># cache while the lock was released.  Since the link</span><span class="s1"> 
+                    </span><span class="s2"># update is already done, we need only return the</span><span class="s1"> 
+                    </span><span class="s2"># computed result and update the count of misses.</span><span class="s1"> 
+                    </span><span class="s4">pass</span><span class="s1"> 
+                </span><span class="s4">elif </span><span class="s1">full: 
+                    </span><span class="s2"># Use the old root to store the new key and result.</span><span class="s1"> 
+                    oldroot = root 
+                    oldroot[KEY] = key 
+                    oldroot[RESULT] = result 
+                    </span><span class="s2"># Empty the oldest link and make it the new root.</span><span class="s1"> 
+                    </span><span class="s2"># Keep a reference to the old key and old result to</span><span class="s1"> 
+                    </span><span class="s2"># prevent their ref counts from going to zero during the</span><span class="s1"> 
+                    </span><span class="s2"># update. That will prevent potentially arbitrary object</span><span class="s1"> 
+                    </span><span class="s2"># clean-up code (i.e. __del__) from running while we're</span><span class="s1"> 
+                    </span><span class="s2"># still adjusting the links.</span><span class="s1"> 
+                    root = oldroot[NEXT] 
+                    oldkey = root[KEY] 
+                    oldresult = root[RESULT] 
+                    root[KEY] = root[RESULT] = </span><span class="s4">None</span><span class="s1"> 
+                    </span><span class="s2"># Now update the cache dictionary.</span><span class="s1"> 
+                    </span><span class="s4">del </span><span class="s1">cache[oldkey] 
+                    </span><span class="s2"># Save the potentially reentrant cache[key] assignment</span><span class="s1"> 
+                    </span><span class="s2"># for last, after the root and links have been put in</span><span class="s1"> 
+                    </span><span class="s2"># a consistent state.</span><span class="s1"> 
+                    cache[key] = oldroot 
+                </span><span class="s4">else</span><span class="s1">: 
+                    </span><span class="s2"># Put result in a new link at the front of the queue.</span><span class="s1"> 
+                    last = root[PREV] 
+                    link = [last</span><span class="s4">, </span><span class="s1">root</span><span class="s4">, </span><span class="s1">key</span><span class="s4">, </span><span class="s1">result] 
+                    last[NEXT] = root[PREV] = cache[key] = link 
+                    full = (len(cache) &gt;= maxsize) 
+                misses += </span><span class="s5">1</span><span class="s1"> 
+            </span><span class="s4">return </span><span class="s1">result 
+ 
+    </span><span class="s4">def </span><span class="s1">cache_info(): 
+        </span><span class="s0">&quot;&quot;&quot;Report cache statistics&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">with </span><span class="s1">lock: 
+            </span><span class="s4">return </span><span class="s1">_CacheInfo(hits</span><span class="s4">, </span><span class="s1">misses</span><span class="s4">, </span><span class="s1">maxsize</span><span class="s4">, </span><span class="s1">len(cache)) 
+ 
+    </span><span class="s4">def </span><span class="s1">cache_clear(): 
+        </span><span class="s0">&quot;&quot;&quot;Clear the cache and cache statistics&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">nonlocal </span><span class="s1">hits</span><span class="s4">, </span><span class="s1">misses</span><span class="s4">, </span><span class="s1">full 
+        </span><span class="s4">with </span><span class="s1">lock: 
+            cache.clear() 
+            root[:] = [root</span><span class="s4">, </span><span class="s1">root</span><span class="s4">, None, None</span><span class="s1">] 
+            hits = misses = </span><span class="s5">0</span><span class="s1"> 
+            full = </span><span class="s4">False</span><span class="s1"> 
+ 
+    wrapper.cache_info = cache_info 
+    wrapper.cache_clear = cache_clear 
+    </span><span class="s4">return </span><span class="s1">wrapper 
+ 
+</span><span class="s4">try</span><span class="s1">: 
+    </span><span class="s4">from </span><span class="s1">_functools </span><span class="s4">import </span><span class="s1">_lru_cache_wrapper 
+</span><span class="s4">except </span><span class="s1">ImportError: 
+    </span><span class="s4">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+</span><span class="s2">### singledispatch() - single-dispatch generic function decorator</span><span class="s1"> 
+</span><span class="s2">################################################################################</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">_c3_merge(sequences): 
+    </span><span class="s0">&quot;&quot;&quot;Merges MROs in *sequences* to a single MRO using the C3 algorithm. 
+ 
+    Adapted from http://www.python.org/download/releases/2.3/mro/. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    result = [] 
+    </span><span class="s4">while True</span><span class="s1">: 
+        sequences = [s </span><span class="s4">for </span><span class="s1">s </span><span class="s4">in </span><span class="s1">sequences </span><span class="s4">if </span><span class="s1">s]   </span><span class="s2"># purge empty sequences</span><span class="s1"> 
+        </span><span class="s4">if not </span><span class="s1">sequences: 
+            </span><span class="s4">return </span><span class="s1">result 
+        </span><span class="s4">for </span><span class="s1">s1 </span><span class="s4">in </span><span class="s1">sequences:   </span><span class="s2"># find merge candidates among seq heads</span><span class="s1"> 
+            candidate = s1[</span><span class="s5">0</span><span class="s1">] 
+            </span><span class="s4">for </span><span class="s1">s2 </span><span class="s4">in </span><span class="s1">sequences: 
+                </span><span class="s4">if </span><span class="s1">candidate </span><span class="s4">in </span><span class="s1">s2[</span><span class="s5">1</span><span class="s1">:]: 
+                    candidate = </span><span class="s4">None</span><span class="s1"> 
+                    </span><span class="s4">break      </span><span class="s2"># reject the current head, it appears later</span><span class="s1"> 
+            </span><span class="s4">else</span><span class="s1">: 
+                </span><span class="s4">break</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">candidate </span><span class="s4">is None</span><span class="s1">: 
+            </span><span class="s4">raise </span><span class="s1">RuntimeError(</span><span class="s3">&quot;Inconsistent hierarchy&quot;</span><span class="s1">) 
+        result.append(candidate) 
+        </span><span class="s2"># remove the chosen candidate</span><span class="s1"> 
+        </span><span class="s4">for </span><span class="s1">seq </span><span class="s4">in </span><span class="s1">sequences: 
+            </span><span class="s4">if </span><span class="s1">seq[</span><span class="s5">0</span><span class="s1">] == candidate: 
+                </span><span class="s4">del </span><span class="s1">seq[</span><span class="s5">0</span><span class="s1">] 
+ 
+</span><span class="s4">def </span><span class="s1">_c3_mro(cls</span><span class="s4">, </span><span class="s1">abcs=</span><span class="s4">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Computes the method resolution order using extended C3 linearization. 
+ 
+    If no *abcs* are given, the algorithm works exactly like the built-in C3 
+    linearization used for method resolution. 
+ 
+    If given, *abcs* is a list of abstract base classes that should be inserted 
+    into the resulting MRO. Unrelated ABCs are ignored and don't end up in the 
+    result. The algorithm inserts ABCs where their functionality is introduced, 
+    i.e. issubclass(cls, abc) returns True for the class itself but returns 
+    False for all its direct base classes. Implicit ABCs for a given class 
+    (either registered or inferred from the presence of a special method like 
+    __len__) are inserted directly after the last ABC explicitly listed in the 
+    MRO of said class. If two implicit ABCs end up next to each other in the 
+    resulting MRO, their ordering depends on the order of types in *abcs*. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">for </span><span class="s1">i</span><span class="s4">, </span><span class="s1">base </span><span class="s4">in </span><span class="s1">enumerate(reversed(cls.__bases__)): 
+        </span><span class="s4">if </span><span class="s1">hasattr(base</span><span class="s4">, </span><span class="s3">'__abstractmethods__'</span><span class="s1">): 
+            boundary = len(cls.__bases__) - i 
+            </span><span class="s4">break   </span><span class="s2"># Bases up to the last explicit ABC are considered first.</span><span class="s1"> 
+    </span><span class="s4">else</span><span class="s1">: 
+        boundary = </span><span class="s5">0</span><span class="s1"> 
+    abcs = list(abcs) </span><span class="s4">if </span><span class="s1">abcs </span><span class="s4">else </span><span class="s1">[] 
+    explicit_bases = list(cls.__bases__[:boundary]) 
+    abstract_bases = [] 
+    other_bases = list(cls.__bases__[boundary:]) 
+    </span><span class="s4">for </span><span class="s1">base </span><span class="s4">in </span><span class="s1">abcs: 
+        </span><span class="s4">if </span><span class="s1">issubclass(cls</span><span class="s4">, </span><span class="s1">base) </span><span class="s4">and not </span><span class="s1">any( 
+                issubclass(b</span><span class="s4">, </span><span class="s1">base) </span><span class="s4">for </span><span class="s1">b </span><span class="s4">in </span><span class="s1">cls.__bases__ 
+            ): 
+            </span><span class="s2"># If *cls* is the class that introduces behaviour described by</span><span class="s1"> 
+            </span><span class="s2"># an ABC *base*, insert said ABC to its MRO.</span><span class="s1"> 
+            abstract_bases.append(base) 
+    </span><span class="s4">for </span><span class="s1">base </span><span class="s4">in </span><span class="s1">abstract_bases: 
+        abcs.remove(base) 
+    explicit_c3_mros = [_c3_mro(base</span><span class="s4">, </span><span class="s1">abcs=abcs) </span><span class="s4">for </span><span class="s1">base </span><span class="s4">in </span><span class="s1">explicit_bases] 
+    abstract_c3_mros = [_c3_mro(base</span><span class="s4">, </span><span class="s1">abcs=abcs) </span><span class="s4">for </span><span class="s1">base </span><span class="s4">in </span><span class="s1">abstract_bases] 
+    other_c3_mros = [_c3_mro(base</span><span class="s4">, </span><span class="s1">abcs=abcs) </span><span class="s4">for </span><span class="s1">base </span><span class="s4">in </span><span class="s1">other_bases] 
+    </span><span class="s4">return </span><span class="s1">_c3_merge( 
+        [[cls]] + 
+        explicit_c3_mros + abstract_c3_mros + other_c3_mros + 
+        [explicit_bases] + [abstract_bases] + [other_bases] 
+    ) 
+ 
+</span><span class="s4">def </span><span class="s1">_compose_mro(cls</span><span class="s4">, </span><span class="s1">types): 
+    </span><span class="s0">&quot;&quot;&quot;Calculates the method resolution order for a given class *cls*. 
+ 
+    Includes relevant abstract base classes (with their respective bases) from 
+    the *types* iterable. Uses a modified C3 linearization algorithm. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    bases = set(cls.__mro__) 
+    </span><span class="s2"># Remove entries which are already present in the __mro__ or unrelated.</span><span class="s1"> 
+    </span><span class="s4">def </span><span class="s1">is_related(typ): 
+        </span><span class="s4">return </span><span class="s1">(typ </span><span class="s4">not in </span><span class="s1">bases </span><span class="s4">and </span><span class="s1">hasattr(typ</span><span class="s4">, </span><span class="s3">'__mro__'</span><span class="s1">) 
+                                 </span><span class="s4">and </span><span class="s1">issubclass(cls</span><span class="s4">, </span><span class="s1">typ)) 
+    types = [n </span><span class="s4">for </span><span class="s1">n </span><span class="s4">in </span><span class="s1">types </span><span class="s4">if </span><span class="s1">is_related(n)] 
+    </span><span class="s2"># Remove entries which are strict bases of other entries (they will end up</span><span class="s1"> 
+    </span><span class="s2"># in the MRO anyway.</span><span class="s1"> 
+    </span><span class="s4">def </span><span class="s1">is_strict_base(typ): 
+        </span><span class="s4">for </span><span class="s1">other </span><span class="s4">in </span><span class="s1">types: 
+            </span><span class="s4">if </span><span class="s1">typ != other </span><span class="s4">and </span><span class="s1">typ </span><span class="s4">in </span><span class="s1">other.__mro__: 
+                </span><span class="s4">return True</span><span class="s1"> 
+        </span><span class="s4">return False</span><span class="s1"> 
+    types = [n </span><span class="s4">for </span><span class="s1">n </span><span class="s4">in </span><span class="s1">types </span><span class="s4">if not </span><span class="s1">is_strict_base(n)] 
+    </span><span class="s2"># Subclasses of the ABCs in *types* which are also implemented by</span><span class="s1"> 
+    </span><span class="s2"># *cls* can be used to stabilize ABC ordering.</span><span class="s1"> 
+    type_set = set(types) 
+    mro = [] 
+    </span><span class="s4">for </span><span class="s1">typ </span><span class="s4">in </span><span class="s1">types: 
+        found = [] 
+        </span><span class="s4">for </span><span class="s1">sub </span><span class="s4">in </span><span class="s1">typ.__subclasses__(): 
+            </span><span class="s4">if </span><span class="s1">sub </span><span class="s4">not in </span><span class="s1">bases </span><span class="s4">and </span><span class="s1">issubclass(cls</span><span class="s4">, </span><span class="s1">sub): 
+                found.append([s </span><span class="s4">for </span><span class="s1">s </span><span class="s4">in </span><span class="s1">sub.__mro__ </span><span class="s4">if </span><span class="s1">s </span><span class="s4">in </span><span class="s1">type_set]) 
+        </span><span class="s4">if not </span><span class="s1">found: 
+            mro.append(typ) 
+            </span><span class="s4">continue</span><span class="s1"> 
+        </span><span class="s2"># Favor subclasses with the biggest number of useful bases</span><span class="s1"> 
+        found.sort(key=len</span><span class="s4">, </span><span class="s1">reverse=</span><span class="s4">True</span><span class="s1">) 
+        </span><span class="s4">for </span><span class="s1">sub </span><span class="s4">in </span><span class="s1">found: 
+            </span><span class="s4">for </span><span class="s1">subcls </span><span class="s4">in </span><span class="s1">sub: 
+                </span><span class="s4">if </span><span class="s1">subcls </span><span class="s4">not in </span><span class="s1">mro: 
+                    mro.append(subcls) 
+    </span><span class="s4">return </span><span class="s1">_c3_mro(cls</span><span class="s4">, </span><span class="s1">abcs=mro) 
+ 
+</span><span class="s4">def </span><span class="s1">_find_impl(cls</span><span class="s4">, </span><span class="s1">registry): 
+    </span><span class="s0">&quot;&quot;&quot;Returns the best matching implementation from *registry* for type *cls*. 
+ 
+    Where there is no registered implementation for a specific type, its method 
+    resolution order is used to find a more generic implementation. 
+ 
+    Note: if *registry* does not contain an implementation for the base 
+    *object* type, this function may return None. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    mro = _compose_mro(cls</span><span class="s4">, </span><span class="s1">registry.keys()) 
+    match = </span><span class="s4">None</span><span class="s1"> 
+    </span><span class="s4">for </span><span class="s1">t </span><span class="s4">in </span><span class="s1">mro: 
+        </span><span class="s4">if </span><span class="s1">match </span><span class="s4">is not None</span><span class="s1">: 
+            </span><span class="s2"># If *match* is an implicit ABC but there is another unrelated,</span><span class="s1"> 
+            </span><span class="s2"># equally matching implicit ABC, refuse the temptation to guess.</span><span class="s1"> 
+            </span><span class="s4">if </span><span class="s1">(t </span><span class="s4">in </span><span class="s1">registry </span><span class="s4">and </span><span class="s1">t </span><span class="s4">not in </span><span class="s1">cls.__mro__ 
+                              </span><span class="s4">and </span><span class="s1">match </span><span class="s4">not in </span><span class="s1">cls.__mro__ 
+                              </span><span class="s4">and not </span><span class="s1">issubclass(match</span><span class="s4">, </span><span class="s1">t)): 
+                </span><span class="s4">raise </span><span class="s1">RuntimeError(</span><span class="s3">&quot;Ambiguous dispatch: {} or {}&quot;</span><span class="s1">.format( 
+                    match</span><span class="s4">, </span><span class="s1">t)) 
+            </span><span class="s4">break</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">t </span><span class="s4">in </span><span class="s1">registry: 
+            match = t 
+    </span><span class="s4">return </span><span class="s1">registry.get(match) 
+ 
+</span><span class="s4">def </span><span class="s1">singledispatch(func): 
+    </span><span class="s0">&quot;&quot;&quot;Single-dispatch generic function decorator. 
+ 
+    Transforms a function into a generic function, which can have different 
+    behaviours depending upon the type of its first argument. The decorated 
+    function acts as the default implementation, and additional 
+    implementations can be registered using the register() attribute of the 
+    generic function. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    registry = {} 
+    dispatch_cache = WeakKeyDictionary() 
+    cache_token = </span><span class="s4">None</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">dispatch(cls): 
+        </span><span class="s0">&quot;&quot;&quot;generic_func.dispatch(cls) -&gt; &lt;function implementation&gt; 
+ 
+        Runs the dispatch algorithm to return the best available implementation 
+        for the given *cls* registered on *generic_func*. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">nonlocal </span><span class="s1">cache_token 
+        </span><span class="s4">if </span><span class="s1">cache_token </span><span class="s4">is not None</span><span class="s1">: 
+            current_token = get_cache_token() 
+            </span><span class="s4">if </span><span class="s1">cache_token != current_token: 
+                dispatch_cache.clear() 
+                cache_token = current_token 
+        </span><span class="s4">try</span><span class="s1">: 
+            impl = dispatch_cache[cls] 
+        </span><span class="s4">except </span><span class="s1">KeyError: 
+            </span><span class="s4">try</span><span class="s1">: 
+                impl = registry[cls] 
+            </span><span class="s4">except </span><span class="s1">KeyError: 
+                impl = _find_impl(cls</span><span class="s4">, </span><span class="s1">registry) 
+            dispatch_cache[cls] = impl 
+        </span><span class="s4">return </span><span class="s1">impl 
+ 
+    </span><span class="s4">def </span><span class="s1">register(cls</span><span class="s4">, </span><span class="s1">func=</span><span class="s4">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;generic_func.register(cls, func) -&gt; func 
+ 
+        Registers a new implementation for the given *cls* on a *generic_func*. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">nonlocal </span><span class="s1">cache_token 
+        </span><span class="s4">if </span><span class="s1">func </span><span class="s4">is None</span><span class="s1">: 
+            </span><span class="s4">return lambda </span><span class="s1">f: register(cls</span><span class="s4">, </span><span class="s1">f) 
+        registry[cls] = func 
+        </span><span class="s4">if </span><span class="s1">cache_token </span><span class="s4">is None and </span><span class="s1">hasattr(cls</span><span class="s4">, </span><span class="s3">'__abstractmethods__'</span><span class="s1">): 
+            cache_token = get_cache_token() 
+        dispatch_cache.clear() 
+        </span><span class="s4">return </span><span class="s1">func 
+ 
+    </span><span class="s4">def </span><span class="s1">wrapper(*args</span><span class="s4">, </span><span class="s1">**kw): 
+        </span><span class="s4">return </span><span class="s1">dispatch(args[</span><span class="s5">0</span><span class="s1">].__class__)(*args</span><span class="s4">, </span><span class="s1">**kw) 
+ 
+    registry[object] = func 
+    wrapper.register = register 
+    wrapper.dispatch = dispatch 
+    wrapper.registry = MappingProxyType(registry) 
+    wrapper._clear_cache = dispatch_cache.clear 
+    update_wrapper(wrapper</span><span class="s4">, </span><span class="s1">func) 
+    </span><span class="s4">return </span><span class="s1">wrapper 
+</span></pre>
+</body>
+</html>

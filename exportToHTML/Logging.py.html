@@ -1,0 +1,144 @@
+<html>
+<head>
+<title>Logging.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Logging.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Logging: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">, </span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">listLogging(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all logging config 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        log = self.client.talk([</span><span class="s4">'/system/logging/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">log == {}: 
+            print(</span><span class="s4">&quot;No logging setup&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Topic</span><span class="s0">\t</span><span class="s4">Prefix</span><span class="s0">\t</span><span class="s4">Action&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">log: 
+                print(log[i][</span><span class="s4">'topics'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+log[i][</span><span class="s4">'prefix'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+log[i][</span><span class="s4">'action'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">log 
+ 
+    </span><span class="s0">def </span><span class="s1">addLoggingRule(self</span><span class="s0">,</span><span class="s1">topic</span><span class="s0">,</span><span class="s1">action</span><span class="s0">,</span><span class="s1">prefix=</span><span class="s0">None</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add logging rule 
+        :param topic: one of rules for topic includes account, async, backup, bfd, bgp, calc, caps, certificate, 
+        critical, ddns, debug, dhcp, dns, dude, e-mail, error, event, firewall, gps, gsm, hotspot, igmp-proxy, info, 
+        interface, ipsec, iscsi, isdn, kvm, l2tp, ldp, lte, manager, mme, mpls, ntp, ospf, ovpn, packet, pim, poe-out, 
+        ppp, ppptp, pppoe, radius, radvd, raw, read, rip, route, rsvp, script, sertcp, simulator, smb, snmp, ssh, 
+        sstp, state, store, system, telephony, tftp, timer, tr069, upnp, ups, vrrp, warning, watchdog, web-proxy, 
+        wireless, write 
+        for negation use !name 
+        :param action: memory, disk, echo, remote 
+        :param prefix: custome prefix (optional) 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">prefix == </span><span class="s0">None</span><span class="s1">: 
+            log = self.client.talk([</span><span class="s4">'/system/logging/add'</span><span class="s0">,</span><span class="s4">'=topics='</span><span class="s1">+topic</span><span class="s0">,</span><span class="s4">'=action='</span><span class="s1">+action]) 
+        </span><span class="s0">else</span><span class="s1">: 
+            log = self.client.talk( [</span><span class="s4">'/system/logging/add'</span><span class="s0">, </span><span class="s4">'=topics=' </span><span class="s1">+ topic</span><span class="s0">, </span><span class="s4">'=action=' </span><span class="s1">+ action</span><span class="s0">,</span><span class="s4">'=prefix='</span><span class="s1">+prefix] ) 
+        </span><span class="s0">return </span><span class="s1">log 
+ 
+    </span><span class="s0">def </span><span class="s1">removeLoggingRule(self</span><span class="s0">,</span><span class="s1">numbers): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove logging rule by order number 
+        :param number: order number of dictionary index 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        logs = self.listLogging() 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">logs: 
+            number = logs[i][</span><span class="s4">'topics'</span><span class="s1">] 
+        log = self.client.talk([</span><span class="s4">'/system/logging/remove'</span><span class="s0">,</span><span class="s4">'=remove='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">log 
+ 
+    </span><span class="s0">def </span><span class="s1">enableRule(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Enabling disabled rule 
+        :param number: order no 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        log = self.client.talk([</span><span class="s4">'/system/logging/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">log 
+ 
+    </span><span class="s0">def </span><span class="s1">disableRule(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Disable enabled rule 
+        :param number:  number of rule 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        log = self.client.talk( [</span><span class="s4">'/system/logging/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">log 
+ 
+    </span><span class="s0">def </span><span class="s1">listCustomActions(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all custom actions 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        action = self.client.talk([</span><span class="s4">'/system/logging/action/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">action == {}: 
+            print(</span><span class="s4">&quot;No customa ction found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">type</span><span class="s0">\t</span><span class="s4">isDefault&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">action: 
+                print(action[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+action[i][</span><span class="s4">'target'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+action[i][</span><span class="s4">'default'</span><span class="s1">]) 
+ 
+    </span><span class="s0">def </span><span class="s1">addAction(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">type</span><span class="s0">,</span><span class="s1">lines): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add customa ction to mikrotik 
+        :param name: name of action 
+        :param type: type of action: mamory, disk, echo, email, remote 
+        :param stoponfull:action will stop if is full 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        action = self.client.talk([</span><span class="s4">'/system/logging/action/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=target='</span><span class="s1">+type</span><span class="s0">,</span><span class="s4">'=memory-lines='</span><span class="s1">+lines]) 
+        </span><span class="s0">return </span><span class="s1">action 
+ 
+    </span><span class="s0">def </span><span class="s1">removeAction(self</span><span class="s0">,</span><span class="s1">actionName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove custom action name 
+        :param actionName: action Name u wanna remove 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">actionName == </span><span class="s4">&quot;disk&quot; </span><span class="s0">or </span><span class="s1">actionName == </span><span class="s4">&quot;echo&quot; </span><span class="s0">or </span><span class="s1">actionName == </span><span class="s4">&quot;memory&quot; </span><span class="s0">or </span><span class="s1">actionName == </span><span class="s4">&quot;remote&quot;</span><span class="s1">: 
+            print(</span><span class="s4">&quot;cannot remove default action&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            action = self.client.talk([</span><span class="s4">'/system/logging/action/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+actionName]) 
+        </span><span class="s0">return </span><span class="s1">action 
+ 
+    </span><span class="s0">def </span><span class="s1">setAction(self</span><span class="s0">,</span><span class="s1">actionName</span><span class="s0">,</span><span class="s1">newName</span><span class="s0">,</span><span class="s1">type</span><span class="s0">,</span><span class="s1">lines): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will edit action which exists 
+        :param actionName: name of action u wanna edit 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">actionName == </span><span class="s4">&quot;disk&quot; </span><span class="s0">or </span><span class="s1">actionName == </span><span class="s4">&quot;echo&quot; </span><span class="s0">or </span><span class="s1">actionName == </span><span class="s4">&quot;memory&quot; </span><span class="s0">or </span><span class="s1">actionName == </span><span class="s4">&quot;remote&quot;</span><span class="s1">: 
+            print( </span><span class="s4">&quot;cannot edit default action&quot; </span><span class="s1">) 
+            self.client.disconnect() 
+        </span><span class="s0">else</span><span class="s1">: 
+            action = self.client.talk([</span><span class="s4">'/system/logging/action/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+actionName</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newName</span><span class="s0">,</span><span class="s4">'=target='</span><span class="s1"> 
+                                       +type</span><span class="s0">,</span><span class="s4">'=memory-lines='</span><span class="s1">+lines]) 
+        </span><span class="s0">return </span><span class="s1">action 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,488 @@
+<html>
+<head>
+<title>operator.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+operator.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; 
+Operator Interface 
+ 
+This module exports a set of functions corresponding to the intrinsic 
+operators of Python.  For example, operator.add(x, y) is equivalent 
+to the expression x+y.  The function names are those used for special 
+methods; variants without leading and trailing '__' are also provided 
+for convenience. 
+ 
+This is the pure Python implementation of the module. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+__all__ = [</span><span class="s2">'abs'</span><span class="s3">, </span><span class="s2">'add'</span><span class="s3">, </span><span class="s2">'and_'</span><span class="s3">, </span><span class="s2">'attrgetter'</span><span class="s3">, </span><span class="s2">'concat'</span><span class="s3">, </span><span class="s2">'contains'</span><span class="s3">, </span><span class="s2">'countOf'</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s2">'delitem'</span><span class="s3">, </span><span class="s2">'eq'</span><span class="s3">, </span><span class="s2">'floordiv'</span><span class="s3">, </span><span class="s2">'ge'</span><span class="s3">, </span><span class="s2">'getitem'</span><span class="s3">, </span><span class="s2">'gt'</span><span class="s3">, </span><span class="s2">'iadd'</span><span class="s3">, </span><span class="s2">'iand'</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s2">'iconcat'</span><span class="s3">, </span><span class="s2">'ifloordiv'</span><span class="s3">, </span><span class="s2">'ilshift'</span><span class="s3">, </span><span class="s2">'imatmul'</span><span class="s3">, </span><span class="s2">'imod'</span><span class="s3">, </span><span class="s2">'imul'</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s2">'index'</span><span class="s3">, </span><span class="s2">'indexOf'</span><span class="s3">, </span><span class="s2">'inv'</span><span class="s3">, </span><span class="s2">'invert'</span><span class="s3">, </span><span class="s2">'ior'</span><span class="s3">, </span><span class="s2">'ipow'</span><span class="s3">, </span><span class="s2">'irshift'</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s2">'is_'</span><span class="s3">, </span><span class="s2">'is_not'</span><span class="s3">, </span><span class="s2">'isub'</span><span class="s3">, </span><span class="s2">'itemgetter'</span><span class="s3">, </span><span class="s2">'itruediv'</span><span class="s3">, </span><span class="s2">'ixor'</span><span class="s3">, </span><span class="s2">'le'</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s2">'length_hint'</span><span class="s3">, </span><span class="s2">'lshift'</span><span class="s3">, </span><span class="s2">'lt'</span><span class="s3">, </span><span class="s2">'matmul'</span><span class="s3">, </span><span class="s2">'methodcaller'</span><span class="s3">, </span><span class="s2">'mod'</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s2">'mul'</span><span class="s3">, </span><span class="s2">'ne'</span><span class="s3">, </span><span class="s2">'neg'</span><span class="s3">, </span><span class="s2">'not_'</span><span class="s3">, </span><span class="s2">'or_'</span><span class="s3">, </span><span class="s2">'pos'</span><span class="s3">, </span><span class="s2">'pow'</span><span class="s3">, </span><span class="s2">'rshift'</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s2">'setitem'</span><span class="s3">, </span><span class="s2">'sub'</span><span class="s3">, </span><span class="s2">'truediv'</span><span class="s3">, </span><span class="s2">'truth'</span><span class="s3">, </span><span class="s2">'xor'</span><span class="s1">] 
+ 
+</span><span class="s3">from </span><span class="s1">builtins </span><span class="s3">import </span><span class="s1">abs </span><span class="s3">as </span><span class="s1">_abs 
+ 
+ 
+</span><span class="s4"># Comparison Operations *******************************************************#</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">lt(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &lt; b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a &lt; b 
+ 
+</span><span class="s3">def </span><span class="s1">le(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &lt;= b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a &lt;= b 
+ 
+</span><span class="s3">def </span><span class="s1">eq(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a == b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a == b 
+ 
+</span><span class="s3">def </span><span class="s1">ne(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a != b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a != b 
+ 
+</span><span class="s3">def </span><span class="s1">ge(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &gt;= b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a &gt;= b 
+ 
+</span><span class="s3">def </span><span class="s1">gt(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &gt; b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a &gt; b 
+ 
+</span><span class="s4"># Logical Operations **********************************************************#</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">not_(a): 
+    </span><span class="s0">&quot;Same as not a.&quot;</span><span class="s1"> 
+    </span><span class="s3">return not </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">truth(a): 
+    </span><span class="s0">&quot;Return True if a is true, False otherwise.&quot;</span><span class="s1"> 
+    </span><span class="s3">return True if </span><span class="s1">a </span><span class="s3">else False</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">is_(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a is b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a </span><span class="s3">is </span><span class="s1">b 
+ 
+</span><span class="s3">def </span><span class="s1">is_not(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a is not b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a </span><span class="s3">is not </span><span class="s1">b 
+ 
+</span><span class="s4"># Mathematical/Bitwise Operations *********************************************#</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">abs(a): 
+    </span><span class="s0">&quot;Same as abs(a).&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">_abs(a) 
+ 
+</span><span class="s3">def </span><span class="s1">add(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a + b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a + b 
+ 
+</span><span class="s3">def </span><span class="s1">and_(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &amp; b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a &amp; b 
+ 
+</span><span class="s3">def </span><span class="s1">floordiv(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a // b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a // b 
+ 
+</span><span class="s3">def </span><span class="s1">index(a): 
+    </span><span class="s0">&quot;Same as a.__index__().&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a.__index__() 
+ 
+</span><span class="s3">def </span><span class="s1">inv(a): 
+    </span><span class="s0">&quot;Same as ~a.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">~a 
+invert = inv 
+ 
+</span><span class="s3">def </span><span class="s1">lshift(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &lt;&lt; b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a &lt;&lt; b 
+ 
+</span><span class="s3">def </span><span class="s1">mod(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a % b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a % b 
+ 
+</span><span class="s3">def </span><span class="s1">mul(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a * b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a * b 
+ 
+</span><span class="s3">def </span><span class="s1">matmul(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a @ b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a @ b 
+ 
+</span><span class="s3">def </span><span class="s1">neg(a): 
+    </span><span class="s0">&quot;Same as -a.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">-a 
+ 
+</span><span class="s3">def </span><span class="s1">or_(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a | b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a | b 
+ 
+</span><span class="s3">def </span><span class="s1">pos(a): 
+    </span><span class="s0">&quot;Same as +a.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">+a 
+ 
+</span><span class="s3">def </span><span class="s1">pow(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a ** b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a ** b 
+ 
+</span><span class="s3">def </span><span class="s1">rshift(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &gt;&gt; b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a &gt;&gt; b 
+ 
+</span><span class="s3">def </span><span class="s1">sub(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a - b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a - b 
+ 
+</span><span class="s3">def </span><span class="s1">truediv(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a / b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a / b 
+ 
+</span><span class="s3">def </span><span class="s1">xor(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a ^ b.&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a ^ b 
+ 
+</span><span class="s4"># Sequence Operations *********************************************************#</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">concat(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a + b, for a and b sequences.&quot;</span><span class="s1"> 
+    </span><span class="s3">if not </span><span class="s1">hasattr(a</span><span class="s3">, </span><span class="s2">'__getitem__'</span><span class="s1">): 
+        msg = </span><span class="s2">&quot;'%s' object can't be concatenated&quot; </span><span class="s1">% type(a).__name__ 
+        </span><span class="s3">raise </span><span class="s1">TypeError(msg) 
+    </span><span class="s3">return </span><span class="s1">a + b 
+ 
+</span><span class="s3">def </span><span class="s1">contains(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as b in a (note reversed operands).&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">b </span><span class="s3">in </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">countOf(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Return the number of times b occurs in a.&quot;</span><span class="s1"> 
+    count = </span><span class="s5">0</span><span class="s1"> 
+    </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">a: 
+        </span><span class="s3">if </span><span class="s1">i == b: 
+            count += </span><span class="s5">1</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">count 
+ 
+</span><span class="s3">def </span><span class="s1">delitem(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as del a[b].&quot;</span><span class="s1"> 
+    </span><span class="s3">del </span><span class="s1">a[b] 
+ 
+</span><span class="s3">def </span><span class="s1">getitem(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a[b].&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">a[b] 
+ 
+</span><span class="s3">def </span><span class="s1">indexOf(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Return the first index of b in a.&quot;</span><span class="s1"> 
+    </span><span class="s3">for </span><span class="s1">i</span><span class="s3">, </span><span class="s1">j </span><span class="s3">in </span><span class="s1">enumerate(a): 
+        </span><span class="s3">if </span><span class="s1">j == b: 
+            </span><span class="s3">return </span><span class="s1">i 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s2">'sequence.index(x): x not in sequence'</span><span class="s1">) 
+ 
+</span><span class="s3">def </span><span class="s1">setitem(a</span><span class="s3">, </span><span class="s1">b</span><span class="s3">, </span><span class="s1">c): 
+    </span><span class="s0">&quot;Same as a[b] = c.&quot;</span><span class="s1"> 
+    a[b] = c 
+ 
+</span><span class="s3">def </span><span class="s1">length_hint(obj</span><span class="s3">, </span><span class="s1">default=</span><span class="s5">0</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot; 
+    Return an estimate of the number of items in obj. 
+    This is useful for presizing containers when building from an iterable. 
+ 
+    If the object supports len(), the result will be exact. Otherwise, it may 
+    over- or under-estimate by an arbitrary amount. The result will be an 
+    integer &gt;= 0. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if not </span><span class="s1">isinstance(default</span><span class="s3">, </span><span class="s1">int): 
+        msg = (</span><span class="s2">&quot;'%s' object cannot be interpreted as an integer&quot; </span><span class="s1">% 
+               type(default).__name__) 
+        </span><span class="s3">raise </span><span class="s1">TypeError(msg) 
+ 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">len(obj) 
+    </span><span class="s3">except </span><span class="s1">TypeError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+ 
+    </span><span class="s3">try</span><span class="s1">: 
+        hint = type(obj).__length_hint__ 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        </span><span class="s3">return </span><span class="s1">default 
+ 
+    </span><span class="s3">try</span><span class="s1">: 
+        val = hint(obj) 
+    </span><span class="s3">except </span><span class="s1">TypeError: 
+        </span><span class="s3">return </span><span class="s1">default 
+    </span><span class="s3">if </span><span class="s1">val </span><span class="s3">is </span><span class="s1">NotImplemented: 
+        </span><span class="s3">return </span><span class="s1">default 
+    </span><span class="s3">if not </span><span class="s1">isinstance(val</span><span class="s3">, </span><span class="s1">int): 
+        msg = (</span><span class="s2">'__length_hint__ must be integer, not %s' </span><span class="s1">% 
+               type(val).__name__) 
+        </span><span class="s3">raise </span><span class="s1">TypeError(msg) 
+    </span><span class="s3">if </span><span class="s1">val &lt; </span><span class="s5">0</span><span class="s1">: 
+        msg = </span><span class="s2">'__length_hint__() should return &gt;= 0'</span><span class="s1"> 
+        </span><span class="s3">raise </span><span class="s1">ValueError(msg) 
+    </span><span class="s3">return </span><span class="s1">val 
+ 
+</span><span class="s4"># Generalized Lookup Objects **************************************************#</span><span class="s1"> 
+ 
+</span><span class="s3">class </span><span class="s1">attrgetter: 
+    </span><span class="s0">&quot;&quot;&quot; 
+    Return a callable object that fetches the given attribute(s) from its operand. 
+    After f = attrgetter('name'), the call f(r) returns r.name. 
+    After g = attrgetter('name', 'date'), the call g(r) returns (r.name, r.date). 
+    After h = attrgetter('name.first', 'name.last'), the call h(r) returns 
+    (r.name.first, r.name.last). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    __slots__ = (</span><span class="s2">'_attrs'</span><span class="s3">, </span><span class="s2">'_call'</span><span class="s1">) 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">attr</span><span class="s3">, </span><span class="s1">*attrs): 
+        </span><span class="s3">if not </span><span class="s1">attrs: 
+            </span><span class="s3">if not </span><span class="s1">isinstance(attr</span><span class="s3">, </span><span class="s1">str): 
+                </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s2">'attribute name must be a string'</span><span class="s1">) 
+            self._attrs = (attr</span><span class="s3">,</span><span class="s1">) 
+            names = attr.split(</span><span class="s2">'.'</span><span class="s1">) 
+            </span><span class="s3">def </span><span class="s1">func(obj): 
+                </span><span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">names: 
+                    obj = getattr(obj</span><span class="s3">, </span><span class="s1">name) 
+                </span><span class="s3">return </span><span class="s1">obj 
+            self._call = func 
+        </span><span class="s3">else</span><span class="s1">: 
+            self._attrs = (attr</span><span class="s3">,</span><span class="s1">) + attrs 
+            getters = tuple(map(attrgetter</span><span class="s3">, </span><span class="s1">self._attrs)) 
+            </span><span class="s3">def </span><span class="s1">func(obj): 
+                </span><span class="s3">return </span><span class="s1">tuple(getter(obj) </span><span class="s3">for </span><span class="s1">getter </span><span class="s3">in </span><span class="s1">getters) 
+            self._call = func 
+ 
+    </span><span class="s3">def </span><span class="s1">__call__(self</span><span class="s3">, </span><span class="s1">obj): 
+        </span><span class="s3">return </span><span class="s1">self._call(obj) 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        </span><span class="s3">return </span><span class="s2">'%s.%s(%s)' </span><span class="s1">% (self.__class__.__module__</span><span class="s3">,</span><span class="s1"> 
+                              self.__class__.__qualname__</span><span class="s3">,</span><span class="s1"> 
+                              </span><span class="s2">', '</span><span class="s1">.join(map(repr</span><span class="s3">, </span><span class="s1">self._attrs))) 
+ 
+    </span><span class="s3">def </span><span class="s1">__reduce__(self): 
+        </span><span class="s3">return </span><span class="s1">self.__class__</span><span class="s3">, </span><span class="s1">self._attrs 
+ 
+</span><span class="s3">class </span><span class="s1">itemgetter: 
+    </span><span class="s0">&quot;&quot;&quot; 
+    Return a callable object that fetches the given item(s) from its operand. 
+    After f = itemgetter(2), the call f(r) returns r[2]. 
+    After g = itemgetter(2, 5, 3), the call g(r) returns (r[2], r[5], r[3]) 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    __slots__ = (</span><span class="s2">'_items'</span><span class="s3">, </span><span class="s2">'_call'</span><span class="s1">) 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">item</span><span class="s3">, </span><span class="s1">*items): 
+        </span><span class="s3">if not </span><span class="s1">items: 
+            self._items = (item</span><span class="s3">,</span><span class="s1">) 
+            </span><span class="s3">def </span><span class="s1">func(obj): 
+                </span><span class="s3">return </span><span class="s1">obj[item] 
+            self._call = func 
+        </span><span class="s3">else</span><span class="s1">: 
+            self._items = items = (item</span><span class="s3">,</span><span class="s1">) + items 
+            </span><span class="s3">def </span><span class="s1">func(obj): 
+                </span><span class="s3">return </span><span class="s1">tuple(obj[i] </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">items) 
+            self._call = func 
+ 
+    </span><span class="s3">def </span><span class="s1">__call__(self</span><span class="s3">, </span><span class="s1">obj): 
+        </span><span class="s3">return </span><span class="s1">self._call(obj) 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        </span><span class="s3">return </span><span class="s2">'%s.%s(%s)' </span><span class="s1">% (self.__class__.__module__</span><span class="s3">,</span><span class="s1"> 
+                              self.__class__.__name__</span><span class="s3">,</span><span class="s1"> 
+                              </span><span class="s2">', '</span><span class="s1">.join(map(repr</span><span class="s3">, </span><span class="s1">self._items))) 
+ 
+    </span><span class="s3">def </span><span class="s1">__reduce__(self): 
+        </span><span class="s3">return </span><span class="s1">self.__class__</span><span class="s3">, </span><span class="s1">self._items 
+ 
+</span><span class="s3">class </span><span class="s1">methodcaller: 
+    </span><span class="s0">&quot;&quot;&quot; 
+    Return a callable object that calls the given method on its operand. 
+    After f = methodcaller('name'), the call f(r) returns r.name(). 
+    After g = methodcaller('name', 'date', foo=1), the call g(r) returns 
+    r.name('date', foo=1). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    __slots__ = (</span><span class="s2">'_name'</span><span class="s3">, </span><span class="s2">'_args'</span><span class="s3">, </span><span class="s2">'_kwargs'</span><span class="s1">) 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(*args</span><span class="s3">, </span><span class="s1">**kwargs): 
+        </span><span class="s3">if </span><span class="s1">len(args) &lt; </span><span class="s5">2</span><span class="s1">: 
+            msg = </span><span class="s2">&quot;methodcaller needs at least one argument, the method name&quot;</span><span class="s1"> 
+            </span><span class="s3">raise </span><span class="s1">TypeError(msg) 
+        self = args[</span><span class="s5">0</span><span class="s1">] 
+        self._name = args[</span><span class="s5">1</span><span class="s1">] 
+        </span><span class="s3">if not </span><span class="s1">isinstance(self._name</span><span class="s3">, </span><span class="s1">str): 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s2">'method name must be a string'</span><span class="s1">) 
+        self._args = args[</span><span class="s5">2</span><span class="s1">:] 
+        self._kwargs = kwargs 
+ 
+    </span><span class="s3">def </span><span class="s1">__call__(self</span><span class="s3">, </span><span class="s1">obj): 
+        </span><span class="s3">return </span><span class="s1">getattr(obj</span><span class="s3">, </span><span class="s1">self._name)(*self._args</span><span class="s3">, </span><span class="s1">**self._kwargs) 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        args = [repr(self._name)] 
+        args.extend(map(repr</span><span class="s3">, </span><span class="s1">self._args)) 
+        args.extend(</span><span class="s2">'%s=%r' </span><span class="s1">% (k</span><span class="s3">, </span><span class="s1">v) </span><span class="s3">for </span><span class="s1">k</span><span class="s3">, </span><span class="s1">v </span><span class="s3">in </span><span class="s1">self._kwargs.items()) 
+        </span><span class="s3">return </span><span class="s2">'%s.%s(%s)' </span><span class="s1">% (self.__class__.__module__</span><span class="s3">,</span><span class="s1"> 
+                              self.__class__.__name__</span><span class="s3">,</span><span class="s1"> 
+                              </span><span class="s2">', '</span><span class="s1">.join(args)) 
+ 
+    </span><span class="s3">def </span><span class="s1">__reduce__(self): 
+        </span><span class="s3">if not </span><span class="s1">self._kwargs: 
+            </span><span class="s3">return </span><span class="s1">self.__class__</span><span class="s3">, </span><span class="s1">(self._name</span><span class="s3">,</span><span class="s1">) + self._args 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">from </span><span class="s1">functools </span><span class="s3">import </span><span class="s1">partial 
+            </span><span class="s3">return </span><span class="s1">partial(self.__class__</span><span class="s3">, </span><span class="s1">self._name</span><span class="s3">, </span><span class="s1">**self._kwargs)</span><span class="s3">, </span><span class="s1">self._args 
+ 
+ 
+</span><span class="s4"># In-place Operations *********************************************************#</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">iadd(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a += b.&quot;</span><span class="s1"> 
+    a += b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">iand(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &amp;= b.&quot;</span><span class="s1"> 
+    a &amp;= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">iconcat(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a += b, for a and b sequences.&quot;</span><span class="s1"> 
+    </span><span class="s3">if not </span><span class="s1">hasattr(a</span><span class="s3">, </span><span class="s2">'__getitem__'</span><span class="s1">): 
+        msg = </span><span class="s2">&quot;'%s' object can't be concatenated&quot; </span><span class="s1">% type(a).__name__ 
+        </span><span class="s3">raise </span><span class="s1">TypeError(msg) 
+    a += b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">ifloordiv(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a //= b.&quot;</span><span class="s1"> 
+    a //= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">ilshift(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &lt;&lt;= b.&quot;</span><span class="s1"> 
+    a &lt;&lt;= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">imod(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a %= b.&quot;</span><span class="s1"> 
+    a %= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">imul(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a *= b.&quot;</span><span class="s1"> 
+    a *= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">imatmul(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a @= b.&quot;</span><span class="s1"> 
+    a @= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">ior(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a |= b.&quot;</span><span class="s1"> 
+    a |= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">ipow(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a **= b.&quot;</span><span class="s1"> 
+    a **=b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">irshift(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a &gt;&gt;= b.&quot;</span><span class="s1"> 
+    a &gt;&gt;= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">isub(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a -= b.&quot;</span><span class="s1"> 
+    a -= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">itruediv(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a /= b.&quot;</span><span class="s1"> 
+    a /= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+</span><span class="s3">def </span><span class="s1">ixor(a</span><span class="s3">, </span><span class="s1">b): 
+    </span><span class="s0">&quot;Same as a ^= b.&quot;</span><span class="s1"> 
+    a ^= b 
+    </span><span class="s3">return </span><span class="s1">a 
+ 
+ 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s3">from </span><span class="s1">_operator </span><span class="s3">import </span><span class="s1">* 
+</span><span class="s3">except </span><span class="s1">ImportError: 
+    </span><span class="s3">pass</span><span class="s1"> 
+</span><span class="s3">else</span><span class="s1">: 
+    </span><span class="s3">from </span><span class="s1">_operator </span><span class="s3">import </span><span class="s1">__doc__ 
+ 
+</span><span class="s4"># All of these &quot;__func__ = func&quot; assignments have to happen after importing</span><span class="s1"> 
+</span><span class="s4"># from _operator to make sure they're set to the right function</span><span class="s1"> 
+__lt__ = lt 
+__le__ = le 
+__eq__ = eq 
+__ne__ = ne 
+__ge__ = ge 
+__gt__ = gt 
+__not__ = not_ 
+__abs__ = abs 
+__add__ = add 
+__and__ = and_ 
+__floordiv__ = floordiv 
+__index__ = index 
+__inv__ = inv 
+__invert__ = invert 
+__lshift__ = lshift 
+__mod__ = mod 
+__mul__ = mul 
+__matmul__ = matmul 
+__neg__ = neg 
+__or__ = or_ 
+__pos__ = pos 
+__pow__ = pow 
+__rshift__ = rshift 
+__sub__ = sub 
+__truediv__ = truediv 
+__xor__ = xor 
+__concat__ = concat 
+__contains__ = contains 
+__delitem__ = delitem 
+__getitem__ = getitem 
+__setitem__ = setitem 
+__iadd__ = iadd 
+__iand__ = iand 
+__iconcat__ = iconcat 
+__ifloordiv__ = ifloordiv 
+__ilshift__ = ilshift 
+__imod__ = imod 
+__imul__ = imul 
+__imatmul__ = imatmul 
+__ior__ = ior 
+__ipow__ = ipow 
+__irshift__ = irshift 
+__isub__ = isub 
+__itruediv__ = itruediv 
+__ixor__ = ixor 
+</span></pre>
+</body>
+</html>

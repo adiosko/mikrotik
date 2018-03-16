@@ -1,0 +1,766 @@
+<html>
+<head>
+<title>random.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(104,151,187); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+random.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Random variable generators. 
+ 
+    integers 
+    -------- 
+           uniform within range 
+ 
+    sequences 
+    --------- 
+           pick random element 
+           pick random sample 
+           generate random permutation 
+ 
+    distributions on the real line: 
+    ------------------------------ 
+           uniform 
+           triangular 
+           normal (Gaussian) 
+           lognormal 
+           negative exponential 
+           gamma 
+           beta 
+           pareto 
+           Weibull 
+ 
+    distributions on the circle (angles 0 to 2pi) 
+    --------------------------------------------- 
+           circular uniform 
+           von Mises 
+ 
+General notes on the underlying Mersenne Twister core generator: 
+ 
+* The period is 2**19937-1. 
+* It is one of the most extensively tested generators in existence. 
+* The random() method is implemented in C, executes in a single Python step, 
+  and is, therefore, threadsafe. 
+ 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">from </span><span class="s1">warnings </span><span class="s2">import </span><span class="s1">warn </span><span class="s2">as </span><span class="s1">_warn 
+</span><span class="s2">from </span><span class="s1">types </span><span class="s2">import </span><span class="s1">MethodType </span><span class="s2">as </span><span class="s1">_MethodType</span><span class="s2">, </span><span class="s1">BuiltinMethodType </span><span class="s2">as </span><span class="s1">_BuiltinMethodType 
+</span><span class="s2">from </span><span class="s1">math </span><span class="s2">import </span><span class="s1">log </span><span class="s2">as </span><span class="s1">_log</span><span class="s2">, </span><span class="s1">exp </span><span class="s2">as </span><span class="s1">_exp</span><span class="s2">, </span><span class="s1">pi </span><span class="s2">as </span><span class="s1">_pi</span><span class="s2">, </span><span class="s1">e </span><span class="s2">as </span><span class="s1">_e</span><span class="s2">, </span><span class="s1">ceil </span><span class="s2">as </span><span class="s1">_ceil 
+</span><span class="s2">from </span><span class="s1">math </span><span class="s2">import </span><span class="s1">sqrt </span><span class="s2">as </span><span class="s1">_sqrt</span><span class="s2">, </span><span class="s1">acos </span><span class="s2">as </span><span class="s1">_acos</span><span class="s2">, </span><span class="s1">cos </span><span class="s2">as </span><span class="s1">_cos</span><span class="s2">, </span><span class="s1">sin </span><span class="s2">as </span><span class="s1">_sin 
+</span><span class="s2">from </span><span class="s1">os </span><span class="s2">import </span><span class="s1">urandom </span><span class="s2">as </span><span class="s1">_urandom 
+</span><span class="s2">from </span><span class="s1">_collections_abc </span><span class="s2">import </span><span class="s1">Set </span><span class="s2">as </span><span class="s1">_Set</span><span class="s2">, </span><span class="s1">Sequence </span><span class="s2">as </span><span class="s1">_Sequence 
+</span><span class="s2">from </span><span class="s1">hashlib </span><span class="s2">import </span><span class="s1">sha512 </span><span class="s2">as </span><span class="s1">_sha512 
+ 
+__all__ = [</span><span class="s3">&quot;Random&quot;</span><span class="s2">,</span><span class="s3">&quot;seed&quot;</span><span class="s2">,</span><span class="s3">&quot;random&quot;</span><span class="s2">,</span><span class="s3">&quot;uniform&quot;</span><span class="s2">,</span><span class="s3">&quot;randint&quot;</span><span class="s2">,</span><span class="s3">&quot;choice&quot;</span><span class="s2">,</span><span class="s3">&quot;sample&quot;</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">&quot;randrange&quot;</span><span class="s2">,</span><span class="s3">&quot;shuffle&quot;</span><span class="s2">,</span><span class="s3">&quot;normalvariate&quot;</span><span class="s2">,</span><span class="s3">&quot;lognormvariate&quot;</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">&quot;expovariate&quot;</span><span class="s2">,</span><span class="s3">&quot;vonmisesvariate&quot;</span><span class="s2">,</span><span class="s3">&quot;gammavariate&quot;</span><span class="s2">,</span><span class="s3">&quot;triangular&quot;</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">&quot;gauss&quot;</span><span class="s2">,</span><span class="s3">&quot;betavariate&quot;</span><span class="s2">,</span><span class="s3">&quot;paretovariate&quot;</span><span class="s2">,</span><span class="s3">&quot;weibullvariate&quot;</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">&quot;getstate&quot;</span><span class="s2">,</span><span class="s3">&quot;setstate&quot;</span><span class="s2">, </span><span class="s3">&quot;getrandbits&quot;</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">&quot;SystemRandom&quot;</span><span class="s1">] 
+ 
+NV_MAGICCONST = </span><span class="s4">4 </span><span class="s1">* _exp(-</span><span class="s4">0.5</span><span class="s1">)/_sqrt(</span><span class="s4">2.0</span><span class="s1">) 
+TWOPI = </span><span class="s4">2.0</span><span class="s1">*_pi 
+LOG4 = _log(</span><span class="s4">4.0</span><span class="s1">) 
+SG_MAGICCONST = </span><span class="s4">1.0 </span><span class="s1">+ _log(</span><span class="s4">4.5</span><span class="s1">) 
+BPF = </span><span class="s4">53        </span><span class="s5"># Number of bits in a float</span><span class="s1"> 
+RECIP_BPF = </span><span class="s4">2</span><span class="s1">**-BPF 
+ 
+ 
+</span><span class="s5"># Translated by Guido van Rossum from C source provided by</span><span class="s1"> 
+</span><span class="s5"># Adrian Baddeley.  Adapted by Raymond Hettinger for use with</span><span class="s1"> 
+</span><span class="s5"># the Mersenne Twister  and os.urandom() core generators.</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">_random 
+ 
+</span><span class="s2">class </span><span class="s1">Random(_random.Random): 
+    </span><span class="s0">&quot;&quot;&quot;Random number generator base class used by bound module functions. 
+ 
+    Used to instantiate instances of Random to get generators that don't 
+    share state. 
+ 
+    Class Random can also be subclassed if you want to use a different basic 
+    generator of your own devising: in that case, override the following 
+    methods:  random(), seed(), getstate(), and setstate(). 
+    Optionally, implement a getrandbits() method so that randrange() 
+    can cover arbitrarily large ranges. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    VERSION = </span><span class="s4">3     </span><span class="s5"># used by getstate/setstate</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">x=</span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Initialize an instance. 
+ 
+        Optional argument x controls seeding, as for Random.seed(). 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        self.seed(x) 
+        self.gauss_next = </span><span class="s2">None</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">seed(self</span><span class="s2">, </span><span class="s1">a=</span><span class="s2">None, </span><span class="s1">version=</span><span class="s4">2</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Initialize internal state from hashable object. 
+ 
+        None or no argument seeds from current time or from an operating 
+        system specific randomness source if available. 
+ 
+        For version 2 (the default), all of the bits are used if *a* is a str, 
+        bytes, or bytearray.  For version 1, the hash() of *a* is used instead. 
+ 
+        If *a* is an int, all bits are used. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">a </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">try</span><span class="s1">: 
+                </span><span class="s5"># Seed with enough bytes to span the 19937 bit</span><span class="s1"> 
+                </span><span class="s5"># state space for the Mersenne Twister</span><span class="s1"> 
+                a = int.from_bytes(_urandom(</span><span class="s4">2500</span><span class="s1">)</span><span class="s2">, </span><span class="s3">'big'</span><span class="s1">) 
+            </span><span class="s2">except </span><span class="s1">NotImplementedError: 
+                </span><span class="s2">import </span><span class="s1">time 
+                a = int(time.time() * </span><span class="s4">256</span><span class="s1">) </span><span class="s5"># use fractional seconds</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">version == </span><span class="s4">2</span><span class="s1">: 
+            </span><span class="s2">if </span><span class="s1">isinstance(a</span><span class="s2">, </span><span class="s1">(str</span><span class="s2">, </span><span class="s1">bytes</span><span class="s2">, </span><span class="s1">bytearray)): 
+                </span><span class="s2">if </span><span class="s1">isinstance(a</span><span class="s2">, </span><span class="s1">str): 
+                    a = a.encode() 
+                a += _sha512(a).digest() 
+                a = int.from_bytes(a</span><span class="s2">, </span><span class="s3">'big'</span><span class="s1">) 
+ 
+        super().seed(a) 
+        self.gauss_next = </span><span class="s2">None</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">getstate(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return internal state; can be passed to setstate() later.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">self.VERSION</span><span class="s2">, </span><span class="s1">super().getstate()</span><span class="s2">, </span><span class="s1">self.gauss_next 
+ 
+    </span><span class="s2">def </span><span class="s1">setstate(self</span><span class="s2">, </span><span class="s1">state): 
+        </span><span class="s0">&quot;&quot;&quot;Restore internal state from object returned by getstate().&quot;&quot;&quot;</span><span class="s1"> 
+        version = state[</span><span class="s4">0</span><span class="s1">] 
+        </span><span class="s2">if </span><span class="s1">version == </span><span class="s4">3</span><span class="s1">: 
+            version</span><span class="s2">, </span><span class="s1">internalstate</span><span class="s2">, </span><span class="s1">self.gauss_next = state 
+            super().setstate(internalstate) 
+        </span><span class="s2">elif </span><span class="s1">version == </span><span class="s4">2</span><span class="s1">: 
+            version</span><span class="s2">, </span><span class="s1">internalstate</span><span class="s2">, </span><span class="s1">self.gauss_next = state 
+            </span><span class="s5"># In version 2, the state was saved as signed ints, which causes</span><span class="s1"> 
+            </span><span class="s5">#   inconsistencies between 32/64-bit systems. The state is</span><span class="s1"> 
+            </span><span class="s5">#   really unsigned 32-bit ints, so we convert negative ints from</span><span class="s1"> 
+            </span><span class="s5">#   version 2 to positive longs for version 3.</span><span class="s1"> 
+            </span><span class="s2">try</span><span class="s1">: 
+                internalstate = tuple(x % (</span><span class="s4">2</span><span class="s1">**</span><span class="s4">32</span><span class="s1">) </span><span class="s2">for </span><span class="s1">x </span><span class="s2">in </span><span class="s1">internalstate) 
+            </span><span class="s2">except </span><span class="s1">ValueError </span><span class="s2">as </span><span class="s1">e: 
+                </span><span class="s2">raise </span><span class="s1">TypeError </span><span class="s2">from </span><span class="s1">e 
+            super().setstate(internalstate) 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;state with version %s passed to &quot;</span><span class="s1"> 
+                             </span><span class="s3">&quot;Random.setstate() of version %s&quot; </span><span class="s1">% 
+                             (version</span><span class="s2">, </span><span class="s1">self.VERSION)) 
+ 
+</span><span class="s5">## ---- Methods below this point do not need to be overridden when</span><span class="s1"> 
+</span><span class="s5">## ---- subclassing for the purpose of using a different core generator.</span><span class="s1"> 
+ 
+</span><span class="s5">## -------------------- pickle support  -------------------</span><span class="s1"> 
+ 
+    </span><span class="s5"># Issue 17489: Since __reduce__ was defined to fix #759889 this is no</span><span class="s1"> 
+    </span><span class="s5"># longer called; we leave it here because it has been here since random was</span><span class="s1"> 
+    </span><span class="s5"># rewritten back in 2001 and why risk breaking something.</span><span class="s1"> 
+    </span><span class="s2">def </span><span class="s1">__getstate__(self): </span><span class="s5"># for pickle</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">self.getstate() 
+ 
+    </span><span class="s2">def </span><span class="s1">__setstate__(self</span><span class="s2">, </span><span class="s1">state):  </span><span class="s5"># for pickle</span><span class="s1"> 
+        self.setstate(state) 
+ 
+    </span><span class="s2">def </span><span class="s1">__reduce__(self): 
+        </span><span class="s2">return </span><span class="s1">self.__class__</span><span class="s2">, </span><span class="s1">()</span><span class="s2">, </span><span class="s1">self.getstate() 
+ 
+</span><span class="s5">## -------------------- integer methods  -------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">randrange(self</span><span class="s2">, </span><span class="s1">start</span><span class="s2">, </span><span class="s1">stop=</span><span class="s2">None, </span><span class="s1">step=</span><span class="s4">1</span><span class="s2">, </span><span class="s1">_int=int): 
+        </span><span class="s0">&quot;&quot;&quot;Choose a random item from range(start, stop[, step]). 
+ 
+        This fixes the problem with randint() which includes the 
+        endpoint; in Python this is usually not what you want. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s5"># This code is a bit messy to make it fast for the</span><span class="s1"> 
+        </span><span class="s5"># common case while still doing adequate error checking.</span><span class="s1"> 
+        istart = _int(start) 
+        </span><span class="s2">if </span><span class="s1">istart != start: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;non-integer arg 1 for randrange()&quot;</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">stop </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">if </span><span class="s1">istart &gt; </span><span class="s4">0</span><span class="s1">: 
+                </span><span class="s2">return </span><span class="s1">self._randbelow(istart) 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;empty range for randrange()&quot;</span><span class="s1">) 
+ 
+        </span><span class="s5"># stop argument supplied.</span><span class="s1"> 
+        istop = _int(stop) 
+        </span><span class="s2">if </span><span class="s1">istop != stop: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;non-integer stop for randrange()&quot;</span><span class="s1">) 
+        width = istop - istart 
+        </span><span class="s2">if </span><span class="s1">step == </span><span class="s4">1 </span><span class="s2">and </span><span class="s1">width &gt; </span><span class="s4">0</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">istart + self._randbelow(width) 
+        </span><span class="s2">if </span><span class="s1">step == </span><span class="s4">1</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;empty range for randrange() (%d,%d, %d)&quot; </span><span class="s1">% (istart</span><span class="s2">, </span><span class="s1">istop</span><span class="s2">, </span><span class="s1">width)) 
+ 
+        </span><span class="s5"># Non-unit step argument supplied.</span><span class="s1"> 
+        istep = _int(step) 
+        </span><span class="s2">if </span><span class="s1">istep != step: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;non-integer step for randrange()&quot;</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">istep &gt; </span><span class="s4">0</span><span class="s1">: 
+            n = (width + istep - </span><span class="s4">1</span><span class="s1">) // istep 
+        </span><span class="s2">elif </span><span class="s1">istep &lt; </span><span class="s4">0</span><span class="s1">: 
+            n = (width + istep + </span><span class="s4">1</span><span class="s1">) // istep 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;zero step for randrange()&quot;</span><span class="s1">) 
+ 
+        </span><span class="s2">if </span><span class="s1">n &lt;= </span><span class="s4">0</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;empty range for randrange()&quot;</span><span class="s1">) 
+ 
+        </span><span class="s2">return </span><span class="s1">istart + istep*self._randbelow(n) 
+ 
+    </span><span class="s2">def </span><span class="s1">randint(self</span><span class="s2">, </span><span class="s1">a</span><span class="s2">, </span><span class="s1">b): 
+        </span><span class="s0">&quot;&quot;&quot;Return random integer in range [a, b], including both end points. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s2">return </span><span class="s1">self.randrange(a</span><span class="s2">, </span><span class="s1">b+</span><span class="s4">1</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">_randbelow(self</span><span class="s2">, </span><span class="s1">n</span><span class="s2">, </span><span class="s1">int=int</span><span class="s2">, </span><span class="s1">maxsize=</span><span class="s4">1</span><span class="s1">&lt;&lt;BPF</span><span class="s2">, </span><span class="s1">type=type</span><span class="s2">,</span><span class="s1"> 
+                   Method=_MethodType</span><span class="s2">, </span><span class="s1">BuiltinMethod=_BuiltinMethodType): 
+        </span><span class="s0">&quot;Return a random int in the range [0,n).  Raises ValueError if n==0.&quot;</span><span class="s1"> 
+ 
+        random = self.random 
+        getrandbits = self.getrandbits 
+        </span><span class="s5"># Only call self.getrandbits if the original random() builtin method</span><span class="s1"> 
+        </span><span class="s5"># has not been overridden or if a new getrandbits() was supplied.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">type(random) </span><span class="s2">is </span><span class="s1">BuiltinMethod </span><span class="s2">or </span><span class="s1">type(getrandbits) </span><span class="s2">is </span><span class="s1">Method: 
+            k = n.bit_length()  </span><span class="s5"># don't use (n-1) here because n can be 1</span><span class="s1"> 
+            r = getrandbits(k)          </span><span class="s5"># 0 &lt;= r &lt; 2**k</span><span class="s1"> 
+            </span><span class="s2">while </span><span class="s1">r &gt;= n: 
+                r = getrandbits(k) 
+            </span><span class="s2">return </span><span class="s1">r 
+        </span><span class="s5"># There's an overridden random() method but no new getrandbits() method,</span><span class="s1"> 
+        </span><span class="s5"># so we can only use random() from here.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">n &gt;= maxsize: 
+            _warn(</span><span class="s3">&quot;Underlying random() generator does not supply </span><span class="s2">\n</span><span class="s3">&quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;enough bits to choose from a population range this large.</span><span class="s2">\n</span><span class="s3">&quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;To remove the range limitation, add a getrandbits() method.&quot;</span><span class="s1">) 
+            </span><span class="s2">return </span><span class="s1">int(random() * n) 
+        rem = maxsize % n 
+        limit = (maxsize - rem) / maxsize   </span><span class="s5"># int(limit * maxsize) % n == 0</span><span class="s1"> 
+        r = random() 
+        </span><span class="s2">while </span><span class="s1">r &gt;= limit: 
+            r = random() 
+        </span><span class="s2">return </span><span class="s1">int(r*maxsize) % n 
+ 
+</span><span class="s5">## -------------------- sequence methods  -------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">choice(self</span><span class="s2">, </span><span class="s1">seq): 
+        </span><span class="s0">&quot;&quot;&quot;Choose a random element from a non-empty sequence.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">try</span><span class="s1">: 
+            i = self._randbelow(len(seq)) 
+        </span><span class="s2">except </span><span class="s1">ValueError: 
+            </span><span class="s2">raise </span><span class="s1">IndexError(</span><span class="s3">'Cannot choose from an empty sequence'</span><span class="s1">) 
+        </span><span class="s2">return </span><span class="s1">seq[i] 
+ 
+    </span><span class="s2">def </span><span class="s1">shuffle(self</span><span class="s2">, </span><span class="s1">x</span><span class="s2">, </span><span class="s1">random=</span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Shuffle list x in place, and return None. 
+ 
+        Optional argument random is a 0-argument function returning a 
+        random float in [0.0, 1.0); if it is the default None, the 
+        standard random.random will be used. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">random </span><span class="s2">is None</span><span class="s1">: 
+            randbelow = self._randbelow 
+            </span><span class="s2">for </span><span class="s1">i </span><span class="s2">in </span><span class="s1">reversed(range(</span><span class="s4">1</span><span class="s2">, </span><span class="s1">len(x))): 
+                </span><span class="s5"># pick an element in x[:i+1] with which to exchange x[i]</span><span class="s1"> 
+                j = randbelow(i+</span><span class="s4">1</span><span class="s1">) 
+                x[i]</span><span class="s2">, </span><span class="s1">x[j] = x[j]</span><span class="s2">, </span><span class="s1">x[i] 
+        </span><span class="s2">else</span><span class="s1">: 
+            _int = int 
+            </span><span class="s2">for </span><span class="s1">i </span><span class="s2">in </span><span class="s1">reversed(range(</span><span class="s4">1</span><span class="s2">, </span><span class="s1">len(x))): 
+                </span><span class="s5"># pick an element in x[:i+1] with which to exchange x[i]</span><span class="s1"> 
+                j = _int(random() * (i+</span><span class="s4">1</span><span class="s1">)) 
+                x[i]</span><span class="s2">, </span><span class="s1">x[j] = x[j]</span><span class="s2">, </span><span class="s1">x[i] 
+ 
+    </span><span class="s2">def </span><span class="s1">sample(self</span><span class="s2">, </span><span class="s1">population</span><span class="s2">, </span><span class="s1">k): 
+        </span><span class="s0">&quot;&quot;&quot;Chooses k unique random elements from a population sequence or set. 
+ 
+        Returns a new list containing elements from the population while 
+        leaving the original population unchanged.  The resulting list is 
+        in selection order so that all sub-slices will also be valid random 
+        samples.  This allows raffle winners (the sample) to be partitioned 
+        into grand prize and second place winners (the subslices). 
+ 
+        Members of the population need not be hashable or unique.  If the 
+        population contains repeats, then each occurrence is a possible 
+        selection in the sample. 
+ 
+        To choose a sample in a range of integers, use range as an argument. 
+        This is especially fast and space efficient for sampling from a 
+        large population:   sample(range(10000000), 60) 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s5"># Sampling without replacement entails tracking either potential</span><span class="s1"> 
+        </span><span class="s5"># selections (the pool) in a list or previous selections in a set.</span><span class="s1"> 
+ 
+        </span><span class="s5"># When the number of selections is small compared to the</span><span class="s1"> 
+        </span><span class="s5"># population, then tracking selections is efficient, requiring</span><span class="s1"> 
+        </span><span class="s5"># only a small set and an occasional reselection.  For</span><span class="s1"> 
+        </span><span class="s5"># a larger number of selections, the pool tracking method is</span><span class="s1"> 
+        </span><span class="s5"># preferred since the list takes less space than the</span><span class="s1"> 
+        </span><span class="s5"># set and it doesn't suffer from frequent reselections.</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">isinstance(population</span><span class="s2">, </span><span class="s1">_Set): 
+            population = tuple(population) 
+        </span><span class="s2">if not </span><span class="s1">isinstance(population</span><span class="s2">, </span><span class="s1">_Sequence): 
+            </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s3">&quot;Population must be a sequence or set.  For dicts, use list(d).&quot;</span><span class="s1">) 
+        randbelow = self._randbelow 
+        n = len(population) 
+        </span><span class="s2">if not </span><span class="s4">0 </span><span class="s1">&lt;= k &lt;= n: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;Sample larger than population&quot;</span><span class="s1">) 
+        result = [</span><span class="s2">None</span><span class="s1">] * k 
+        setsize = </span><span class="s4">21        </span><span class="s5"># size of a small set minus size of an empty list</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">k &gt; </span><span class="s4">5</span><span class="s1">: 
+            setsize += </span><span class="s4">4 </span><span class="s1">** _ceil(_log(k * </span><span class="s4">3</span><span class="s2">, </span><span class="s4">4</span><span class="s1">)) </span><span class="s5"># table size for big sets</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">n &lt;= setsize: 
+            </span><span class="s5"># An n-length list is smaller than a k-length set</span><span class="s1"> 
+            pool = list(population) 
+            </span><span class="s2">for </span><span class="s1">i </span><span class="s2">in </span><span class="s1">range(k):         </span><span class="s5"># invariant:  non-selected at [0,n-i)</span><span class="s1"> 
+                j = randbelow(n-i) 
+                result[i] = pool[j] 
+                pool[j] = pool[n-i-</span><span class="s4">1</span><span class="s1">]   </span><span class="s5"># move non-selected item into vacancy</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            selected = set() 
+            selected_add = selected.add 
+            </span><span class="s2">for </span><span class="s1">i </span><span class="s2">in </span><span class="s1">range(k): 
+                j = randbelow(n) 
+                </span><span class="s2">while </span><span class="s1">j </span><span class="s2">in </span><span class="s1">selected: 
+                    j = randbelow(n) 
+                selected_add(j) 
+                result[i] = population[j] 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+</span><span class="s5">## -------------------- real-valued distributions  -------------------</span><span class="s1"> 
+ 
+</span><span class="s5">## -------------------- uniform distribution -------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">uniform(self</span><span class="s2">, </span><span class="s1">a</span><span class="s2">, </span><span class="s1">b): 
+        </span><span class="s0">&quot;Get a random number in the range [a, b) or [a, b] depending on rounding.&quot;</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">a + (b-a) * self.random() 
+ 
+</span><span class="s5">## -------------------- triangular --------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">triangular(self</span><span class="s2">, </span><span class="s1">low=</span><span class="s4">0.0</span><span class="s2">, </span><span class="s1">high=</span><span class="s4">1.0</span><span class="s2">, </span><span class="s1">mode=</span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Triangular distribution. 
+ 
+        Continuous distribution bounded by given lower and upper limits, 
+        and having a given mode value in-between. 
+ 
+        http://en.wikipedia.org/wiki/Triangular_distribution 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        u = self.random() 
+        </span><span class="s2">try</span><span class="s1">: 
+            c = </span><span class="s4">0.5 </span><span class="s2">if </span><span class="s1">mode </span><span class="s2">is None else </span><span class="s1">(mode - low) / (high - low) 
+        </span><span class="s2">except </span><span class="s1">ZeroDivisionError: 
+            </span><span class="s2">return </span><span class="s1">low 
+        </span><span class="s2">if </span><span class="s1">u &gt; c: 
+            u = </span><span class="s4">1.0 </span><span class="s1">- u 
+            c = </span><span class="s4">1.0 </span><span class="s1">- c 
+            low</span><span class="s2">, </span><span class="s1">high = high</span><span class="s2">, </span><span class="s1">low 
+        </span><span class="s2">return </span><span class="s1">low + (high - low) * (u * c) ** </span><span class="s4">0.5</span><span class="s1"> 
+ 
+</span><span class="s5">## -------------------- normal distribution --------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">normalvariate(self</span><span class="s2">, </span><span class="s1">mu</span><span class="s2">, </span><span class="s1">sigma): 
+        </span><span class="s0">&quot;&quot;&quot;Normal distribution. 
+ 
+        mu is the mean, and sigma is the standard deviation. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s5"># mu = mean, sigma = standard deviation</span><span class="s1"> 
+ 
+        </span><span class="s5"># Uses Kinderman and Monahan method. Reference: Kinderman,</span><span class="s1"> 
+        </span><span class="s5"># A.J. and Monahan, J.F., &quot;Computer generation of random</span><span class="s1"> 
+        </span><span class="s5"># variables using the ratio of uniform deviates&quot;, ACM Trans</span><span class="s1"> 
+        </span><span class="s5"># Math Software, 3, (1977), pp257-260.</span><span class="s1"> 
+ 
+        random = self.random 
+        </span><span class="s2">while </span><span class="s4">1</span><span class="s1">: 
+            u1 = random() 
+            u2 = </span><span class="s4">1.0 </span><span class="s1">- random() 
+            z = NV_MAGICCONST*(u1-</span><span class="s4">0.5</span><span class="s1">)/u2 
+            zz = z*z/</span><span class="s4">4.0</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">zz &lt;= -_log(u2): 
+                </span><span class="s2">break</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">mu + z*sigma 
+ 
+</span><span class="s5">## -------------------- lognormal distribution --------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">lognormvariate(self</span><span class="s2">, </span><span class="s1">mu</span><span class="s2">, </span><span class="s1">sigma): 
+        </span><span class="s0">&quot;&quot;&quot;Log normal distribution. 
+ 
+        If you take the natural logarithm of this distribution, you'll get a 
+        normal distribution with mean mu and standard deviation sigma. 
+        mu can have any value, and sigma must be greater than zero. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">_exp(self.normalvariate(mu</span><span class="s2">, </span><span class="s1">sigma)) 
+ 
+</span><span class="s5">## -------------------- exponential distribution --------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">expovariate(self</span><span class="s2">, </span><span class="s1">lambd): 
+        </span><span class="s0">&quot;&quot;&quot;Exponential distribution. 
+ 
+        lambd is 1.0 divided by the desired mean.  It should be 
+        nonzero.  (The parameter would be called &quot;lambda&quot;, but that is 
+        a reserved word in Python.)  Returned values range from 0 to 
+        positive infinity if lambd is positive, and from negative 
+        infinity to 0 if lambd is negative. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s5"># lambd: rate lambd = 1/mean</span><span class="s1"> 
+        </span><span class="s5"># ('lambda' is a Python reserved word)</span><span class="s1"> 
+ 
+        </span><span class="s5"># we use 1-random() instead of random() to preclude the</span><span class="s1"> 
+        </span><span class="s5"># possibility of taking the log of zero.</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">-_log(</span><span class="s4">1.0 </span><span class="s1">- self.random())/lambd 
+ 
+</span><span class="s5">## -------------------- von Mises distribution --------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">vonmisesvariate(self</span><span class="s2">, </span><span class="s1">mu</span><span class="s2">, </span><span class="s1">kappa): 
+        </span><span class="s0">&quot;&quot;&quot;Circular data distribution. 
+ 
+        mu is the mean angle, expressed in radians between 0 and 2*pi, and 
+        kappa is the concentration parameter, which must be greater than or 
+        equal to zero.  If kappa is equal to zero, this distribution reduces 
+        to a uniform random angle over the range 0 to 2*pi. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s5"># mu:    mean angle (in radians between 0 and 2*pi)</span><span class="s1"> 
+        </span><span class="s5"># kappa: concentration parameter kappa (&gt;= 0)</span><span class="s1"> 
+        </span><span class="s5"># if kappa = 0 generate uniform random angle</span><span class="s1"> 
+ 
+        </span><span class="s5"># Based upon an algorithm published in: Fisher, N.I.,</span><span class="s1"> 
+        </span><span class="s5"># &quot;Statistical Analysis of Circular Data&quot;, Cambridge</span><span class="s1"> 
+        </span><span class="s5"># University Press, 1993.</span><span class="s1"> 
+ 
+        </span><span class="s5"># Thanks to Magnus Kessler for a correction to the</span><span class="s1"> 
+        </span><span class="s5"># implementation of step 4.</span><span class="s1"> 
+ 
+        random = self.random 
+        </span><span class="s2">if </span><span class="s1">kappa &lt;= </span><span class="s4">1e-6</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">TWOPI * random() 
+ 
+        s = </span><span class="s4">0.5 </span><span class="s1">/ kappa 
+        r = s + _sqrt(</span><span class="s4">1.0 </span><span class="s1">+ s * s) 
+ 
+        </span><span class="s2">while </span><span class="s4">1</span><span class="s1">: 
+            u1 = random() 
+            z = _cos(_pi * u1) 
+ 
+            d = z / (r + z) 
+            u2 = random() 
+            </span><span class="s2">if </span><span class="s1">u2 &lt; </span><span class="s4">1.0 </span><span class="s1">- d * d </span><span class="s2">or </span><span class="s1">u2 &lt;= (</span><span class="s4">1.0 </span><span class="s1">- d) * _exp(d): 
+                </span><span class="s2">break</span><span class="s1"> 
+ 
+        q = </span><span class="s4">1.0 </span><span class="s1">/ r 
+        f = (q + z) / (</span><span class="s4">1.0 </span><span class="s1">+ q * z) 
+        u3 = random() 
+        </span><span class="s2">if </span><span class="s1">u3 &gt; </span><span class="s4">0.5</span><span class="s1">: 
+            theta = (mu + _acos(f)) % TWOPI 
+        </span><span class="s2">else</span><span class="s1">: 
+            theta = (mu - _acos(f)) % TWOPI 
+ 
+        </span><span class="s2">return </span><span class="s1">theta 
+ 
+</span><span class="s5">## -------------------- gamma distribution --------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">gammavariate(self</span><span class="s2">, </span><span class="s1">alpha</span><span class="s2">, </span><span class="s1">beta): 
+        </span><span class="s0">&quot;&quot;&quot;Gamma distribution.  Not the gamma function! 
+ 
+        Conditions on the parameters are alpha &gt; 0 and beta &gt; 0. 
+ 
+        The probability distribution function is: 
+ 
+                    x ** (alpha - 1) * math.exp(-x / beta) 
+          pdf(x) =  -------------------------------------- 
+                      math.gamma(alpha) * beta ** alpha 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s5"># alpha &gt; 0, beta &gt; 0, mean is alpha*beta, variance is alpha*beta**2</span><span class="s1"> 
+ 
+        </span><span class="s5"># Warning: a few older sources define the gamma distribution in terms</span><span class="s1"> 
+        </span><span class="s5"># of alpha &gt; -1.0</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">alpha &lt;= </span><span class="s4">0.0 </span><span class="s2">or </span><span class="s1">beta &lt;= </span><span class="s4">0.0</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'gammavariate: alpha and beta must be &gt; 0.0'</span><span class="s1">) 
+ 
+        random = self.random 
+        </span><span class="s2">if </span><span class="s1">alpha &gt; </span><span class="s4">1.0</span><span class="s1">: 
+ 
+            </span><span class="s5"># Uses R.C.H. Cheng, &quot;The generation of Gamma</span><span class="s1"> 
+            </span><span class="s5"># variables with non-integral shape parameters&quot;,</span><span class="s1"> 
+            </span><span class="s5"># Applied Statistics, (1977), 26, No. 1, p71-74</span><span class="s1"> 
+ 
+            ainv = _sqrt(</span><span class="s4">2.0 </span><span class="s1">* alpha - </span><span class="s4">1.0</span><span class="s1">) 
+            bbb = alpha - LOG4 
+            ccc = alpha + ainv 
+ 
+            </span><span class="s2">while </span><span class="s4">1</span><span class="s1">: 
+                u1 = random() 
+                </span><span class="s2">if not </span><span class="s4">1e-7 </span><span class="s1">&lt; u1 &lt; </span><span class="s4">.9999999</span><span class="s1">: 
+                    </span><span class="s2">continue</span><span class="s1"> 
+                u2 = </span><span class="s4">1.0 </span><span class="s1">- random() 
+                v = _log(u1/(</span><span class="s4">1.0</span><span class="s1">-u1))/ainv 
+                x = alpha*_exp(v) 
+                z = u1*u1*u2 
+                r = bbb+ccc*v-x 
+                </span><span class="s2">if </span><span class="s1">r + SG_MAGICCONST - </span><span class="s4">4.5</span><span class="s1">*z &gt;= </span><span class="s4">0.0 </span><span class="s2">or </span><span class="s1">r &gt;= _log(z): 
+                    </span><span class="s2">return </span><span class="s1">x * beta 
+ 
+        </span><span class="s2">elif </span><span class="s1">alpha == </span><span class="s4">1.0</span><span class="s1">: 
+            </span><span class="s5"># expovariate(1)</span><span class="s1"> 
+            u = random() 
+            </span><span class="s2">while </span><span class="s1">u &lt;= </span><span class="s4">1e-7</span><span class="s1">: 
+                u = random() 
+            </span><span class="s2">return </span><span class="s1">-_log(u) * beta 
+ 
+        </span><span class="s2">else</span><span class="s1">:   </span><span class="s5"># alpha is between 0 and 1 (exclusive)</span><span class="s1"> 
+ 
+            </span><span class="s5"># Uses ALGORITHM GS of Statistical Computing - Kennedy &amp; Gentle</span><span class="s1"> 
+ 
+            </span><span class="s2">while </span><span class="s4">1</span><span class="s1">: 
+                u = random() 
+                b = (_e + alpha)/_e 
+                p = b*u 
+                </span><span class="s2">if </span><span class="s1">p &lt;= </span><span class="s4">1.0</span><span class="s1">: 
+                    x = p ** (</span><span class="s4">1.0</span><span class="s1">/alpha) 
+                </span><span class="s2">else</span><span class="s1">: 
+                    x = -_log((b-p)/alpha) 
+                u1 = random() 
+                </span><span class="s2">if </span><span class="s1">p &gt; </span><span class="s4">1.0</span><span class="s1">: 
+                    </span><span class="s2">if </span><span class="s1">u1 &lt;= x ** (alpha - </span><span class="s4">1.0</span><span class="s1">): 
+                        </span><span class="s2">break</span><span class="s1"> 
+                </span><span class="s2">elif </span><span class="s1">u1 &lt;= _exp(-x): 
+                    </span><span class="s2">break</span><span class="s1"> 
+            </span><span class="s2">return </span><span class="s1">x * beta 
+ 
+</span><span class="s5">## -------------------- Gauss (faster alternative) --------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">gauss(self</span><span class="s2">, </span><span class="s1">mu</span><span class="s2">, </span><span class="s1">sigma): 
+        </span><span class="s0">&quot;&quot;&quot;Gaussian distribution. 
+ 
+        mu is the mean, and sigma is the standard deviation.  This is 
+        slightly faster than the normalvariate() function. 
+ 
+        Not thread-safe without a lock around calls. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s5"># When x and y are two variables from [0, 1), uniformly</span><span class="s1"> 
+        </span><span class="s5"># distributed, then</span><span class="s1"> 
+        </span><span class="s5">#</span><span class="s1"> 
+        </span><span class="s5">#    cos(2*pi*x)*sqrt(-2*log(1-y))</span><span class="s1"> 
+        </span><span class="s5">#    sin(2*pi*x)*sqrt(-2*log(1-y))</span><span class="s1"> 
+        </span><span class="s5">#</span><span class="s1"> 
+        </span><span class="s5"># are two *independent* variables with normal distribution</span><span class="s1"> 
+        </span><span class="s5"># (mu = 0, sigma = 1).</span><span class="s1"> 
+        </span><span class="s5"># (Lambert Meertens)</span><span class="s1"> 
+        </span><span class="s5"># (corrected version; bug discovered by Mike Miller, fixed by LM)</span><span class="s1"> 
+ 
+        </span><span class="s5"># Multithreading note: When two threads call this function</span><span class="s1"> 
+        </span><span class="s5"># simultaneously, it is possible that they will receive the</span><span class="s1"> 
+        </span><span class="s5"># same return value.  The window is very small though.  To</span><span class="s1"> 
+        </span><span class="s5"># avoid this, you have to use a lock around all calls.  (I</span><span class="s1"> 
+        </span><span class="s5"># didn't want to slow this down in the serial case by using a</span><span class="s1"> 
+        </span><span class="s5"># lock here.)</span><span class="s1"> 
+ 
+        random = self.random 
+        z = self.gauss_next 
+        self.gauss_next = </span><span class="s2">None</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">z </span><span class="s2">is None</span><span class="s1">: 
+            x2pi = random() * TWOPI 
+            g2rad = _sqrt(-</span><span class="s4">2.0 </span><span class="s1">* _log(</span><span class="s4">1.0 </span><span class="s1">- random())) 
+            z = _cos(x2pi) * g2rad 
+            self.gauss_next = _sin(x2pi) * g2rad 
+ 
+        </span><span class="s2">return </span><span class="s1">mu + z*sigma 
+ 
+</span><span class="s5">## -------------------- beta --------------------</span><span class="s1"> 
+</span><span class="s5">## See</span><span class="s1"> 
+</span><span class="s5">## http://mail.python.org/pipermail/python-bugs-list/2001-January/003752.html</span><span class="s1"> 
+</span><span class="s5">## for Ivan Frohne's insightful analysis of why the original implementation:</span><span class="s1"> 
+</span><span class="s5">##</span><span class="s1"> 
+</span><span class="s5">##    def betavariate(self, alpha, beta):</span><span class="s1"> 
+</span><span class="s5">##        # Discrete Event Simulation in C, pp 87-88.</span><span class="s1"> 
+</span><span class="s5">##</span><span class="s1"> 
+</span><span class="s5">##        y = self.expovariate(alpha)</span><span class="s1"> 
+</span><span class="s5">##        z = self.expovariate(1.0/beta)</span><span class="s1"> 
+</span><span class="s5">##        return z/(y+z)</span><span class="s1"> 
+</span><span class="s5">##</span><span class="s1"> 
+</span><span class="s5">## was dead wrong, and how it probably got that way.</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">betavariate(self</span><span class="s2">, </span><span class="s1">alpha</span><span class="s2">, </span><span class="s1">beta): 
+        </span><span class="s0">&quot;&quot;&quot;Beta distribution. 
+ 
+        Conditions on the parameters are alpha &gt; 0 and beta &gt; 0. 
+        Returned values range between 0 and 1. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s5"># This version due to Janne Sinkkonen, and matches all the std</span><span class="s1"> 
+        </span><span class="s5"># texts (e.g., Knuth Vol 2 Ed 3 pg 134 &quot;the beta distribution&quot;).</span><span class="s1"> 
+        y = self.gammavariate(alpha</span><span class="s2">, </span><span class="s4">1.</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">y == </span><span class="s4">0</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s4">0.0</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">y / (y + self.gammavariate(beta</span><span class="s2">, </span><span class="s4">1.</span><span class="s1">)) 
+ 
+</span><span class="s5">## -------------------- Pareto --------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">paretovariate(self</span><span class="s2">, </span><span class="s1">alpha): 
+        </span><span class="s0">&quot;&quot;&quot;Pareto distribution.  alpha is the shape parameter.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s5"># Jain, pg. 495</span><span class="s1"> 
+ 
+        u = </span><span class="s4">1.0 </span><span class="s1">- self.random() 
+        </span><span class="s2">return </span><span class="s4">1.0 </span><span class="s1">/ u ** (</span><span class="s4">1.0</span><span class="s1">/alpha) 
+ 
+</span><span class="s5">## -------------------- Weibull --------------------</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">weibullvariate(self</span><span class="s2">, </span><span class="s1">alpha</span><span class="s2">, </span><span class="s1">beta): 
+        </span><span class="s0">&quot;&quot;&quot;Weibull distribution. 
+ 
+        alpha is the scale parameter and beta is the shape parameter. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s5"># Jain, pg. 499; bug fix courtesy Bill Arms</span><span class="s1"> 
+ 
+        u = </span><span class="s4">1.0 </span><span class="s1">- self.random() 
+        </span><span class="s2">return </span><span class="s1">alpha * (-_log(u)) ** (</span><span class="s4">1.0</span><span class="s1">/beta) 
+ 
+</span><span class="s5">## --------------- Operating System Random Source  ------------------</span><span class="s1"> 
+ 
+</span><span class="s2">class </span><span class="s1">SystemRandom(Random): 
+    </span><span class="s0">&quot;&quot;&quot;Alternate random number generator using sources provided 
+    by the operating system (such as /dev/urandom on Unix or 
+    CryptGenRandom on Windows). 
+ 
+     Not available on all systems (see os.urandom() for details). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">random(self): 
+        </span><span class="s0">&quot;&quot;&quot;Get the next random number in the range [0.0, 1.0).&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">(int.from_bytes(_urandom(</span><span class="s4">7</span><span class="s1">)</span><span class="s2">, </span><span class="s3">'big'</span><span class="s1">) &gt;&gt; </span><span class="s4">3</span><span class="s1">) * RECIP_BPF 
+ 
+    </span><span class="s2">def </span><span class="s1">getrandbits(self</span><span class="s2">, </span><span class="s1">k): 
+        </span><span class="s0">&quot;&quot;&quot;getrandbits(k) -&gt; x.  Generates an int with k random bits.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">k &lt;= </span><span class="s4">0</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'number of bits must be greater than zero'</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">k != int(k): 
+            </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s3">'number of bits should be an integer'</span><span class="s1">) 
+        numbytes = (k + </span><span class="s4">7</span><span class="s1">) // </span><span class="s4">8                       </span><span class="s5"># bits / 8 and rounded up</span><span class="s1"> 
+        x = int.from_bytes(_urandom(numbytes)</span><span class="s2">, </span><span class="s3">'big'</span><span class="s1">) 
+        </span><span class="s2">return </span><span class="s1">x &gt;&gt; (numbytes * </span><span class="s4">8 </span><span class="s1">- k)                </span><span class="s5"># trim excess bits</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">seed(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwds): 
+        </span><span class="s0">&quot;Stub method.  Not used for a system random number generator.&quot;</span><span class="s1"> 
+        </span><span class="s2">return None</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">_notimplemented(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwds): 
+        </span><span class="s0">&quot;Method should not be called for a system random number generator.&quot;</span><span class="s1"> 
+        </span><span class="s2">raise </span><span class="s1">NotImplementedError(</span><span class="s3">'System entropy source does not have state.'</span><span class="s1">) 
+    getstate = setstate = _notimplemented 
+ 
+</span><span class="s5">## -------------------- test program --------------------</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">_test_generator(n</span><span class="s2">, </span><span class="s1">func</span><span class="s2">, </span><span class="s1">args): 
+    </span><span class="s2">import </span><span class="s1">time 
+    print(n</span><span class="s2">, </span><span class="s3">'times'</span><span class="s2">, </span><span class="s1">func.__name__) 
+    total = </span><span class="s4">0.0</span><span class="s1"> 
+    sqsum = </span><span class="s4">0.0</span><span class="s1"> 
+    smallest = </span><span class="s4">1e10</span><span class="s1"> 
+    largest = -</span><span class="s4">1e10</span><span class="s1"> 
+    t0 = time.time() 
+    </span><span class="s2">for </span><span class="s1">i </span><span class="s2">in </span><span class="s1">range(n): 
+        x = func(*args) 
+        total += x 
+        sqsum = sqsum + x*x 
+        smallest = min(x</span><span class="s2">, </span><span class="s1">smallest) 
+        largest = max(x</span><span class="s2">, </span><span class="s1">largest) 
+    t1 = time.time() 
+    print(round(t1-t0</span><span class="s2">, </span><span class="s4">3</span><span class="s1">)</span><span class="s2">, </span><span class="s3">'sec,'</span><span class="s2">, </span><span class="s1">end=</span><span class="s3">' '</span><span class="s1">) 
+    avg = total/n 
+    stddev = _sqrt(sqsum/n - avg*avg) 
+    print(</span><span class="s3">'avg %g, stddev %g, min %g, max %g</span><span class="s2">\n</span><span class="s3">' </span><span class="s1">% \ 
+              (avg</span><span class="s2">, </span><span class="s1">stddev</span><span class="s2">, </span><span class="s1">smallest</span><span class="s2">, </span><span class="s1">largest)) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">_test(N=</span><span class="s4">2000</span><span class="s1">): 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">random</span><span class="s2">, </span><span class="s1">()) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">normalvariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">lognormvariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">vonmisesvariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gammavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.01</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gammavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.1</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gammavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.1</span><span class="s2">, </span><span class="s4">2.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gammavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.5</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gammavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.9</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gammavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">1.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gammavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">2.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gammavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">20.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gammavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">200.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">gauss</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">betavariate</span><span class="s2">, </span><span class="s1">(</span><span class="s4">3.0</span><span class="s2">, </span><span class="s4">3.0</span><span class="s1">)) 
+    _test_generator(N</span><span class="s2">, </span><span class="s1">triangular</span><span class="s2">, </span><span class="s1">(</span><span class="s4">0.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s2">, </span><span class="s4">1.0</span><span class="s1">/</span><span class="s4">3.0</span><span class="s1">)) 
+ 
+</span><span class="s5"># Create one instance, seeded from current time, and export its methods</span><span class="s1"> 
+</span><span class="s5"># as module-level functions.  The functions share state across all uses</span><span class="s1"> 
+</span><span class="s5">#(both in the user's code and in the Python libraries), but that's fine</span><span class="s1"> 
+</span><span class="s5"># for most programs and is easier for the casual user than making them</span><span class="s1"> 
+</span><span class="s5"># instantiate their own Random() instance.</span><span class="s1"> 
+ 
+_inst = Random() 
+seed = _inst.seed 
+random = _inst.random 
+uniform = _inst.uniform 
+triangular = _inst.triangular 
+randint = _inst.randint 
+choice = _inst.choice 
+randrange = _inst.randrange 
+sample = _inst.sample 
+shuffle = _inst.shuffle 
+normalvariate = _inst.normalvariate 
+lognormvariate = _inst.lognormvariate 
+expovariate = _inst.expovariate 
+vonmisesvariate = _inst.vonmisesvariate 
+gammavariate = _inst.gammavariate 
+gauss = _inst.gauss 
+betavariate = _inst.betavariate 
+paretovariate = _inst.paretovariate 
+weibullvariate = _inst.weibullvariate 
+getstate = _inst.getstate 
+setstate = _inst.setstate 
+getrandbits = _inst.getrandbits 
+ 
+</span><span class="s2">if </span><span class="s1">__name__ == </span><span class="s3">'__main__'</span><span class="s1">: 
+    _test() 
+</span></pre>
+</body>
+</html>

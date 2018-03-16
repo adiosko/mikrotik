@@ -1,0 +1,60 @@
+<html>
+<head>
+<title>cache.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+cache.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; 
+The cache object API for implementing caches. The default is a thread 
+safe in-memory dictionary. 
+&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2">from </span><span class="s1">threading </span><span class="s2">import </span><span class="s1">Lock 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">BaseCache(object): 
+ 
+    </span><span class="s2">def </span><span class="s1">get(self</span><span class="s2">, </span><span class="s1">key): 
+        </span><span class="s2">raise </span><span class="s1">NotImplemented() 
+ 
+    </span><span class="s2">def </span><span class="s1">set(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value): 
+        </span><span class="s2">raise </span><span class="s1">NotImplemented() 
+ 
+    </span><span class="s2">def </span><span class="s1">delete(self</span><span class="s2">, </span><span class="s1">key): 
+        </span><span class="s2">raise </span><span class="s1">NotImplemented() 
+ 
+    </span><span class="s2">def </span><span class="s1">close(self): 
+        </span><span class="s2">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">DictCache(BaseCache): 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">init_dict=</span><span class="s2">None</span><span class="s1">): 
+        self.lock = Lock() 
+        self.data = init_dict </span><span class="s2">or </span><span class="s1">{} 
+ 
+    </span><span class="s2">def </span><span class="s1">get(self</span><span class="s2">, </span><span class="s1">key): 
+        </span><span class="s2">return </span><span class="s1">self.data.get(key</span><span class="s2">, None</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">set(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value): 
+        </span><span class="s2">with </span><span class="s1">self.lock: 
+            self.data.update({key: value}) 
+ 
+    </span><span class="s2">def </span><span class="s1">delete(self</span><span class="s2">, </span><span class="s1">key): 
+        </span><span class="s2">with </span><span class="s1">self.lock: 
+            </span><span class="s2">if </span><span class="s1">key </span><span class="s2">in </span><span class="s1">self.data: 
+                self.data.pop(key) 
+</span></pre>
+</body>
+</html>

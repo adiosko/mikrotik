@@ -1,0 +1,330 @@
+<html>
+<head>
+<title>cp1006.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(106,135,89); }
+.s1 { color: rgb(128,128,128); }
+.s2 { color: rgb(169,183,198); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+cp1006.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; Python Character Mapping Codec cp1006 generated from 'MAPPINGS/VENDORS/MISC/CP1006.TXT' with gencodec.py. 
+ 
+&quot;&quot;&quot;</span><span class="s1">#&quot;</span><span class="s2"> 
+ 
+</span><span class="s3">import </span><span class="s2">codecs 
+ 
+</span><span class="s1">### Codec APIs</span><span class="s2"> 
+ 
+</span><span class="s3">class </span><span class="s2">Codec(codecs.Codec): 
+ 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_encode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">encoding_table) 
+ 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_decode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">decoding_table) 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalEncoder(codecs.IncrementalEncoder): 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_encode(input</span><span class="s3">,</span><span class="s2">self.errors</span><span class="s3">,</span><span class="s2">encoding_table)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalDecoder(codecs.IncrementalDecoder): 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_decode(input</span><span class="s3">,</span><span class="s2">self.errors</span><span class="s3">,</span><span class="s2">decoding_table)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">StreamWriter(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamWriter): 
+    </span><span class="s3">pass</span><span class="s2"> 
+ 
+</span><span class="s3">class </span><span class="s2">StreamReader(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamReader): 
+    </span><span class="s3">pass</span><span class="s2"> 
+ 
+</span><span class="s1">### encodings module API</span><span class="s2"> 
+ 
+</span><span class="s3">def </span><span class="s2">getregentry(): 
+    </span><span class="s3">return </span><span class="s2">codecs.CodecInfo( 
+        name=</span><span class="s0">'cp1006'</span><span class="s3">,</span><span class="s2"> 
+        encode=Codec().encode</span><span class="s3">,</span><span class="s2"> 
+        decode=Codec().decode</span><span class="s3">,</span><span class="s2"> 
+        incrementalencoder=IncrementalEncoder</span><span class="s3">,</span><span class="s2"> 
+        incrementaldecoder=IncrementalDecoder</span><span class="s3">,</span><span class="s2"> 
+        streamreader=StreamReader</span><span class="s3">,</span><span class="s2"> 
+        streamwriter=StreamWriter</span><span class="s3">,</span><span class="s2"> 
+    ) 
+ 
+ 
+</span><span class="s1">### Decoding Table</span><span class="s2"> 
+ 
+decoding_table = ( 
+    </span><span class="s0">'</span><span class="s3">\x00</span><span class="s0">'     </span><span class="s1">#  0x00 -&gt; NULL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x01</span><span class="s0">'     </span><span class="s1">#  0x01 -&gt; START OF HEADING</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x02</span><span class="s0">'     </span><span class="s1">#  0x02 -&gt; START OF TEXT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x03</span><span class="s0">'     </span><span class="s1">#  0x03 -&gt; END OF TEXT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x04</span><span class="s0">'     </span><span class="s1">#  0x04 -&gt; END OF TRANSMISSION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x05</span><span class="s0">'     </span><span class="s1">#  0x05 -&gt; ENQUIRY</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x06</span><span class="s0">'     </span><span class="s1">#  0x06 -&gt; ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x07</span><span class="s0">'     </span><span class="s1">#  0x07 -&gt; BELL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x08</span><span class="s0">'     </span><span class="s1">#  0x08 -&gt; BACKSPACE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\t</span><span class="s0">'       </span><span class="s1">#  0x09 -&gt; HORIZONTAL TABULATION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\n</span><span class="s0">'       </span><span class="s1">#  0x0A -&gt; LINE FEED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0b</span><span class="s0">'     </span><span class="s1">#  0x0B -&gt; VERTICAL TABULATION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0c</span><span class="s0">'     </span><span class="s1">#  0x0C -&gt; FORM FEED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\r</span><span class="s0">'       </span><span class="s1">#  0x0D -&gt; CARRIAGE RETURN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0e</span><span class="s0">'     </span><span class="s1">#  0x0E -&gt; SHIFT OUT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0f</span><span class="s0">'     </span><span class="s1">#  0x0F -&gt; SHIFT IN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x10</span><span class="s0">'     </span><span class="s1">#  0x10 -&gt; DATA LINK ESCAPE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x11</span><span class="s0">'     </span><span class="s1">#  0x11 -&gt; DEVICE CONTROL ONE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x12</span><span class="s0">'     </span><span class="s1">#  0x12 -&gt; DEVICE CONTROL TWO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x13</span><span class="s0">'     </span><span class="s1">#  0x13 -&gt; DEVICE CONTROL THREE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x14</span><span class="s0">'     </span><span class="s1">#  0x14 -&gt; DEVICE CONTROL FOUR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x15</span><span class="s0">'     </span><span class="s1">#  0x15 -&gt; NEGATIVE ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x16</span><span class="s0">'     </span><span class="s1">#  0x16 -&gt; SYNCHRONOUS IDLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x17</span><span class="s0">'     </span><span class="s1">#  0x17 -&gt; END OF TRANSMISSION BLOCK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x18</span><span class="s0">'     </span><span class="s1">#  0x18 -&gt; CANCEL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x19</span><span class="s0">'     </span><span class="s1">#  0x19 -&gt; END OF MEDIUM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1a</span><span class="s0">'     </span><span class="s1">#  0x1A -&gt; SUBSTITUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1b</span><span class="s0">'     </span><span class="s1">#  0x1B -&gt; ESCAPE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1c</span><span class="s0">'     </span><span class="s1">#  0x1C -&gt; FILE SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1d</span><span class="s0">'     </span><span class="s1">#  0x1D -&gt; GROUP SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1e</span><span class="s0">'     </span><span class="s1">#  0x1E -&gt; RECORD SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1f</span><span class="s0">'     </span><span class="s1">#  0x1F -&gt; UNIT SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">' '        </span><span class="s1">#  0x20 -&gt; SPACE</span><span class="s2"> 
+    </span><span class="s0">'!'        </span><span class="s1">#  0x21 -&gt; EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s0">'&quot;'        </span><span class="s1">#  0x22 -&gt; QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s0">'#'        </span><span class="s1">#  0x23 -&gt; NUMBER SIGN</span><span class="s2"> 
+    </span><span class="s0">'$'        </span><span class="s1">#  0x24 -&gt; DOLLAR SIGN</span><span class="s2"> 
+    </span><span class="s0">'%'        </span><span class="s1">#  0x25 -&gt; PERCENT SIGN</span><span class="s2"> 
+    </span><span class="s0">'&amp;'        </span><span class="s1">#  0x26 -&gt; AMPERSAND</span><span class="s2"> 
+    </span><span class="s0">&quot;'&quot;        </span><span class="s1">#  0x27 -&gt; APOSTROPHE</span><span class="s2"> 
+    </span><span class="s0">'('        </span><span class="s1">#  0x28 -&gt; LEFT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s0">')'        </span><span class="s1">#  0x29 -&gt; RIGHT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s0">'*'        </span><span class="s1">#  0x2A -&gt; ASTERISK</span><span class="s2"> 
+    </span><span class="s0">'+'        </span><span class="s1">#  0x2B -&gt; PLUS SIGN</span><span class="s2"> 
+    </span><span class="s0">','        </span><span class="s1">#  0x2C -&gt; COMMA</span><span class="s2"> 
+    </span><span class="s0">'-'        </span><span class="s1">#  0x2D -&gt; HYPHEN-MINUS</span><span class="s2"> 
+    </span><span class="s0">'.'        </span><span class="s1">#  0x2E -&gt; FULL STOP</span><span class="s2"> 
+    </span><span class="s0">'/'        </span><span class="s1">#  0x2F -&gt; SOLIDUS</span><span class="s2"> 
+    </span><span class="s0">'0'        </span><span class="s1">#  0x30 -&gt; DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s0">'1'        </span><span class="s1">#  0x31 -&gt; DIGIT ONE</span><span class="s2"> 
+    </span><span class="s0">'2'        </span><span class="s1">#  0x32 -&gt; DIGIT TWO</span><span class="s2"> 
+    </span><span class="s0">'3'        </span><span class="s1">#  0x33 -&gt; DIGIT THREE</span><span class="s2"> 
+    </span><span class="s0">'4'        </span><span class="s1">#  0x34 -&gt; DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s0">'5'        </span><span class="s1">#  0x35 -&gt; DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s0">'6'        </span><span class="s1">#  0x36 -&gt; DIGIT SIX</span><span class="s2"> 
+    </span><span class="s0">'7'        </span><span class="s1">#  0x37 -&gt; DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s0">'8'        </span><span class="s1">#  0x38 -&gt; DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s0">'9'        </span><span class="s1">#  0x39 -&gt; DIGIT NINE</span><span class="s2"> 
+    </span><span class="s0">':'        </span><span class="s1">#  0x3A -&gt; COLON</span><span class="s2"> 
+    </span><span class="s0">';'        </span><span class="s1">#  0x3B -&gt; SEMICOLON</span><span class="s2"> 
+    </span><span class="s0">'&lt;'        </span><span class="s1">#  0x3C -&gt; LESS-THAN SIGN</span><span class="s2"> 
+    </span><span class="s0">'='        </span><span class="s1">#  0x3D -&gt; EQUALS SIGN</span><span class="s2"> 
+    </span><span class="s0">'&gt;'        </span><span class="s1">#  0x3E -&gt; GREATER-THAN SIGN</span><span class="s2"> 
+    </span><span class="s0">'?'        </span><span class="s1">#  0x3F -&gt; QUESTION MARK</span><span class="s2"> 
+    </span><span class="s0">'@'        </span><span class="s1">#  0x40 -&gt; COMMERCIAL AT</span><span class="s2"> 
+    </span><span class="s0">'A'        </span><span class="s1">#  0x41 -&gt; LATIN CAPITAL LETTER A</span><span class="s2"> 
+    </span><span class="s0">'B'        </span><span class="s1">#  0x42 -&gt; LATIN CAPITAL LETTER B</span><span class="s2"> 
+    </span><span class="s0">'C'        </span><span class="s1">#  0x43 -&gt; LATIN CAPITAL LETTER C</span><span class="s2"> 
+    </span><span class="s0">'D'        </span><span class="s1">#  0x44 -&gt; LATIN CAPITAL LETTER D</span><span class="s2"> 
+    </span><span class="s0">'E'        </span><span class="s1">#  0x45 -&gt; LATIN CAPITAL LETTER E</span><span class="s2"> 
+    </span><span class="s0">'F'        </span><span class="s1">#  0x46 -&gt; LATIN CAPITAL LETTER F</span><span class="s2"> 
+    </span><span class="s0">'G'        </span><span class="s1">#  0x47 -&gt; LATIN CAPITAL LETTER G</span><span class="s2"> 
+    </span><span class="s0">'H'        </span><span class="s1">#  0x48 -&gt; LATIN CAPITAL LETTER H</span><span class="s2"> 
+    </span><span class="s0">'I'        </span><span class="s1">#  0x49 -&gt; LATIN CAPITAL LETTER I</span><span class="s2"> 
+    </span><span class="s0">'J'        </span><span class="s1">#  0x4A -&gt; LATIN CAPITAL LETTER J</span><span class="s2"> 
+    </span><span class="s0">'K'        </span><span class="s1">#  0x4B -&gt; LATIN CAPITAL LETTER K</span><span class="s2"> 
+    </span><span class="s0">'L'        </span><span class="s1">#  0x4C -&gt; LATIN CAPITAL LETTER L</span><span class="s2"> 
+    </span><span class="s0">'M'        </span><span class="s1">#  0x4D -&gt; LATIN CAPITAL LETTER M</span><span class="s2"> 
+    </span><span class="s0">'N'        </span><span class="s1">#  0x4E -&gt; LATIN CAPITAL LETTER N</span><span class="s2"> 
+    </span><span class="s0">'O'        </span><span class="s1">#  0x4F -&gt; LATIN CAPITAL LETTER O</span><span class="s2"> 
+    </span><span class="s0">'P'        </span><span class="s1">#  0x50 -&gt; LATIN CAPITAL LETTER P</span><span class="s2"> 
+    </span><span class="s0">'Q'        </span><span class="s1">#  0x51 -&gt; LATIN CAPITAL LETTER Q</span><span class="s2"> 
+    </span><span class="s0">'R'        </span><span class="s1">#  0x52 -&gt; LATIN CAPITAL LETTER R</span><span class="s2"> 
+    </span><span class="s0">'S'        </span><span class="s1">#  0x53 -&gt; LATIN CAPITAL LETTER S</span><span class="s2"> 
+    </span><span class="s0">'T'        </span><span class="s1">#  0x54 -&gt; LATIN CAPITAL LETTER T</span><span class="s2"> 
+    </span><span class="s0">'U'        </span><span class="s1">#  0x55 -&gt; LATIN CAPITAL LETTER U</span><span class="s2"> 
+    </span><span class="s0">'V'        </span><span class="s1">#  0x56 -&gt; LATIN CAPITAL LETTER V</span><span class="s2"> 
+    </span><span class="s0">'W'        </span><span class="s1">#  0x57 -&gt; LATIN CAPITAL LETTER W</span><span class="s2"> 
+    </span><span class="s0">'X'        </span><span class="s1">#  0x58 -&gt; LATIN CAPITAL LETTER X</span><span class="s2"> 
+    </span><span class="s0">'Y'        </span><span class="s1">#  0x59 -&gt; LATIN CAPITAL LETTER Y</span><span class="s2"> 
+    </span><span class="s0">'Z'        </span><span class="s1">#  0x5A -&gt; LATIN CAPITAL LETTER Z</span><span class="s2"> 
+    </span><span class="s0">'['        </span><span class="s1">#  0x5B -&gt; LEFT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\\</span><span class="s0">'       </span><span class="s1">#  0x5C -&gt; REVERSE SOLIDUS</span><span class="s2"> 
+    </span><span class="s0">']'        </span><span class="s1">#  0x5D -&gt; RIGHT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s0">'^'        </span><span class="s1">#  0x5E -&gt; CIRCUMFLEX ACCENT</span><span class="s2"> 
+    </span><span class="s0">'_'        </span><span class="s1">#  0x5F -&gt; LOW LINE</span><span class="s2"> 
+    </span><span class="s0">'`'        </span><span class="s1">#  0x60 -&gt; GRAVE ACCENT</span><span class="s2"> 
+    </span><span class="s0">'a'        </span><span class="s1">#  0x61 -&gt; LATIN SMALL LETTER A</span><span class="s2"> 
+    </span><span class="s0">'b'        </span><span class="s1">#  0x62 -&gt; LATIN SMALL LETTER B</span><span class="s2"> 
+    </span><span class="s0">'c'        </span><span class="s1">#  0x63 -&gt; LATIN SMALL LETTER C</span><span class="s2"> 
+    </span><span class="s0">'d'        </span><span class="s1">#  0x64 -&gt; LATIN SMALL LETTER D</span><span class="s2"> 
+    </span><span class="s0">'e'        </span><span class="s1">#  0x65 -&gt; LATIN SMALL LETTER E</span><span class="s2"> 
+    </span><span class="s0">'f'        </span><span class="s1">#  0x66 -&gt; LATIN SMALL LETTER F</span><span class="s2"> 
+    </span><span class="s0">'g'        </span><span class="s1">#  0x67 -&gt; LATIN SMALL LETTER G</span><span class="s2"> 
+    </span><span class="s0">'h'        </span><span class="s1">#  0x68 -&gt; LATIN SMALL LETTER H</span><span class="s2"> 
+    </span><span class="s0">'i'        </span><span class="s1">#  0x69 -&gt; LATIN SMALL LETTER I</span><span class="s2"> 
+    </span><span class="s0">'j'        </span><span class="s1">#  0x6A -&gt; LATIN SMALL LETTER J</span><span class="s2"> 
+    </span><span class="s0">'k'        </span><span class="s1">#  0x6B -&gt; LATIN SMALL LETTER K</span><span class="s2"> 
+    </span><span class="s0">'l'        </span><span class="s1">#  0x6C -&gt; LATIN SMALL LETTER L</span><span class="s2"> 
+    </span><span class="s0">'m'        </span><span class="s1">#  0x6D -&gt; LATIN SMALL LETTER M</span><span class="s2"> 
+    </span><span class="s0">'n'        </span><span class="s1">#  0x6E -&gt; LATIN SMALL LETTER N</span><span class="s2"> 
+    </span><span class="s0">'o'        </span><span class="s1">#  0x6F -&gt; LATIN SMALL LETTER O</span><span class="s2"> 
+    </span><span class="s0">'p'        </span><span class="s1">#  0x70 -&gt; LATIN SMALL LETTER P</span><span class="s2"> 
+    </span><span class="s0">'q'        </span><span class="s1">#  0x71 -&gt; LATIN SMALL LETTER Q</span><span class="s2"> 
+    </span><span class="s0">'r'        </span><span class="s1">#  0x72 -&gt; LATIN SMALL LETTER R</span><span class="s2"> 
+    </span><span class="s0">'s'        </span><span class="s1">#  0x73 -&gt; LATIN SMALL LETTER S</span><span class="s2"> 
+    </span><span class="s0">'t'        </span><span class="s1">#  0x74 -&gt; LATIN SMALL LETTER T</span><span class="s2"> 
+    </span><span class="s0">'u'        </span><span class="s1">#  0x75 -&gt; LATIN SMALL LETTER U</span><span class="s2"> 
+    </span><span class="s0">'v'        </span><span class="s1">#  0x76 -&gt; LATIN SMALL LETTER V</span><span class="s2"> 
+    </span><span class="s0">'w'        </span><span class="s1">#  0x77 -&gt; LATIN SMALL LETTER W</span><span class="s2"> 
+    </span><span class="s0">'x'        </span><span class="s1">#  0x78 -&gt; LATIN SMALL LETTER X</span><span class="s2"> 
+    </span><span class="s0">'y'        </span><span class="s1">#  0x79 -&gt; LATIN SMALL LETTER Y</span><span class="s2"> 
+    </span><span class="s0">'z'        </span><span class="s1">#  0x7A -&gt; LATIN SMALL LETTER Z</span><span class="s2"> 
+    </span><span class="s0">'{'        </span><span class="s1">#  0x7B -&gt; LEFT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s0">'|'        </span><span class="s1">#  0x7C -&gt; VERTICAL LINE</span><span class="s2"> 
+    </span><span class="s0">'}'        </span><span class="s1">#  0x7D -&gt; RIGHT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s0">'~'        </span><span class="s1">#  0x7E -&gt; TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x7f</span><span class="s0">'     </span><span class="s1">#  0x7F -&gt; DELETE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x80</span><span class="s0">'     </span><span class="s1">#  0x80 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x81</span><span class="s0">'     </span><span class="s1">#  0x81 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x82</span><span class="s0">'     </span><span class="s1">#  0x82 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x83</span><span class="s0">'     </span><span class="s1">#  0x83 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x84</span><span class="s0">'     </span><span class="s1">#  0x84 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x85</span><span class="s0">'     </span><span class="s1">#  0x85 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x86</span><span class="s0">'     </span><span class="s1">#  0x86 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x87</span><span class="s0">'     </span><span class="s1">#  0x87 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x88</span><span class="s0">'     </span><span class="s1">#  0x88 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x89</span><span class="s0">'     </span><span class="s1">#  0x89 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8a</span><span class="s0">'     </span><span class="s1">#  0x8A -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8b</span><span class="s0">'     </span><span class="s1">#  0x8B -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8c</span><span class="s0">'     </span><span class="s1">#  0x8C -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8d</span><span class="s0">'     </span><span class="s1">#  0x8D -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8e</span><span class="s0">'     </span><span class="s1">#  0x8E -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8f</span><span class="s0">'     </span><span class="s1">#  0x8F -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x90</span><span class="s0">'     </span><span class="s1">#  0x90 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x91</span><span class="s0">'     </span><span class="s1">#  0x91 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x92</span><span class="s0">'     </span><span class="s1">#  0x92 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x93</span><span class="s0">'     </span><span class="s1">#  0x93 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x94</span><span class="s0">'     </span><span class="s1">#  0x94 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x95</span><span class="s0">'     </span><span class="s1">#  0x95 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x96</span><span class="s0">'     </span><span class="s1">#  0x96 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x97</span><span class="s0">'     </span><span class="s1">#  0x97 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x98</span><span class="s0">'     </span><span class="s1">#  0x98 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x99</span><span class="s0">'     </span><span class="s1">#  0x99 -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9a</span><span class="s0">'     </span><span class="s1">#  0x9A -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9b</span><span class="s0">'     </span><span class="s1">#  0x9B -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9c</span><span class="s0">'     </span><span class="s1">#  0x9C -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9d</span><span class="s0">'     </span><span class="s1">#  0x9D -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9e</span><span class="s0">'     </span><span class="s1">#  0x9E -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9f</span><span class="s0">'     </span><span class="s1">#  0x9F -&gt; &lt;control&gt;</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa0</span><span class="s0">'     </span><span class="s1">#  0xA0 -&gt; NO-BREAK SPACE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f0</span><span class="s0">'   </span><span class="s1">#  0xA1 -&gt; EXTENDED ARABIC-INDIC DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f1</span><span class="s0">'   </span><span class="s1">#  0xA2 -&gt; EXTENDED ARABIC-INDIC DIGIT ONE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f2</span><span class="s0">'   </span><span class="s1">#  0xA3 -&gt; EXTENDED ARABIC-INDIC DIGIT TWO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f3</span><span class="s0">'   </span><span class="s1">#  0xA4 -&gt; EXTENDED ARABIC-INDIC DIGIT THREE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f4</span><span class="s0">'   </span><span class="s1">#  0xA5 -&gt; EXTENDED ARABIC-INDIC DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f5</span><span class="s0">'   </span><span class="s1">#  0xA6 -&gt; EXTENDED ARABIC-INDIC DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f6</span><span class="s0">'   </span><span class="s1">#  0xA7 -&gt; EXTENDED ARABIC-INDIC DIGIT SIX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f7</span><span class="s0">'   </span><span class="s1">#  0xA8 -&gt; EXTENDED ARABIC-INDIC DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f8</span><span class="s0">'   </span><span class="s1">#  0xA9 -&gt; EXTENDED ARABIC-INDIC DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u06f9</span><span class="s0">'   </span><span class="s1">#  0xAA -&gt; EXTENDED ARABIC-INDIC DIGIT NINE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u060c</span><span class="s0">'   </span><span class="s1">#  0xAB -&gt; ARABIC COMMA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u061b</span><span class="s0">'   </span><span class="s1">#  0xAC -&gt; ARABIC SEMICOLON</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xad</span><span class="s0">'     </span><span class="s1">#  0xAD -&gt; SOFT HYPHEN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u061f</span><span class="s0">'   </span><span class="s1">#  0xAE -&gt; ARABIC QUESTION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe81</span><span class="s0">'   </span><span class="s1">#  0xAF -&gt; ARABIC LETTER ALEF WITH MADDA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8d</span><span class="s0">'   </span><span class="s1">#  0xB0 -&gt; ARABIC LETTER ALEF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8e</span><span class="s0">'   </span><span class="s1">#  0xB1 -&gt; ARABIC LETTER ALEF FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8e</span><span class="s0">'   </span><span class="s1">#  0xB2 -&gt; ARABIC LETTER ALEF FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8f</span><span class="s0">'   </span><span class="s1">#  0xB3 -&gt; ARABIC LETTER BEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe91</span><span class="s0">'   </span><span class="s1">#  0xB4 -&gt; ARABIC LETTER BEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb56</span><span class="s0">'   </span><span class="s1">#  0xB5 -&gt; ARABIC LETTER PEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb58</span><span class="s0">'   </span><span class="s1">#  0xB6 -&gt; ARABIC LETTER PEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe93</span><span class="s0">'   </span><span class="s1">#  0xB7 -&gt; ARABIC LETTER TEH MARBUTA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe95</span><span class="s0">'   </span><span class="s1">#  0xB8 -&gt; ARABIC LETTER TEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe97</span><span class="s0">'   </span><span class="s1">#  0xB9 -&gt; ARABIC LETTER TEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb66</span><span class="s0">'   </span><span class="s1">#  0xBA -&gt; ARABIC LETTER TTEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb68</span><span class="s0">'   </span><span class="s1">#  0xBB -&gt; ARABIC LETTER TTEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe99</span><span class="s0">'   </span><span class="s1">#  0xBC -&gt; ARABIC LETTER THEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe9b</span><span class="s0">'   </span><span class="s1">#  0xBD -&gt; ARABIC LETTER THEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe9d</span><span class="s0">'   </span><span class="s1">#  0xBE -&gt; ARABIC LETTER JEEM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe9f</span><span class="s0">'   </span><span class="s1">#  0xBF -&gt; ARABIC LETTER JEEM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb7a</span><span class="s0">'   </span><span class="s1">#  0xC0 -&gt; ARABIC LETTER TCHEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb7c</span><span class="s0">'   </span><span class="s1">#  0xC1 -&gt; ARABIC LETTER TCHEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea1</span><span class="s0">'   </span><span class="s1">#  0xC2 -&gt; ARABIC LETTER HAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea3</span><span class="s0">'   </span><span class="s1">#  0xC3 -&gt; ARABIC LETTER HAH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea5</span><span class="s0">'   </span><span class="s1">#  0xC4 -&gt; ARABIC LETTER KHAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea7</span><span class="s0">'   </span><span class="s1">#  0xC5 -&gt; ARABIC LETTER KHAH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea9</span><span class="s0">'   </span><span class="s1">#  0xC6 -&gt; ARABIC LETTER DAL ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb84</span><span class="s0">'   </span><span class="s1">#  0xC7 -&gt; ARABIC LETTER DAHAL ISOLATED FORMN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeab</span><span class="s0">'   </span><span class="s1">#  0xC8 -&gt; ARABIC LETTER THAL ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufead</span><span class="s0">'   </span><span class="s1">#  0xC9 -&gt; ARABIC LETTER REH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb8c</span><span class="s0">'   </span><span class="s1">#  0xCA -&gt; ARABIC LETTER RREH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeaf</span><span class="s0">'   </span><span class="s1">#  0xCB -&gt; ARABIC LETTER ZAIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb8a</span><span class="s0">'   </span><span class="s1">#  0xCC -&gt; ARABIC LETTER JEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb1</span><span class="s0">'   </span><span class="s1">#  0xCD -&gt; ARABIC LETTER SEEN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb3</span><span class="s0">'   </span><span class="s1">#  0xCE -&gt; ARABIC LETTER SEEN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb5</span><span class="s0">'   </span><span class="s1">#  0xCF -&gt; ARABIC LETTER SHEEN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb7</span><span class="s0">'   </span><span class="s1">#  0xD0 -&gt; ARABIC LETTER SHEEN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb9</span><span class="s0">'   </span><span class="s1">#  0xD1 -&gt; ARABIC LETTER SAD ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufebb</span><span class="s0">'   </span><span class="s1">#  0xD2 -&gt; ARABIC LETTER SAD INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufebd</span><span class="s0">'   </span><span class="s1">#  0xD3 -&gt; ARABIC LETTER DAD ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufebf</span><span class="s0">'   </span><span class="s1">#  0xD4 -&gt; ARABIC LETTER DAD INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufec1</span><span class="s0">'   </span><span class="s1">#  0xD5 -&gt; ARABIC LETTER TAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufec5</span><span class="s0">'   </span><span class="s1">#  0xD6 -&gt; ARABIC LETTER ZAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufec9</span><span class="s0">'   </span><span class="s1">#  0xD7 -&gt; ARABIC LETTER AIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeca</span><span class="s0">'   </span><span class="s1">#  0xD8 -&gt; ARABIC LETTER AIN FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufecb</span><span class="s0">'   </span><span class="s1">#  0xD9 -&gt; ARABIC LETTER AIN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufecc</span><span class="s0">'   </span><span class="s1">#  0xDA -&gt; ARABIC LETTER AIN MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufecd</span><span class="s0">'   </span><span class="s1">#  0xDB -&gt; ARABIC LETTER GHAIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufece</span><span class="s0">'   </span><span class="s1">#  0xDC -&gt; ARABIC LETTER GHAIN FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufecf</span><span class="s0">'   </span><span class="s1">#  0xDD -&gt; ARABIC LETTER GHAIN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed0</span><span class="s0">'   </span><span class="s1">#  0xDE -&gt; ARABIC LETTER GHAIN MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed1</span><span class="s0">'   </span><span class="s1">#  0xDF -&gt; ARABIC LETTER FEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed3</span><span class="s0">'   </span><span class="s1">#  0xE0 -&gt; ARABIC LETTER FEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed5</span><span class="s0">'   </span><span class="s1">#  0xE1 -&gt; ARABIC LETTER QAF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed7</span><span class="s0">'   </span><span class="s1">#  0xE2 -&gt; ARABIC LETTER QAF INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed9</span><span class="s0">'   </span><span class="s1">#  0xE3 -&gt; ARABIC LETTER KAF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufedb</span><span class="s0">'   </span><span class="s1">#  0xE4 -&gt; ARABIC LETTER KAF INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb92</span><span class="s0">'   </span><span class="s1">#  0xE5 -&gt; ARABIC LETTER GAF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb94</span><span class="s0">'   </span><span class="s1">#  0xE6 -&gt; ARABIC LETTER GAF INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufedd</span><span class="s0">'   </span><span class="s1">#  0xE7 -&gt; ARABIC LETTER LAM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufedf</span><span class="s0">'   </span><span class="s1">#  0xE8 -&gt; ARABIC LETTER LAM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee0</span><span class="s0">'   </span><span class="s1">#  0xE9 -&gt; ARABIC LETTER LAM MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee1</span><span class="s0">'   </span><span class="s1">#  0xEA -&gt; ARABIC LETTER MEEM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee3</span><span class="s0">'   </span><span class="s1">#  0xEB -&gt; ARABIC LETTER MEEM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufb9e</span><span class="s0">'   </span><span class="s1">#  0xEC -&gt; ARABIC LETTER NOON GHUNNA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee5</span><span class="s0">'   </span><span class="s1">#  0xED -&gt; ARABIC LETTER NOON ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee7</span><span class="s0">'   </span><span class="s1">#  0xEE -&gt; ARABIC LETTER NOON INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe85</span><span class="s0">'   </span><span class="s1">#  0xEF -&gt; ARABIC LETTER WAW WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeed</span><span class="s0">'   </span><span class="s1">#  0xF0 -&gt; ARABIC LETTER WAW ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufba6</span><span class="s0">'   </span><span class="s1">#  0xF1 -&gt; ARABIC LETTER HEH GOAL ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufba8</span><span class="s0">'   </span><span class="s1">#  0xF2 -&gt; ARABIC LETTER HEH GOAL INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufba9</span><span class="s0">'   </span><span class="s1">#  0xF3 -&gt; ARABIC LETTER HEH GOAL MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufbaa</span><span class="s0">'   </span><span class="s1">#  0xF4 -&gt; ARABIC LETTER HEH DOACHASHMEE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe80</span><span class="s0">'   </span><span class="s1">#  0xF5 -&gt; ARABIC LETTER HAMZA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe89</span><span class="s0">'   </span><span class="s1">#  0xF6 -&gt; ARABIC LETTER YEH WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8a</span><span class="s0">'   </span><span class="s1">#  0xF7 -&gt; ARABIC LETTER YEH WITH HAMZA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8b</span><span class="s0">'   </span><span class="s1">#  0xF8 -&gt; ARABIC LETTER YEH WITH HAMZA ABOVE INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef1</span><span class="s0">'   </span><span class="s1">#  0xF9 -&gt; ARABIC LETTER YEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef2</span><span class="s0">'   </span><span class="s1">#  0xFA -&gt; ARABIC LETTER YEH FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef3</span><span class="s0">'   </span><span class="s1">#  0xFB -&gt; ARABIC LETTER YEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufbb0</span><span class="s0">'   </span><span class="s1">#  0xFC -&gt; ARABIC LETTER YEH BARREE WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufbae</span><span class="s0">'   </span><span class="s1">#  0xFD -&gt; ARABIC LETTER YEH BARREE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe7c</span><span class="s0">'   </span><span class="s1">#  0xFE -&gt; ARABIC SHADDA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe7d</span><span class="s0">'   </span><span class="s1">#  0xFF -&gt; ARABIC SHADDA MEDIAL FORM</span><span class="s2"> 
+) 
+ 
+</span><span class="s1">### Encoding table</span><span class="s2"> 
+encoding_table=codecs.charmap_build(decoding_table) 
+</span></pre>
+</body>
+</html>

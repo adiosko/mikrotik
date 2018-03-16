@@ -1,0 +1,1454 @@
+<html>
+<head>
+<title>_bootstrap_external.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(204,120,50); }
+.s5 { color: rgb(165,194,97); }
+.s6 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+_bootstrap_external.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Core implementation of path-based import. 
+ 
+This module is NOT meant to be directly imported! It has been designed such 
+that it can be bootstrapped into Python as the implementation of import. As 
+such it requires the injection of specific modules and attributes in order to 
+work. One should use importlib as the public-facing version of this module. 
+ 
+&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># IMPORTANT: Whenever making changes to this module, be sure to run</span><span class="s1"> 
+</span><span class="s2"># a top-level make in order to get the frozen version of the module</span><span class="s1"> 
+</span><span class="s2"># updated. Not doing so will result in the Makefile to fail for</span><span class="s1"> 
+</span><span class="s2"># all others who don't have a ./python around to freeze the module</span><span class="s1"> 
+</span><span class="s2"># in the early stages of compilation.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+ 
+</span><span class="s2"># See importlib._setup() for what is injected into the global namespace.</span><span class="s1"> 
+ 
+</span><span class="s2"># When editing this code be aware that code executed at import time CANNOT</span><span class="s1"> 
+</span><span class="s2"># reference any injected objects! This includes not only global code but also</span><span class="s1"> 
+</span><span class="s2"># anything specified at the class level.</span><span class="s1"> 
+ 
+</span><span class="s2"># Bootstrap-related code ######################################################</span><span class="s1"> 
+ 
+_CASE_INSENSITIVE_PLATFORMS = </span><span class="s3">'win'</span><span class="s4">, </span><span class="s3">'cygwin'</span><span class="s4">, </span><span class="s3">'darwin'</span><span class="s1"> 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_make_relax_case(): 
+    </span><span class="s4">if </span><span class="s1">sys.platform.startswith(_CASE_INSENSITIVE_PLATFORMS): 
+        </span><span class="s4">def </span><span class="s1">_relax_case(): 
+            </span><span class="s0">&quot;&quot;&quot;True if filenames must be checked case-insensitively.&quot;&quot;&quot;</span><span class="s1"> 
+            </span><span class="s4">return </span><span class="s5">b'PYTHONCASEOK' </span><span class="s4">in </span><span class="s1">_os.environ 
+    </span><span class="s4">else</span><span class="s1">: 
+        </span><span class="s4">def </span><span class="s1">_relax_case(): 
+            </span><span class="s0">&quot;&quot;&quot;True if filenames must be checked case-insensitively.&quot;&quot;&quot;</span><span class="s1"> 
+            </span><span class="s4">return False</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">_relax_case 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_w_long(x): 
+    </span><span class="s0">&quot;&quot;&quot;Convert a 32-bit integer to little-endian.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">(int(x) &amp; </span><span class="s6">0xFFFFFFFF</span><span class="s1">).to_bytes(</span><span class="s6">4</span><span class="s4">, </span><span class="s3">'little'</span><span class="s1">) 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_r_long(int_bytes): 
+    </span><span class="s0">&quot;&quot;&quot;Convert 4 bytes in little-endian to an integer.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">int.from_bytes(int_bytes</span><span class="s4">, </span><span class="s3">'little'</span><span class="s1">) 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_path_join(*path_parts): 
+    </span><span class="s0">&quot;&quot;&quot;Replacement for os.path.join().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">path_sep.join([part.rstrip(path_separators) 
+                          </span><span class="s4">for </span><span class="s1">part </span><span class="s4">in </span><span class="s1">path_parts </span><span class="s4">if </span><span class="s1">part]) 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_path_split(path): 
+    </span><span class="s0">&quot;&quot;&quot;Replacement for os.path.split().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">len(path_separators) == </span><span class="s6">1</span><span class="s1">: 
+        front</span><span class="s4">, </span><span class="s1">_</span><span class="s4">, </span><span class="s1">tail = path.rpartition(path_sep) 
+        </span><span class="s4">return </span><span class="s1">front</span><span class="s4">, </span><span class="s1">tail 
+    </span><span class="s4">for </span><span class="s1">x </span><span class="s4">in </span><span class="s1">reversed(path): 
+        </span><span class="s4">if </span><span class="s1">x </span><span class="s4">in </span><span class="s1">path_separators: 
+            front</span><span class="s4">, </span><span class="s1">tail = path.rsplit(x</span><span class="s4">, </span><span class="s1">maxsplit=</span><span class="s6">1</span><span class="s1">) 
+            </span><span class="s4">return </span><span class="s1">front</span><span class="s4">, </span><span class="s1">tail 
+    </span><span class="s4">return </span><span class="s3">''</span><span class="s4">, </span><span class="s1">path 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_path_stat(path): 
+    </span><span class="s0">&quot;&quot;&quot;Stat the path. 
+ 
+    Made a separate function to make it easier to override in experiments 
+    (e.g. cache stat results). 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">_os.stat(path) 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_path_is_mode_type(path</span><span class="s4">, </span><span class="s1">mode): 
+    </span><span class="s0">&quot;&quot;&quot;Test whether the path is the specified mode type.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">try</span><span class="s1">: 
+        stat_info = _path_stat(path) 
+    </span><span class="s4">except </span><span class="s1">OSError: 
+        </span><span class="s4">return False</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">(stat_info.st_mode &amp; </span><span class="s6">0o170000</span><span class="s1">) == mode 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_path_isfile(path): 
+    </span><span class="s0">&quot;&quot;&quot;Replacement for os.path.isfile.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">_path_is_mode_type(path</span><span class="s4">, </span><span class="s6">0o100000</span><span class="s1">) 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_path_isdir(path): 
+    </span><span class="s0">&quot;&quot;&quot;Replacement for os.path.isdir.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if not </span><span class="s1">path: 
+        path = _os.getcwd() 
+    </span><span class="s4">return </span><span class="s1">_path_is_mode_type(path</span><span class="s4">, </span><span class="s6">0o040000</span><span class="s1">) 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_write_atomic(path</span><span class="s4">, </span><span class="s1">data</span><span class="s4">, </span><span class="s1">mode=</span><span class="s6">0o666</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Best-effort function to write data to a path atomically. 
+    Be prepared to handle a FileExistsError if concurrent writing of the 
+    temporary file is attempted.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2"># id() is used to generate a pseudo-random filename.</span><span class="s1"> 
+    path_tmp = </span><span class="s3">'{}.{}'</span><span class="s1">.format(path</span><span class="s4">, </span><span class="s1">id(path)) 
+    fd = _os.open(path_tmp</span><span class="s4">,</span><span class="s1"> 
+                  _os.O_EXCL | _os.O_CREAT | _os.O_WRONLY</span><span class="s4">, </span><span class="s1">mode &amp; </span><span class="s6">0o666</span><span class="s1">) 
+    </span><span class="s4">try</span><span class="s1">: 
+        </span><span class="s2"># We first write data to a temporary file, and then use os.replace() to</span><span class="s1"> 
+        </span><span class="s2"># perform an atomic rename.</span><span class="s1"> 
+        </span><span class="s4">with </span><span class="s1">_io.FileIO(fd</span><span class="s4">, </span><span class="s3">'wb'</span><span class="s1">) </span><span class="s4">as </span><span class="s1">file: 
+            file.write(data) 
+        _os.replace(path_tmp</span><span class="s4">, </span><span class="s1">path) 
+    </span><span class="s4">except </span><span class="s1">OSError: 
+        </span><span class="s4">try</span><span class="s1">: 
+            _os.unlink(path_tmp) 
+        </span><span class="s4">except </span><span class="s1">OSError: 
+            </span><span class="s4">pass</span><span class="s1"> 
+        </span><span class="s4">raise</span><span class="s1"> 
+ 
+ 
+_code_type = type(_write_atomic.__code__) 
+ 
+ 
+</span><span class="s2"># Finder/loader utility code ###############################################</span><span class="s1"> 
+ 
+</span><span class="s2"># Magic word to reject .pyc files generated by other Python versions.</span><span class="s1"> 
+</span><span class="s2"># It should change for each incompatible change to the bytecode.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># The value of CR and LF is incorporated so if you ever read or write</span><span class="s1"> 
+</span><span class="s2"># a .pyc file in text mode the magic number will be wrong; also, the</span><span class="s1"> 
+</span><span class="s2"># Apple MPW compiler swaps their values, botching string constants.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># The magic numbers must be spaced apart at least 2 values, as the</span><span class="s1"> 
+</span><span class="s2"># -U interpeter flag will cause MAGIC+1 being used. They have been</span><span class="s1"> 
+</span><span class="s2"># odd numbers for some time now.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># There were a variety of old schemes for setting the magic number.</span><span class="s1"> 
+</span><span class="s2"># The current working scheme is to increment the previous value by</span><span class="s1"> 
+</span><span class="s2"># 10.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># Starting with the adoption of PEP 3147 in Python 3.2, every bump in magic</span><span class="s1"> 
+</span><span class="s2"># number also includes a new &quot;magic tag&quot;, i.e. a human readable string used</span><span class="s1"> 
+</span><span class="s2"># to represent the magic number in __pycache__ directories.  When you change</span><span class="s1"> 
+</span><span class="s2"># the magic number, you must also set a new unique magic tag.  Generally this</span><span class="s1"> 
+</span><span class="s2"># can be named after the Python major version of the magic number bump, but</span><span class="s1"> 
+</span><span class="s2"># it can really be anything, as long as it's different than anything else</span><span class="s1"> 
+</span><span class="s2"># that's come before.  The tags are included in the following table, starting</span><span class="s1"> 
+</span><span class="s2"># with Python 3.2a0.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># Known values:</span><span class="s1"> 
+</span><span class="s2">#  Python 1.5:   20121</span><span class="s1"> 
+</span><span class="s2">#  Python 1.5.1: 20121</span><span class="s1"> 
+</span><span class="s2">#     Python 1.5.2: 20121</span><span class="s1"> 
+</span><span class="s2">#     Python 1.6:   50428</span><span class="s1"> 
+</span><span class="s2">#     Python 2.0:   50823</span><span class="s1"> 
+</span><span class="s2">#     Python 2.0.1: 50823</span><span class="s1"> 
+</span><span class="s2">#     Python 2.1:   60202</span><span class="s1"> 
+</span><span class="s2">#     Python 2.1.1: 60202</span><span class="s1"> 
+</span><span class="s2">#     Python 2.1.2: 60202</span><span class="s1"> 
+</span><span class="s2">#     Python 2.2:   60717</span><span class="s1"> 
+</span><span class="s2">#     Python 2.3a0: 62011</span><span class="s1"> 
+</span><span class="s2">#     Python 2.3a0: 62021</span><span class="s1"> 
+</span><span class="s2">#     Python 2.3a0: 62011 (!)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.4a0: 62041</span><span class="s1"> 
+</span><span class="s2">#     Python 2.4a3: 62051</span><span class="s1"> 
+</span><span class="s2">#     Python 2.4b1: 62061</span><span class="s1"> 
+</span><span class="s2">#     Python 2.5a0: 62071</span><span class="s1"> 
+</span><span class="s2">#     Python 2.5a0: 62081 (ast-branch)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.5a0: 62091 (with)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.5a0: 62092 (changed WITH_CLEANUP opcode)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.5b3: 62101 (fix wrong code: for x, in ...)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.5b3: 62111 (fix wrong code: x += yield)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.5c1: 62121 (fix wrong lnotab with for loops and</span><span class="s1"> 
+</span><span class="s2">#                          storing constants that should have been removed)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.5c2: 62131 (fix wrong code: for x, in ... in listcomp/genexp)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.6a0: 62151 (peephole optimizations and STORE_MAP opcode)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.6a1: 62161 (WITH_CLEANUP optimization)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.7a0: 62171 (optimize list comprehensions/change LIST_APPEND)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.7a0: 62181 (optimize conditional branches:</span><span class="s1"> 
+</span><span class="s2">#                          introduce POP_JUMP_IF_FALSE and POP_JUMP_IF_TRUE)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.7a0  62191 (introduce SETUP_WITH)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.7a0  62201 (introduce BUILD_SET)</span><span class="s1"> 
+</span><span class="s2">#     Python 2.7a0  62211 (introduce MAP_ADD and SET_ADD)</span><span class="s1"> 
+</span><span class="s2">#     Python 3000:   3000</span><span class="s1"> 
+</span><span class="s2">#                    3010 (removed UNARY_CONVERT)</span><span class="s1"> 
+</span><span class="s2">#                    3020 (added BUILD_SET)</span><span class="s1"> 
+</span><span class="s2">#                    3030 (added keyword-only parameters)</span><span class="s1"> 
+</span><span class="s2">#                    3040 (added signature annotations)</span><span class="s1"> 
+</span><span class="s2">#                    3050 (print becomes a function)</span><span class="s1"> 
+</span><span class="s2">#                    3060 (PEP 3115 metaclass syntax)</span><span class="s1"> 
+</span><span class="s2">#                    3061 (string literals become unicode)</span><span class="s1"> 
+</span><span class="s2">#                    3071 (PEP 3109 raise changes)</span><span class="s1"> 
+</span><span class="s2">#                    3081 (PEP 3137 make __file__ and __name__ unicode)</span><span class="s1"> 
+</span><span class="s2">#                    3091 (kill str8 interning)</span><span class="s1"> 
+</span><span class="s2">#                    3101 (merge from 2.6a0, see 62151)</span><span class="s1"> 
+</span><span class="s2">#                    3103 (__file__ points to source file)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.0a4: 3111 (WITH_CLEANUP optimization).</span><span class="s1"> 
+</span><span class="s2">#     Python 3.0a5: 3131 (lexical exception stacking, including POP_EXCEPT)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.1a0: 3141 (optimize list, set and dict comprehensions:</span><span class="s1"> 
+</span><span class="s2">#             change LIST_APPEND and SET_ADD, add MAP_ADD)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.1a0: 3151 (optimize conditional branches:</span><span class="s1"> 
+</span><span class="s2">#             introduce POP_JUMP_IF_FALSE and POP_JUMP_IF_TRUE)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.2a0: 3160 (add SETUP_WITH)</span><span class="s1"> 
+</span><span class="s2">#                   tag: cpython-32</span><span class="s1"> 
+</span><span class="s2">#     Python 3.2a1: 3170 (add DUP_TOP_TWO, remove DUP_TOPX and ROT_FOUR)</span><span class="s1"> 
+</span><span class="s2">#                   tag: cpython-32</span><span class="s1"> 
+</span><span class="s2">#     Python 3.2a2  3180 (add DELETE_DEREF)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.3a0  3190 __class__ super closure changed</span><span class="s1"> 
+</span><span class="s2">#     Python 3.3a0  3200 (__qualname__ added)</span><span class="s1"> 
+</span><span class="s2">#                      3210 (added size modulo 2**32 to the pyc header)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.3a1  3220 (changed PEP 380 implementation)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.3a4  3230 (revert changes to implicit __class__ closure)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.4a1  3250 (evaluate positional default arguments before</span><span class="s1"> 
+</span><span class="s2">#                        keyword-only defaults)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.4a1  3260 (add LOAD_CLASSDEREF; allow locals of class to override</span><span class="s1"> 
+</span><span class="s2">#                        free vars)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.4a1  3270 (various tweaks to the __class__ closure)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.4a1  3280 (remove implicit class argument)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.4a4  3290 (changes to __qualname__ computation)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.4a4  3300 (more changes to __qualname__ computation)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.4rc2 3310 (alter __qualname__ computation)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.5a0  3320 (matrix multiplication operator)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.5b1  3330 (PEP 448: Additional Unpacking Generalizations)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.5b2  3340 (fix dictionary display evaluation order #11205)</span><span class="s1"> 
+</span><span class="s2">#     Python 3.5b2  3350 (add GET_YIELD_FROM_ITER opcode #24400)</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># MAGIC must change whenever the bytecode emitted by the compiler may no</span><span class="s1"> 
+</span><span class="s2"># longer be understood by older implementations of the eval loop (usually</span><span class="s1"> 
+</span><span class="s2"># due to the addition of new opcodes).</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># Whenever MAGIC_NUMBER is changed, the ranges in the magic_values array</span><span class="s1"> 
+</span><span class="s2"># in PC/launcher.c must also be updated.</span><span class="s1"> 
+ 
+MAGIC_NUMBER = (</span><span class="s6">3350</span><span class="s1">).to_bytes(</span><span class="s6">2</span><span class="s4">, </span><span class="s3">'little'</span><span class="s1">) + </span><span class="s5">b'</span><span class="s4">\r\n</span><span class="s5">'</span><span class="s1"> 
+_RAW_MAGIC_NUMBER = int.from_bytes(MAGIC_NUMBER</span><span class="s4">, </span><span class="s3">'little'</span><span class="s1">)  </span><span class="s2"># For import.c</span><span class="s1"> 
+ 
+_PYCACHE = </span><span class="s3">'__pycache__'</span><span class="s1"> 
+_OPT = </span><span class="s3">'opt-'</span><span class="s1"> 
+ 
+SOURCE_SUFFIXES = [</span><span class="s3">'.py'</span><span class="s1">]  </span><span class="s2"># _setup() adds .pyw as needed.</span><span class="s1"> 
+ 
+BYTECODE_SUFFIXES = [</span><span class="s3">'.pyc'</span><span class="s1">] 
+</span><span class="s2"># Deprecated.</span><span class="s1"> 
+DEBUG_BYTECODE_SUFFIXES = OPTIMIZED_BYTECODE_SUFFIXES = BYTECODE_SUFFIXES 
+ 
+</span><span class="s4">def </span><span class="s1">cache_from_source(path</span><span class="s4">, </span><span class="s1">debug_override=</span><span class="s4">None, </span><span class="s1">*</span><span class="s4">, </span><span class="s1">optimization=</span><span class="s4">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Given the path to a .py file, return the path to its .pyc file. 
+ 
+    The .py file does not need to exist; this simply returns the path to the 
+    .pyc file calculated as if the .py file were imported. 
+ 
+    The 'optimization' parameter controls the presumed optimization level of 
+    the bytecode file. If 'optimization' is not None, the string representation 
+    of the argument is taken and verified to be alphanumeric (else ValueError 
+    is raised). 
+ 
+    The debug_override parameter is deprecated. If debug_override is not None, 
+    a True value is the same as setting 'optimization' to the empty string 
+    while a False value is equivalent to setting 'optimization' to '1'. 
+ 
+    If sys.implementation.cache_tag is None then NotImplementedError is raised. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">debug_override </span><span class="s4">is not None</span><span class="s1">: 
+        _warnings.warn(</span><span class="s3">'the debug_override parameter is deprecated; use '</span><span class="s1"> 
+                       </span><span class="s3">&quot;'optimization' instead&quot;</span><span class="s4">, </span><span class="s1">DeprecationWarning) 
+        </span><span class="s4">if </span><span class="s1">optimization </span><span class="s4">is not None</span><span class="s1">: 
+            message = </span><span class="s3">'debug_override or optimization must be set to None'</span><span class="s1"> 
+            </span><span class="s4">raise </span><span class="s1">TypeError(message) 
+        optimization = </span><span class="s3">'' </span><span class="s4">if </span><span class="s1">debug_override </span><span class="s4">else </span><span class="s6">1</span><span class="s1"> 
+    head</span><span class="s4">, </span><span class="s1">tail = _path_split(path) 
+    base</span><span class="s4">, </span><span class="s1">sep</span><span class="s4">, </span><span class="s1">rest = tail.rpartition(</span><span class="s3">'.'</span><span class="s1">) 
+    tag = sys.implementation.cache_tag 
+    </span><span class="s4">if </span><span class="s1">tag </span><span class="s4">is None</span><span class="s1">: 
+        </span><span class="s4">raise </span><span class="s1">NotImplementedError(</span><span class="s3">'sys.implementation.cache_tag is None'</span><span class="s1">) 
+    almost_filename = </span><span class="s3">''</span><span class="s1">.join([(base </span><span class="s4">if </span><span class="s1">base </span><span class="s4">else </span><span class="s1">rest)</span><span class="s4">, </span><span class="s1">sep</span><span class="s4">, </span><span class="s1">tag]) 
+    </span><span class="s4">if </span><span class="s1">optimization </span><span class="s4">is None</span><span class="s1">: 
+        </span><span class="s4">if </span><span class="s1">sys.flags.optimize == </span><span class="s6">0</span><span class="s1">: 
+            optimization = </span><span class="s3">''</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            optimization = sys.flags.optimize 
+    optimization = str(optimization) 
+    </span><span class="s4">if </span><span class="s1">optimization != </span><span class="s3">''</span><span class="s1">: 
+        </span><span class="s4">if not </span><span class="s1">optimization.isalnum(): 
+            </span><span class="s4">raise </span><span class="s1">ValueError(</span><span class="s3">'{!r} is not alphanumeric'</span><span class="s1">.format(optimization)) 
+        almost_filename = </span><span class="s3">'{}.{}{}'</span><span class="s1">.format(almost_filename</span><span class="s4">, </span><span class="s1">_OPT</span><span class="s4">, </span><span class="s1">optimization) 
+    </span><span class="s4">return </span><span class="s1">_path_join(head</span><span class="s4">, </span><span class="s1">_PYCACHE</span><span class="s4">, </span><span class="s1">almost_filename + BYTECODE_SUFFIXES[</span><span class="s6">0</span><span class="s1">]) 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">source_from_cache(path): 
+    </span><span class="s0">&quot;&quot;&quot;Given the path to a .pyc. file, return the path to its .py file. 
+ 
+    The .pyc file does not need to exist; this simply returns the path to 
+    the .py file calculated to correspond to the .pyc file.  If path does 
+    not conform to PEP 3147/488 format, ValueError will be raised. If 
+    sys.implementation.cache_tag is None then NotImplementedError is raised. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">sys.implementation.cache_tag </span><span class="s4">is None</span><span class="s1">: 
+        </span><span class="s4">raise </span><span class="s1">NotImplementedError(</span><span class="s3">'sys.implementation.cache_tag is None'</span><span class="s1">) 
+    head</span><span class="s4">, </span><span class="s1">pycache_filename = _path_split(path) 
+    head</span><span class="s4">, </span><span class="s1">pycache = _path_split(head) 
+    </span><span class="s4">if </span><span class="s1">pycache != _PYCACHE: 
+        </span><span class="s4">raise </span><span class="s1">ValueError(</span><span class="s3">'{} not bottom-level directory in '</span><span class="s1"> 
+                         </span><span class="s3">'{!r}'</span><span class="s1">.format(_PYCACHE</span><span class="s4">, </span><span class="s1">path)) 
+    dot_count = pycache_filename.count(</span><span class="s3">'.'</span><span class="s1">) 
+    </span><span class="s4">if </span><span class="s1">dot_count </span><span class="s4">not in </span><span class="s1">{</span><span class="s6">2</span><span class="s4">, </span><span class="s6">3</span><span class="s1">}: 
+        </span><span class="s4">raise </span><span class="s1">ValueError(</span><span class="s3">'expected only 2 or 3 dots in '</span><span class="s1"> 
+                         </span><span class="s3">'{!r}'</span><span class="s1">.format(pycache_filename)) 
+    </span><span class="s4">elif </span><span class="s1">dot_count == </span><span class="s6">3</span><span class="s1">: 
+        optimization = pycache_filename.rsplit(</span><span class="s3">'.'</span><span class="s4">, </span><span class="s6">2</span><span class="s1">)[-</span><span class="s6">2</span><span class="s1">] 
+        </span><span class="s4">if not </span><span class="s1">optimization.startswith(_OPT): 
+            </span><span class="s4">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;optimization portion of filename does not start &quot;</span><span class="s1"> 
+                             </span><span class="s3">&quot;with {!r}&quot;</span><span class="s1">.format(_OPT)) 
+        opt_level = optimization[len(_OPT):] 
+        </span><span class="s4">if not </span><span class="s1">opt_level.isalnum(): 
+            </span><span class="s4">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;optimization level {!r} is not an alphanumeric &quot;</span><span class="s1"> 
+                             </span><span class="s3">&quot;value&quot;</span><span class="s1">.format(optimization)) 
+    base_filename = pycache_filename.partition(</span><span class="s3">'.'</span><span class="s1">)[</span><span class="s6">0</span><span class="s1">] 
+    </span><span class="s4">return </span><span class="s1">_path_join(head</span><span class="s4">, </span><span class="s1">base_filename + SOURCE_SUFFIXES[</span><span class="s6">0</span><span class="s1">]) 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_get_sourcefile(bytecode_path): 
+    </span><span class="s0">&quot;&quot;&quot;Convert a bytecode file path to a source path (if possible). 
+ 
+    This function exists purely for backwards-compatibility for 
+    PyImport_ExecCodeModuleWithFilenames() in the C API. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">len(bytecode_path) == </span><span class="s6">0</span><span class="s1">: 
+        </span><span class="s4">return None</span><span class="s1"> 
+    rest</span><span class="s4">, </span><span class="s1">_</span><span class="s4">, </span><span class="s1">extension = bytecode_path.rpartition(</span><span class="s3">'.'</span><span class="s1">) 
+    </span><span class="s4">if not </span><span class="s1">rest </span><span class="s4">or </span><span class="s1">extension.lower()[-</span><span class="s6">3</span><span class="s1">:-</span><span class="s6">1</span><span class="s1">] != </span><span class="s3">'py'</span><span class="s1">: 
+        </span><span class="s4">return </span><span class="s1">bytecode_path 
+    </span><span class="s4">try</span><span class="s1">: 
+        source_path = source_from_cache(bytecode_path) 
+    </span><span class="s4">except </span><span class="s1">(NotImplementedError</span><span class="s4">, </span><span class="s1">ValueError): 
+        source_path = bytecode_path[:-</span><span class="s6">1</span><span class="s1">] 
+    </span><span class="s4">return </span><span class="s1">source_path </span><span class="s4">if </span><span class="s1">_path_isfile(source_path) </span><span class="s4">else </span><span class="s1">bytecode_path 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_get_cached(filename): 
+    </span><span class="s4">if </span><span class="s1">filename.endswith(tuple(SOURCE_SUFFIXES)): 
+        </span><span class="s4">try</span><span class="s1">: 
+            </span><span class="s4">return </span><span class="s1">cache_from_source(filename) 
+        </span><span class="s4">except </span><span class="s1">NotImplementedError: 
+            </span><span class="s4">pass</span><span class="s1"> 
+    </span><span class="s4">elif </span><span class="s1">filename.endswith(tuple(BYTECODE_SUFFIXES)): 
+        </span><span class="s4">return </span><span class="s1">filename 
+    </span><span class="s4">else</span><span class="s1">: 
+        </span><span class="s4">return None</span><span class="s1"> 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_calc_mode(path): 
+    </span><span class="s0">&quot;&quot;&quot;Calculate the mode permissions for a bytecode file.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">try</span><span class="s1">: 
+        mode = _path_stat(path).st_mode 
+    </span><span class="s4">except </span><span class="s1">OSError: 
+        mode = </span><span class="s6">0o666</span><span class="s1"> 
+    </span><span class="s2"># We always ensure write access so we can update cached files</span><span class="s1"> 
+    </span><span class="s2"># later even when the source files are read-only on Windows (#6074)</span><span class="s1"> 
+    mode |= </span><span class="s6">0o200</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">mode 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_verbose_message(message</span><span class="s4">, </span><span class="s1">*args</span><span class="s4">, </span><span class="s1">verbosity=</span><span class="s6">1</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Print the message to stderr if -v/PYTHONVERBOSE is turned on.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">sys.flags.verbose &gt;= verbosity: 
+        </span><span class="s4">if not </span><span class="s1">message.startswith((</span><span class="s3">'#'</span><span class="s4">, </span><span class="s3">'import '</span><span class="s1">)): 
+            message = </span><span class="s3">'# ' </span><span class="s1">+ message 
+        print(message.format(*args)</span><span class="s4">, </span><span class="s1">file=sys.stderr) 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_check_name(method): 
+    </span><span class="s0">&quot;&quot;&quot;Decorator to verify that the module being requested matches the one the 
+    loader can handle. 
+ 
+    The first argument (self) must define _name which the second argument is 
+    compared against. If the comparison fails then ImportError is raised. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">def </span><span class="s1">_check_name_wrapper(self</span><span class="s4">, </span><span class="s1">name=</span><span class="s4">None, </span><span class="s1">*args</span><span class="s4">, </span><span class="s1">**kwargs): 
+        </span><span class="s4">if </span><span class="s1">name </span><span class="s4">is None</span><span class="s1">: 
+            name = self.name 
+        </span><span class="s4">elif </span><span class="s1">self.name != name: 
+            </span><span class="s4">raise </span><span class="s1">ImportError(</span><span class="s3">'loader for %s cannot handle %s' </span><span class="s1">% 
+                                (self.name</span><span class="s4">, </span><span class="s1">name)</span><span class="s4">, </span><span class="s1">name=name) 
+        </span><span class="s4">return </span><span class="s1">method(self</span><span class="s4">, </span><span class="s1">name</span><span class="s4">, </span><span class="s1">*args</span><span class="s4">, </span><span class="s1">**kwargs) 
+    </span><span class="s4">try</span><span class="s1">: 
+        _wrap = _bootstrap._wrap 
+    </span><span class="s4">except </span><span class="s1">NameError: 
+        </span><span class="s2"># XXX yuck</span><span class="s1"> 
+        </span><span class="s4">def </span><span class="s1">_wrap(new</span><span class="s4">, </span><span class="s1">old): 
+            </span><span class="s4">for </span><span class="s1">replace </span><span class="s4">in </span><span class="s1">[</span><span class="s3">'__module__'</span><span class="s4">, </span><span class="s3">'__name__'</span><span class="s4">, </span><span class="s3">'__qualname__'</span><span class="s4">, </span><span class="s3">'__doc__'</span><span class="s1">]: 
+                </span><span class="s4">if </span><span class="s1">hasattr(old</span><span class="s4">, </span><span class="s1">replace): 
+                    setattr(new</span><span class="s4">, </span><span class="s1">replace</span><span class="s4">, </span><span class="s1">getattr(old</span><span class="s4">, </span><span class="s1">replace)) 
+            new.__dict__.update(old.__dict__) 
+    _wrap(_check_name_wrapper</span><span class="s4">, </span><span class="s1">method) 
+    </span><span class="s4">return </span><span class="s1">_check_name_wrapper 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_find_module_shim(self</span><span class="s4">, </span><span class="s1">fullname): 
+    </span><span class="s0">&quot;&quot;&quot;Try to find a loader for the specified module by delegating to 
+    self.find_loader(). 
+ 
+    This method is deprecated in favor of finder.find_spec(). 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2"># Call find_loader(). If it returns a string (indicating this</span><span class="s1"> 
+    </span><span class="s2"># is a namespace package portion), generate a warning and</span><span class="s1"> 
+    </span><span class="s2"># return None.</span><span class="s1"> 
+    loader</span><span class="s4">, </span><span class="s1">portions = self.find_loader(fullname) 
+    </span><span class="s4">if </span><span class="s1">loader </span><span class="s4">is None and </span><span class="s1">len(portions): 
+        msg = </span><span class="s3">'Not importing directory {}: missing __init__'</span><span class="s1"> 
+        _warnings.warn(msg.format(portions[</span><span class="s6">0</span><span class="s1">])</span><span class="s4">, </span><span class="s1">ImportWarning) 
+    </span><span class="s4">return </span><span class="s1">loader 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_validate_bytecode_header(data</span><span class="s4">, </span><span class="s1">source_stats=</span><span class="s4">None, </span><span class="s1">name=</span><span class="s4">None, </span><span class="s1">path=</span><span class="s4">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Validate the header of the passed-in bytecode against source_stats (if 
+    given) and returning the bytecode that can be compiled by compile(). 
+ 
+    All other arguments are used to enhance error reporting. 
+ 
+    ImportError is raised when the magic number is incorrect or the bytecode is 
+    found to be stale. EOFError is raised when the data is found to be 
+    truncated. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    exc_details = {} 
+    </span><span class="s4">if </span><span class="s1">name </span><span class="s4">is not None</span><span class="s1">: 
+        exc_details[</span><span class="s3">'name'</span><span class="s1">] = name 
+    </span><span class="s4">else</span><span class="s1">: 
+        </span><span class="s2"># To prevent having to make all messages have a conditional name.</span><span class="s1"> 
+        name = </span><span class="s3">'&lt;bytecode&gt;'</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">path </span><span class="s4">is not None</span><span class="s1">: 
+        exc_details[</span><span class="s3">'path'</span><span class="s1">] = path 
+    magic = data[:</span><span class="s6">4</span><span class="s1">] 
+    raw_timestamp = data[</span><span class="s6">4</span><span class="s1">:</span><span class="s6">8</span><span class="s1">] 
+    raw_size = data[</span><span class="s6">8</span><span class="s1">:</span><span class="s6">12</span><span class="s1">] 
+    </span><span class="s4">if </span><span class="s1">magic != MAGIC_NUMBER: 
+        message = </span><span class="s3">'bad magic number in {!r}: {!r}'</span><span class="s1">.format(name</span><span class="s4">, </span><span class="s1">magic) 
+        _verbose_message(</span><span class="s3">'{}'</span><span class="s4">, </span><span class="s1">message) 
+        </span><span class="s4">raise </span><span class="s1">ImportError(message</span><span class="s4">, </span><span class="s1">**exc_details) 
+    </span><span class="s4">elif </span><span class="s1">len(raw_timestamp) != </span><span class="s6">4</span><span class="s1">: 
+        message = </span><span class="s3">'reached EOF while reading timestamp in {!r}'</span><span class="s1">.format(name) 
+        _verbose_message(</span><span class="s3">'{}'</span><span class="s4">, </span><span class="s1">message) 
+        </span><span class="s4">raise </span><span class="s1">EOFError(message) 
+    </span><span class="s4">elif </span><span class="s1">len(raw_size) != </span><span class="s6">4</span><span class="s1">: 
+        message = </span><span class="s3">'reached EOF while reading size of source in {!r}'</span><span class="s1">.format(name) 
+        _verbose_message(</span><span class="s3">'{}'</span><span class="s4">, </span><span class="s1">message) 
+        </span><span class="s4">raise </span><span class="s1">EOFError(message) 
+    </span><span class="s4">if </span><span class="s1">source_stats </span><span class="s4">is not None</span><span class="s1">: 
+        </span><span class="s4">try</span><span class="s1">: 
+            source_mtime = int(source_stats[</span><span class="s3">'mtime'</span><span class="s1">]) 
+        </span><span class="s4">except </span><span class="s1">KeyError: 
+            </span><span class="s4">pass</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s4">if </span><span class="s1">_r_long(raw_timestamp) != source_mtime: 
+                message = </span><span class="s3">'bytecode is stale for {!r}'</span><span class="s1">.format(name) 
+                _verbose_message(</span><span class="s3">'{}'</span><span class="s4">, </span><span class="s1">message) 
+                </span><span class="s4">raise </span><span class="s1">ImportError(message</span><span class="s4">, </span><span class="s1">**exc_details) 
+        </span><span class="s4">try</span><span class="s1">: 
+            source_size = source_stats[</span><span class="s3">'size'</span><span class="s1">] &amp; </span><span class="s6">0xFFFFFFFF</span><span class="s1"> 
+        </span><span class="s4">except </span><span class="s1">KeyError: 
+            </span><span class="s4">pass</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s4">if </span><span class="s1">_r_long(raw_size) != source_size: 
+                </span><span class="s4">raise </span><span class="s1">ImportError(</span><span class="s3">'bytecode is stale for {!r}'</span><span class="s1">.format(name)</span><span class="s4">,</span><span class="s1"> 
+                                  **exc_details) 
+    </span><span class="s4">return </span><span class="s1">data[</span><span class="s6">12</span><span class="s1">:] 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_compile_bytecode(data</span><span class="s4">, </span><span class="s1">name=</span><span class="s4">None, </span><span class="s1">bytecode_path=</span><span class="s4">None, </span><span class="s1">source_path=</span><span class="s4">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Compile bytecode as returned by _validate_bytecode_header().&quot;&quot;&quot;</span><span class="s1"> 
+    code = marshal.loads(data) 
+    </span><span class="s4">if </span><span class="s1">isinstance(code</span><span class="s4">, </span><span class="s1">_code_type): 
+        _verbose_message(</span><span class="s3">'code object from {!r}'</span><span class="s4">, </span><span class="s1">bytecode_path) 
+        </span><span class="s4">if </span><span class="s1">source_path </span><span class="s4">is not None</span><span class="s1">: 
+            _imp._fix_co_filename(code</span><span class="s4">, </span><span class="s1">source_path) 
+        </span><span class="s4">return </span><span class="s1">code 
+    </span><span class="s4">else</span><span class="s1">: 
+        </span><span class="s4">raise </span><span class="s1">ImportError(</span><span class="s3">'Non-code object in {!r}'</span><span class="s1">.format(bytecode_path)</span><span class="s4">,</span><span class="s1"> 
+                          name=name</span><span class="s4">, </span><span class="s1">path=bytecode_path) 
+ 
+</span><span class="s4">def </span><span class="s1">_code_to_bytecode(code</span><span class="s4">, </span><span class="s1">mtime=</span><span class="s6">0</span><span class="s4">, </span><span class="s1">source_size=</span><span class="s6">0</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Compile a code object into bytecode for writing out to a byte-compiled 
+    file.&quot;&quot;&quot;</span><span class="s1"> 
+    data = bytearray(MAGIC_NUMBER) 
+    data.extend(_w_long(mtime)) 
+    data.extend(_w_long(source_size)) 
+    data.extend(marshal.dumps(code)) 
+    </span><span class="s4">return </span><span class="s1">data 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">decode_source(source_bytes): 
+    </span><span class="s0">&quot;&quot;&quot;Decode bytes representing source code and return the string. 
+ 
+    Universal newline support is used in the decoding. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">import </span><span class="s1">tokenize  </span><span class="s2"># To avoid bootstrap issues.</span><span class="s1"> 
+    source_bytes_readline = _io.BytesIO(source_bytes).readline 
+    encoding = tokenize.detect_encoding(source_bytes_readline) 
+    newline_decoder = _io.IncrementalNewlineDecoder(</span><span class="s4">None, True</span><span class="s1">) 
+    </span><span class="s4">return </span><span class="s1">newline_decoder.decode(source_bytes.decode(encoding[</span><span class="s6">0</span><span class="s1">])) 
+ 
+ 
+</span><span class="s2"># Module specifications #######################################################</span><span class="s1"> 
+ 
+_POPULATE = object() 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">spec_from_file_location(name</span><span class="s4">, </span><span class="s1">location=</span><span class="s4">None, </span><span class="s1">*</span><span class="s4">, </span><span class="s1">loader=</span><span class="s4">None,</span><span class="s1"> 
+                            submodule_search_locations=_POPULATE): 
+    </span><span class="s0">&quot;&quot;&quot;Return a module spec based on a file location. 
+ 
+    To indicate that the module is a package, set 
+    submodule_search_locations to a list of directory paths.  An 
+    empty list is sufficient, though its not otherwise useful to the 
+    import system. 
+ 
+    The loader must take a spec as its only __init__() arg. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">location </span><span class="s4">is None</span><span class="s1">: 
+        </span><span class="s2"># The caller may simply want a partially populated location-</span><span class="s1"> 
+        </span><span class="s2"># oriented spec.  So we set the location to a bogus value and</span><span class="s1"> 
+        </span><span class="s2"># fill in as much as we can.</span><span class="s1"> 
+        location = </span><span class="s3">'&lt;unknown&gt;'</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">hasattr(loader</span><span class="s4">, </span><span class="s3">'get_filename'</span><span class="s1">): 
+            </span><span class="s2"># ExecutionLoader</span><span class="s1"> 
+            </span><span class="s4">try</span><span class="s1">: 
+                location = loader.get_filename(name) 
+            </span><span class="s4">except </span><span class="s1">ImportError: 
+                </span><span class="s4">pass</span><span class="s1"> 
+ 
+    </span><span class="s2"># If the location is on the filesystem, but doesn't actually exist,</span><span class="s1"> 
+    </span><span class="s2"># we could return None here, indicating that the location is not</span><span class="s1"> 
+    </span><span class="s2"># valid.  However, we don't have a good way of testing since an</span><span class="s1"> 
+    </span><span class="s2"># indirect location (e.g. a zip file or URL) will look like a</span><span class="s1"> 
+    </span><span class="s2"># non-existent file relative to the filesystem.</span><span class="s1"> 
+ 
+    spec = _bootstrap.ModuleSpec(name</span><span class="s4">, </span><span class="s1">loader</span><span class="s4">, </span><span class="s1">origin=location) 
+    spec._set_fileattr = </span><span class="s4">True</span><span class="s1"> 
+ 
+    </span><span class="s2"># Pick a loader if one wasn't provided.</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">loader </span><span class="s4">is None</span><span class="s1">: 
+        </span><span class="s4">for </span><span class="s1">loader_class</span><span class="s4">, </span><span class="s1">suffixes </span><span class="s4">in </span><span class="s1">_get_supported_file_loaders(): 
+            </span><span class="s4">if </span><span class="s1">location.endswith(tuple(suffixes)): 
+                loader = loader_class(name</span><span class="s4">, </span><span class="s1">location) 
+                spec.loader = loader 
+                </span><span class="s4">break</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s4">return None</span><span class="s1"> 
+ 
+    </span><span class="s2"># Set submodule_search_paths appropriately.</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">submodule_search_locations </span><span class="s4">is </span><span class="s1">_POPULATE: 
+        </span><span class="s2"># Check the loader.</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">hasattr(loader</span><span class="s4">, </span><span class="s3">'is_package'</span><span class="s1">): 
+            </span><span class="s4">try</span><span class="s1">: 
+                is_package = loader.is_package(name) 
+            </span><span class="s4">except </span><span class="s1">ImportError: 
+                </span><span class="s4">pass</span><span class="s1"> 
+            </span><span class="s4">else</span><span class="s1">: 
+                </span><span class="s4">if </span><span class="s1">is_package: 
+                    spec.submodule_search_locations = [] 
+    </span><span class="s4">else</span><span class="s1">: 
+        spec.submodule_search_locations = submodule_search_locations 
+    </span><span class="s4">if </span><span class="s1">spec.submodule_search_locations == []: 
+        </span><span class="s4">if </span><span class="s1">location: 
+            dirname = _path_split(location)[</span><span class="s6">0</span><span class="s1">] 
+            spec.submodule_search_locations.append(dirname) 
+ 
+    </span><span class="s4">return </span><span class="s1">spec 
+ 
+ 
+</span><span class="s2"># Loaders #####################################################################</span><span class="s1"> 
+ 
+</span><span class="s4">class </span><span class="s1">WindowsRegistryFinder: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Meta path finder for modules declared in the Windows registry.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    REGISTRY_KEY = ( 
+        </span><span class="s3">'Software</span><span class="s4">\\</span><span class="s3">Python</span><span class="s4">\\</span><span class="s3">PythonCore</span><span class="s4">\\</span><span class="s3">{sys_version}'</span><span class="s1"> 
+        </span><span class="s3">'</span><span class="s4">\\</span><span class="s3">Modules</span><span class="s4">\\</span><span class="s3">{fullname}'</span><span class="s1">) 
+    REGISTRY_KEY_DEBUG = ( 
+        </span><span class="s3">'Software</span><span class="s4">\\</span><span class="s3">Python</span><span class="s4">\\</span><span class="s3">PythonCore</span><span class="s4">\\</span><span class="s3">{sys_version}'</span><span class="s1"> 
+        </span><span class="s3">'</span><span class="s4">\\</span><span class="s3">Modules</span><span class="s4">\\</span><span class="s3">{fullname}</span><span class="s4">\\</span><span class="s3">Debug'</span><span class="s1">) 
+    DEBUG_BUILD = </span><span class="s4">False  </span><span class="s2"># Changed in _setup()</span><span class="s1"> 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">_open_registry(cls</span><span class="s4">, </span><span class="s1">key): 
+        </span><span class="s4">try</span><span class="s1">: 
+            </span><span class="s4">return </span><span class="s1">_winreg.OpenKey(_winreg.HKEY_CURRENT_USER</span><span class="s4">, </span><span class="s1">key) 
+        </span><span class="s4">except </span><span class="s1">OSError: 
+            </span><span class="s4">return </span><span class="s1">_winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE</span><span class="s4">, </span><span class="s1">key) 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">_search_registry(cls</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s4">if </span><span class="s1">cls.DEBUG_BUILD: 
+            registry_key = cls.REGISTRY_KEY_DEBUG 
+        </span><span class="s4">else</span><span class="s1">: 
+            registry_key = cls.REGISTRY_KEY 
+        key = registry_key.format(fullname=fullname</span><span class="s4">,</span><span class="s1"> 
+                                  sys_version=sys.version[:</span><span class="s6">3</span><span class="s1">]) 
+        </span><span class="s4">try</span><span class="s1">: 
+            </span><span class="s4">with </span><span class="s1">cls._open_registry(key) </span><span class="s4">as </span><span class="s1">hkey: 
+                filepath = _winreg.QueryValue(hkey</span><span class="s4">, </span><span class="s3">''</span><span class="s1">) 
+        </span><span class="s4">except </span><span class="s1">OSError: 
+            </span><span class="s4">return None</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">filepath 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">find_spec(cls</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">path=</span><span class="s4">None, </span><span class="s1">target=</span><span class="s4">None</span><span class="s1">): 
+        filepath = cls._search_registry(fullname) 
+        </span><span class="s4">if </span><span class="s1">filepath </span><span class="s4">is None</span><span class="s1">: 
+            </span><span class="s4">return None</span><span class="s1"> 
+        </span><span class="s4">try</span><span class="s1">: 
+            _path_stat(filepath) 
+        </span><span class="s4">except </span><span class="s1">OSError: 
+            </span><span class="s4">return None</span><span class="s1"> 
+        </span><span class="s4">for </span><span class="s1">loader</span><span class="s4">, </span><span class="s1">suffixes </span><span class="s4">in </span><span class="s1">_get_supported_file_loaders(): 
+            </span><span class="s4">if </span><span class="s1">filepath.endswith(tuple(suffixes)): 
+                spec = _bootstrap.spec_from_loader(fullname</span><span class="s4">,</span><span class="s1"> 
+                                                   loader(fullname</span><span class="s4">, </span><span class="s1">filepath)</span><span class="s4">,</span><span class="s1"> 
+                                                   origin=filepath) 
+                </span><span class="s4">return </span><span class="s1">spec 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">find_module(cls</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">path=</span><span class="s4">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Find module named in the registry. 
+ 
+        This method is deprecated.  Use exec_module() instead. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        spec = cls.find_spec(fullname</span><span class="s4">, </span><span class="s1">path) 
+        </span><span class="s4">if </span><span class="s1">spec </span><span class="s4">is not None</span><span class="s1">: 
+            </span><span class="s4">return </span><span class="s1">spec.loader 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s4">return None</span><span class="s1"> 
+ 
+ 
+</span><span class="s4">class </span><span class="s1">_LoaderBasics: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Base class of common code needed by both SourceLoader and 
+    SourcelessFileLoader.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">is_package(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Concrete implementation of InspectLoader.is_package by checking if 
+        the path returned by get_filename has a filename of '__init__.py'.&quot;&quot;&quot;</span><span class="s1"> 
+        filename = _path_split(self.get_filename(fullname))[</span><span class="s6">1</span><span class="s1">] 
+        filename_base = filename.rsplit(</span><span class="s3">'.'</span><span class="s4">, </span><span class="s6">1</span><span class="s1">)[</span><span class="s6">0</span><span class="s1">] 
+        tail_name = fullname.rpartition(</span><span class="s3">'.'</span><span class="s1">)[</span><span class="s6">2</span><span class="s1">] 
+        </span><span class="s4">return </span><span class="s1">filename_base == </span><span class="s3">'__init__' </span><span class="s4">and </span><span class="s1">tail_name != </span><span class="s3">'__init__'</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">create_module(self</span><span class="s4">, </span><span class="s1">spec): 
+        </span><span class="s0">&quot;&quot;&quot;Use default semantics for module creation.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">exec_module(self</span><span class="s4">, </span><span class="s1">module): 
+        </span><span class="s0">&quot;&quot;&quot;Execute the module.&quot;&quot;&quot;</span><span class="s1"> 
+        code = self.get_code(module.__name__) 
+        </span><span class="s4">if </span><span class="s1">code </span><span class="s4">is None</span><span class="s1">: 
+            </span><span class="s4">raise </span><span class="s1">ImportError(</span><span class="s3">'cannot load module {!r} when get_code() '</span><span class="s1"> 
+                              </span><span class="s3">'returns None'</span><span class="s1">.format(module.__name__)) 
+        _bootstrap._call_with_frames_removed(exec</span><span class="s4">, </span><span class="s1">code</span><span class="s4">, </span><span class="s1">module.__dict__) 
+ 
+    </span><span class="s4">def </span><span class="s1">load_module(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s4">return </span><span class="s1">_bootstrap._load_module_shim(self</span><span class="s4">, </span><span class="s1">fullname) 
+ 
+ 
+</span><span class="s4">class </span><span class="s1">SourceLoader(_LoaderBasics): 
+ 
+    </span><span class="s4">def </span><span class="s1">path_mtime(self</span><span class="s4">, </span><span class="s1">path): 
+        </span><span class="s0">&quot;&quot;&quot;Optional method that returns the modification time (an int) for the 
+        specified path, where path is a str. 
+ 
+        Raises IOError when the path cannot be handled. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">raise </span><span class="s1">IOError 
+ 
+    </span><span class="s4">def </span><span class="s1">path_stats(self</span><span class="s4">, </span><span class="s1">path): 
+        </span><span class="s0">&quot;&quot;&quot;Optional method returning a metadata dict for the specified path 
+        to by the path (str). 
+        Possible keys: 
+        - 'mtime' (mandatory) is the numeric timestamp of last source 
+          code modification; 
+        - 'size' (optional) is the size in bytes of the source code. 
+ 
+        Implementing this method allows the loader to read bytecode files. 
+        Raises IOError when the path cannot be handled. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">{</span><span class="s3">'mtime'</span><span class="s1">: self.path_mtime(path)} 
+ 
+    </span><span class="s4">def </span><span class="s1">_cache_bytecode(self</span><span class="s4">, </span><span class="s1">source_path</span><span class="s4">, </span><span class="s1">cache_path</span><span class="s4">, </span><span class="s1">data): 
+        </span><span class="s0">&quot;&quot;&quot;Optional method which writes data (bytes) to a file path (a str). 
+ 
+        Implementing this method allows for the writing of bytecode files. 
+ 
+        The source path is needed in order to correctly transfer permissions 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2"># For backwards compatibility, we delegate to set_data()</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">self.set_data(cache_path</span><span class="s4">, </span><span class="s1">data) 
+ 
+    </span><span class="s4">def </span><span class="s1">set_data(self</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">data): 
+        </span><span class="s0">&quot;&quot;&quot;Optional method which writes data (bytes) to a file path (a str). 
+ 
+        Implementing this method allows for the writing of bytecode files. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+ 
+    </span><span class="s4">def </span><span class="s1">get_source(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Concrete implementation of InspectLoader.get_source.&quot;&quot;&quot;</span><span class="s1"> 
+        path = self.get_filename(fullname) 
+        </span><span class="s4">try</span><span class="s1">: 
+            source_bytes = self.get_data(path) 
+        </span><span class="s4">except </span><span class="s1">OSError </span><span class="s4">as </span><span class="s1">exc: 
+            </span><span class="s4">raise </span><span class="s1">ImportError(</span><span class="s3">'source not available through get_data()'</span><span class="s4">,</span><span class="s1"> 
+                              name=fullname) </span><span class="s4">from </span><span class="s1">exc 
+        </span><span class="s4">return </span><span class="s1">decode_source(source_bytes) 
+ 
+    </span><span class="s4">def </span><span class="s1">source_to_code(self</span><span class="s4">, </span><span class="s1">data</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">*</span><span class="s4">, </span><span class="s1">_optimize=-</span><span class="s6">1</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Return the code object compiled from source. 
+ 
+        The 'data' argument can be any object type that compile() supports. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">_bootstrap._call_with_frames_removed(compile</span><span class="s4">, </span><span class="s1">data</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s3">'exec'</span><span class="s4">,</span><span class="s1"> 
+                                        dont_inherit=</span><span class="s4">True, </span><span class="s1">optimize=_optimize) 
+ 
+    </span><span class="s4">def </span><span class="s1">get_code(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Concrete implementation of InspectLoader.get_code. 
+ 
+        Reading of bytecode requires path_stats to be implemented. To write 
+        bytecode, set_data must also be implemented. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        source_path = self.get_filename(fullname) 
+        source_mtime = </span><span class="s4">None</span><span class="s1"> 
+        </span><span class="s4">try</span><span class="s1">: 
+            bytecode_path = cache_from_source(source_path) 
+        </span><span class="s4">except </span><span class="s1">NotImplementedError: 
+            bytecode_path = </span><span class="s4">None</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s4">try</span><span class="s1">: 
+                st = self.path_stats(source_path) 
+            </span><span class="s4">except </span><span class="s1">IOError: 
+                </span><span class="s4">pass</span><span class="s1"> 
+            </span><span class="s4">else</span><span class="s1">: 
+                source_mtime = int(st[</span><span class="s3">'mtime'</span><span class="s1">]) 
+                </span><span class="s4">try</span><span class="s1">: 
+                    data = self.get_data(bytecode_path) 
+                </span><span class="s4">except </span><span class="s1">OSError: 
+                    </span><span class="s4">pass</span><span class="s1"> 
+                </span><span class="s4">else</span><span class="s1">: 
+                    </span><span class="s4">try</span><span class="s1">: 
+                        bytes_data = _validate_bytecode_header(data</span><span class="s4">,</span><span class="s1"> 
+                                source_stats=st</span><span class="s4">, </span><span class="s1">name=fullname</span><span class="s4">,</span><span class="s1"> 
+                                path=bytecode_path) 
+                    </span><span class="s4">except </span><span class="s1">(ImportError</span><span class="s4">, </span><span class="s1">EOFError): 
+                        </span><span class="s4">pass</span><span class="s1"> 
+                    </span><span class="s4">else</span><span class="s1">: 
+                        _verbose_message(</span><span class="s3">'{} matches {}'</span><span class="s4">, </span><span class="s1">bytecode_path</span><span class="s4">,</span><span class="s1"> 
+                                        source_path) 
+                        </span><span class="s4">return </span><span class="s1">_compile_bytecode(bytes_data</span><span class="s4">, </span><span class="s1">name=fullname</span><span class="s4">,</span><span class="s1"> 
+                                                 bytecode_path=bytecode_path</span><span class="s4">,</span><span class="s1"> 
+                                                 source_path=source_path) 
+        source_bytes = self.get_data(source_path) 
+        code_object = self.source_to_code(source_bytes</span><span class="s4">, </span><span class="s1">source_path) 
+        _verbose_message(</span><span class="s3">'code object from {}'</span><span class="s4">, </span><span class="s1">source_path) 
+        </span><span class="s4">if </span><span class="s1">(</span><span class="s4">not </span><span class="s1">sys.dont_write_bytecode </span><span class="s4">and </span><span class="s1">bytecode_path </span><span class="s4">is not None and</span><span class="s1"> 
+                source_mtime </span><span class="s4">is not None</span><span class="s1">): 
+            data = _code_to_bytecode(code_object</span><span class="s4">, </span><span class="s1">source_mtime</span><span class="s4">,</span><span class="s1"> 
+                    len(source_bytes)) 
+            </span><span class="s4">try</span><span class="s1">: 
+                self._cache_bytecode(source_path</span><span class="s4">, </span><span class="s1">bytecode_path</span><span class="s4">, </span><span class="s1">data) 
+                _verbose_message(</span><span class="s3">'wrote {!r}'</span><span class="s4">, </span><span class="s1">bytecode_path) 
+            </span><span class="s4">except </span><span class="s1">NotImplementedError: 
+                </span><span class="s4">pass</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">code_object 
+ 
+ 
+</span><span class="s4">class </span><span class="s1">FileLoader: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Base file loader class which implements the loader protocol methods that 
+    require file system usage.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">__init__(self</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">path): 
+        </span><span class="s0">&quot;&quot;&quot;Cache the module name and the path to the file found by the 
+        finder.&quot;&quot;&quot;</span><span class="s1"> 
+        self.name = fullname 
+        self.path = path 
+ 
+    </span><span class="s4">def </span><span class="s1">__eq__(self</span><span class="s4">, </span><span class="s1">other): 
+        </span><span class="s4">return </span><span class="s1">(self.__class__ == other.__class__ </span><span class="s4">and</span><span class="s1"> 
+                self.__dict__ == other.__dict__) 
+ 
+    </span><span class="s4">def </span><span class="s1">__hash__(self): 
+        </span><span class="s4">return </span><span class="s1">hash(self.name) ^ hash(self.path) 
+ 
+    @_check_name 
+    </span><span class="s4">def </span><span class="s1">load_module(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Load a module from a file. 
+ 
+        This method is deprecated.  Use exec_module() instead. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2"># The only reason for this method is for the name check.</span><span class="s1"> 
+        </span><span class="s2"># Issue #14857: Avoid the zero-argument form of super so the implementation</span><span class="s1"> 
+        </span><span class="s2"># of that form can be updated without breaking the frozen module</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">super(FileLoader</span><span class="s4">, </span><span class="s1">self).load_module(fullname) 
+ 
+    @_check_name 
+    </span><span class="s4">def </span><span class="s1">get_filename(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return the path to the source file as found by the finder.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">self.path 
+ 
+    </span><span class="s4">def </span><span class="s1">get_data(self</span><span class="s4">, </span><span class="s1">path): 
+        </span><span class="s0">&quot;&quot;&quot;Return the data from path as raw bytes.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">with </span><span class="s1">_io.FileIO(path</span><span class="s4">, </span><span class="s3">'r'</span><span class="s1">) </span><span class="s4">as </span><span class="s1">file: 
+            </span><span class="s4">return </span><span class="s1">file.read() 
+ 
+ 
+</span><span class="s4">class </span><span class="s1">SourceFileLoader(FileLoader</span><span class="s4">, </span><span class="s1">SourceLoader): 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Concrete implementation of SourceLoader using the file system.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">path_stats(self</span><span class="s4">, </span><span class="s1">path): 
+        </span><span class="s0">&quot;&quot;&quot;Return the metadata for the path.&quot;&quot;&quot;</span><span class="s1"> 
+        st = _path_stat(path) 
+        </span><span class="s4">return </span><span class="s1">{</span><span class="s3">'mtime'</span><span class="s1">: st.st_mtime</span><span class="s4">, </span><span class="s3">'size'</span><span class="s1">: st.st_size} 
+ 
+    </span><span class="s4">def </span><span class="s1">_cache_bytecode(self</span><span class="s4">, </span><span class="s1">source_path</span><span class="s4">, </span><span class="s1">bytecode_path</span><span class="s4">, </span><span class="s1">data): 
+        </span><span class="s2"># Adapt between the two APIs</span><span class="s1"> 
+        mode = _calc_mode(source_path) 
+        </span><span class="s4">return </span><span class="s1">self.set_data(bytecode_path</span><span class="s4">, </span><span class="s1">data</span><span class="s4">, </span><span class="s1">_mode=mode) 
+ 
+    </span><span class="s4">def </span><span class="s1">set_data(self</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">data</span><span class="s4">, </span><span class="s1">*</span><span class="s4">, </span><span class="s1">_mode=</span><span class="s6">0o666</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Write bytes data to a file.&quot;&quot;&quot;</span><span class="s1"> 
+        parent</span><span class="s4">, </span><span class="s1">filename = _path_split(path) 
+        path_parts = [] 
+        </span><span class="s2"># Figure out what directories are missing.</span><span class="s1"> 
+        </span><span class="s4">while </span><span class="s1">parent </span><span class="s4">and not </span><span class="s1">_path_isdir(parent): 
+            parent</span><span class="s4">, </span><span class="s1">part = _path_split(parent) 
+            path_parts.append(part) 
+        </span><span class="s2"># Create needed directories.</span><span class="s1"> 
+        </span><span class="s4">for </span><span class="s1">part </span><span class="s4">in </span><span class="s1">reversed(path_parts): 
+            parent = _path_join(parent</span><span class="s4">, </span><span class="s1">part) 
+            </span><span class="s4">try</span><span class="s1">: 
+                _os.mkdir(parent) 
+            </span><span class="s4">except </span><span class="s1">FileExistsError: 
+                </span><span class="s2"># Probably another Python process already created the dir.</span><span class="s1"> 
+                </span><span class="s4">continue</span><span class="s1"> 
+            </span><span class="s4">except </span><span class="s1">OSError </span><span class="s4">as </span><span class="s1">exc: 
+                </span><span class="s2"># Could be a permission error, read-only filesystem: just forget</span><span class="s1"> 
+                </span><span class="s2"># about writing the data.</span><span class="s1"> 
+                _verbose_message(</span><span class="s3">'could not create {!r}: {!r}'</span><span class="s4">, </span><span class="s1">parent</span><span class="s4">, </span><span class="s1">exc) 
+                </span><span class="s4">return</span><span class="s1"> 
+        </span><span class="s4">try</span><span class="s1">: 
+            _write_atomic(path</span><span class="s4">, </span><span class="s1">data</span><span class="s4">, </span><span class="s1">_mode) 
+            _verbose_message(</span><span class="s3">'created {!r}'</span><span class="s4">, </span><span class="s1">path) 
+        </span><span class="s4">except </span><span class="s1">OSError </span><span class="s4">as </span><span class="s1">exc: 
+            </span><span class="s2"># Same as above: just don't write the bytecode.</span><span class="s1"> 
+            _verbose_message(</span><span class="s3">'could not create {!r}: {!r}'</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">exc) 
+ 
+ 
+</span><span class="s4">class </span><span class="s1">SourcelessFileLoader(FileLoader</span><span class="s4">, </span><span class="s1">_LoaderBasics): 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Loader which handles sourceless file imports.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">get_code(self</span><span class="s4">, </span><span class="s1">fullname): 
+        path = self.get_filename(fullname) 
+        data = self.get_data(path) 
+        bytes_data = _validate_bytecode_header(data</span><span class="s4">, </span><span class="s1">name=fullname</span><span class="s4">, </span><span class="s1">path=path) 
+        </span><span class="s4">return </span><span class="s1">_compile_bytecode(bytes_data</span><span class="s4">, </span><span class="s1">name=fullname</span><span class="s4">, </span><span class="s1">bytecode_path=path) 
+ 
+    </span><span class="s4">def </span><span class="s1">get_source(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return None as there is no source code.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">return None</span><span class="s1"> 
+ 
+ 
+</span><span class="s2"># Filled in by _setup().</span><span class="s1"> 
+EXTENSION_SUFFIXES = [] 
+ 
+ 
+</span><span class="s4">class </span><span class="s1">ExtensionFileLoader(FileLoader</span><span class="s4">, </span><span class="s1">_LoaderBasics): 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Loader for extension modules. 
+ 
+    The constructor is designed to work with FileFinder. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">__init__(self</span><span class="s4">, </span><span class="s1">name</span><span class="s4">, </span><span class="s1">path): 
+        self.name = name 
+        self.path = path 
+ 
+    </span><span class="s4">def </span><span class="s1">__eq__(self</span><span class="s4">, </span><span class="s1">other): 
+        </span><span class="s4">return </span><span class="s1">(self.__class__ == other.__class__ </span><span class="s4">and</span><span class="s1"> 
+                self.__dict__ == other.__dict__) 
+ 
+    </span><span class="s4">def </span><span class="s1">__hash__(self): 
+        </span><span class="s4">return </span><span class="s1">hash(self.name) ^ hash(self.path) 
+ 
+    </span><span class="s4">def </span><span class="s1">create_module(self</span><span class="s4">, </span><span class="s1">spec): 
+        </span><span class="s0">&quot;&quot;&quot;Create an unitialized extension module&quot;&quot;&quot;</span><span class="s1"> 
+        module = _bootstrap._call_with_frames_removed( 
+            _imp.create_dynamic</span><span class="s4">, </span><span class="s1">spec) 
+        _verbose_message(</span><span class="s3">'extension module {!r} loaded from {!r}'</span><span class="s4">,</span><span class="s1"> 
+                         spec.name</span><span class="s4">, </span><span class="s1">self.path) 
+        </span><span class="s4">return </span><span class="s1">module 
+ 
+    </span><span class="s4">def </span><span class="s1">exec_module(self</span><span class="s4">, </span><span class="s1">module): 
+        </span><span class="s0">&quot;&quot;&quot;Initialize an extension module&quot;&quot;&quot;</span><span class="s1"> 
+        _bootstrap._call_with_frames_removed(_imp.exec_dynamic</span><span class="s4">, </span><span class="s1">module) 
+        _verbose_message(</span><span class="s3">'extension module {!r} executed from {!r}'</span><span class="s4">,</span><span class="s1"> 
+                         self.name</span><span class="s4">, </span><span class="s1">self.path) 
+ 
+    </span><span class="s4">def </span><span class="s1">is_package(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return True if the extension module is a package.&quot;&quot;&quot;</span><span class="s1"> 
+        file_name = _path_split(self.path)[</span><span class="s6">1</span><span class="s1">] 
+        </span><span class="s4">return </span><span class="s1">any(file_name == </span><span class="s3">'__init__' </span><span class="s1">+ suffix 
+                   </span><span class="s4">for </span><span class="s1">suffix </span><span class="s4">in </span><span class="s1">EXTENSION_SUFFIXES) 
+ 
+    </span><span class="s4">def </span><span class="s1">get_code(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return None as an extension module cannot create a code object.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">return None</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">get_source(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return None as extension modules have no source code.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">return None</span><span class="s1"> 
+ 
+    @_check_name 
+    </span><span class="s4">def </span><span class="s1">get_filename(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return the path to the source file as found by the finder.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">self.path 
+ 
+ 
+</span><span class="s4">class </span><span class="s1">_NamespacePath: 
+    </span><span class="s0">&quot;&quot;&quot;Represents a namespace package's path.  It uses the module name 
+    to find its parent module, and from there it looks up the parent's 
+    __path__.  When this changes, the module's own path is recomputed, 
+    using path_finder.  For top-level modules, the parent module's path 
+    is sys.path.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">__init__(self</span><span class="s4">, </span><span class="s1">name</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">path_finder): 
+        self._name = name 
+        self._path = path 
+        self._last_parent_path = tuple(self._get_parent_path()) 
+        self._path_finder = path_finder 
+ 
+    </span><span class="s4">def </span><span class="s1">_find_parent_path_names(self): 
+        </span><span class="s0">&quot;&quot;&quot;Returns a tuple of (parent-module-name, parent-path-attr-name)&quot;&quot;&quot;</span><span class="s1"> 
+        parent</span><span class="s4">, </span><span class="s1">dot</span><span class="s4">, </span><span class="s1">me = self._name.rpartition(</span><span class="s3">'.'</span><span class="s1">) 
+        </span><span class="s4">if </span><span class="s1">dot == </span><span class="s3">''</span><span class="s1">: 
+            </span><span class="s2"># This is a top-level module. sys.path contains the parent path.</span><span class="s1"> 
+            </span><span class="s4">return </span><span class="s3">'sys'</span><span class="s4">, </span><span class="s3">'path'</span><span class="s1"> 
+        </span><span class="s2"># Not a top-level module. parent-module.__path__ contains the</span><span class="s1"> 
+        </span><span class="s2">#  parent path.</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">parent</span><span class="s4">, </span><span class="s3">'__path__'</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">_get_parent_path(self): 
+        parent_module_name</span><span class="s4">, </span><span class="s1">path_attr_name = self._find_parent_path_names() 
+        </span><span class="s4">return </span><span class="s1">getattr(sys.modules[parent_module_name]</span><span class="s4">, </span><span class="s1">path_attr_name) 
+ 
+    </span><span class="s4">def </span><span class="s1">_recalculate(self): 
+        </span><span class="s2"># If the parent's path has changed, recalculate _path</span><span class="s1"> 
+        parent_path = tuple(self._get_parent_path()) </span><span class="s2"># Make a copy</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">parent_path != self._last_parent_path: 
+            spec = self._path_finder(self._name</span><span class="s4">, </span><span class="s1">parent_path) 
+            </span><span class="s2"># Note that no changes are made if a loader is returned, but we</span><span class="s1"> 
+            </span><span class="s2">#  do remember the new parent path</span><span class="s1"> 
+            </span><span class="s4">if </span><span class="s1">spec </span><span class="s4">is not None and </span><span class="s1">spec.loader </span><span class="s4">is None</span><span class="s1">: 
+                </span><span class="s4">if </span><span class="s1">spec.submodule_search_locations: 
+                    self._path = spec.submodule_search_locations 
+            self._last_parent_path = parent_path     </span><span class="s2"># Save the copy</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">self._path 
+ 
+    </span><span class="s4">def </span><span class="s1">__iter__(self): 
+        </span><span class="s4">return </span><span class="s1">iter(self._recalculate()) 
+ 
+    </span><span class="s4">def </span><span class="s1">__len__(self): 
+        </span><span class="s4">return </span><span class="s1">len(self._recalculate()) 
+ 
+    </span><span class="s4">def </span><span class="s1">__repr__(self): 
+        </span><span class="s4">return </span><span class="s3">'_NamespacePath({!r})'</span><span class="s1">.format(self._path) 
+ 
+    </span><span class="s4">def </span><span class="s1">__contains__(self</span><span class="s4">, </span><span class="s1">item): 
+        </span><span class="s4">return </span><span class="s1">item </span><span class="s4">in </span><span class="s1">self._recalculate() 
+ 
+    </span><span class="s4">def </span><span class="s1">append(self</span><span class="s4">, </span><span class="s1">item): 
+        self._path.append(item) 
+ 
+ 
+</span><span class="s2"># We use this exclusively in module_from_spec() for backward-compatibility.</span><span class="s1"> 
+</span><span class="s4">class </span><span class="s1">_NamespaceLoader: 
+    </span><span class="s4">def </span><span class="s1">__init__(self</span><span class="s4">, </span><span class="s1">name</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">path_finder): 
+        self._path = _NamespacePath(name</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">path_finder) 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">module_repr(cls</span><span class="s4">, </span><span class="s1">module): 
+        </span><span class="s0">&quot;&quot;&quot;Return repr for the module. 
+ 
+        The method is deprecated.  The import machinery does the job itself. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s3">'&lt;module {!r} (namespace)&gt;'</span><span class="s1">.format(module.__name__) 
+ 
+    </span><span class="s4">def </span><span class="s1">is_package(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s4">return True</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">get_source(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s4">return </span><span class="s3">''</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">get_code(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s4">return </span><span class="s1">compile(</span><span class="s3">''</span><span class="s4">, </span><span class="s3">'&lt;string&gt;'</span><span class="s4">, </span><span class="s3">'exec'</span><span class="s4">, </span><span class="s1">dont_inherit=</span><span class="s4">True</span><span class="s1">) 
+ 
+    </span><span class="s4">def </span><span class="s1">create_module(self</span><span class="s4">, </span><span class="s1">spec): 
+        </span><span class="s0">&quot;&quot;&quot;Use default semantics for module creation.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">exec_module(self</span><span class="s4">, </span><span class="s1">module): 
+        </span><span class="s4">pass</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">load_module(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Load a namespace module. 
+ 
+        This method is deprecated.  Use exec_module() instead. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2"># The import system never calls this method.</span><span class="s1"> 
+        _verbose_message(</span><span class="s3">'namespace module loaded with path {!r}'</span><span class="s4">, </span><span class="s1">self._path) 
+        </span><span class="s4">return </span><span class="s1">_bootstrap._load_module_shim(self</span><span class="s4">, </span><span class="s1">fullname) 
+ 
+ 
+</span><span class="s2"># Finders #####################################################################</span><span class="s1"> 
+ 
+</span><span class="s4">class </span><span class="s1">PathFinder: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Meta path finder for sys.path and package __path__ attributes.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">invalidate_caches(cls): 
+        </span><span class="s0">&quot;&quot;&quot;Call the invalidate_caches() method on all path entry finders 
+        stored in sys.path_importer_caches (where implemented).&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">for </span><span class="s1">finder </span><span class="s4">in </span><span class="s1">sys.path_importer_cache.values(): 
+            </span><span class="s4">if </span><span class="s1">hasattr(finder</span><span class="s4">, </span><span class="s3">'invalidate_caches'</span><span class="s1">): 
+                finder.invalidate_caches() 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">_path_hooks(cls</span><span class="s4">, </span><span class="s1">path): 
+        </span><span class="s0">&quot;&quot;&quot;Search sequence of hooks for a finder for 'path'. 
+ 
+        If 'hooks' is false then use sys.path_hooks. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">sys.path_hooks </span><span class="s4">is not None and not </span><span class="s1">sys.path_hooks: 
+            _warnings.warn(</span><span class="s3">'sys.path_hooks is empty'</span><span class="s4">, </span><span class="s1">ImportWarning) 
+        </span><span class="s4">for </span><span class="s1">hook </span><span class="s4">in </span><span class="s1">sys.path_hooks: 
+            </span><span class="s4">try</span><span class="s1">: 
+                </span><span class="s4">return </span><span class="s1">hook(path) 
+            </span><span class="s4">except </span><span class="s1">ImportError: 
+                </span><span class="s4">continue</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s4">return None</span><span class="s1"> 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">_path_importer_cache(cls</span><span class="s4">, </span><span class="s1">path): 
+        </span><span class="s0">&quot;&quot;&quot;Get the finder for the path entry from sys.path_importer_cache. 
+ 
+        If the path entry is not in the cache, find the appropriate finder 
+        and cache it. If no finder is available, store None. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">path == </span><span class="s3">''</span><span class="s1">: 
+            </span><span class="s4">try</span><span class="s1">: 
+                path = _os.getcwd() 
+            </span><span class="s4">except </span><span class="s1">FileNotFoundError: 
+                </span><span class="s2"># Don't cache the failure as the cwd can easily change to</span><span class="s1"> 
+                </span><span class="s2"># a valid directory later on.</span><span class="s1"> 
+                </span><span class="s4">return None</span><span class="s1"> 
+        </span><span class="s4">try</span><span class="s1">: 
+            finder = sys.path_importer_cache[path] 
+        </span><span class="s4">except </span><span class="s1">KeyError: 
+            finder = cls._path_hooks(path) 
+            sys.path_importer_cache[path] = finder 
+        </span><span class="s4">return </span><span class="s1">finder 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">_legacy_get_spec(cls</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">finder): 
+        </span><span class="s2"># This would be a good place for a DeprecationWarning if</span><span class="s1"> 
+        </span><span class="s2"># we ended up going that route.</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">hasattr(finder</span><span class="s4">, </span><span class="s3">'find_loader'</span><span class="s1">): 
+            loader</span><span class="s4">, </span><span class="s1">portions = finder.find_loader(fullname) 
+        </span><span class="s4">else</span><span class="s1">: 
+            loader = finder.find_module(fullname) 
+            portions = [] 
+        </span><span class="s4">if </span><span class="s1">loader </span><span class="s4">is not None</span><span class="s1">: 
+            </span><span class="s4">return </span><span class="s1">_bootstrap.spec_from_loader(fullname</span><span class="s4">, </span><span class="s1">loader) 
+        spec = _bootstrap.ModuleSpec(fullname</span><span class="s4">, None</span><span class="s1">) 
+        spec.submodule_search_locations = portions 
+        </span><span class="s4">return </span><span class="s1">spec 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">_get_spec(cls</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">target=</span><span class="s4">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Find the loader or namespace_path for this module/package name.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2"># If this ends up being a namespace package, namespace_path is</span><span class="s1"> 
+        </span><span class="s2">#  the list of paths that will become its __path__</span><span class="s1"> 
+        namespace_path = [] 
+        </span><span class="s4">for </span><span class="s1">entry </span><span class="s4">in </span><span class="s1">path: 
+            </span><span class="s4">if not </span><span class="s1">isinstance(entry</span><span class="s4">, </span><span class="s1">(str</span><span class="s4">, </span><span class="s1">bytes)): 
+                </span><span class="s4">continue</span><span class="s1"> 
+            finder = cls._path_importer_cache(entry) 
+            </span><span class="s4">if </span><span class="s1">finder </span><span class="s4">is not None</span><span class="s1">: 
+                </span><span class="s4">if </span><span class="s1">hasattr(finder</span><span class="s4">, </span><span class="s3">'find_spec'</span><span class="s1">): 
+                    spec = finder.find_spec(fullname</span><span class="s4">, </span><span class="s1">target) 
+                </span><span class="s4">else</span><span class="s1">: 
+                    spec = cls._legacy_get_spec(fullname</span><span class="s4">, </span><span class="s1">finder) 
+                </span><span class="s4">if </span><span class="s1">spec </span><span class="s4">is None</span><span class="s1">: 
+                    </span><span class="s4">continue</span><span class="s1"> 
+                </span><span class="s4">if </span><span class="s1">spec.loader </span><span class="s4">is not None</span><span class="s1">: 
+                    </span><span class="s4">return </span><span class="s1">spec 
+                portions = spec.submodule_search_locations 
+                </span><span class="s4">if </span><span class="s1">portions </span><span class="s4">is None</span><span class="s1">: 
+                    </span><span class="s4">raise </span><span class="s1">ImportError(</span><span class="s3">'spec missing loader'</span><span class="s1">) 
+                </span><span class="s2"># This is possibly part of a namespace package.</span><span class="s1"> 
+                </span><span class="s2">#  Remember these path entries (if any) for when we</span><span class="s1"> 
+                </span><span class="s2">#  create a namespace package, and continue iterating</span><span class="s1"> 
+                </span><span class="s2">#  on path.</span><span class="s1"> 
+                namespace_path.extend(portions) 
+        </span><span class="s4">else</span><span class="s1">: 
+            spec = _bootstrap.ModuleSpec(fullname</span><span class="s4">, None</span><span class="s1">) 
+            spec.submodule_search_locations = namespace_path 
+            </span><span class="s4">return </span><span class="s1">spec 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">find_spec(cls</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">path=</span><span class="s4">None, </span><span class="s1">target=</span><span class="s4">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;find the module on sys.path or 'path' based on sys.path_hooks and 
+        sys.path_importer_cache.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">path </span><span class="s4">is None</span><span class="s1">: 
+            path = sys.path 
+        spec = cls._get_spec(fullname</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">target) 
+        </span><span class="s4">if </span><span class="s1">spec </span><span class="s4">is None</span><span class="s1">: 
+            </span><span class="s4">return None</span><span class="s1"> 
+        </span><span class="s4">elif </span><span class="s1">spec.loader </span><span class="s4">is None</span><span class="s1">: 
+            namespace_path = spec.submodule_search_locations 
+            </span><span class="s4">if </span><span class="s1">namespace_path: 
+                </span><span class="s2"># We found at least one namespace path.  Return a</span><span class="s1"> 
+                </span><span class="s2">#  spec which can create the namespace package.</span><span class="s1"> 
+                spec.origin = </span><span class="s3">'namespace'</span><span class="s1"> 
+                spec.submodule_search_locations = _NamespacePath(fullname</span><span class="s4">, </span><span class="s1">namespace_path</span><span class="s4">, </span><span class="s1">cls._get_spec) 
+                </span><span class="s4">return </span><span class="s1">spec 
+            </span><span class="s4">else</span><span class="s1">: 
+                </span><span class="s4">return None</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s4">return </span><span class="s1">spec 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">find_module(cls</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">path=</span><span class="s4">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;find the module on sys.path or 'path' based on sys.path_hooks and 
+        sys.path_importer_cache. 
+ 
+        This method is deprecated.  Use find_spec() instead. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        spec = cls.find_spec(fullname</span><span class="s4">, </span><span class="s1">path) 
+        </span><span class="s4">if </span><span class="s1">spec </span><span class="s4">is None</span><span class="s1">: 
+            </span><span class="s4">return None</span><span class="s1"> 
+        </span><span class="s4">return </span><span class="s1">spec.loader 
+ 
+ 
+</span><span class="s4">class </span><span class="s1">FileFinder: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;File-based finder. 
+ 
+    Interactions with the file system are cached for performance, being 
+    refreshed when the directory the finder is handling has been modified. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">__init__(self</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">*loader_details): 
+        </span><span class="s0">&quot;&quot;&quot;Initialize with the path to search on and a variable number of 
+        2-tuples containing the loader and the file suffixes the loader 
+        recognizes.&quot;&quot;&quot;</span><span class="s1"> 
+        loaders = [] 
+        </span><span class="s4">for </span><span class="s1">loader</span><span class="s4">, </span><span class="s1">suffixes </span><span class="s4">in </span><span class="s1">loader_details: 
+            loaders.extend((suffix</span><span class="s4">, </span><span class="s1">loader) </span><span class="s4">for </span><span class="s1">suffix </span><span class="s4">in </span><span class="s1">suffixes) 
+        self._loaders = loaders 
+        </span><span class="s2"># Base (directory) path</span><span class="s1"> 
+        self.path = path </span><span class="s4">or </span><span class="s3">'.'</span><span class="s1"> 
+        self._path_mtime = -</span><span class="s6">1</span><span class="s1"> 
+        self._path_cache = set() 
+        self._relaxed_path_cache = set() 
+ 
+    </span><span class="s4">def </span><span class="s1">invalidate_caches(self): 
+        </span><span class="s0">&quot;&quot;&quot;Invalidate the directory mtime.&quot;&quot;&quot;</span><span class="s1"> 
+        self._path_mtime = -</span><span class="s6">1</span><span class="s1"> 
+ 
+    find_module = _find_module_shim 
+ 
+    </span><span class="s4">def </span><span class="s1">find_loader(self</span><span class="s4">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Try to find a loader for the specified module, or the namespace 
+        package portions. Returns (loader, list-of-portions). 
+ 
+        This method is deprecated.  Use find_spec() instead. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        spec = self.find_spec(fullname) 
+        </span><span class="s4">if </span><span class="s1">spec </span><span class="s4">is None</span><span class="s1">: 
+            </span><span class="s4">return None, </span><span class="s1">[] 
+        </span><span class="s4">return </span><span class="s1">spec.loader</span><span class="s4">, </span><span class="s1">spec.submodule_search_locations </span><span class="s4">or </span><span class="s1">[] 
+ 
+    </span><span class="s4">def </span><span class="s1">_get_spec(self</span><span class="s4">, </span><span class="s1">loader_class</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">smsl</span><span class="s4">, </span><span class="s1">target): 
+        loader = loader_class(fullname</span><span class="s4">, </span><span class="s1">path) 
+        </span><span class="s4">return </span><span class="s1">spec_from_file_location(fullname</span><span class="s4">, </span><span class="s1">path</span><span class="s4">, </span><span class="s1">loader=loader</span><span class="s4">,</span><span class="s1"> 
+                                       submodule_search_locations=smsl) 
+ 
+    </span><span class="s4">def </span><span class="s1">find_spec(self</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">target=</span><span class="s4">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Try to find a spec for the specified module.  Returns the 
+        matching spec, or None if not found.&quot;&quot;&quot;</span><span class="s1"> 
+        is_namespace = </span><span class="s4">False</span><span class="s1"> 
+        tail_module = fullname.rpartition(</span><span class="s3">'.'</span><span class="s1">)[</span><span class="s6">2</span><span class="s1">] 
+        </span><span class="s4">try</span><span class="s1">: 
+            mtime = _path_stat(self.path </span><span class="s4">or </span><span class="s1">_os.getcwd()).st_mtime 
+        </span><span class="s4">except </span><span class="s1">OSError: 
+            mtime = -</span><span class="s6">1</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">mtime != self._path_mtime: 
+            self._fill_cache() 
+            self._path_mtime = mtime 
+        </span><span class="s2"># tail_module keeps the original casing, for __file__ and friends</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">_relax_case(): 
+            cache = self._relaxed_path_cache 
+            cache_module = tail_module.lower() 
+        </span><span class="s4">else</span><span class="s1">: 
+            cache = self._path_cache 
+            cache_module = tail_module 
+        </span><span class="s2"># Check if the module is the name of a directory (and thus a package).</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">cache_module </span><span class="s4">in </span><span class="s1">cache: 
+            base_path = _path_join(self.path</span><span class="s4">, </span><span class="s1">tail_module) 
+            </span><span class="s4">for </span><span class="s1">suffix</span><span class="s4">, </span><span class="s1">loader_class </span><span class="s4">in </span><span class="s1">self._loaders: 
+                init_filename = </span><span class="s3">'__init__' </span><span class="s1">+ suffix 
+                full_path = _path_join(base_path</span><span class="s4">, </span><span class="s1">init_filename) 
+                </span><span class="s4">if </span><span class="s1">_path_isfile(full_path): 
+                    </span><span class="s4">return </span><span class="s1">self._get_spec(loader_class</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">full_path</span><span class="s4">, </span><span class="s1">[base_path]</span><span class="s4">, </span><span class="s1">target) 
+            </span><span class="s4">else</span><span class="s1">: 
+                </span><span class="s2"># If a namespace package, return the path if we don't</span><span class="s1"> 
+                </span><span class="s2">#  find a module in the next section.</span><span class="s1"> 
+                is_namespace = _path_isdir(base_path) 
+        </span><span class="s2"># Check for a file w/ a proper suffix exists.</span><span class="s1"> 
+        </span><span class="s4">for </span><span class="s1">suffix</span><span class="s4">, </span><span class="s1">loader_class </span><span class="s4">in </span><span class="s1">self._loaders: 
+            full_path = _path_join(self.path</span><span class="s4">, </span><span class="s1">tail_module + suffix) 
+            _verbose_message(</span><span class="s3">'trying {}'</span><span class="s1">.format(full_path)</span><span class="s4">, </span><span class="s1">verbosity=</span><span class="s6">2</span><span class="s1">) 
+            </span><span class="s4">if </span><span class="s1">cache_module + suffix </span><span class="s4">in </span><span class="s1">cache: 
+                </span><span class="s4">if </span><span class="s1">_path_isfile(full_path): 
+                    </span><span class="s4">return </span><span class="s1">self._get_spec(loader_class</span><span class="s4">, </span><span class="s1">fullname</span><span class="s4">, </span><span class="s1">full_path</span><span class="s4">, None, </span><span class="s1">target) 
+        </span><span class="s4">if </span><span class="s1">is_namespace: 
+            _verbose_message(</span><span class="s3">'possible namespace for {}'</span><span class="s1">.format(base_path)) 
+            spec = _bootstrap.ModuleSpec(fullname</span><span class="s4">, None</span><span class="s1">) 
+            spec.submodule_search_locations = [base_path] 
+            </span><span class="s4">return </span><span class="s1">spec 
+        </span><span class="s4">return None</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">_fill_cache(self): 
+        </span><span class="s0">&quot;&quot;&quot;Fill the cache of potential modules and packages for this directory.&quot;&quot;&quot;</span><span class="s1"> 
+        path = self.path 
+        </span><span class="s4">try</span><span class="s1">: 
+            contents = _os.listdir(path </span><span class="s4">or </span><span class="s1">_os.getcwd()) 
+        </span><span class="s4">except </span><span class="s1">(FileNotFoundError</span><span class="s4">, </span><span class="s1">PermissionError</span><span class="s4">, </span><span class="s1">NotADirectoryError): 
+            </span><span class="s2"># Directory has either been removed, turned into a file, or made</span><span class="s1"> 
+            </span><span class="s2"># unreadable.</span><span class="s1"> 
+            contents = [] 
+        </span><span class="s2"># We store two cached versions, to handle runtime changes of the</span><span class="s1"> 
+        </span><span class="s2"># PYTHONCASEOK environment variable.</span><span class="s1"> 
+        </span><span class="s4">if not </span><span class="s1">sys.platform.startswith(</span><span class="s3">'win'</span><span class="s1">): 
+            self._path_cache = set(contents) 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s2"># Windows users can import modules with case-insensitive file</span><span class="s1"> 
+            </span><span class="s2"># suffixes (for legacy reasons). Make the suffix lowercase here</span><span class="s1"> 
+            </span><span class="s2"># so it's done once instead of for every import. This is safe as</span><span class="s1"> 
+            </span><span class="s2"># the specified suffixes to check against are always specified in a</span><span class="s1"> 
+            </span><span class="s2"># case-sensitive manner.</span><span class="s1"> 
+            lower_suffix_contents = set() 
+            </span><span class="s4">for </span><span class="s1">item </span><span class="s4">in </span><span class="s1">contents: 
+                name</span><span class="s4">, </span><span class="s1">dot</span><span class="s4">, </span><span class="s1">suffix = item.partition(</span><span class="s3">'.'</span><span class="s1">) 
+                </span><span class="s4">if </span><span class="s1">dot: 
+                    new_name = </span><span class="s3">'{}.{}'</span><span class="s1">.format(name</span><span class="s4">, </span><span class="s1">suffix.lower()) 
+                </span><span class="s4">else</span><span class="s1">: 
+                    new_name = name 
+                lower_suffix_contents.add(new_name) 
+            self._path_cache = lower_suffix_contents 
+        </span><span class="s4">if </span><span class="s1">sys.platform.startswith(_CASE_INSENSITIVE_PLATFORMS): 
+            self._relaxed_path_cache = {fn.lower() </span><span class="s4">for </span><span class="s1">fn </span><span class="s4">in </span><span class="s1">contents} 
+ 
+    @classmethod 
+    </span><span class="s4">def </span><span class="s1">path_hook(cls</span><span class="s4">, </span><span class="s1">*loader_details): 
+        </span><span class="s0">&quot;&quot;&quot;A class method which returns a closure to use on sys.path_hook 
+        which will return an instance using the specified loaders and the path 
+        called on the closure. 
+ 
+        If the path called on the closure is not a directory, ImportError is 
+        raised. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">def </span><span class="s1">path_hook_for_FileFinder(path): 
+            </span><span class="s0">&quot;&quot;&quot;Path hook for importlib.machinery.FileFinder.&quot;&quot;&quot;</span><span class="s1"> 
+            </span><span class="s4">if not </span><span class="s1">_path_isdir(path): 
+                </span><span class="s4">raise </span><span class="s1">ImportError(</span><span class="s3">'only directories are supported'</span><span class="s4">, </span><span class="s1">path=path) 
+            </span><span class="s4">return </span><span class="s1">cls(path</span><span class="s4">, </span><span class="s1">*loader_details) 
+ 
+        </span><span class="s4">return </span><span class="s1">path_hook_for_FileFinder 
+ 
+    </span><span class="s4">def </span><span class="s1">__repr__(self): 
+        </span><span class="s4">return </span><span class="s3">'FileFinder({!r})'</span><span class="s1">.format(self.path) 
+ 
+ 
+</span><span class="s2"># Import setup ###############################################################</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">_fix_up_module(ns</span><span class="s4">, </span><span class="s1">name</span><span class="s4">, </span><span class="s1">pathname</span><span class="s4">, </span><span class="s1">cpathname=</span><span class="s4">None</span><span class="s1">): 
+    </span><span class="s2"># This function is used by PyImport_ExecCodeModuleObject().</span><span class="s1"> 
+    loader = ns.get(</span><span class="s3">'__loader__'</span><span class="s1">) 
+    spec = ns.get(</span><span class="s3">'__spec__'</span><span class="s1">) 
+    </span><span class="s4">if not </span><span class="s1">loader: 
+        </span><span class="s4">if </span><span class="s1">spec: 
+            loader = spec.loader 
+        </span><span class="s4">elif </span><span class="s1">pathname == cpathname: 
+            loader = SourcelessFileLoader(name</span><span class="s4">, </span><span class="s1">pathname) 
+        </span><span class="s4">else</span><span class="s1">: 
+            loader = SourceFileLoader(name</span><span class="s4">, </span><span class="s1">pathname) 
+    </span><span class="s4">if not </span><span class="s1">spec: 
+        spec = spec_from_file_location(name</span><span class="s4">, </span><span class="s1">pathname</span><span class="s4">, </span><span class="s1">loader=loader) 
+    </span><span class="s4">try</span><span class="s1">: 
+        ns[</span><span class="s3">'__spec__'</span><span class="s1">] = spec 
+        ns[</span><span class="s3">'__loader__'</span><span class="s1">] = loader 
+        ns[</span><span class="s3">'__file__'</span><span class="s1">] = pathname 
+        ns[</span><span class="s3">'__cached__'</span><span class="s1">] = cpathname 
+    </span><span class="s4">except </span><span class="s1">Exception: 
+        </span><span class="s2"># Not important enough to report.</span><span class="s1"> 
+        </span><span class="s4">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_get_supported_file_loaders(): 
+    </span><span class="s0">&quot;&quot;&quot;Returns a list of file-based module loaders. 
+ 
+    Each item is a tuple (loader, suffixes). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    extensions = ExtensionFileLoader</span><span class="s4">, </span><span class="s1">_imp.extension_suffixes() 
+    source = SourceFileLoader</span><span class="s4">, </span><span class="s1">SOURCE_SUFFIXES 
+    bytecode = SourcelessFileLoader</span><span class="s4">, </span><span class="s1">BYTECODE_SUFFIXES 
+    </span><span class="s4">return </span><span class="s1">[extensions</span><span class="s4">, </span><span class="s1">source</span><span class="s4">, </span><span class="s1">bytecode] 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_setup(_bootstrap_module): 
+    </span><span class="s0">&quot;&quot;&quot;Setup the path-based importers for importlib by importing needed 
+    built-in modules and injecting them into the global namespace. 
+ 
+    Other components are extracted from the core bootstrap module. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">global </span><span class="s1">sys</span><span class="s4">, </span><span class="s1">_imp</span><span class="s4">, </span><span class="s1">_bootstrap 
+    _bootstrap = _bootstrap_module 
+    sys = _bootstrap.sys 
+    _imp = _bootstrap._imp 
+ 
+    </span><span class="s2"># Directly load built-in modules needed during bootstrap.</span><span class="s1"> 
+    self_module = sys.modules[__name__] 
+    </span><span class="s4">for </span><span class="s1">builtin_name </span><span class="s4">in </span><span class="s1">(</span><span class="s3">'_io'</span><span class="s4">, </span><span class="s3">'_warnings'</span><span class="s4">, </span><span class="s3">'builtins'</span><span class="s4">, </span><span class="s3">'marshal'</span><span class="s1">): 
+        </span><span class="s4">if </span><span class="s1">builtin_name </span><span class="s4">not in </span><span class="s1">sys.modules: 
+            builtin_module = _bootstrap._builtin_from_name(builtin_name) 
+        </span><span class="s4">else</span><span class="s1">: 
+            builtin_module = sys.modules[builtin_name] 
+        setattr(self_module</span><span class="s4">, </span><span class="s1">builtin_name</span><span class="s4">, </span><span class="s1">builtin_module) 
+ 
+    </span><span class="s2"># Directly load the os module (needed during bootstrap).</span><span class="s1"> 
+    os_details = (</span><span class="s3">'posix'</span><span class="s4">, </span><span class="s1">[</span><span class="s3">'/'</span><span class="s1">])</span><span class="s4">, </span><span class="s1">(</span><span class="s3">'nt'</span><span class="s4">, </span><span class="s1">[</span><span class="s3">'</span><span class="s4">\\</span><span class="s3">'</span><span class="s4">, </span><span class="s3">'/'</span><span class="s1">]) 
+    </span><span class="s4">for </span><span class="s1">builtin_os</span><span class="s4">, </span><span class="s1">path_separators </span><span class="s4">in </span><span class="s1">os_details: 
+        </span><span class="s2"># Assumption made in _path_join()</span><span class="s1"> 
+        </span><span class="s4">assert </span><span class="s1">all(len(sep) == </span><span class="s6">1 </span><span class="s4">for </span><span class="s1">sep </span><span class="s4">in </span><span class="s1">path_separators) 
+        path_sep = path_separators[</span><span class="s6">0</span><span class="s1">] 
+        </span><span class="s4">if </span><span class="s1">builtin_os </span><span class="s4">in </span><span class="s1">sys.modules: 
+            os_module = sys.modules[builtin_os] 
+            </span><span class="s4">break</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s4">try</span><span class="s1">: 
+                os_module = _bootstrap._builtin_from_name(builtin_os) 
+                </span><span class="s4">break</span><span class="s1"> 
+            </span><span class="s4">except </span><span class="s1">ImportError: 
+                </span><span class="s4">continue</span><span class="s1"> 
+    </span><span class="s4">else</span><span class="s1">: 
+        </span><span class="s4">raise </span><span class="s1">ImportError(</span><span class="s3">'importlib requires posix or nt'</span><span class="s1">) 
+    setattr(self_module</span><span class="s4">, </span><span class="s3">'_os'</span><span class="s4">, </span><span class="s1">os_module) 
+    setattr(self_module</span><span class="s4">, </span><span class="s3">'path_sep'</span><span class="s4">, </span><span class="s1">path_sep) 
+    setattr(self_module</span><span class="s4">, </span><span class="s3">'path_separators'</span><span class="s4">, </span><span class="s3">''</span><span class="s1">.join(path_separators)) 
+ 
+    </span><span class="s2"># Directly load the _thread module (needed during bootstrap).</span><span class="s1"> 
+    </span><span class="s4">try</span><span class="s1">: 
+        thread_module = _bootstrap._builtin_from_name(</span><span class="s3">'_thread'</span><span class="s1">) 
+    </span><span class="s4">except </span><span class="s1">ImportError: 
+        </span><span class="s2"># Python was built without threads</span><span class="s1"> 
+        thread_module = </span><span class="s4">None</span><span class="s1"> 
+    setattr(self_module</span><span class="s4">, </span><span class="s3">'_thread'</span><span class="s4">, </span><span class="s1">thread_module) 
+ 
+    </span><span class="s2"># Directly load the _weakref module (needed during bootstrap).</span><span class="s1"> 
+    weakref_module = _bootstrap._builtin_from_name(</span><span class="s3">'_weakref'</span><span class="s1">) 
+    setattr(self_module</span><span class="s4">, </span><span class="s3">'_weakref'</span><span class="s4">, </span><span class="s1">weakref_module) 
+ 
+    </span><span class="s2"># Directly load the winreg module (needed during bootstrap).</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">builtin_os == </span><span class="s3">'nt'</span><span class="s1">: 
+        winreg_module = _bootstrap._builtin_from_name(</span><span class="s3">'winreg'</span><span class="s1">) 
+        setattr(self_module</span><span class="s4">, </span><span class="s3">'_winreg'</span><span class="s4">, </span><span class="s1">winreg_module) 
+ 
+    </span><span class="s2"># Constants</span><span class="s1"> 
+    setattr(self_module</span><span class="s4">, </span><span class="s3">'_relax_case'</span><span class="s4">, </span><span class="s1">_make_relax_case()) 
+    EXTENSION_SUFFIXES.extend(_imp.extension_suffixes()) 
+    </span><span class="s4">if </span><span class="s1">builtin_os == </span><span class="s3">'nt'</span><span class="s1">: 
+        SOURCE_SUFFIXES.append(</span><span class="s3">'.pyw'</span><span class="s1">) 
+        </span><span class="s4">if </span><span class="s3">'_d.pyd' </span><span class="s4">in </span><span class="s1">EXTENSION_SUFFIXES: 
+            WindowsRegistryFinder.DEBUG_BUILD = </span><span class="s4">True</span><span class="s1"> 
+ 
+ 
+</span><span class="s4">def </span><span class="s1">_install(_bootstrap_module): 
+    </span><span class="s0">&quot;&quot;&quot;Install the path-based import components.&quot;&quot;&quot;</span><span class="s1"> 
+    _setup(_bootstrap_module) 
+    supported_loaders = _get_supported_file_loaders() 
+    sys.path_hooks.extend([FileFinder.path_hook(*supported_loaders)]) 
+    </span><span class="s4">if </span><span class="s1">_os.__name__ == </span><span class="s3">'nt'</span><span class="s1">: 
+        sys.meta_path.append(WindowsRegistryFinder) 
+    sys.meta_path.append(PathFinder) 
+ 
+    </span><span class="s2"># XXX We expose a couple of classes in _bootstrap for the sake of</span><span class="s1"> 
+    </span><span class="s2"># a setuptools bug (https://bitbucket.org/pypa/setuptools/issue/378).</span><span class="s1"> 
+    _bootstrap_module.FileFinder = FileFinder 
+    _bootstrap_module.SourceFileLoader = SourceFileLoader 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<html>
+<head>
+<title>TrafficFlowIpfix.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+TrafficFlowIpfix.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">TrafficFlowIpfix: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setLastForwarded(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set last forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=last-forwarded=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setFirstForwarded(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=first-forwarded=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setInInterface(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=in-interface=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutInterface(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=out-interface=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcPort(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=src-port=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstPort(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=dst-port=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setGateway(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=gateway=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcAddressMask(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=src-address-mask=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstMac(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=dst-mac-address=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcMac(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=src-mac-address=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setNatSrcPort(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=nat-src-port=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setNatDstPort(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=nat-dst-port=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setIsMulticast(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=is-multicast=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpHeaderLength(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=ip-header-length=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpSeqNumber(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=tcp-seq-num=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setAckNumber(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=tcp-ack-number=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setIcmpType(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=icmp-type=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setIcmpCode(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=icmp-code=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setPackets(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=packets=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setBytes(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=bytes=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcAddress(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=src-address=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstAddress(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=dst-address=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtocol(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=protocol=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpTos(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=tos=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstAddressMask(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=dst-address-mask=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpFlags(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=tcp-flags=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setNatSrcAddress(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=nat-src-address=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setNatDstAddress(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=nat-dst-address=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpv6FlowLabel(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=ipv6-flow-label=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setTtl(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=ttl=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpTotalLength(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=ip-total-length=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setUdpLength(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=udp-length=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpWindowSize(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=tcp-window-size=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix 
+ 
+    </span><span class="s0">def </span><span class="s1">setIgmpType(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first forwarded 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipfix = self.client.talk( [</span><span class="s4">'/ip/traffic-flow/ipfix/set'</span><span class="s0">, </span><span class="s4">'=igmp-type=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipfix</span></pre>
+</body>
+</html>

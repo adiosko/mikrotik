@@ -1,0 +1,179 @@
+<html>
+<head>
+<title>FirewallCOnnections.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+FirewallCOnnections.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">FirewallConnections: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listCOnnections(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all connections 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/print'</span><span class="s1">] ) 
+        </span><span class="s0">if </span><span class="s1">ip == {}: 
+            print( </span><span class="s4">&quot;No connection found&quot; </span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print( </span><span class="s4">&quot;Protocol</span><span class="s0">\t</span><span class="s4">Src address</span><span class="s0">\t</span><span class="s4">Dst address</span><span class="s0">\t</span><span class="s4">Timeout&quot; </span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ip: 
+                print( ip[i][</span><span class="s4">'protocol'</span><span class="s1">] + </span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot; </span><span class="s1">+ ip[i][</span><span class="s4">'src-address'</span><span class="s1">] + </span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot; </span><span class="s1">+ ip[i][</span><span class="s4">'dst-address'</span><span class="s1">] + </span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot; </span><span class="s1">+ 
+                       ip[i][</span><span class="s4">'timeout'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTrackingMode(self</span><span class="s0">,</span><span class="s1">mode=</span><span class="s4">&quot;yes&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tracking 
+        :param mode:  auto,no,yes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">,</span><span class="s4">'=enabled=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpSynSendTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:00:05&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-syn-sent-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpSynRcvTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:00:05&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-syn-received-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpEstablishedTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;1d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-established-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpFinWaitTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-fin-wait-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpCloseWaitTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-close-wait-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpLastAckTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-last-ack-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpTimeWaitTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-time-wait-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpCloseTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-close-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpMaxRetransmitTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:05:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-max-retrans-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpUnackedTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:05:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=tcp-unacked-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setUdpTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=udp-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setUdpStreamTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:03:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=udp-stream-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setIcmpTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=icmp-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setGenericTimeout(self</span><span class="s0">, </span><span class="s1">timeout=</span><span class="s4">&quot;00:10:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will tcp timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/connection/tracking/set'</span><span class="s0">, </span><span class="s4">'=generic-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip</span></pre>
+</body>
+</html>

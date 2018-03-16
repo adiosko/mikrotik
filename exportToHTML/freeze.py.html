@@ -1,0 +1,155 @@
+<html>
+<head>
+<title>freeze.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+freeze.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">import </span><span class="s1">logging 
+</span><span class="s0">import </span><span class="s1">re 
+ 
+</span><span class="s0">import </span><span class="s1">pip 
+</span><span class="s0">from </span><span class="s1">pip.req </span><span class="s0">import </span><span class="s1">InstallRequirement 
+</span><span class="s0">from </span><span class="s1">pip.req.req_file </span><span class="s0">import </span><span class="s1">COMMENT_RE 
+</span><span class="s0">from </span><span class="s1">pip.utils </span><span class="s0">import </span><span class="s1">get_installed_distributions 
+</span><span class="s0">from </span><span class="s1">pip._vendor </span><span class="s0">import </span><span class="s1">pkg_resources 
+</span><span class="s0">from </span><span class="s1">pip._vendor.packaging.utils </span><span class="s0">import </span><span class="s1">canonicalize_name 
+</span><span class="s0">from </span><span class="s1">pip._vendor.pkg_resources </span><span class="s0">import </span><span class="s1">RequirementParseError 
+ 
+ 
+logger = logging.getLogger(__name__) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">freeze( 
+        requirement=</span><span class="s0">None,</span><span class="s1"> 
+        find_links=</span><span class="s0">None, </span><span class="s1">local_only=</span><span class="s0">None, </span><span class="s1">user_only=</span><span class="s0">None, </span><span class="s1">skip_regex=</span><span class="s0">None,</span><span class="s1"> 
+        default_vcs=</span><span class="s0">None,</span><span class="s1"> 
+        isolated=</span><span class="s0">False,</span><span class="s1"> 
+        wheel_cache=</span><span class="s0">None,</span><span class="s1"> 
+        skip=()): 
+    find_links = find_links </span><span class="s0">or </span><span class="s1">[] 
+    skip_match = </span><span class="s0">None</span><span class="s1"> 
+ 
+    </span><span class="s0">if </span><span class="s1">skip_regex: 
+        skip_match = re.compile(skip_regex).search 
+ 
+    dependency_links = [] 
+ 
+    </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">pkg_resources.working_set: 
+        </span><span class="s0">if </span><span class="s1">dist.has_metadata(</span><span class="s2">'dependency_links.txt'</span><span class="s1">): 
+            dependency_links.extend( 
+                dist.get_metadata_lines(</span><span class="s2">'dependency_links.txt'</span><span class="s1">) 
+            ) 
+    </span><span class="s0">for </span><span class="s1">link </span><span class="s0">in </span><span class="s1">find_links: 
+        </span><span class="s0">if </span><span class="s2">'#egg=' </span><span class="s0">in </span><span class="s1">link: 
+            dependency_links.append(link) 
+    </span><span class="s0">for </span><span class="s1">link </span><span class="s0">in </span><span class="s1">find_links: 
+        </span><span class="s0">yield </span><span class="s2">'-f %s' </span><span class="s1">% link 
+    installations = {} 
+    </span><span class="s0">for </span><span class="s1">dist </span><span class="s0">in </span><span class="s1">get_installed_distributions(local_only=local_only</span><span class="s0">,</span><span class="s1"> 
+                                            skip=()</span><span class="s0">,</span><span class="s1"> 
+                                            user_only=user_only): 
+        </span><span class="s0">try</span><span class="s1">: 
+            req = pip.FrozenRequirement.from_dist( 
+                dist</span><span class="s0">,</span><span class="s1"> 
+                dependency_links 
+            ) 
+        </span><span class="s0">except </span><span class="s1">RequirementParseError: 
+            logger.warning( 
+                </span><span class="s2">&quot;Could not parse requirement: %s&quot;</span><span class="s0">,</span><span class="s1"> 
+                dist.project_name 
+            ) 
+            </span><span class="s0">continue</span><span class="s1"> 
+        installations[req.name] = req 
+ 
+    </span><span class="s0">if </span><span class="s1">requirement: 
+        </span><span class="s3"># the options that don't get turned into an InstallRequirement</span><span class="s1"> 
+        </span><span class="s3"># should only be emitted once, even if the same option is in multiple</span><span class="s1"> 
+        </span><span class="s3"># requirements files, so we need to keep track of what has been emitted</span><span class="s1"> 
+        </span><span class="s3"># so that we don't emit it again if it's seen again</span><span class="s1"> 
+        emitted_options = set() 
+        </span><span class="s0">for </span><span class="s1">req_file_path </span><span class="s0">in </span><span class="s1">requirement: 
+            </span><span class="s0">with </span><span class="s1">open(req_file_path) </span><span class="s0">as </span><span class="s1">req_file: 
+                </span><span class="s0">for </span><span class="s1">line </span><span class="s0">in </span><span class="s1">req_file: 
+                    </span><span class="s0">if </span><span class="s1">(</span><span class="s0">not </span><span class="s1">line.strip() </span><span class="s0">or</span><span class="s1"> 
+                            line.strip().startswith(</span><span class="s2">'#'</span><span class="s1">) </span><span class="s0">or</span><span class="s1"> 
+                            (skip_match </span><span class="s0">and </span><span class="s1">skip_match(line)) </span><span class="s0">or</span><span class="s1"> 
+                            line.startswith(( 
+                                </span><span class="s2">'-r'</span><span class="s0">, </span><span class="s2">'--requirement'</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s2">'-Z'</span><span class="s0">, </span><span class="s2">'--always-unzip'</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s2">'-f'</span><span class="s0">, </span><span class="s2">'--find-links'</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s2">'-i'</span><span class="s0">, </span><span class="s2">'--index-url'</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s2">'--pre'</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s2">'--trusted-host'</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s2">'--process-dependency-links'</span><span class="s0">,</span><span class="s1"> 
+                                </span><span class="s2">'--extra-index-url'</span><span class="s1">))): 
+                        line = line.rstrip() 
+                        </span><span class="s0">if </span><span class="s1">line </span><span class="s0">not in </span><span class="s1">emitted_options: 
+                            emitted_options.add(line) 
+                            </span><span class="s0">yield </span><span class="s1">line 
+                        </span><span class="s0">continue</span><span class="s1"> 
+ 
+                    </span><span class="s0">if </span><span class="s1">line.startswith(</span><span class="s2">'-e'</span><span class="s1">) </span><span class="s0">or </span><span class="s1">line.startswith(</span><span class="s2">'--editable'</span><span class="s1">): 
+                        </span><span class="s0">if </span><span class="s1">line.startswith(</span><span class="s2">'-e'</span><span class="s1">): 
+                            line = line[</span><span class="s4">2</span><span class="s1">:].strip() 
+                        </span><span class="s0">else</span><span class="s1">: 
+                            line = line[len(</span><span class="s2">'--editable'</span><span class="s1">):].strip().lstrip(</span><span class="s2">'='</span><span class="s1">) 
+                        line_req = InstallRequirement.from_editable( 
+                            line</span><span class="s0">,</span><span class="s1"> 
+                            default_vcs=default_vcs</span><span class="s0">,</span><span class="s1"> 
+                            isolated=isolated</span><span class="s0">,</span><span class="s1"> 
+                            wheel_cache=wheel_cache</span><span class="s0">,</span><span class="s1"> 
+                        ) 
+                    </span><span class="s0">else</span><span class="s1">: 
+                        line_req = InstallRequirement.from_line( 
+                            COMMENT_RE.sub(</span><span class="s2">''</span><span class="s0">, </span><span class="s1">line).strip()</span><span class="s0">,</span><span class="s1"> 
+                            isolated=isolated</span><span class="s0">,</span><span class="s1"> 
+                            wheel_cache=wheel_cache</span><span class="s0">,</span><span class="s1"> 
+                        ) 
+ 
+                    </span><span class="s0">if not </span><span class="s1">line_req.name: 
+                        logger.info( 
+                            </span><span class="s2">&quot;Skipping line in requirement file [%s] because &quot;</span><span class="s1"> 
+                            </span><span class="s2">&quot;it's not clear what it would install: %s&quot;</span><span class="s0">,</span><span class="s1"> 
+                            req_file_path</span><span class="s0">, </span><span class="s1">line.strip()</span><span class="s0">,</span><span class="s1"> 
+                        ) 
+                        logger.info( 
+                            </span><span class="s2">&quot;  (add #egg=PackageName to the URL to avoid&quot;</span><span class="s1"> 
+                            </span><span class="s2">&quot; this warning)&quot;</span><span class="s1"> 
+                        ) 
+                    </span><span class="s0">elif </span><span class="s1">line_req.name </span><span class="s0">not in </span><span class="s1">installations: 
+                        logger.warning( 
+                            </span><span class="s2">&quot;Requirement file [%s] contains %s, but that &quot;</span><span class="s1"> 
+                            </span><span class="s2">&quot;package is not installed&quot;</span><span class="s0">,</span><span class="s1"> 
+                            req_file_path</span><span class="s0">, </span><span class="s1">COMMENT_RE.sub(</span><span class="s2">''</span><span class="s0">, </span><span class="s1">line).strip()</span><span class="s0">,</span><span class="s1"> 
+                        ) 
+                    </span><span class="s0">else</span><span class="s1">: 
+                        </span><span class="s0">yield </span><span class="s1">str(installations[line_req.name]).rstrip() 
+                        </span><span class="s0">del </span><span class="s1">installations[line_req.name] 
+ 
+        </span><span class="s0">yield</span><span class="s1">( 
+            </span><span class="s2">'## The following requirements were added by '</span><span class="s1"> 
+            </span><span class="s2">'pip freeze:'</span><span class="s1"> 
+        ) 
+    </span><span class="s0">for </span><span class="s1">installation </span><span class="s0">in </span><span class="s1">sorted( 
+            installations.values()</span><span class="s0">, </span><span class="s1">key=</span><span class="s0">lambda </span><span class="s1">x: x.name.lower()): 
+        </span><span class="s0">if </span><span class="s1">canonicalize_name(installation.name) </span><span class="s0">not in </span><span class="s1">skip: 
+            </span><span class="s0">yield </span><span class="s1">str(installation).rstrip() 
+</span></pre>
+</body>
+</html>

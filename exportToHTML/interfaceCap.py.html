@@ -1,0 +1,140 @@
+<html>
+<head>
+<title>interfaceCap.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+interfaceCap.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">interfaceCap: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">enableCap(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">,</span><span class="s4">'=enabled=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">disableCap(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=enabled=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterfaces(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=interfaces='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setCertificate(self</span><span class="s0">,</span><span class="s1">cert=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param cert: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=certificate='</span><span class="s1">+cert] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setDiscoveryInterfaces(self</span><span class="s0">,</span><span class="s1">interfaces): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param interfaces: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=discovery-interfaces=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">lockToCapsman(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=lock-to-caps-man=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">unlockToCapsman(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=lock-to-caps-man=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setCapsManAddresses(self</span><span class="s0">,</span><span class="s1">addresses): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param addresses: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=caps-man-addresses='</span><span class="s1">+addresses] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setCapsManNames(self</span><span class="s0">,</span><span class="s1">names): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param names: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=caps-man-names='</span><span class="s1">+names] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setCapsmanCertficateComonNames(self</span><span class="s0">,</span><span class="s1">comonNames): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param comonNames: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=caps-man-certificate-common-names='</span><span class="s1">+comonNames] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setBridge(self</span><span class="s0">,</span><span class="s1">bridge=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param bridge: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=bridge='</span><span class="s1">+bridge] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setStaticVirtual(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=static-virtual=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetStaticVirtual(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/cap/set'</span><span class="s0">, </span><span class="s4">'=static-virtual=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi</span></pre>
+</body>
+</html>

@@ -1,0 +1,713 @@
+<html>
+<head>
+<title>cp864.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(106,135,89); }
+.s1 { color: rgb(128,128,128); }
+.s2 { color: rgb(169,183,198); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+cp864.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; Python Character Mapping Codec generated from 'VENDORS/MICSFT/PC/CP864.TXT' with gencodec.py. 
+ 
+&quot;&quot;&quot;</span><span class="s1">#&quot;</span><span class="s2"> 
+ 
+</span><span class="s3">import </span><span class="s2">codecs 
+ 
+</span><span class="s1">### Codec APIs</span><span class="s2"> 
+ 
+</span><span class="s3">class </span><span class="s2">Codec(codecs.Codec): 
+ 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_encode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">encoding_map) 
+ 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_decode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">decoding_table) 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalEncoder(codecs.IncrementalEncoder): 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_encode(input</span><span class="s3">,</span><span class="s2">self.errors</span><span class="s3">,</span><span class="s2">encoding_map)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalDecoder(codecs.IncrementalDecoder): 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_decode(input</span><span class="s3">,</span><span class="s2">self.errors</span><span class="s3">,</span><span class="s2">decoding_table)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">StreamWriter(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamWriter): 
+    </span><span class="s3">pass</span><span class="s2"> 
+ 
+</span><span class="s3">class </span><span class="s2">StreamReader(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamReader): 
+    </span><span class="s3">pass</span><span class="s2"> 
+ 
+</span><span class="s1">### encodings module API</span><span class="s2"> 
+ 
+</span><span class="s3">def </span><span class="s2">getregentry(): 
+    </span><span class="s3">return </span><span class="s2">codecs.CodecInfo( 
+        name=</span><span class="s0">'cp864'</span><span class="s3">,</span><span class="s2"> 
+        encode=Codec().encode</span><span class="s3">,</span><span class="s2"> 
+        decode=Codec().decode</span><span class="s3">,</span><span class="s2"> 
+        incrementalencoder=IncrementalEncoder</span><span class="s3">,</span><span class="s2"> 
+        incrementaldecoder=IncrementalDecoder</span><span class="s3">,</span><span class="s2"> 
+        streamreader=StreamReader</span><span class="s3">,</span><span class="s2"> 
+        streamwriter=StreamWriter</span><span class="s3">,</span><span class="s2"> 
+    ) 
+ 
+</span><span class="s1">### Decoding Map</span><span class="s2"> 
+ 
+decoding_map = codecs.make_identity_dict(range(</span><span class="s4">256</span><span class="s2">)) 
+decoding_map.update({ 
+    </span><span class="s4">0x0025</span><span class="s2">: </span><span class="s4">0x066a</span><span class="s3">,     </span><span class="s1">#  ARABIC PERCENT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x0080</span><span class="s2">: </span><span class="s4">0x00b0</span><span class="s3">,     </span><span class="s1">#  DEGREE SIGN</span><span class="s2"> 
+    </span><span class="s4">0x0081</span><span class="s2">: </span><span class="s4">0x00b7</span><span class="s3">,     </span><span class="s1">#  MIDDLE DOT</span><span class="s2"> 
+    </span><span class="s4">0x0082</span><span class="s2">: </span><span class="s4">0x2219</span><span class="s3">,     </span><span class="s1">#  BULLET OPERATOR</span><span class="s2"> 
+    </span><span class="s4">0x0083</span><span class="s2">: </span><span class="s4">0x221a</span><span class="s3">,     </span><span class="s1">#  SQUARE ROOT</span><span class="s2"> 
+    </span><span class="s4">0x0084</span><span class="s2">: </span><span class="s4">0x2592</span><span class="s3">,     </span><span class="s1">#  MEDIUM SHADE</span><span class="s2"> 
+    </span><span class="s4">0x0085</span><span class="s2">: </span><span class="s4">0x2500</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x0086</span><span class="s2">: </span><span class="s4">0x2502</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT VERTICAL</span><span class="s2"> 
+    </span><span class="s4">0x0087</span><span class="s2">: </span><span class="s4">0x253c</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT VERTICAL AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x0088</span><span class="s2">: </span><span class="s4">0x2524</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT VERTICAL AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x0089</span><span class="s2">: </span><span class="s4">0x252c</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT DOWN AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x008a</span><span class="s2">: </span><span class="s4">0x251c</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT VERTICAL AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x008b</span><span class="s2">: </span><span class="s4">0x2534</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT UP AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x008c</span><span class="s2">: </span><span class="s4">0x2510</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT DOWN AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x008d</span><span class="s2">: </span><span class="s4">0x250c</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT DOWN AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x008e</span><span class="s2">: </span><span class="s4">0x2514</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT UP AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x008f</span><span class="s2">: </span><span class="s4">0x2518</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT UP AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x0090</span><span class="s2">: </span><span class="s4">0x03b2</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL BETA</span><span class="s2"> 
+    </span><span class="s4">0x0091</span><span class="s2">: </span><span class="s4">0x221e</span><span class="s3">,     </span><span class="s1">#  INFINITY</span><span class="s2"> 
+    </span><span class="s4">0x0092</span><span class="s2">: </span><span class="s4">0x03c6</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL PHI</span><span class="s2"> 
+    </span><span class="s4">0x0093</span><span class="s2">: </span><span class="s4">0x00b1</span><span class="s3">,     </span><span class="s1">#  PLUS-OR-MINUS SIGN</span><span class="s2"> 
+    </span><span class="s4">0x0094</span><span class="s2">: </span><span class="s4">0x00bd</span><span class="s3">,     </span><span class="s1">#  FRACTION 1/2</span><span class="s2"> 
+    </span><span class="s4">0x0095</span><span class="s2">: </span><span class="s4">0x00bc</span><span class="s3">,     </span><span class="s1">#  FRACTION 1/4</span><span class="s2"> 
+    </span><span class="s4">0x0096</span><span class="s2">: </span><span class="s4">0x2248</span><span class="s3">,     </span><span class="s1">#  ALMOST EQUAL TO</span><span class="s2"> 
+    </span><span class="s4">0x0097</span><span class="s2">: </span><span class="s4">0x00ab</span><span class="s3">,     </span><span class="s1">#  LEFT POINTING GUILLEMET</span><span class="s2"> 
+    </span><span class="s4">0x0098</span><span class="s2">: </span><span class="s4">0x00bb</span><span class="s3">,     </span><span class="s1">#  RIGHT POINTING GUILLEMET</span><span class="s2"> 
+    </span><span class="s4">0x0099</span><span class="s2">: </span><span class="s4">0xfef7</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x009a</span><span class="s2">: </span><span class="s4">0xfef8</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF WITH HAMZA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x009b</span><span class="s2">: </span><span class="s3">None,       </span><span class="s1">#  UNDEFINED</span><span class="s2"> 
+    </span><span class="s4">0x009c</span><span class="s2">: </span><span class="s3">None,       </span><span class="s1">#  UNDEFINED</span><span class="s2"> 
+    </span><span class="s4">0x009d</span><span class="s2">: </span><span class="s4">0xfefb</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x009e</span><span class="s2">: </span><span class="s4">0xfefc</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x009f</span><span class="s2">: </span><span class="s3">None,       </span><span class="s1">#  UNDEFINED</span><span class="s2"> 
+    </span><span class="s4">0x00a1</span><span class="s2">: </span><span class="s4">0x00ad</span><span class="s3">,     </span><span class="s1">#  SOFT HYPHEN</span><span class="s2"> 
+    </span><span class="s4">0x00a2</span><span class="s2">: </span><span class="s4">0xfe82</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF WITH MADDA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00a5</span><span class="s2">: </span><span class="s4">0xfe84</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF WITH HAMZA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00a6</span><span class="s2">: </span><span class="s3">None,       </span><span class="s1">#  UNDEFINED</span><span class="s2"> 
+    </span><span class="s4">0x00a7</span><span class="s2">: </span><span class="s3">None,       </span><span class="s1">#  UNDEFINED</span><span class="s2"> 
+    </span><span class="s4">0x00a8</span><span class="s2">: </span><span class="s4">0xfe8e</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00a9</span><span class="s2">: </span><span class="s4">0xfe8f</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER BEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00aa</span><span class="s2">: </span><span class="s4">0xfe95</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER TEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ab</span><span class="s2">: </span><span class="s4">0xfe99</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER THEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ac</span><span class="s2">: </span><span class="s4">0x060c</span><span class="s3">,     </span><span class="s1">#  ARABIC COMMA</span><span class="s2"> 
+    </span><span class="s4">0x00ad</span><span class="s2">: </span><span class="s4">0xfe9d</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER JEEM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ae</span><span class="s2">: </span><span class="s4">0xfea1</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00af</span><span class="s2">: </span><span class="s4">0xfea5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER KHAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00b0</span><span class="s2">: </span><span class="s4">0x0660</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s4">0x00b1</span><span class="s2">: </span><span class="s4">0x0661</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT ONE</span><span class="s2"> 
+    </span><span class="s4">0x00b2</span><span class="s2">: </span><span class="s4">0x0662</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT TWO</span><span class="s2"> 
+    </span><span class="s4">0x00b3</span><span class="s2">: </span><span class="s4">0x0663</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT THREE</span><span class="s2"> 
+    </span><span class="s4">0x00b4</span><span class="s2">: </span><span class="s4">0x0664</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s4">0x00b5</span><span class="s2">: </span><span class="s4">0x0665</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s4">0x00b6</span><span class="s2">: </span><span class="s4">0x0666</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT SIX</span><span class="s2"> 
+    </span><span class="s4">0x00b7</span><span class="s2">: </span><span class="s4">0x0667</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s4">0x00b8</span><span class="s2">: </span><span class="s4">0x0668</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s4">0x00b9</span><span class="s2">: </span><span class="s4">0x0669</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT NINE</span><span class="s2"> 
+    </span><span class="s4">0x00ba</span><span class="s2">: </span><span class="s4">0xfed1</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER FEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00bb</span><span class="s2">: </span><span class="s4">0x061b</span><span class="s3">,     </span><span class="s1">#  ARABIC SEMICOLON</span><span class="s2"> 
+    </span><span class="s4">0x00bc</span><span class="s2">: </span><span class="s4">0xfeb1</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SEEN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00bd</span><span class="s2">: </span><span class="s4">0xfeb5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SHEEN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00be</span><span class="s2">: </span><span class="s4">0xfeb9</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SAD ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00bf</span><span class="s2">: </span><span class="s4">0x061f</span><span class="s3">,     </span><span class="s1">#  ARABIC QUESTION MARK</span><span class="s2"> 
+    </span><span class="s4">0x00c0</span><span class="s2">: </span><span class="s4">0x00a2</span><span class="s3">,     </span><span class="s1">#  CENT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00c1</span><span class="s2">: </span><span class="s4">0xfe80</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HAMZA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00c2</span><span class="s2">: </span><span class="s4">0xfe81</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF WITH MADDA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00c3</span><span class="s2">: </span><span class="s4">0xfe83</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00c4</span><span class="s2">: </span><span class="s4">0xfe85</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER WAW WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00c5</span><span class="s2">: </span><span class="s4">0xfeca</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER AIN FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00c6</span><span class="s2">: </span><span class="s4">0xfe8b</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER YEH WITH HAMZA ABOVE INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00c7</span><span class="s2">: </span><span class="s4">0xfe8d</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00c8</span><span class="s2">: </span><span class="s4">0xfe91</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER BEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00c9</span><span class="s2">: </span><span class="s4">0xfe93</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER TEH MARBUTA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ca</span><span class="s2">: </span><span class="s4">0xfe97</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER TEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00cb</span><span class="s2">: </span><span class="s4">0xfe9b</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER THEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00cc</span><span class="s2">: </span><span class="s4">0xfe9f</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER JEEM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00cd</span><span class="s2">: </span><span class="s4">0xfea3</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HAH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ce</span><span class="s2">: </span><span class="s4">0xfea7</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER KHAH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00cf</span><span class="s2">: </span><span class="s4">0xfea9</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER DAL ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d0</span><span class="s2">: </span><span class="s4">0xfeab</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER THAL ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d1</span><span class="s2">: </span><span class="s4">0xfead</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER REH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d2</span><span class="s2">: </span><span class="s4">0xfeaf</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ZAIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d3</span><span class="s2">: </span><span class="s4">0xfeb3</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SEEN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d4</span><span class="s2">: </span><span class="s4">0xfeb7</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SHEEN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d5</span><span class="s2">: </span><span class="s4">0xfebb</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SAD INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d6</span><span class="s2">: </span><span class="s4">0xfebf</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER DAD INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d7</span><span class="s2">: </span><span class="s4">0xfec1</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER TAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d8</span><span class="s2">: </span><span class="s4">0xfec5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ZAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00d9</span><span class="s2">: </span><span class="s4">0xfecb</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER AIN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00da</span><span class="s2">: </span><span class="s4">0xfecf</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER GHAIN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00db</span><span class="s2">: </span><span class="s4">0x00a6</span><span class="s3">,     </span><span class="s1">#  BROKEN VERTICAL BAR</span><span class="s2"> 
+    </span><span class="s4">0x00dc</span><span class="s2">: </span><span class="s4">0x00ac</span><span class="s3">,     </span><span class="s1">#  NOT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00dd</span><span class="s2">: </span><span class="s4">0x00f7</span><span class="s3">,     </span><span class="s1">#  DIVISION SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00de</span><span class="s2">: </span><span class="s4">0x00d7</span><span class="s3">,     </span><span class="s1">#  MULTIPLICATION SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00df</span><span class="s2">: </span><span class="s4">0xfec9</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER AIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00e0</span><span class="s2">: </span><span class="s4">0x0640</span><span class="s3">,     </span><span class="s1">#  ARABIC TATWEEL</span><span class="s2"> 
+    </span><span class="s4">0x00e1</span><span class="s2">: </span><span class="s4">0xfed3</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER FEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00e2</span><span class="s2">: </span><span class="s4">0xfed7</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER QAF INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00e3</span><span class="s2">: </span><span class="s4">0xfedb</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER KAF INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00e4</span><span class="s2">: </span><span class="s4">0xfedf</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER LAM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00e5</span><span class="s2">: </span><span class="s4">0xfee3</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER MEEM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00e6</span><span class="s2">: </span><span class="s4">0xfee7</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER NOON INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00e7</span><span class="s2">: </span><span class="s4">0xfeeb</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00e8</span><span class="s2">: </span><span class="s4">0xfeed</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER WAW ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00e9</span><span class="s2">: </span><span class="s4">0xfeef</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF MAKSURA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ea</span><span class="s2">: </span><span class="s4">0xfef3</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER YEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00eb</span><span class="s2">: </span><span class="s4">0xfebd</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER DAD ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ec</span><span class="s2">: </span><span class="s4">0xfecc</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER AIN MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ed</span><span class="s2">: </span><span class="s4">0xfece</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER GHAIN FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ee</span><span class="s2">: </span><span class="s4">0xfecd</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER GHAIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00ef</span><span class="s2">: </span><span class="s4">0xfee1</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER MEEM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00f0</span><span class="s2">: </span><span class="s4">0xfe7d</span><span class="s3">,     </span><span class="s1">#  ARABIC SHADDA MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00f1</span><span class="s2">: </span><span class="s4">0x0651</span><span class="s3">,     </span><span class="s1">#  ARABIC SHADDAH</span><span class="s2"> 
+    </span><span class="s4">0x00f2</span><span class="s2">: </span><span class="s4">0xfee5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER NOON ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00f3</span><span class="s2">: </span><span class="s4">0xfee9</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00f4</span><span class="s2">: </span><span class="s4">0xfeec</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HEH MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00f5</span><span class="s2">: </span><span class="s4">0xfef0</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF MAKSURA FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00f6</span><span class="s2">: </span><span class="s4">0xfef2</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER YEH FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00f7</span><span class="s2">: </span><span class="s4">0xfed0</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER GHAIN MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00f8</span><span class="s2">: </span><span class="s4">0xfed5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER QAF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00f9</span><span class="s2">: </span><span class="s4">0xfef5</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF WITH MADDA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00fa</span><span class="s2">: </span><span class="s4">0xfef6</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF WITH MADDA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0x00fb</span><span class="s2">: </span><span class="s4">0xfedd</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER LAM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00fc</span><span class="s2">: </span><span class="s4">0xfed9</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER KAF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00fd</span><span class="s2">: </span><span class="s4">0xfef1</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER YEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0x00fe</span><span class="s2">: </span><span class="s4">0x25a0</span><span class="s3">,     </span><span class="s1">#  BLACK SQUARE</span><span class="s2"> 
+    </span><span class="s4">0x00ff</span><span class="s2">: </span><span class="s3">None,       </span><span class="s1">#  UNDEFINED</span><span class="s2"> 
+}) 
+ 
+</span><span class="s1">### Decoding Table</span><span class="s2"> 
+ 
+decoding_table = ( 
+    </span><span class="s0">'</span><span class="s3">\x00</span><span class="s0">'     </span><span class="s1">#  0x0000 -&gt; NULL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x01</span><span class="s0">'     </span><span class="s1">#  0x0001 -&gt; START OF HEADING</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x02</span><span class="s0">'     </span><span class="s1">#  0x0002 -&gt; START OF TEXT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x03</span><span class="s0">'     </span><span class="s1">#  0x0003 -&gt; END OF TEXT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x04</span><span class="s0">'     </span><span class="s1">#  0x0004 -&gt; END OF TRANSMISSION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x05</span><span class="s0">'     </span><span class="s1">#  0x0005 -&gt; ENQUIRY</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x06</span><span class="s0">'     </span><span class="s1">#  0x0006 -&gt; ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x07</span><span class="s0">'     </span><span class="s1">#  0x0007 -&gt; BELL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x08</span><span class="s0">'     </span><span class="s1">#  0x0008 -&gt; BACKSPACE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\t</span><span class="s0">'       </span><span class="s1">#  0x0009 -&gt; HORIZONTAL TABULATION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\n</span><span class="s0">'       </span><span class="s1">#  0x000a -&gt; LINE FEED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0b</span><span class="s0">'     </span><span class="s1">#  0x000b -&gt; VERTICAL TABULATION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0c</span><span class="s0">'     </span><span class="s1">#  0x000c -&gt; FORM FEED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\r</span><span class="s0">'       </span><span class="s1">#  0x000d -&gt; CARRIAGE RETURN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0e</span><span class="s0">'     </span><span class="s1">#  0x000e -&gt; SHIFT OUT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0f</span><span class="s0">'     </span><span class="s1">#  0x000f -&gt; SHIFT IN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x10</span><span class="s0">'     </span><span class="s1">#  0x0010 -&gt; DATA LINK ESCAPE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x11</span><span class="s0">'     </span><span class="s1">#  0x0011 -&gt; DEVICE CONTROL ONE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x12</span><span class="s0">'     </span><span class="s1">#  0x0012 -&gt; DEVICE CONTROL TWO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x13</span><span class="s0">'     </span><span class="s1">#  0x0013 -&gt; DEVICE CONTROL THREE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x14</span><span class="s0">'     </span><span class="s1">#  0x0014 -&gt; DEVICE CONTROL FOUR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x15</span><span class="s0">'     </span><span class="s1">#  0x0015 -&gt; NEGATIVE ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x16</span><span class="s0">'     </span><span class="s1">#  0x0016 -&gt; SYNCHRONOUS IDLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x17</span><span class="s0">'     </span><span class="s1">#  0x0017 -&gt; END OF TRANSMISSION BLOCK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x18</span><span class="s0">'     </span><span class="s1">#  0x0018 -&gt; CANCEL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x19</span><span class="s0">'     </span><span class="s1">#  0x0019 -&gt; END OF MEDIUM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1a</span><span class="s0">'     </span><span class="s1">#  0x001a -&gt; SUBSTITUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1b</span><span class="s0">'     </span><span class="s1">#  0x001b -&gt; ESCAPE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1c</span><span class="s0">'     </span><span class="s1">#  0x001c -&gt; FILE SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1d</span><span class="s0">'     </span><span class="s1">#  0x001d -&gt; GROUP SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1e</span><span class="s0">'     </span><span class="s1">#  0x001e -&gt; RECORD SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1f</span><span class="s0">'     </span><span class="s1">#  0x001f -&gt; UNIT SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">' '        </span><span class="s1">#  0x0020 -&gt; SPACE</span><span class="s2"> 
+    </span><span class="s0">'!'        </span><span class="s1">#  0x0021 -&gt; EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s0">'&quot;'        </span><span class="s1">#  0x0022 -&gt; QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s0">'#'        </span><span class="s1">#  0x0023 -&gt; NUMBER SIGN</span><span class="s2"> 
+    </span><span class="s0">'$'        </span><span class="s1">#  0x0024 -&gt; DOLLAR SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u066a</span><span class="s0">'   </span><span class="s1">#  0x0025 -&gt; ARABIC PERCENT SIGN</span><span class="s2"> 
+    </span><span class="s0">'&amp;'        </span><span class="s1">#  0x0026 -&gt; AMPERSAND</span><span class="s2"> 
+    </span><span class="s0">&quot;'&quot;        </span><span class="s1">#  0x0027 -&gt; APOSTROPHE</span><span class="s2"> 
+    </span><span class="s0">'('        </span><span class="s1">#  0x0028 -&gt; LEFT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s0">')'        </span><span class="s1">#  0x0029 -&gt; RIGHT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s0">'*'        </span><span class="s1">#  0x002a -&gt; ASTERISK</span><span class="s2"> 
+    </span><span class="s0">'+'        </span><span class="s1">#  0x002b -&gt; PLUS SIGN</span><span class="s2"> 
+    </span><span class="s0">','        </span><span class="s1">#  0x002c -&gt; COMMA</span><span class="s2"> 
+    </span><span class="s0">'-'        </span><span class="s1">#  0x002d -&gt; HYPHEN-MINUS</span><span class="s2"> 
+    </span><span class="s0">'.'        </span><span class="s1">#  0x002e -&gt; FULL STOP</span><span class="s2"> 
+    </span><span class="s0">'/'        </span><span class="s1">#  0x002f -&gt; SOLIDUS</span><span class="s2"> 
+    </span><span class="s0">'0'        </span><span class="s1">#  0x0030 -&gt; DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s0">'1'        </span><span class="s1">#  0x0031 -&gt; DIGIT ONE</span><span class="s2"> 
+    </span><span class="s0">'2'        </span><span class="s1">#  0x0032 -&gt; DIGIT TWO</span><span class="s2"> 
+    </span><span class="s0">'3'        </span><span class="s1">#  0x0033 -&gt; DIGIT THREE</span><span class="s2"> 
+    </span><span class="s0">'4'        </span><span class="s1">#  0x0034 -&gt; DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s0">'5'        </span><span class="s1">#  0x0035 -&gt; DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s0">'6'        </span><span class="s1">#  0x0036 -&gt; DIGIT SIX</span><span class="s2"> 
+    </span><span class="s0">'7'        </span><span class="s1">#  0x0037 -&gt; DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s0">'8'        </span><span class="s1">#  0x0038 -&gt; DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s0">'9'        </span><span class="s1">#  0x0039 -&gt; DIGIT NINE</span><span class="s2"> 
+    </span><span class="s0">':'        </span><span class="s1">#  0x003a -&gt; COLON</span><span class="s2"> 
+    </span><span class="s0">';'        </span><span class="s1">#  0x003b -&gt; SEMICOLON</span><span class="s2"> 
+    </span><span class="s0">'&lt;'        </span><span class="s1">#  0x003c -&gt; LESS-THAN SIGN</span><span class="s2"> 
+    </span><span class="s0">'='        </span><span class="s1">#  0x003d -&gt; EQUALS SIGN</span><span class="s2"> 
+    </span><span class="s0">'&gt;'        </span><span class="s1">#  0x003e -&gt; GREATER-THAN SIGN</span><span class="s2"> 
+    </span><span class="s0">'?'        </span><span class="s1">#  0x003f -&gt; QUESTION MARK</span><span class="s2"> 
+    </span><span class="s0">'@'        </span><span class="s1">#  0x0040 -&gt; COMMERCIAL AT</span><span class="s2"> 
+    </span><span class="s0">'A'        </span><span class="s1">#  0x0041 -&gt; LATIN CAPITAL LETTER A</span><span class="s2"> 
+    </span><span class="s0">'B'        </span><span class="s1">#  0x0042 -&gt; LATIN CAPITAL LETTER B</span><span class="s2"> 
+    </span><span class="s0">'C'        </span><span class="s1">#  0x0043 -&gt; LATIN CAPITAL LETTER C</span><span class="s2"> 
+    </span><span class="s0">'D'        </span><span class="s1">#  0x0044 -&gt; LATIN CAPITAL LETTER D</span><span class="s2"> 
+    </span><span class="s0">'E'        </span><span class="s1">#  0x0045 -&gt; LATIN CAPITAL LETTER E</span><span class="s2"> 
+    </span><span class="s0">'F'        </span><span class="s1">#  0x0046 -&gt; LATIN CAPITAL LETTER F</span><span class="s2"> 
+    </span><span class="s0">'G'        </span><span class="s1">#  0x0047 -&gt; LATIN CAPITAL LETTER G</span><span class="s2"> 
+    </span><span class="s0">'H'        </span><span class="s1">#  0x0048 -&gt; LATIN CAPITAL LETTER H</span><span class="s2"> 
+    </span><span class="s0">'I'        </span><span class="s1">#  0x0049 -&gt; LATIN CAPITAL LETTER I</span><span class="s2"> 
+    </span><span class="s0">'J'        </span><span class="s1">#  0x004a -&gt; LATIN CAPITAL LETTER J</span><span class="s2"> 
+    </span><span class="s0">'K'        </span><span class="s1">#  0x004b -&gt; LATIN CAPITAL LETTER K</span><span class="s2"> 
+    </span><span class="s0">'L'        </span><span class="s1">#  0x004c -&gt; LATIN CAPITAL LETTER L</span><span class="s2"> 
+    </span><span class="s0">'M'        </span><span class="s1">#  0x004d -&gt; LATIN CAPITAL LETTER M</span><span class="s2"> 
+    </span><span class="s0">'N'        </span><span class="s1">#  0x004e -&gt; LATIN CAPITAL LETTER N</span><span class="s2"> 
+    </span><span class="s0">'O'        </span><span class="s1">#  0x004f -&gt; LATIN CAPITAL LETTER O</span><span class="s2"> 
+    </span><span class="s0">'P'        </span><span class="s1">#  0x0050 -&gt; LATIN CAPITAL LETTER P</span><span class="s2"> 
+    </span><span class="s0">'Q'        </span><span class="s1">#  0x0051 -&gt; LATIN CAPITAL LETTER Q</span><span class="s2"> 
+    </span><span class="s0">'R'        </span><span class="s1">#  0x0052 -&gt; LATIN CAPITAL LETTER R</span><span class="s2"> 
+    </span><span class="s0">'S'        </span><span class="s1">#  0x0053 -&gt; LATIN CAPITAL LETTER S</span><span class="s2"> 
+    </span><span class="s0">'T'        </span><span class="s1">#  0x0054 -&gt; LATIN CAPITAL LETTER T</span><span class="s2"> 
+    </span><span class="s0">'U'        </span><span class="s1">#  0x0055 -&gt; LATIN CAPITAL LETTER U</span><span class="s2"> 
+    </span><span class="s0">'V'        </span><span class="s1">#  0x0056 -&gt; LATIN CAPITAL LETTER V</span><span class="s2"> 
+    </span><span class="s0">'W'        </span><span class="s1">#  0x0057 -&gt; LATIN CAPITAL LETTER W</span><span class="s2"> 
+    </span><span class="s0">'X'        </span><span class="s1">#  0x0058 -&gt; LATIN CAPITAL LETTER X</span><span class="s2"> 
+    </span><span class="s0">'Y'        </span><span class="s1">#  0x0059 -&gt; LATIN CAPITAL LETTER Y</span><span class="s2"> 
+    </span><span class="s0">'Z'        </span><span class="s1">#  0x005a -&gt; LATIN CAPITAL LETTER Z</span><span class="s2"> 
+    </span><span class="s0">'['        </span><span class="s1">#  0x005b -&gt; LEFT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\\</span><span class="s0">'       </span><span class="s1">#  0x005c -&gt; REVERSE SOLIDUS</span><span class="s2"> 
+    </span><span class="s0">']'        </span><span class="s1">#  0x005d -&gt; RIGHT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s0">'^'        </span><span class="s1">#  0x005e -&gt; CIRCUMFLEX ACCENT</span><span class="s2"> 
+    </span><span class="s0">'_'        </span><span class="s1">#  0x005f -&gt; LOW LINE</span><span class="s2"> 
+    </span><span class="s0">'`'        </span><span class="s1">#  0x0060 -&gt; GRAVE ACCENT</span><span class="s2"> 
+    </span><span class="s0">'a'        </span><span class="s1">#  0x0061 -&gt; LATIN SMALL LETTER A</span><span class="s2"> 
+    </span><span class="s0">'b'        </span><span class="s1">#  0x0062 -&gt; LATIN SMALL LETTER B</span><span class="s2"> 
+    </span><span class="s0">'c'        </span><span class="s1">#  0x0063 -&gt; LATIN SMALL LETTER C</span><span class="s2"> 
+    </span><span class="s0">'d'        </span><span class="s1">#  0x0064 -&gt; LATIN SMALL LETTER D</span><span class="s2"> 
+    </span><span class="s0">'e'        </span><span class="s1">#  0x0065 -&gt; LATIN SMALL LETTER E</span><span class="s2"> 
+    </span><span class="s0">'f'        </span><span class="s1">#  0x0066 -&gt; LATIN SMALL LETTER F</span><span class="s2"> 
+    </span><span class="s0">'g'        </span><span class="s1">#  0x0067 -&gt; LATIN SMALL LETTER G</span><span class="s2"> 
+    </span><span class="s0">'h'        </span><span class="s1">#  0x0068 -&gt; LATIN SMALL LETTER H</span><span class="s2"> 
+    </span><span class="s0">'i'        </span><span class="s1">#  0x0069 -&gt; LATIN SMALL LETTER I</span><span class="s2"> 
+    </span><span class="s0">'j'        </span><span class="s1">#  0x006a -&gt; LATIN SMALL LETTER J</span><span class="s2"> 
+    </span><span class="s0">'k'        </span><span class="s1">#  0x006b -&gt; LATIN SMALL LETTER K</span><span class="s2"> 
+    </span><span class="s0">'l'        </span><span class="s1">#  0x006c -&gt; LATIN SMALL LETTER L</span><span class="s2"> 
+    </span><span class="s0">'m'        </span><span class="s1">#  0x006d -&gt; LATIN SMALL LETTER M</span><span class="s2"> 
+    </span><span class="s0">'n'        </span><span class="s1">#  0x006e -&gt; LATIN SMALL LETTER N</span><span class="s2"> 
+    </span><span class="s0">'o'        </span><span class="s1">#  0x006f -&gt; LATIN SMALL LETTER O</span><span class="s2"> 
+    </span><span class="s0">'p'        </span><span class="s1">#  0x0070 -&gt; LATIN SMALL LETTER P</span><span class="s2"> 
+    </span><span class="s0">'q'        </span><span class="s1">#  0x0071 -&gt; LATIN SMALL LETTER Q</span><span class="s2"> 
+    </span><span class="s0">'r'        </span><span class="s1">#  0x0072 -&gt; LATIN SMALL LETTER R</span><span class="s2"> 
+    </span><span class="s0">'s'        </span><span class="s1">#  0x0073 -&gt; LATIN SMALL LETTER S</span><span class="s2"> 
+    </span><span class="s0">'t'        </span><span class="s1">#  0x0074 -&gt; LATIN SMALL LETTER T</span><span class="s2"> 
+    </span><span class="s0">'u'        </span><span class="s1">#  0x0075 -&gt; LATIN SMALL LETTER U</span><span class="s2"> 
+    </span><span class="s0">'v'        </span><span class="s1">#  0x0076 -&gt; LATIN SMALL LETTER V</span><span class="s2"> 
+    </span><span class="s0">'w'        </span><span class="s1">#  0x0077 -&gt; LATIN SMALL LETTER W</span><span class="s2"> 
+    </span><span class="s0">'x'        </span><span class="s1">#  0x0078 -&gt; LATIN SMALL LETTER X</span><span class="s2"> 
+    </span><span class="s0">'y'        </span><span class="s1">#  0x0079 -&gt; LATIN SMALL LETTER Y</span><span class="s2"> 
+    </span><span class="s0">'z'        </span><span class="s1">#  0x007a -&gt; LATIN SMALL LETTER Z</span><span class="s2"> 
+    </span><span class="s0">'{'        </span><span class="s1">#  0x007b -&gt; LEFT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s0">'|'        </span><span class="s1">#  0x007c -&gt; VERTICAL LINE</span><span class="s2"> 
+    </span><span class="s0">'}'        </span><span class="s1">#  0x007d -&gt; RIGHT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s0">'~'        </span><span class="s1">#  0x007e -&gt; TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x7f</span><span class="s0">'     </span><span class="s1">#  0x007f -&gt; DELETE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb0</span><span class="s0">'     </span><span class="s1">#  0x0080 -&gt; DEGREE SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb7</span><span class="s0">'     </span><span class="s1">#  0x0081 -&gt; MIDDLE DOT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2219</span><span class="s0">'   </span><span class="s1">#  0x0082 -&gt; BULLET OPERATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u221a</span><span class="s0">'   </span><span class="s1">#  0x0083 -&gt; SQUARE ROOT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2592</span><span class="s0">'   </span><span class="s1">#  0x0084 -&gt; MEDIUM SHADE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2500</span><span class="s0">'   </span><span class="s1">#  0x0085 -&gt; FORMS LIGHT HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2502</span><span class="s0">'   </span><span class="s1">#  0x0086 -&gt; FORMS LIGHT VERTICAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u253c</span><span class="s0">'   </span><span class="s1">#  0x0087 -&gt; FORMS LIGHT VERTICAL AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2524</span><span class="s0">'   </span><span class="s1">#  0x0088 -&gt; FORMS LIGHT VERTICAL AND LEFT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u252c</span><span class="s0">'   </span><span class="s1">#  0x0089 -&gt; FORMS LIGHT DOWN AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u251c</span><span class="s0">'   </span><span class="s1">#  0x008a -&gt; FORMS LIGHT VERTICAL AND RIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2534</span><span class="s0">'   </span><span class="s1">#  0x008b -&gt; FORMS LIGHT UP AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2510</span><span class="s0">'   </span><span class="s1">#  0x008c -&gt; FORMS LIGHT DOWN AND LEFT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u250c</span><span class="s0">'   </span><span class="s1">#  0x008d -&gt; FORMS LIGHT DOWN AND RIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2514</span><span class="s0">'   </span><span class="s1">#  0x008e -&gt; FORMS LIGHT UP AND RIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2518</span><span class="s0">'   </span><span class="s1">#  0x008f -&gt; FORMS LIGHT UP AND LEFT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03b2</span><span class="s0">'   </span><span class="s1">#  0x0090 -&gt; GREEK SMALL BETA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u221e</span><span class="s0">'   </span><span class="s1">#  0x0091 -&gt; INFINITY</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03c6</span><span class="s0">'   </span><span class="s1">#  0x0092 -&gt; GREEK SMALL PHI</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb1</span><span class="s0">'     </span><span class="s1">#  0x0093 -&gt; PLUS-OR-MINUS SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbd</span><span class="s0">'     </span><span class="s1">#  0x0094 -&gt; FRACTION 1/2</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbc</span><span class="s0">'     </span><span class="s1">#  0x0095 -&gt; FRACTION 1/4</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2248</span><span class="s0">'   </span><span class="s1">#  0x0096 -&gt; ALMOST EQUAL TO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xab</span><span class="s0">'     </span><span class="s1">#  0x0097 -&gt; LEFT POINTING GUILLEMET</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbb</span><span class="s0">'     </span><span class="s1">#  0x0098 -&gt; RIGHT POINTING GUILLEMET</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef7</span><span class="s0">'   </span><span class="s1">#  0x0099 -&gt; ARABIC LIGATURE LAM WITH ALEF WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef8</span><span class="s0">'   </span><span class="s1">#  0x009a -&gt; ARABIC LIGATURE LAM WITH ALEF WITH HAMZA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufffe</span><span class="s0">'   </span><span class="s1">#  0x009b -&gt; UNDEFINED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufffe</span><span class="s0">'   </span><span class="s1">#  0x009c -&gt; UNDEFINED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufefb</span><span class="s0">'   </span><span class="s1">#  0x009d -&gt; ARABIC LIGATURE LAM WITH ALEF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufefc</span><span class="s0">'   </span><span class="s1">#  0x009e -&gt; ARABIC LIGATURE LAM WITH ALEF FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufffe</span><span class="s0">'   </span><span class="s1">#  0x009f -&gt; UNDEFINED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa0</span><span class="s0">'     </span><span class="s1">#  0x00a0 -&gt; NON-BREAKING SPACE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xad</span><span class="s0">'     </span><span class="s1">#  0x00a1 -&gt; SOFT HYPHEN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe82</span><span class="s0">'   </span><span class="s1">#  0x00a2 -&gt; ARABIC LETTER ALEF WITH MADDA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa3</span><span class="s0">'     </span><span class="s1">#  0x00a3 -&gt; POUND SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa4</span><span class="s0">'     </span><span class="s1">#  0x00a4 -&gt; CURRENCY SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe84</span><span class="s0">'   </span><span class="s1">#  0x00a5 -&gt; ARABIC LETTER ALEF WITH HAMZA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufffe</span><span class="s0">'   </span><span class="s1">#  0x00a6 -&gt; UNDEFINED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufffe</span><span class="s0">'   </span><span class="s1">#  0x00a7 -&gt; UNDEFINED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8e</span><span class="s0">'   </span><span class="s1">#  0x00a8 -&gt; ARABIC LETTER ALEF FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8f</span><span class="s0">'   </span><span class="s1">#  0x00a9 -&gt; ARABIC LETTER BEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe95</span><span class="s0">'   </span><span class="s1">#  0x00aa -&gt; ARABIC LETTER TEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe99</span><span class="s0">'   </span><span class="s1">#  0x00ab -&gt; ARABIC LETTER THEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u060c</span><span class="s0">'   </span><span class="s1">#  0x00ac -&gt; ARABIC COMMA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe9d</span><span class="s0">'   </span><span class="s1">#  0x00ad -&gt; ARABIC LETTER JEEM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea1</span><span class="s0">'   </span><span class="s1">#  0x00ae -&gt; ARABIC LETTER HAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea5</span><span class="s0">'   </span><span class="s1">#  0x00af -&gt; ARABIC LETTER KHAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0660</span><span class="s0">'   </span><span class="s1">#  0x00b0 -&gt; ARABIC-INDIC DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0661</span><span class="s0">'   </span><span class="s1">#  0x00b1 -&gt; ARABIC-INDIC DIGIT ONE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0662</span><span class="s0">'   </span><span class="s1">#  0x00b2 -&gt; ARABIC-INDIC DIGIT TWO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0663</span><span class="s0">'   </span><span class="s1">#  0x00b3 -&gt; ARABIC-INDIC DIGIT THREE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0664</span><span class="s0">'   </span><span class="s1">#  0x00b4 -&gt; ARABIC-INDIC DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0665</span><span class="s0">'   </span><span class="s1">#  0x00b5 -&gt; ARABIC-INDIC DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0666</span><span class="s0">'   </span><span class="s1">#  0x00b6 -&gt; ARABIC-INDIC DIGIT SIX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0667</span><span class="s0">'   </span><span class="s1">#  0x00b7 -&gt; ARABIC-INDIC DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0668</span><span class="s0">'   </span><span class="s1">#  0x00b8 -&gt; ARABIC-INDIC DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0669</span><span class="s0">'   </span><span class="s1">#  0x00b9 -&gt; ARABIC-INDIC DIGIT NINE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed1</span><span class="s0">'   </span><span class="s1">#  0x00ba -&gt; ARABIC LETTER FEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u061b</span><span class="s0">'   </span><span class="s1">#  0x00bb -&gt; ARABIC SEMICOLON</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb1</span><span class="s0">'   </span><span class="s1">#  0x00bc -&gt; ARABIC LETTER SEEN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb5</span><span class="s0">'   </span><span class="s1">#  0x00bd -&gt; ARABIC LETTER SHEEN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb9</span><span class="s0">'   </span><span class="s1">#  0x00be -&gt; ARABIC LETTER SAD ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u061f</span><span class="s0">'   </span><span class="s1">#  0x00bf -&gt; ARABIC QUESTION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa2</span><span class="s0">'     </span><span class="s1">#  0x00c0 -&gt; CENT SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe80</span><span class="s0">'   </span><span class="s1">#  0x00c1 -&gt; ARABIC LETTER HAMZA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe81</span><span class="s0">'   </span><span class="s1">#  0x00c2 -&gt; ARABIC LETTER ALEF WITH MADDA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe83</span><span class="s0">'   </span><span class="s1">#  0x00c3 -&gt; ARABIC LETTER ALEF WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe85</span><span class="s0">'   </span><span class="s1">#  0x00c4 -&gt; ARABIC LETTER WAW WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeca</span><span class="s0">'   </span><span class="s1">#  0x00c5 -&gt; ARABIC LETTER AIN FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8b</span><span class="s0">'   </span><span class="s1">#  0x00c6 -&gt; ARABIC LETTER YEH WITH HAMZA ABOVE INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe8d</span><span class="s0">'   </span><span class="s1">#  0x00c7 -&gt; ARABIC LETTER ALEF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe91</span><span class="s0">'   </span><span class="s1">#  0x00c8 -&gt; ARABIC LETTER BEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe93</span><span class="s0">'   </span><span class="s1">#  0x00c9 -&gt; ARABIC LETTER TEH MARBUTA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe97</span><span class="s0">'   </span><span class="s1">#  0x00ca -&gt; ARABIC LETTER TEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe9b</span><span class="s0">'   </span><span class="s1">#  0x00cb -&gt; ARABIC LETTER THEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe9f</span><span class="s0">'   </span><span class="s1">#  0x00cc -&gt; ARABIC LETTER JEEM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea3</span><span class="s0">'   </span><span class="s1">#  0x00cd -&gt; ARABIC LETTER HAH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea7</span><span class="s0">'   </span><span class="s1">#  0x00ce -&gt; ARABIC LETTER KHAH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufea9</span><span class="s0">'   </span><span class="s1">#  0x00cf -&gt; ARABIC LETTER DAL ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeab</span><span class="s0">'   </span><span class="s1">#  0x00d0 -&gt; ARABIC LETTER THAL ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufead</span><span class="s0">'   </span><span class="s1">#  0x00d1 -&gt; ARABIC LETTER REH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeaf</span><span class="s0">'   </span><span class="s1">#  0x00d2 -&gt; ARABIC LETTER ZAIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb3</span><span class="s0">'   </span><span class="s1">#  0x00d3 -&gt; ARABIC LETTER SEEN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeb7</span><span class="s0">'   </span><span class="s1">#  0x00d4 -&gt; ARABIC LETTER SHEEN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufebb</span><span class="s0">'   </span><span class="s1">#  0x00d5 -&gt; ARABIC LETTER SAD INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufebf</span><span class="s0">'   </span><span class="s1">#  0x00d6 -&gt; ARABIC LETTER DAD INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufec1</span><span class="s0">'   </span><span class="s1">#  0x00d7 -&gt; ARABIC LETTER TAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufec5</span><span class="s0">'   </span><span class="s1">#  0x00d8 -&gt; ARABIC LETTER ZAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufecb</span><span class="s0">'   </span><span class="s1">#  0x00d9 -&gt; ARABIC LETTER AIN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufecf</span><span class="s0">'   </span><span class="s1">#  0x00da -&gt; ARABIC LETTER GHAIN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa6</span><span class="s0">'     </span><span class="s1">#  0x00db -&gt; BROKEN VERTICAL BAR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xac</span><span class="s0">'     </span><span class="s1">#  0x00dc -&gt; NOT SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf7</span><span class="s0">'     </span><span class="s1">#  0x00dd -&gt; DIVISION SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd7</span><span class="s0">'     </span><span class="s1">#  0x00de -&gt; MULTIPLICATION SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufec9</span><span class="s0">'   </span><span class="s1">#  0x00df -&gt; ARABIC LETTER AIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0640</span><span class="s0">'   </span><span class="s1">#  0x00e0 -&gt; ARABIC TATWEEL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed3</span><span class="s0">'   </span><span class="s1">#  0x00e1 -&gt; ARABIC LETTER FEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed7</span><span class="s0">'   </span><span class="s1">#  0x00e2 -&gt; ARABIC LETTER QAF INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufedb</span><span class="s0">'   </span><span class="s1">#  0x00e3 -&gt; ARABIC LETTER KAF INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufedf</span><span class="s0">'   </span><span class="s1">#  0x00e4 -&gt; ARABIC LETTER LAM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee3</span><span class="s0">'   </span><span class="s1">#  0x00e5 -&gt; ARABIC LETTER MEEM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee7</span><span class="s0">'   </span><span class="s1">#  0x00e6 -&gt; ARABIC LETTER NOON INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeeb</span><span class="s0">'   </span><span class="s1">#  0x00e7 -&gt; ARABIC LETTER HEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeed</span><span class="s0">'   </span><span class="s1">#  0x00e8 -&gt; ARABIC LETTER WAW ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeef</span><span class="s0">'   </span><span class="s1">#  0x00e9 -&gt; ARABIC LETTER ALEF MAKSURA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef3</span><span class="s0">'   </span><span class="s1">#  0x00ea -&gt; ARABIC LETTER YEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufebd</span><span class="s0">'   </span><span class="s1">#  0x00eb -&gt; ARABIC LETTER DAD ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufecc</span><span class="s0">'   </span><span class="s1">#  0x00ec -&gt; ARABIC LETTER AIN MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufece</span><span class="s0">'   </span><span class="s1">#  0x00ed -&gt; ARABIC LETTER GHAIN FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufecd</span><span class="s0">'   </span><span class="s1">#  0x00ee -&gt; ARABIC LETTER GHAIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee1</span><span class="s0">'   </span><span class="s1">#  0x00ef -&gt; ARABIC LETTER MEEM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufe7d</span><span class="s0">'   </span><span class="s1">#  0x00f0 -&gt; ARABIC SHADDA MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0651</span><span class="s0">'   </span><span class="s1">#  0x00f1 -&gt; ARABIC SHADDAH</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee5</span><span class="s0">'   </span><span class="s1">#  0x00f2 -&gt; ARABIC LETTER NOON ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufee9</span><span class="s0">'   </span><span class="s1">#  0x00f3 -&gt; ARABIC LETTER HEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufeec</span><span class="s0">'   </span><span class="s1">#  0x00f4 -&gt; ARABIC LETTER HEH MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef0</span><span class="s0">'   </span><span class="s1">#  0x00f5 -&gt; ARABIC LETTER ALEF MAKSURA FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef2</span><span class="s0">'   </span><span class="s1">#  0x00f6 -&gt; ARABIC LETTER YEH FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed0</span><span class="s0">'   </span><span class="s1">#  0x00f7 -&gt; ARABIC LETTER GHAIN MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed5</span><span class="s0">'   </span><span class="s1">#  0x00f8 -&gt; ARABIC LETTER QAF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef5</span><span class="s0">'   </span><span class="s1">#  0x00f9 -&gt; ARABIC LIGATURE LAM WITH ALEF WITH MADDA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef6</span><span class="s0">'   </span><span class="s1">#  0x00fa -&gt; ARABIC LIGATURE LAM WITH ALEF WITH MADDA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufedd</span><span class="s0">'   </span><span class="s1">#  0x00fb -&gt; ARABIC LETTER LAM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufed9</span><span class="s0">'   </span><span class="s1">#  0x00fc -&gt; ARABIC LETTER KAF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufef1</span><span class="s0">'   </span><span class="s1">#  0x00fd -&gt; ARABIC LETTER YEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u25a0</span><span class="s0">'   </span><span class="s1">#  0x00fe -&gt; BLACK SQUARE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\ufffe</span><span class="s0">'   </span><span class="s1">#  0x00ff -&gt; UNDEFINED</span><span class="s2"> 
+) 
+ 
+</span><span class="s1">### Encoding Map</span><span class="s2"> 
+ 
+encoding_map = { 
+    </span><span class="s4">0x0000</span><span class="s2">: </span><span class="s4">0x0000</span><span class="s3">,     </span><span class="s1">#  NULL</span><span class="s2"> 
+    </span><span class="s4">0x0001</span><span class="s2">: </span><span class="s4">0x0001</span><span class="s3">,     </span><span class="s1">#  START OF HEADING</span><span class="s2"> 
+    </span><span class="s4">0x0002</span><span class="s2">: </span><span class="s4">0x0002</span><span class="s3">,     </span><span class="s1">#  START OF TEXT</span><span class="s2"> 
+    </span><span class="s4">0x0003</span><span class="s2">: </span><span class="s4">0x0003</span><span class="s3">,     </span><span class="s1">#  END OF TEXT</span><span class="s2"> 
+    </span><span class="s4">0x0004</span><span class="s2">: </span><span class="s4">0x0004</span><span class="s3">,     </span><span class="s1">#  END OF TRANSMISSION</span><span class="s2"> 
+    </span><span class="s4">0x0005</span><span class="s2">: </span><span class="s4">0x0005</span><span class="s3">,     </span><span class="s1">#  ENQUIRY</span><span class="s2"> 
+    </span><span class="s4">0x0006</span><span class="s2">: </span><span class="s4">0x0006</span><span class="s3">,     </span><span class="s1">#  ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s4">0x0007</span><span class="s2">: </span><span class="s4">0x0007</span><span class="s3">,     </span><span class="s1">#  BELL</span><span class="s2"> 
+    </span><span class="s4">0x0008</span><span class="s2">: </span><span class="s4">0x0008</span><span class="s3">,     </span><span class="s1">#  BACKSPACE</span><span class="s2"> 
+    </span><span class="s4">0x0009</span><span class="s2">: </span><span class="s4">0x0009</span><span class="s3">,     </span><span class="s1">#  HORIZONTAL TABULATION</span><span class="s2"> 
+    </span><span class="s4">0x000a</span><span class="s2">: </span><span class="s4">0x000a</span><span class="s3">,     </span><span class="s1">#  LINE FEED</span><span class="s2"> 
+    </span><span class="s4">0x000b</span><span class="s2">: </span><span class="s4">0x000b</span><span class="s3">,     </span><span class="s1">#  VERTICAL TABULATION</span><span class="s2"> 
+    </span><span class="s4">0x000c</span><span class="s2">: </span><span class="s4">0x000c</span><span class="s3">,     </span><span class="s1">#  FORM FEED</span><span class="s2"> 
+    </span><span class="s4">0x000d</span><span class="s2">: </span><span class="s4">0x000d</span><span class="s3">,     </span><span class="s1">#  CARRIAGE RETURN</span><span class="s2"> 
+    </span><span class="s4">0x000e</span><span class="s2">: </span><span class="s4">0x000e</span><span class="s3">,     </span><span class="s1">#  SHIFT OUT</span><span class="s2"> 
+    </span><span class="s4">0x000f</span><span class="s2">: </span><span class="s4">0x000f</span><span class="s3">,     </span><span class="s1">#  SHIFT IN</span><span class="s2"> 
+    </span><span class="s4">0x0010</span><span class="s2">: </span><span class="s4">0x0010</span><span class="s3">,     </span><span class="s1">#  DATA LINK ESCAPE</span><span class="s2"> 
+    </span><span class="s4">0x0011</span><span class="s2">: </span><span class="s4">0x0011</span><span class="s3">,     </span><span class="s1">#  DEVICE CONTROL ONE</span><span class="s2"> 
+    </span><span class="s4">0x0012</span><span class="s2">: </span><span class="s4">0x0012</span><span class="s3">,     </span><span class="s1">#  DEVICE CONTROL TWO</span><span class="s2"> 
+    </span><span class="s4">0x0013</span><span class="s2">: </span><span class="s4">0x0013</span><span class="s3">,     </span><span class="s1">#  DEVICE CONTROL THREE</span><span class="s2"> 
+    </span><span class="s4">0x0014</span><span class="s2">: </span><span class="s4">0x0014</span><span class="s3">,     </span><span class="s1">#  DEVICE CONTROL FOUR</span><span class="s2"> 
+    </span><span class="s4">0x0015</span><span class="s2">: </span><span class="s4">0x0015</span><span class="s3">,     </span><span class="s1">#  NEGATIVE ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s4">0x0016</span><span class="s2">: </span><span class="s4">0x0016</span><span class="s3">,     </span><span class="s1">#  SYNCHRONOUS IDLE</span><span class="s2"> 
+    </span><span class="s4">0x0017</span><span class="s2">: </span><span class="s4">0x0017</span><span class="s3">,     </span><span class="s1">#  END OF TRANSMISSION BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x0018</span><span class="s2">: </span><span class="s4">0x0018</span><span class="s3">,     </span><span class="s1">#  CANCEL</span><span class="s2"> 
+    </span><span class="s4">0x0019</span><span class="s2">: </span><span class="s4">0x0019</span><span class="s3">,     </span><span class="s1">#  END OF MEDIUM</span><span class="s2"> 
+    </span><span class="s4">0x001a</span><span class="s2">: </span><span class="s4">0x001a</span><span class="s3">,     </span><span class="s1">#  SUBSTITUTE</span><span class="s2"> 
+    </span><span class="s4">0x001b</span><span class="s2">: </span><span class="s4">0x001b</span><span class="s3">,     </span><span class="s1">#  ESCAPE</span><span class="s2"> 
+    </span><span class="s4">0x001c</span><span class="s2">: </span><span class="s4">0x001c</span><span class="s3">,     </span><span class="s1">#  FILE SEPARATOR</span><span class="s2"> 
+    </span><span class="s4">0x001d</span><span class="s2">: </span><span class="s4">0x001d</span><span class="s3">,     </span><span class="s1">#  GROUP SEPARATOR</span><span class="s2"> 
+    </span><span class="s4">0x001e</span><span class="s2">: </span><span class="s4">0x001e</span><span class="s3">,     </span><span class="s1">#  RECORD SEPARATOR</span><span class="s2"> 
+    </span><span class="s4">0x001f</span><span class="s2">: </span><span class="s4">0x001f</span><span class="s3">,     </span><span class="s1">#  UNIT SEPARATOR</span><span class="s2"> 
+    </span><span class="s4">0x0020</span><span class="s2">: </span><span class="s4">0x0020</span><span class="s3">,     </span><span class="s1">#  SPACE</span><span class="s2"> 
+    </span><span class="s4">0x0021</span><span class="s2">: </span><span class="s4">0x0021</span><span class="s3">,     </span><span class="s1">#  EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x0022</span><span class="s2">: </span><span class="s4">0x0022</span><span class="s3">,     </span><span class="s1">#  QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x0023</span><span class="s2">: </span><span class="s4">0x0023</span><span class="s3">,     </span><span class="s1">#  NUMBER SIGN</span><span class="s2"> 
+    </span><span class="s4">0x0024</span><span class="s2">: </span><span class="s4">0x0024</span><span class="s3">,     </span><span class="s1">#  DOLLAR SIGN</span><span class="s2"> 
+    </span><span class="s4">0x0026</span><span class="s2">: </span><span class="s4">0x0026</span><span class="s3">,     </span><span class="s1">#  AMPERSAND</span><span class="s2"> 
+    </span><span class="s4">0x0027</span><span class="s2">: </span><span class="s4">0x0027</span><span class="s3">,     </span><span class="s1">#  APOSTROPHE</span><span class="s2"> 
+    </span><span class="s4">0x0028</span><span class="s2">: </span><span class="s4">0x0028</span><span class="s3">,     </span><span class="s1">#  LEFT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s4">0x0029</span><span class="s2">: </span><span class="s4">0x0029</span><span class="s3">,     </span><span class="s1">#  RIGHT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s4">0x002a</span><span class="s2">: </span><span class="s4">0x002a</span><span class="s3">,     </span><span class="s1">#  ASTERISK</span><span class="s2"> 
+    </span><span class="s4">0x002b</span><span class="s2">: </span><span class="s4">0x002b</span><span class="s3">,     </span><span class="s1">#  PLUS SIGN</span><span class="s2"> 
+    </span><span class="s4">0x002c</span><span class="s2">: </span><span class="s4">0x002c</span><span class="s3">,     </span><span class="s1">#  COMMA</span><span class="s2"> 
+    </span><span class="s4">0x002d</span><span class="s2">: </span><span class="s4">0x002d</span><span class="s3">,     </span><span class="s1">#  HYPHEN-MINUS</span><span class="s2"> 
+    </span><span class="s4">0x002e</span><span class="s2">: </span><span class="s4">0x002e</span><span class="s3">,     </span><span class="s1">#  FULL STOP</span><span class="s2"> 
+    </span><span class="s4">0x002f</span><span class="s2">: </span><span class="s4">0x002f</span><span class="s3">,     </span><span class="s1">#  SOLIDUS</span><span class="s2"> 
+    </span><span class="s4">0x0030</span><span class="s2">: </span><span class="s4">0x0030</span><span class="s3">,     </span><span class="s1">#  DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s4">0x0031</span><span class="s2">: </span><span class="s4">0x0031</span><span class="s3">,     </span><span class="s1">#  DIGIT ONE</span><span class="s2"> 
+    </span><span class="s4">0x0032</span><span class="s2">: </span><span class="s4">0x0032</span><span class="s3">,     </span><span class="s1">#  DIGIT TWO</span><span class="s2"> 
+    </span><span class="s4">0x0033</span><span class="s2">: </span><span class="s4">0x0033</span><span class="s3">,     </span><span class="s1">#  DIGIT THREE</span><span class="s2"> 
+    </span><span class="s4">0x0034</span><span class="s2">: </span><span class="s4">0x0034</span><span class="s3">,     </span><span class="s1">#  DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s4">0x0035</span><span class="s2">: </span><span class="s4">0x0035</span><span class="s3">,     </span><span class="s1">#  DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s4">0x0036</span><span class="s2">: </span><span class="s4">0x0036</span><span class="s3">,     </span><span class="s1">#  DIGIT SIX</span><span class="s2"> 
+    </span><span class="s4">0x0037</span><span class="s2">: </span><span class="s4">0x0037</span><span class="s3">,     </span><span class="s1">#  DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s4">0x0038</span><span class="s2">: </span><span class="s4">0x0038</span><span class="s3">,     </span><span class="s1">#  DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s4">0x0039</span><span class="s2">: </span><span class="s4">0x0039</span><span class="s3">,     </span><span class="s1">#  DIGIT NINE</span><span class="s2"> 
+    </span><span class="s4">0x003a</span><span class="s2">: </span><span class="s4">0x003a</span><span class="s3">,     </span><span class="s1">#  COLON</span><span class="s2"> 
+    </span><span class="s4">0x003b</span><span class="s2">: </span><span class="s4">0x003b</span><span class="s3">,     </span><span class="s1">#  SEMICOLON</span><span class="s2"> 
+    </span><span class="s4">0x003c</span><span class="s2">: </span><span class="s4">0x003c</span><span class="s3">,     </span><span class="s1">#  LESS-THAN SIGN</span><span class="s2"> 
+    </span><span class="s4">0x003d</span><span class="s2">: </span><span class="s4">0x003d</span><span class="s3">,     </span><span class="s1">#  EQUALS SIGN</span><span class="s2"> 
+    </span><span class="s4">0x003e</span><span class="s2">: </span><span class="s4">0x003e</span><span class="s3">,     </span><span class="s1">#  GREATER-THAN SIGN</span><span class="s2"> 
+    </span><span class="s4">0x003f</span><span class="s2">: </span><span class="s4">0x003f</span><span class="s3">,     </span><span class="s1">#  QUESTION MARK</span><span class="s2"> 
+    </span><span class="s4">0x0040</span><span class="s2">: </span><span class="s4">0x0040</span><span class="s3">,     </span><span class="s1">#  COMMERCIAL AT</span><span class="s2"> 
+    </span><span class="s4">0x0041</span><span class="s2">: </span><span class="s4">0x0041</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A</span><span class="s2"> 
+    </span><span class="s4">0x0042</span><span class="s2">: </span><span class="s4">0x0042</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER B</span><span class="s2"> 
+    </span><span class="s4">0x0043</span><span class="s2">: </span><span class="s4">0x0043</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER C</span><span class="s2"> 
+    </span><span class="s4">0x0044</span><span class="s2">: </span><span class="s4">0x0044</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER D</span><span class="s2"> 
+    </span><span class="s4">0x0045</span><span class="s2">: </span><span class="s4">0x0045</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER E</span><span class="s2"> 
+    </span><span class="s4">0x0046</span><span class="s2">: </span><span class="s4">0x0046</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER F</span><span class="s2"> 
+    </span><span class="s4">0x0047</span><span class="s2">: </span><span class="s4">0x0047</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER G</span><span class="s2"> 
+    </span><span class="s4">0x0048</span><span class="s2">: </span><span class="s4">0x0048</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER H</span><span class="s2"> 
+    </span><span class="s4">0x0049</span><span class="s2">: </span><span class="s4">0x0049</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER I</span><span class="s2"> 
+    </span><span class="s4">0x004a</span><span class="s2">: </span><span class="s4">0x004a</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER J</span><span class="s2"> 
+    </span><span class="s4">0x004b</span><span class="s2">: </span><span class="s4">0x004b</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER K</span><span class="s2"> 
+    </span><span class="s4">0x004c</span><span class="s2">: </span><span class="s4">0x004c</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER L</span><span class="s2"> 
+    </span><span class="s4">0x004d</span><span class="s2">: </span><span class="s4">0x004d</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER M</span><span class="s2"> 
+    </span><span class="s4">0x004e</span><span class="s2">: </span><span class="s4">0x004e</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER N</span><span class="s2"> 
+    </span><span class="s4">0x004f</span><span class="s2">: </span><span class="s4">0x004f</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O</span><span class="s2"> 
+    </span><span class="s4">0x0050</span><span class="s2">: </span><span class="s4">0x0050</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER P</span><span class="s2"> 
+    </span><span class="s4">0x0051</span><span class="s2">: </span><span class="s4">0x0051</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER Q</span><span class="s2"> 
+    </span><span class="s4">0x0052</span><span class="s2">: </span><span class="s4">0x0052</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER R</span><span class="s2"> 
+    </span><span class="s4">0x0053</span><span class="s2">: </span><span class="s4">0x0053</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER S</span><span class="s2"> 
+    </span><span class="s4">0x0054</span><span class="s2">: </span><span class="s4">0x0054</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER T</span><span class="s2"> 
+    </span><span class="s4">0x0055</span><span class="s2">: </span><span class="s4">0x0055</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER U</span><span class="s2"> 
+    </span><span class="s4">0x0056</span><span class="s2">: </span><span class="s4">0x0056</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER V</span><span class="s2"> 
+    </span><span class="s4">0x0057</span><span class="s2">: </span><span class="s4">0x0057</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER W</span><span class="s2"> 
+    </span><span class="s4">0x0058</span><span class="s2">: </span><span class="s4">0x0058</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER X</span><span class="s2"> 
+    </span><span class="s4">0x0059</span><span class="s2">: </span><span class="s4">0x0059</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER Y</span><span class="s2"> 
+    </span><span class="s4">0x005a</span><span class="s2">: </span><span class="s4">0x005a</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER Z</span><span class="s2"> 
+    </span><span class="s4">0x005b</span><span class="s2">: </span><span class="s4">0x005b</span><span class="s3">,     </span><span class="s1">#  LEFT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s4">0x005c</span><span class="s2">: </span><span class="s4">0x005c</span><span class="s3">,     </span><span class="s1">#  REVERSE SOLIDUS</span><span class="s2"> 
+    </span><span class="s4">0x005d</span><span class="s2">: </span><span class="s4">0x005d</span><span class="s3">,     </span><span class="s1">#  RIGHT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s4">0x005e</span><span class="s2">: </span><span class="s4">0x005e</span><span class="s3">,     </span><span class="s1">#  CIRCUMFLEX ACCENT</span><span class="s2"> 
+    </span><span class="s4">0x005f</span><span class="s2">: </span><span class="s4">0x005f</span><span class="s3">,     </span><span class="s1">#  LOW LINE</span><span class="s2"> 
+    </span><span class="s4">0x0060</span><span class="s2">: </span><span class="s4">0x0060</span><span class="s3">,     </span><span class="s1">#  GRAVE ACCENT</span><span class="s2"> 
+    </span><span class="s4">0x0061</span><span class="s2">: </span><span class="s4">0x0061</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A</span><span class="s2"> 
+    </span><span class="s4">0x0062</span><span class="s2">: </span><span class="s4">0x0062</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER B</span><span class="s2"> 
+    </span><span class="s4">0x0063</span><span class="s2">: </span><span class="s4">0x0063</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER C</span><span class="s2"> 
+    </span><span class="s4">0x0064</span><span class="s2">: </span><span class="s4">0x0064</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER D</span><span class="s2"> 
+    </span><span class="s4">0x0065</span><span class="s2">: </span><span class="s4">0x0065</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER E</span><span class="s2"> 
+    </span><span class="s4">0x0066</span><span class="s2">: </span><span class="s4">0x0066</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER F</span><span class="s2"> 
+    </span><span class="s4">0x0067</span><span class="s2">: </span><span class="s4">0x0067</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER G</span><span class="s2"> 
+    </span><span class="s4">0x0068</span><span class="s2">: </span><span class="s4">0x0068</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER H</span><span class="s2"> 
+    </span><span class="s4">0x0069</span><span class="s2">: </span><span class="s4">0x0069</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER I</span><span class="s2"> 
+    </span><span class="s4">0x006a</span><span class="s2">: </span><span class="s4">0x006a</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER J</span><span class="s2"> 
+    </span><span class="s4">0x006b</span><span class="s2">: </span><span class="s4">0x006b</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER K</span><span class="s2"> 
+    </span><span class="s4">0x006c</span><span class="s2">: </span><span class="s4">0x006c</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER L</span><span class="s2"> 
+    </span><span class="s4">0x006d</span><span class="s2">: </span><span class="s4">0x006d</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER M</span><span class="s2"> 
+    </span><span class="s4">0x006e</span><span class="s2">: </span><span class="s4">0x006e</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER N</span><span class="s2"> 
+    </span><span class="s4">0x006f</span><span class="s2">: </span><span class="s4">0x006f</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O</span><span class="s2"> 
+    </span><span class="s4">0x0070</span><span class="s2">: </span><span class="s4">0x0070</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER P</span><span class="s2"> 
+    </span><span class="s4">0x0071</span><span class="s2">: </span><span class="s4">0x0071</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER Q</span><span class="s2"> 
+    </span><span class="s4">0x0072</span><span class="s2">: </span><span class="s4">0x0072</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER R</span><span class="s2"> 
+    </span><span class="s4">0x0073</span><span class="s2">: </span><span class="s4">0x0073</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER S</span><span class="s2"> 
+    </span><span class="s4">0x0074</span><span class="s2">: </span><span class="s4">0x0074</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER T</span><span class="s2"> 
+    </span><span class="s4">0x0075</span><span class="s2">: </span><span class="s4">0x0075</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER U</span><span class="s2"> 
+    </span><span class="s4">0x0076</span><span class="s2">: </span><span class="s4">0x0076</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER V</span><span class="s2"> 
+    </span><span class="s4">0x0077</span><span class="s2">: </span><span class="s4">0x0077</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER W</span><span class="s2"> 
+    </span><span class="s4">0x0078</span><span class="s2">: </span><span class="s4">0x0078</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER X</span><span class="s2"> 
+    </span><span class="s4">0x0079</span><span class="s2">: </span><span class="s4">0x0079</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER Y</span><span class="s2"> 
+    </span><span class="s4">0x007a</span><span class="s2">: </span><span class="s4">0x007a</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER Z</span><span class="s2"> 
+    </span><span class="s4">0x007b</span><span class="s2">: </span><span class="s4">0x007b</span><span class="s3">,     </span><span class="s1">#  LEFT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s4">0x007c</span><span class="s2">: </span><span class="s4">0x007c</span><span class="s3">,     </span><span class="s1">#  VERTICAL LINE</span><span class="s2"> 
+    </span><span class="s4">0x007d</span><span class="s2">: </span><span class="s4">0x007d</span><span class="s3">,     </span><span class="s1">#  RIGHT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s4">0x007e</span><span class="s2">: </span><span class="s4">0x007e</span><span class="s3">,     </span><span class="s1">#  TILDE</span><span class="s2"> 
+    </span><span class="s4">0x007f</span><span class="s2">: </span><span class="s4">0x007f</span><span class="s3">,     </span><span class="s1">#  DELETE</span><span class="s2"> 
+    </span><span class="s4">0x00a0</span><span class="s2">: </span><span class="s4">0x00a0</span><span class="s3">,     </span><span class="s1">#  NON-BREAKING SPACE</span><span class="s2"> 
+    </span><span class="s4">0x00a2</span><span class="s2">: </span><span class="s4">0x00c0</span><span class="s3">,     </span><span class="s1">#  CENT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00a3</span><span class="s2">: </span><span class="s4">0x00a3</span><span class="s3">,     </span><span class="s1">#  POUND SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00a4</span><span class="s2">: </span><span class="s4">0x00a4</span><span class="s3">,     </span><span class="s1">#  CURRENCY SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00a6</span><span class="s2">: </span><span class="s4">0x00db</span><span class="s3">,     </span><span class="s1">#  BROKEN VERTICAL BAR</span><span class="s2"> 
+    </span><span class="s4">0x00ab</span><span class="s2">: </span><span class="s4">0x0097</span><span class="s3">,     </span><span class="s1">#  LEFT POINTING GUILLEMET</span><span class="s2"> 
+    </span><span class="s4">0x00ac</span><span class="s2">: </span><span class="s4">0x00dc</span><span class="s3">,     </span><span class="s1">#  NOT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00ad</span><span class="s2">: </span><span class="s4">0x00a1</span><span class="s3">,     </span><span class="s1">#  SOFT HYPHEN</span><span class="s2"> 
+    </span><span class="s4">0x00b0</span><span class="s2">: </span><span class="s4">0x0080</span><span class="s3">,     </span><span class="s1">#  DEGREE SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00b1</span><span class="s2">: </span><span class="s4">0x0093</span><span class="s3">,     </span><span class="s1">#  PLUS-OR-MINUS SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00b7</span><span class="s2">: </span><span class="s4">0x0081</span><span class="s3">,     </span><span class="s1">#  MIDDLE DOT</span><span class="s2"> 
+    </span><span class="s4">0x00bb</span><span class="s2">: </span><span class="s4">0x0098</span><span class="s3">,     </span><span class="s1">#  RIGHT POINTING GUILLEMET</span><span class="s2"> 
+    </span><span class="s4">0x00bc</span><span class="s2">: </span><span class="s4">0x0095</span><span class="s3">,     </span><span class="s1">#  FRACTION 1/4</span><span class="s2"> 
+    </span><span class="s4">0x00bd</span><span class="s2">: </span><span class="s4">0x0094</span><span class="s3">,     </span><span class="s1">#  FRACTION 1/2</span><span class="s2"> 
+    </span><span class="s4">0x00d7</span><span class="s2">: </span><span class="s4">0x00de</span><span class="s3">,     </span><span class="s1">#  MULTIPLICATION SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00f7</span><span class="s2">: </span><span class="s4">0x00dd</span><span class="s3">,     </span><span class="s1">#  DIVISION SIGN</span><span class="s2"> 
+    </span><span class="s4">0x03b2</span><span class="s2">: </span><span class="s4">0x0090</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL BETA</span><span class="s2"> 
+    </span><span class="s4">0x03c6</span><span class="s2">: </span><span class="s4">0x0092</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL PHI</span><span class="s2"> 
+    </span><span class="s4">0x060c</span><span class="s2">: </span><span class="s4">0x00ac</span><span class="s3">,     </span><span class="s1">#  ARABIC COMMA</span><span class="s2"> 
+    </span><span class="s4">0x061b</span><span class="s2">: </span><span class="s4">0x00bb</span><span class="s3">,     </span><span class="s1">#  ARABIC SEMICOLON</span><span class="s2"> 
+    </span><span class="s4">0x061f</span><span class="s2">: </span><span class="s4">0x00bf</span><span class="s3">,     </span><span class="s1">#  ARABIC QUESTION MARK</span><span class="s2"> 
+    </span><span class="s4">0x0640</span><span class="s2">: </span><span class="s4">0x00e0</span><span class="s3">,     </span><span class="s1">#  ARABIC TATWEEL</span><span class="s2"> 
+    </span><span class="s4">0x0651</span><span class="s2">: </span><span class="s4">0x00f1</span><span class="s3">,     </span><span class="s1">#  ARABIC SHADDAH</span><span class="s2"> 
+    </span><span class="s4">0x0660</span><span class="s2">: </span><span class="s4">0x00b0</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s4">0x0661</span><span class="s2">: </span><span class="s4">0x00b1</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT ONE</span><span class="s2"> 
+    </span><span class="s4">0x0662</span><span class="s2">: </span><span class="s4">0x00b2</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT TWO</span><span class="s2"> 
+    </span><span class="s4">0x0663</span><span class="s2">: </span><span class="s4">0x00b3</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT THREE</span><span class="s2"> 
+    </span><span class="s4">0x0664</span><span class="s2">: </span><span class="s4">0x00b4</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s4">0x0665</span><span class="s2">: </span><span class="s4">0x00b5</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s4">0x0666</span><span class="s2">: </span><span class="s4">0x00b6</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT SIX</span><span class="s2"> 
+    </span><span class="s4">0x0667</span><span class="s2">: </span><span class="s4">0x00b7</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s4">0x0668</span><span class="s2">: </span><span class="s4">0x00b8</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s4">0x0669</span><span class="s2">: </span><span class="s4">0x00b9</span><span class="s3">,     </span><span class="s1">#  ARABIC-INDIC DIGIT NINE</span><span class="s2"> 
+    </span><span class="s4">0x066a</span><span class="s2">: </span><span class="s4">0x0025</span><span class="s3">,     </span><span class="s1">#  ARABIC PERCENT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x2219</span><span class="s2">: </span><span class="s4">0x0082</span><span class="s3">,     </span><span class="s1">#  BULLET OPERATOR</span><span class="s2"> 
+    </span><span class="s4">0x221a</span><span class="s2">: </span><span class="s4">0x0083</span><span class="s3">,     </span><span class="s1">#  SQUARE ROOT</span><span class="s2"> 
+    </span><span class="s4">0x221e</span><span class="s2">: </span><span class="s4">0x0091</span><span class="s3">,     </span><span class="s1">#  INFINITY</span><span class="s2"> 
+    </span><span class="s4">0x2248</span><span class="s2">: </span><span class="s4">0x0096</span><span class="s3">,     </span><span class="s1">#  ALMOST EQUAL TO</span><span class="s2"> 
+    </span><span class="s4">0x2500</span><span class="s2">: </span><span class="s4">0x0085</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x2502</span><span class="s2">: </span><span class="s4">0x0086</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT VERTICAL</span><span class="s2"> 
+    </span><span class="s4">0x250c</span><span class="s2">: </span><span class="s4">0x008d</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT DOWN AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x2510</span><span class="s2">: </span><span class="s4">0x008c</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT DOWN AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x2514</span><span class="s2">: </span><span class="s4">0x008e</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT UP AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x2518</span><span class="s2">: </span><span class="s4">0x008f</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT UP AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x251c</span><span class="s2">: </span><span class="s4">0x008a</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT VERTICAL AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x2524</span><span class="s2">: </span><span class="s4">0x0088</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT VERTICAL AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x252c</span><span class="s2">: </span><span class="s4">0x0089</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT DOWN AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x2534</span><span class="s2">: </span><span class="s4">0x008b</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT UP AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x253c</span><span class="s2">: </span><span class="s4">0x0087</span><span class="s3">,     </span><span class="s1">#  FORMS LIGHT VERTICAL AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x2592</span><span class="s2">: </span><span class="s4">0x0084</span><span class="s3">,     </span><span class="s1">#  MEDIUM SHADE</span><span class="s2"> 
+    </span><span class="s4">0x25a0</span><span class="s2">: </span><span class="s4">0x00fe</span><span class="s3">,     </span><span class="s1">#  BLACK SQUARE</span><span class="s2"> 
+    </span><span class="s4">0xfe7d</span><span class="s2">: </span><span class="s4">0x00f0</span><span class="s3">,     </span><span class="s1">#  ARABIC SHADDA MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe80</span><span class="s2">: </span><span class="s4">0x00c1</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HAMZA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe81</span><span class="s2">: </span><span class="s4">0x00c2</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF WITH MADDA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe82</span><span class="s2">: </span><span class="s4">0x00a2</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF WITH MADDA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe83</span><span class="s2">: </span><span class="s4">0x00c3</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe84</span><span class="s2">: </span><span class="s4">0x00a5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF WITH HAMZA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe85</span><span class="s2">: </span><span class="s4">0x00c4</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER WAW WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe8b</span><span class="s2">: </span><span class="s4">0x00c6</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER YEH WITH HAMZA ABOVE INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe8d</span><span class="s2">: </span><span class="s4">0x00c7</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe8e</span><span class="s2">: </span><span class="s4">0x00a8</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe8f</span><span class="s2">: </span><span class="s4">0x00a9</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER BEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe91</span><span class="s2">: </span><span class="s4">0x00c8</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER BEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe93</span><span class="s2">: </span><span class="s4">0x00c9</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER TEH MARBUTA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe95</span><span class="s2">: </span><span class="s4">0x00aa</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER TEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe97</span><span class="s2">: </span><span class="s4">0x00ca</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER TEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe99</span><span class="s2">: </span><span class="s4">0x00ab</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER THEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe9b</span><span class="s2">: </span><span class="s4">0x00cb</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER THEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe9d</span><span class="s2">: </span><span class="s4">0x00ad</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER JEEM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfe9f</span><span class="s2">: </span><span class="s4">0x00cc</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER JEEM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfea1</span><span class="s2">: </span><span class="s4">0x00ae</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfea3</span><span class="s2">: </span><span class="s4">0x00cd</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HAH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfea5</span><span class="s2">: </span><span class="s4">0x00af</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER KHAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfea7</span><span class="s2">: </span><span class="s4">0x00ce</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER KHAH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfea9</span><span class="s2">: </span><span class="s4">0x00cf</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER DAL ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeab</span><span class="s2">: </span><span class="s4">0x00d0</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER THAL ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfead</span><span class="s2">: </span><span class="s4">0x00d1</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER REH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeaf</span><span class="s2">: </span><span class="s4">0x00d2</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ZAIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeb1</span><span class="s2">: </span><span class="s4">0x00bc</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SEEN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeb3</span><span class="s2">: </span><span class="s4">0x00d3</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SEEN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeb5</span><span class="s2">: </span><span class="s4">0x00bd</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SHEEN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeb7</span><span class="s2">: </span><span class="s4">0x00d4</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SHEEN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeb9</span><span class="s2">: </span><span class="s4">0x00be</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SAD ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfebb</span><span class="s2">: </span><span class="s4">0x00d5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER SAD INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfebd</span><span class="s2">: </span><span class="s4">0x00eb</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER DAD ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfebf</span><span class="s2">: </span><span class="s4">0x00d6</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER DAD INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfec1</span><span class="s2">: </span><span class="s4">0x00d7</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER TAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfec5</span><span class="s2">: </span><span class="s4">0x00d8</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ZAH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfec9</span><span class="s2">: </span><span class="s4">0x00df</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER AIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeca</span><span class="s2">: </span><span class="s4">0x00c5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER AIN FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfecb</span><span class="s2">: </span><span class="s4">0x00d9</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER AIN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfecc</span><span class="s2">: </span><span class="s4">0x00ec</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER AIN MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfecd</span><span class="s2">: </span><span class="s4">0x00ee</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER GHAIN ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfece</span><span class="s2">: </span><span class="s4">0x00ed</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER GHAIN FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfecf</span><span class="s2">: </span><span class="s4">0x00da</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER GHAIN INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfed0</span><span class="s2">: </span><span class="s4">0x00f7</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER GHAIN MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfed1</span><span class="s2">: </span><span class="s4">0x00ba</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER FEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfed3</span><span class="s2">: </span><span class="s4">0x00e1</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER FEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfed5</span><span class="s2">: </span><span class="s4">0x00f8</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER QAF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfed7</span><span class="s2">: </span><span class="s4">0x00e2</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER QAF INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfed9</span><span class="s2">: </span><span class="s4">0x00fc</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER KAF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfedb</span><span class="s2">: </span><span class="s4">0x00e3</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER KAF INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfedd</span><span class="s2">: </span><span class="s4">0x00fb</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER LAM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfedf</span><span class="s2">: </span><span class="s4">0x00e4</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER LAM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfee1</span><span class="s2">: </span><span class="s4">0x00ef</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER MEEM ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfee3</span><span class="s2">: </span><span class="s4">0x00e5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER MEEM INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfee5</span><span class="s2">: </span><span class="s4">0x00f2</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER NOON ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfee7</span><span class="s2">: </span><span class="s4">0x00e6</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER NOON INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfee9</span><span class="s2">: </span><span class="s4">0x00f3</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeeb</span><span class="s2">: </span><span class="s4">0x00e7</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeec</span><span class="s2">: </span><span class="s4">0x00f4</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER HEH MEDIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeed</span><span class="s2">: </span><span class="s4">0x00e8</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER WAW ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfeef</span><span class="s2">: </span><span class="s4">0x00e9</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF MAKSURA ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfef0</span><span class="s2">: </span><span class="s4">0x00f5</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER ALEF MAKSURA FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfef1</span><span class="s2">: </span><span class="s4">0x00fd</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER YEH ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfef2</span><span class="s2">: </span><span class="s4">0x00f6</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER YEH FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfef3</span><span class="s2">: </span><span class="s4">0x00ea</span><span class="s3">,     </span><span class="s1">#  ARABIC LETTER YEH INITIAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfef5</span><span class="s2">: </span><span class="s4">0x00f9</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF WITH MADDA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfef6</span><span class="s2">: </span><span class="s4">0x00fa</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF WITH MADDA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfef7</span><span class="s2">: </span><span class="s4">0x0099</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF WITH HAMZA ABOVE ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfef8</span><span class="s2">: </span><span class="s4">0x009a</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF WITH HAMZA ABOVE FINAL FORM</span><span class="s2"> 
+    </span><span class="s4">0xfefb</span><span class="s2">: </span><span class="s4">0x009d</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF ISOLATED FORM</span><span class="s2"> 
+    </span><span class="s4">0xfefc</span><span class="s2">: </span><span class="s4">0x009e</span><span class="s3">,     </span><span class="s1">#  ARABIC LIGATURE LAM WITH ALEF FINAL FORM</span><span class="s2"> 
+} 
+</span></pre>
+</body>
+</html>

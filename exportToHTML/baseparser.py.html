@@ -1,0 +1,317 @@
+<html>
+<head>
+<title>baseparser.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+baseparser.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Base option parser setup&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2">from </span><span class="s1">__future__ </span><span class="s2">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s2">import </span><span class="s1">sys 
+</span><span class="s2">import </span><span class="s1">optparse 
+</span><span class="s2">import </span><span class="s1">os 
+</span><span class="s2">import </span><span class="s1">re 
+</span><span class="s2">import </span><span class="s1">textwrap 
+</span><span class="s2">from </span><span class="s1">distutils.util </span><span class="s2">import </span><span class="s1">strtobool 
+ 
+</span><span class="s2">from </span><span class="s1">pip._vendor.six </span><span class="s2">import </span><span class="s1">string_types 
+</span><span class="s2">from </span><span class="s1">pip._vendor.six.moves </span><span class="s2">import </span><span class="s1">configparser 
+</span><span class="s2">from </span><span class="s1">pip.locations </span><span class="s2">import </span><span class="s1">( 
+    legacy_config_file</span><span class="s2">, </span><span class="s1">config_basename</span><span class="s2">, </span><span class="s1">running_under_virtualenv</span><span class="s2">,</span><span class="s1"> 
+    site_config_files 
+) 
+</span><span class="s2">from </span><span class="s1">pip.utils </span><span class="s2">import </span><span class="s1">appdirs</span><span class="s2">, </span><span class="s1">get_terminal_size 
+ 
+ 
+_environ_prefix_re = re.compile(</span><span class="s3">r&quot;^PIP_&quot;</span><span class="s2">, </span><span class="s1">re.I) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">PrettyHelpFormatter(optparse.IndentedHelpFormatter): 
+    </span><span class="s0">&quot;&quot;&quot;A prettier/less verbose help formatter for optparse.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwargs): 
+        </span><span class="s4"># help position must be aligned with __init__.parseopts.description</span><span class="s1"> 
+        kwargs[</span><span class="s3">'max_help_position'</span><span class="s1">] = </span><span class="s5">30</span><span class="s1"> 
+        kwargs[</span><span class="s3">'indent_increment'</span><span class="s1">] = </span><span class="s5">1</span><span class="s1"> 
+        kwargs[</span><span class="s3">'width'</span><span class="s1">] = get_terminal_size()[</span><span class="s5">0</span><span class="s1">] - </span><span class="s5">2</span><span class="s1"> 
+        optparse.IndentedHelpFormatter.__init__(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+ 
+    </span><span class="s2">def </span><span class="s1">format_option_strings(self</span><span class="s2">, </span><span class="s1">option): 
+        </span><span class="s2">return </span><span class="s1">self._format_option_strings(option</span><span class="s2">, </span><span class="s3">' &lt;%s&gt;'</span><span class="s2">, </span><span class="s3">', '</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">_format_option_strings(self</span><span class="s2">, </span><span class="s1">option</span><span class="s2">, </span><span class="s1">mvarfmt=</span><span class="s3">' &lt;%s&gt;'</span><span class="s2">, </span><span class="s1">optsep=</span><span class="s3">', '</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot; 
+        Return a comma-separated list of option strings and metavars. 
+ 
+        :param option:  tuple of (short opt, long opt), e.g: ('-f', '--format') 
+        :param mvarfmt: metavar format string - evaluated as mvarfmt % metavar 
+        :param optsep:  separator 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        opts = [] 
+ 
+        </span><span class="s2">if </span><span class="s1">option._short_opts: 
+            opts.append(option._short_opts[</span><span class="s5">0</span><span class="s1">]) 
+        </span><span class="s2">if </span><span class="s1">option._long_opts: 
+            opts.append(option._long_opts[</span><span class="s5">0</span><span class="s1">]) 
+        </span><span class="s2">if </span><span class="s1">len(opts) &gt; </span><span class="s5">1</span><span class="s1">: 
+            opts.insert(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">optsep) 
+ 
+        </span><span class="s2">if </span><span class="s1">option.takes_value(): 
+            metavar = option.metavar </span><span class="s2">or </span><span class="s1">option.dest.lower() 
+            opts.append(mvarfmt % metavar.lower()) 
+ 
+        </span><span class="s2">return </span><span class="s3">''</span><span class="s1">.join(opts) 
+ 
+    </span><span class="s2">def </span><span class="s1">format_heading(self</span><span class="s2">, </span><span class="s1">heading): 
+        </span><span class="s2">if </span><span class="s1">heading == </span><span class="s3">'Options'</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s3">''</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">heading + </span><span class="s3">':</span><span class="s2">\n</span><span class="s3">'</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">format_usage(self</span><span class="s2">, </span><span class="s1">usage): 
+        </span><span class="s0">&quot;&quot;&quot; 
+        Ensure there is only one newline between usage and the first heading 
+        if there is no description. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        msg = </span><span class="s3">'</span><span class="s2">\n</span><span class="s3">Usage: %s</span><span class="s2">\n</span><span class="s3">' </span><span class="s1">% self.indent_lines(textwrap.dedent(usage)</span><span class="s2">, </span><span class="s3">&quot;  &quot;</span><span class="s1">) 
+        </span><span class="s2">return </span><span class="s1">msg 
+ 
+    </span><span class="s2">def </span><span class="s1">format_description(self</span><span class="s2">, </span><span class="s1">description): 
+        </span><span class="s4"># leave full control over description to us</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">description: 
+            </span><span class="s2">if </span><span class="s1">hasattr(self.parser</span><span class="s2">, </span><span class="s3">'main'</span><span class="s1">): 
+                label = </span><span class="s3">'Commands'</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                label = </span><span class="s3">'Description'</span><span class="s1"> 
+            </span><span class="s4"># some doc strings have initial newlines, some don't</span><span class="s1"> 
+            description = description.lstrip(</span><span class="s3">'</span><span class="s2">\n</span><span class="s3">'</span><span class="s1">) 
+            </span><span class="s4"># some doc strings have final newlines and spaces, some don't</span><span class="s1"> 
+            description = description.rstrip() 
+            </span><span class="s4"># dedent, then reindent</span><span class="s1"> 
+            description = self.indent_lines(textwrap.dedent(description)</span><span class="s2">, </span><span class="s3">&quot;  &quot;</span><span class="s1">) 
+            description = </span><span class="s3">'%s:</span><span class="s2">\n</span><span class="s3">%s</span><span class="s2">\n</span><span class="s3">' </span><span class="s1">% (label</span><span class="s2">, </span><span class="s1">description) 
+            </span><span class="s2">return </span><span class="s1">description 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s3">''</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">format_epilog(self</span><span class="s2">, </span><span class="s1">epilog): 
+        </span><span class="s4"># leave full control over epilog to us</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">epilog: 
+            </span><span class="s2">return </span><span class="s1">epilog 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s3">''</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">indent_lines(self</span><span class="s2">, </span><span class="s1">text</span><span class="s2">, </span><span class="s1">indent): 
+        new_lines = [indent + line </span><span class="s2">for </span><span class="s1">line </span><span class="s2">in </span><span class="s1">text.split(</span><span class="s3">'</span><span class="s2">\n</span><span class="s3">'</span><span class="s1">)] 
+        </span><span class="s2">return </span><span class="s3">&quot;</span><span class="s2">\n</span><span class="s3">&quot;</span><span class="s1">.join(new_lines) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">UpdatingDefaultsHelpFormatter(PrettyHelpFormatter): 
+    </span><span class="s0">&quot;&quot;&quot;Custom help formatter for use in ConfigOptionParser. 
+ 
+    This is updates the defaults before expanding them, allowing 
+    them to show up correctly in the help listing. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">expand_default(self</span><span class="s2">, </span><span class="s1">option): 
+        </span><span class="s2">if </span><span class="s1">self.parser </span><span class="s2">is not None</span><span class="s1">: 
+            self.parser._update_defaults(self.parser.defaults) 
+        </span><span class="s2">return </span><span class="s1">optparse.IndentedHelpFormatter.expand_default(self</span><span class="s2">, </span><span class="s1">option) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">CustomOptionParser(optparse.OptionParser): 
+ 
+    </span><span class="s2">def </span><span class="s1">insert_option_group(self</span><span class="s2">, </span><span class="s1">idx</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwargs): 
+        </span><span class="s0">&quot;&quot;&quot;Insert an OptionGroup at a given position.&quot;&quot;&quot;</span><span class="s1"> 
+        group = self.add_option_group(*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+ 
+        self.option_groups.pop() 
+        self.option_groups.insert(idx</span><span class="s2">, </span><span class="s1">group) 
+ 
+        </span><span class="s2">return </span><span class="s1">group 
+ 
+    @property 
+    </span><span class="s2">def </span><span class="s1">option_list_all(self): 
+        </span><span class="s0">&quot;&quot;&quot;Get a list of all options, including those in option groups.&quot;&quot;&quot;</span><span class="s1"> 
+        res = self.option_list[:] 
+        </span><span class="s2">for </span><span class="s1">i </span><span class="s2">in </span><span class="s1">self.option_groups: 
+            res.extend(i.option_list) 
+ 
+        </span><span class="s2">return </span><span class="s1">res 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">ConfigOptionParser(CustomOptionParser): 
+    </span><span class="s0">&quot;&quot;&quot;Custom option parser which updates its defaults by checking the 
+    configuration files and environmental variables&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    isolated = </span><span class="s2">False</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwargs): 
+        self.config = configparser.RawConfigParser() 
+        self.name = kwargs.pop(</span><span class="s3">'name'</span><span class="s1">) 
+        self.isolated = kwargs.pop(</span><span class="s3">&quot;isolated&quot;</span><span class="s2">, False</span><span class="s1">) 
+        self.files = self.get_config_files() 
+        </span><span class="s2">if </span><span class="s1">self.files: 
+            self.config.read(self.files) 
+        </span><span class="s2">assert </span><span class="s1">self.name 
+        optparse.OptionParser.__init__(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+ 
+    </span><span class="s2">def </span><span class="s1">get_config_files(self): 
+        </span><span class="s4"># the files returned by this method will be parsed in order with the</span><span class="s1"> 
+        </span><span class="s4"># first files listed being overridden by later files in standard</span><span class="s1"> 
+        </span><span class="s4"># ConfigParser fashion</span><span class="s1"> 
+        config_file = os.environ.get(</span><span class="s3">'PIP_CONFIG_FILE'</span><span class="s2">, False</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">config_file == os.devnull: 
+            </span><span class="s2">return </span><span class="s1">[] 
+ 
+        </span><span class="s4"># at the base we have any site-wide configuration</span><span class="s1"> 
+        files = list(site_config_files) 
+ 
+        </span><span class="s4"># per-user configuration next</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">self.isolated: 
+            </span><span class="s2">if </span><span class="s1">config_file </span><span class="s2">and </span><span class="s1">os.path.exists(config_file): 
+                files.append(config_file) 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s4"># This is the legacy config file, we consider it to be a lower</span><span class="s1"> 
+                </span><span class="s4"># priority than the new file location.</span><span class="s1"> 
+                files.append(legacy_config_file) 
+ 
+                </span><span class="s4"># This is the new config file, we consider it to be a higher</span><span class="s1"> 
+                </span><span class="s4"># priority than the legacy file.</span><span class="s1"> 
+                files.append( 
+                    os.path.join( 
+                        appdirs.user_config_dir(</span><span class="s3">&quot;pip&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                        config_basename</span><span class="s2">,</span><span class="s1"> 
+                    ) 
+                ) 
+ 
+        </span><span class="s4"># finally virtualenv configuration first trumping others</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">running_under_virtualenv(): 
+            venv_config_file = os.path.join( 
+                sys.prefix</span><span class="s2">,</span><span class="s1"> 
+                config_basename</span><span class="s2">,</span><span class="s1"> 
+            ) 
+            </span><span class="s2">if </span><span class="s1">os.path.exists(venv_config_file): 
+                files.append(venv_config_file) 
+ 
+        </span><span class="s2">return </span><span class="s1">files 
+ 
+    </span><span class="s2">def </span><span class="s1">check_default(self</span><span class="s2">, </span><span class="s1">option</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">val): 
+        </span><span class="s2">try</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">option.check_value(key</span><span class="s2">, </span><span class="s1">val) 
+        </span><span class="s2">except </span><span class="s1">optparse.OptionValueError </span><span class="s2">as </span><span class="s1">exc: 
+            print(</span><span class="s3">&quot;An error occurred during configuration: %s&quot; </span><span class="s1">% exc) 
+            sys.exit(</span><span class="s5">3</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">_update_defaults(self</span><span class="s2">, </span><span class="s1">defaults): 
+        </span><span class="s0">&quot;&quot;&quot;Updates the given defaults with values from the config files and 
+        the environ. Does a little special handling for certain types of 
+        options (lists).&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4"># Then go and look for the other sources of configuration:</span><span class="s1"> 
+        config = {} 
+        </span><span class="s4"># 1. config files</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">section </span><span class="s2">in </span><span class="s1">(</span><span class="s3">'global'</span><span class="s2">, </span><span class="s1">self.name): 
+            config.update( 
+                self.normalize_keys(self.get_config_section(section)) 
+            ) 
+        </span><span class="s4"># 2. environmental variables</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">self.isolated: 
+            config.update(self.normalize_keys(self.get_environ_vars())) 
+        </span><span class="s4"># Accumulate complex default state.</span><span class="s1"> 
+        self.values = optparse.Values(self.defaults) 
+        late_eval = set() 
+        </span><span class="s4"># Then set the options with those values</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">key</span><span class="s2">, </span><span class="s1">val </span><span class="s2">in </span><span class="s1">config.items(): 
+            </span><span class="s4"># ignore empty values</span><span class="s1"> 
+            </span><span class="s2">if not </span><span class="s1">val: 
+                </span><span class="s2">continue</span><span class="s1"> 
+ 
+            option = self.get_option(key) 
+            </span><span class="s4"># Ignore options not present in this parser. E.g. non-globals put</span><span class="s1"> 
+            </span><span class="s4"># in [global] by users that want them to apply to all applicable</span><span class="s1"> 
+            </span><span class="s4"># commands.</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">option </span><span class="s2">is None</span><span class="s1">: 
+                </span><span class="s2">continue</span><span class="s1"> 
+ 
+            </span><span class="s2">if </span><span class="s1">option.action </span><span class="s2">in </span><span class="s1">(</span><span class="s3">'store_true'</span><span class="s2">, </span><span class="s3">'store_false'</span><span class="s2">, </span><span class="s3">'count'</span><span class="s1">): 
+                val = strtobool(val) 
+            </span><span class="s2">elif </span><span class="s1">option.action == </span><span class="s3">'append'</span><span class="s1">: 
+                val = val.split() 
+                val = [self.check_default(option</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">v) </span><span class="s2">for </span><span class="s1">v </span><span class="s2">in </span><span class="s1">val] 
+            </span><span class="s2">elif </span><span class="s1">option.action == </span><span class="s3">'callback'</span><span class="s1">: 
+                late_eval.add(option.dest) 
+                opt_str = option.get_opt_string() 
+                val = option.convert_value(opt_str</span><span class="s2">, </span><span class="s1">val) 
+                </span><span class="s4"># From take_action</span><span class="s1"> 
+                args = option.callback_args </span><span class="s2">or </span><span class="s1">() 
+                kwargs = option.callback_kwargs </span><span class="s2">or </span><span class="s1">{} 
+                option.callback(option</span><span class="s2">, </span><span class="s1">opt_str</span><span class="s2">, </span><span class="s1">val</span><span class="s2">, </span><span class="s1">self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+            </span><span class="s2">else</span><span class="s1">: 
+                val = self.check_default(option</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">val) 
+ 
+            defaults[option.dest] = val 
+ 
+        </span><span class="s2">for </span><span class="s1">key </span><span class="s2">in </span><span class="s1">late_eval: 
+            defaults[key] = getattr(self.values</span><span class="s2">, </span><span class="s1">key) 
+        self.values = </span><span class="s2">None</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">defaults 
+ 
+    </span><span class="s2">def </span><span class="s1">normalize_keys(self</span><span class="s2">, </span><span class="s1">items): 
+        </span><span class="s0">&quot;&quot;&quot;Return a config dictionary with normalized keys regardless of 
+        whether the keys were specified in environment variables or in config 
+        files&quot;&quot;&quot;</span><span class="s1"> 
+        normalized = {} 
+        </span><span class="s2">for </span><span class="s1">key</span><span class="s2">, </span><span class="s1">val </span><span class="s2">in </span><span class="s1">items: 
+            key = key.replace(</span><span class="s3">'_'</span><span class="s2">, </span><span class="s3">'-'</span><span class="s1">) 
+            </span><span class="s2">if not </span><span class="s1">key.startswith(</span><span class="s3">'--'</span><span class="s1">): 
+                key = </span><span class="s3">'--%s' </span><span class="s1">% key  </span><span class="s4"># only prefer long opts</span><span class="s1"> 
+            normalized[key] = val 
+        </span><span class="s2">return </span><span class="s1">normalized 
+ 
+    </span><span class="s2">def </span><span class="s1">get_config_section(self</span><span class="s2">, </span><span class="s1">name): 
+        </span><span class="s0">&quot;&quot;&quot;Get a section of a configuration&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">self.config.has_section(name): 
+            </span><span class="s2">return </span><span class="s1">self.config.items(name) 
+        </span><span class="s2">return </span><span class="s1">[] 
+ 
+    </span><span class="s2">def </span><span class="s1">get_environ_vars(self): 
+        </span><span class="s0">&quot;&quot;&quot;Returns a generator with all environmental vars with prefix PIP_&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">key</span><span class="s2">, </span><span class="s1">val </span><span class="s2">in </span><span class="s1">os.environ.items(): 
+            </span><span class="s2">if </span><span class="s1">_environ_prefix_re.search(key): 
+                </span><span class="s2">yield </span><span class="s1">(_environ_prefix_re.sub(</span><span class="s3">&quot;&quot;</span><span class="s2">, </span><span class="s1">key).lower()</span><span class="s2">, </span><span class="s1">val) 
+ 
+    </span><span class="s2">def </span><span class="s1">get_default_values(self): 
+        </span><span class="s0">&quot;&quot;&quot;Overriding to make updating the defaults after instantiation of 
+        the option parser possible, _update_defaults() does the dirty work.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">self.process_default_values: 
+            </span><span class="s4"># Old, pre-Optik 1.5 behaviour.</span><span class="s1"> 
+            </span><span class="s2">return </span><span class="s1">optparse.Values(self.defaults) 
+ 
+        defaults = self._update_defaults(self.defaults.copy())  </span><span class="s4"># ours</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">option </span><span class="s2">in </span><span class="s1">self._get_all_options(): 
+            default = defaults.get(option.dest) 
+            </span><span class="s2">if </span><span class="s1">isinstance(default</span><span class="s2">, </span><span class="s1">string_types): 
+                opt_str = option.get_opt_string() 
+                defaults[option.dest] = option.check_value(opt_str</span><span class="s2">, </span><span class="s1">default) 
+        </span><span class="s2">return </span><span class="s1">optparse.Values(defaults) 
+ 
+    </span><span class="s2">def </span><span class="s1">error(self</span><span class="s2">, </span><span class="s1">msg): 
+        self.print_usage(sys.stderr) 
+        self.exit(</span><span class="s5">2</span><span class="s2">, </span><span class="s3">&quot;%s</span><span class="s2">\n</span><span class="s3">&quot; </span><span class="s1">% msg) 
+</span></pre>
+</body>
+</html>

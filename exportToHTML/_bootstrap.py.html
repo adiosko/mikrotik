@@ -1,0 +1,1166 @@
+<html>
+<head>
+<title>_bootstrap.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+_bootstrap.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Core implementation of import. 
+ 
+This module is NOT meant to be directly imported! It has been designed such 
+that it can be bootstrapped into Python as the implementation of import. As 
+such it requires the injection of specific modules and attributes in order to 
+work. One should use importlib as the public-facing version of this module. 
+ 
+&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># IMPORTANT: Whenever making changes to this module, be sure to run</span><span class="s1"> 
+</span><span class="s2"># a top-level make in order to get the frozen version of the module</span><span class="s1"> 
+</span><span class="s2"># updated. Not doing so will result in the Makefile to fail for</span><span class="s1"> 
+</span><span class="s2"># all others who don't have a ./python around to freeze the module</span><span class="s1"> 
+</span><span class="s2"># in the early stages of compilation.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+ 
+</span><span class="s2"># See importlib._setup() for what is injected into the global namespace.</span><span class="s1"> 
+ 
+</span><span class="s2"># When editing this code be aware that code executed at import time CANNOT</span><span class="s1"> 
+</span><span class="s2"># reference any injected objects! This includes not only global code but also</span><span class="s1"> 
+</span><span class="s2"># anything specified at the class level.</span><span class="s1"> 
+ 
+</span><span class="s2"># Bootstrap-related code ######################################################</span><span class="s1"> 
+ 
+_bootstrap_external = </span><span class="s3">None</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">_wrap(new</span><span class="s3">, </span><span class="s1">old): 
+    </span><span class="s0">&quot;&quot;&quot;Simple substitute for functools.update_wrapper.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">for </span><span class="s1">replace </span><span class="s3">in </span><span class="s1">[</span><span class="s4">'__module__'</span><span class="s3">, </span><span class="s4">'__name__'</span><span class="s3">, </span><span class="s4">'__qualname__'</span><span class="s3">, </span><span class="s4">'__doc__'</span><span class="s1">]: 
+        </span><span class="s3">if </span><span class="s1">hasattr(old</span><span class="s3">, </span><span class="s1">replace): 
+            setattr(new</span><span class="s3">, </span><span class="s1">replace</span><span class="s3">, </span><span class="s1">getattr(old</span><span class="s3">, </span><span class="s1">replace)) 
+    new.__dict__.update(old.__dict__) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_new_module(name): 
+    </span><span class="s3">return </span><span class="s1">type(sys)(name) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_ManageReload: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Manages the possible clean-up of sys.modules for load_module().&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">name): 
+        self._name = name 
+ 
+    </span><span class="s3">def </span><span class="s1">__enter__(self): 
+        self._is_reload = self._name </span><span class="s3">in </span><span class="s1">sys.modules 
+ 
+    </span><span class="s3">def </span><span class="s1">__exit__(self</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s3">if </span><span class="s1">any(arg </span><span class="s3">is not None for </span><span class="s1">arg </span><span class="s3">in </span><span class="s1">args) </span><span class="s3">and not </span><span class="s1">self._is_reload: 
+            </span><span class="s3">try</span><span class="s1">: 
+                </span><span class="s3">del </span><span class="s1">sys.modules[self._name] 
+            </span><span class="s3">except </span><span class="s1">KeyError: 
+                </span><span class="s3">pass</span><span class="s1"> 
+ 
+</span><span class="s2"># Module-level locking ########################################################</span><span class="s1"> 
+ 
+</span><span class="s2"># A dict mapping module names to weakrefs of _ModuleLock instances</span><span class="s1"> 
+_module_locks = {} 
+</span><span class="s2"># A dict mapping thread ids to _ModuleLock instances</span><span class="s1"> 
+_blocking_on = {} 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_DeadlockError(RuntimeError): 
+    </span><span class="s3">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_ModuleLock: 
+    </span><span class="s0">&quot;&quot;&quot;A recursive lock implementation which is able to detect deadlocks 
+    (e.g. thread 1 trying to take locks A then B, and thread 2 trying to 
+    take locks B then A). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">name): 
+        self.lock = _thread.allocate_lock() 
+        self.wakeup = _thread.allocate_lock() 
+        self.name = name 
+        self.owner = </span><span class="s3">None</span><span class="s1"> 
+        self.count = </span><span class="s5">0</span><span class="s1"> 
+        self.waiters = </span><span class="s5">0</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">has_deadlock(self): 
+        </span><span class="s2"># Deadlock avoidance for concurrent circular imports.</span><span class="s1"> 
+        me = _thread.get_ident() 
+        tid = self.owner 
+        </span><span class="s3">while True</span><span class="s1">: 
+            lock = _blocking_on.get(tid) 
+            </span><span class="s3">if </span><span class="s1">lock </span><span class="s3">is None</span><span class="s1">: 
+                </span><span class="s3">return False</span><span class="s1"> 
+            tid = lock.owner 
+            </span><span class="s3">if </span><span class="s1">tid == me: 
+                </span><span class="s3">return True</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">acquire(self): 
+        </span><span class="s0">&quot;&quot;&quot; 
+        Acquire the module lock.  If a potential deadlock is detected, 
+        a _DeadlockError is raised. 
+        Otherwise, the lock is always acquired and True is returned. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        tid = _thread.get_ident() 
+        _blocking_on[tid] = self 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">while True</span><span class="s1">: 
+                </span><span class="s3">with </span><span class="s1">self.lock: 
+                    </span><span class="s3">if </span><span class="s1">self.count == </span><span class="s5">0 </span><span class="s3">or </span><span class="s1">self.owner == tid: 
+                        self.owner = tid 
+                        self.count += </span><span class="s5">1</span><span class="s1"> 
+                        </span><span class="s3">return True</span><span class="s1"> 
+                    </span><span class="s3">if </span><span class="s1">self.has_deadlock(): 
+                        </span><span class="s3">raise </span><span class="s1">_DeadlockError(</span><span class="s4">'deadlock detected by %r' </span><span class="s1">% self) 
+                    </span><span class="s3">if </span><span class="s1">self.wakeup.acquire(</span><span class="s3">False</span><span class="s1">): 
+                        self.waiters += </span><span class="s5">1</span><span class="s1"> 
+                </span><span class="s2"># Wait for a release() call</span><span class="s1"> 
+                self.wakeup.acquire() 
+                self.wakeup.release() 
+        </span><span class="s3">finally</span><span class="s1">: 
+            </span><span class="s3">del </span><span class="s1">_blocking_on[tid] 
+ 
+    </span><span class="s3">def </span><span class="s1">release(self): 
+        tid = _thread.get_ident() 
+        </span><span class="s3">with </span><span class="s1">self.lock: 
+            </span><span class="s3">if </span><span class="s1">self.owner != tid: 
+                </span><span class="s3">raise </span><span class="s1">RuntimeError(</span><span class="s4">'cannot release un-acquired lock'</span><span class="s1">) 
+            </span><span class="s3">assert </span><span class="s1">self.count &gt; </span><span class="s5">0</span><span class="s1"> 
+            self.count -= </span><span class="s5">1</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">self.count == </span><span class="s5">0</span><span class="s1">: 
+                self.owner = </span><span class="s3">None</span><span class="s1"> 
+                </span><span class="s3">if </span><span class="s1">self.waiters: 
+                    self.waiters -= </span><span class="s5">1</span><span class="s1"> 
+                    self.wakeup.release() 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        </span><span class="s3">return </span><span class="s4">'_ModuleLock({!r}) at {}'</span><span class="s1">.format(self.name</span><span class="s3">, </span><span class="s1">id(self)) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_DummyModuleLock: 
+    </span><span class="s0">&quot;&quot;&quot;A simple _ModuleLock equivalent for Python builds without 
+    multi-threading support.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">name): 
+        self.name = name 
+        self.count = </span><span class="s5">0</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">acquire(self): 
+        self.count += </span><span class="s5">1</span><span class="s1"> 
+        </span><span class="s3">return True</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">release(self): 
+        </span><span class="s3">if </span><span class="s1">self.count == </span><span class="s5">0</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">RuntimeError(</span><span class="s4">'cannot release un-acquired lock'</span><span class="s1">) 
+        self.count -= </span><span class="s5">1</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        </span><span class="s3">return </span><span class="s4">'_DummyModuleLock({!r}) at {}'</span><span class="s1">.format(self.name</span><span class="s3">, </span><span class="s1">id(self)) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_ModuleLockManager: 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">name): 
+        self._name = name 
+        self._lock = </span><span class="s3">None</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__enter__(self): 
+        </span><span class="s3">try</span><span class="s1">: 
+            self._lock = _get_module_lock(self._name) 
+        </span><span class="s3">finally</span><span class="s1">: 
+            _imp.release_lock() 
+        self._lock.acquire() 
+ 
+    </span><span class="s3">def </span><span class="s1">__exit__(self</span><span class="s3">, </span><span class="s1">*args</span><span class="s3">, </span><span class="s1">**kwargs): 
+        self._lock.release() 
+ 
+ 
+</span><span class="s2"># The following two functions are for consumption by Python/import.c.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">_get_module_lock(name): 
+    </span><span class="s0">&quot;&quot;&quot;Get or create the module lock for a given module name. 
+ 
+    Should only be called with the import lock taken.&quot;&quot;&quot;</span><span class="s1"> 
+    lock = </span><span class="s3">None</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        lock = _module_locks[name]() 
+    </span><span class="s3">except </span><span class="s1">KeyError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">lock </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">_thread </span><span class="s3">is None</span><span class="s1">: 
+            lock = _DummyModuleLock(name) 
+        </span><span class="s3">else</span><span class="s1">: 
+            lock = _ModuleLock(name) 
+        </span><span class="s3">def </span><span class="s1">cb(_): 
+            </span><span class="s3">del </span><span class="s1">_module_locks[name] 
+        _module_locks[name] = _weakref.ref(lock</span><span class="s3">, </span><span class="s1">cb) 
+    </span><span class="s3">return </span><span class="s1">lock 
+ 
+</span><span class="s3">def </span><span class="s1">_lock_unlock_module(name): 
+    </span><span class="s0">&quot;&quot;&quot;Release the global import lock, and acquires then release the 
+    module lock for a given module name. 
+    This is used to ensure a module is completely initialized, in the 
+    event it is being imported by another thread. 
+ 
+    Should only be called with the import lock taken.&quot;&quot;&quot;</span><span class="s1"> 
+    lock = _get_module_lock(name) 
+    _imp.release_lock() 
+    </span><span class="s3">try</span><span class="s1">: 
+        lock.acquire() 
+    </span><span class="s3">except </span><span class="s1">_DeadlockError: 
+        </span><span class="s2"># Concurrent circular import, we'll accept a partially initialized</span><span class="s1"> 
+        </span><span class="s2"># module object.</span><span class="s1"> 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        lock.release() 
+ 
+</span><span class="s2"># Frame stripping magic ###############################################</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">_call_with_frames_removed(f</span><span class="s3">, </span><span class="s1">*args</span><span class="s3">, </span><span class="s1">**kwds): 
+    </span><span class="s0">&quot;&quot;&quot;remove_importlib_frames in import.c will always remove sequences 
+    of importlib frames that end with a call to this function 
+ 
+    Use it instead of a normal call in places where including the importlib 
+    frames introduces unwanted noise into the traceback (e.g. when executing 
+    module code) 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">f(*args</span><span class="s3">, </span><span class="s1">**kwds) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_verbose_message(message</span><span class="s3">, </span><span class="s1">*args</span><span class="s3">, </span><span class="s1">verbosity=</span><span class="s5">1</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Print the message to stderr if -v/PYTHONVERBOSE is turned on.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">sys.flags.verbose &gt;= verbosity: 
+        </span><span class="s3">if not </span><span class="s1">message.startswith((</span><span class="s4">'#'</span><span class="s3">, </span><span class="s4">'import '</span><span class="s1">)): 
+            message = </span><span class="s4">'# ' </span><span class="s1">+ message 
+        print(message.format(*args)</span><span class="s3">, </span><span class="s1">file=sys.stderr) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_requires_builtin(fxn): 
+    </span><span class="s0">&quot;&quot;&quot;Decorator to verify the named module is built-in.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">_requires_builtin_wrapper(self</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s3">if </span><span class="s1">fullname </span><span class="s3">not in </span><span class="s1">sys.builtin_module_names: 
+            </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'{!r} is not a built-in module'</span><span class="s1">.format(fullname)</span><span class="s3">,</span><span class="s1"> 
+                              name=fullname) 
+        </span><span class="s3">return </span><span class="s1">fxn(self</span><span class="s3">, </span><span class="s1">fullname) 
+    _wrap(_requires_builtin_wrapper</span><span class="s3">, </span><span class="s1">fxn) 
+    </span><span class="s3">return </span><span class="s1">_requires_builtin_wrapper 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_requires_frozen(fxn): 
+    </span><span class="s0">&quot;&quot;&quot;Decorator to verify the named module is frozen.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">_requires_frozen_wrapper(self</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s3">if not </span><span class="s1">_imp.is_frozen(fullname): 
+            </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'{!r} is not a frozen module'</span><span class="s1">.format(fullname)</span><span class="s3">,</span><span class="s1"> 
+                              name=fullname) 
+        </span><span class="s3">return </span><span class="s1">fxn(self</span><span class="s3">, </span><span class="s1">fullname) 
+    _wrap(_requires_frozen_wrapper</span><span class="s3">, </span><span class="s1">fxn) 
+    </span><span class="s3">return </span><span class="s1">_requires_frozen_wrapper 
+ 
+ 
+</span><span class="s2"># Typically used by loader classes as a method replacement.</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">_load_module_shim(self</span><span class="s3">, </span><span class="s1">fullname): 
+    </span><span class="s0">&quot;&quot;&quot;Load the specified module into sys.modules and return it. 
+ 
+    This method is deprecated.  Use loader.exec_module instead. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    spec = spec_from_loader(fullname</span><span class="s3">, </span><span class="s1">self) 
+    </span><span class="s3">if </span><span class="s1">fullname </span><span class="s3">in </span><span class="s1">sys.modules: 
+        module = sys.modules[fullname] 
+        _exec(spec</span><span class="s3">, </span><span class="s1">module) 
+        </span><span class="s3">return </span><span class="s1">sys.modules[fullname] 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">_load(spec) 
+ 
+</span><span class="s2"># Module specifications #######################################################</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">_module_repr(module): 
+    </span><span class="s2"># The implementation of ModuleType__repr__().</span><span class="s1"> 
+    loader = getattr(module</span><span class="s3">, </span><span class="s4">'__loader__'</span><span class="s3">, None</span><span class="s1">) 
+    </span><span class="s3">if </span><span class="s1">hasattr(loader</span><span class="s3">, </span><span class="s4">'module_repr'</span><span class="s1">): 
+        </span><span class="s2"># As soon as BuiltinImporter, FrozenImporter, and NamespaceLoader</span><span class="s1"> 
+        </span><span class="s2"># drop their implementations for module_repr. we can add a</span><span class="s1"> 
+        </span><span class="s2"># deprecation warning here.</span><span class="s1"> 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">loader.module_repr(module) 
+        </span><span class="s3">except </span><span class="s1">Exception: 
+            </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        spec = module.__spec__ 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">spec </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">_module_repr_from_spec(spec) 
+ 
+    </span><span class="s2"># We could use module.__class__.__name__ instead of 'module' in the</span><span class="s1"> 
+    </span><span class="s2"># various repr permutations.</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        name = module.__name__ 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        name = </span><span class="s4">'?'</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        filename = module.__file__ 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        </span><span class="s3">if </span><span class="s1">loader </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s4">'&lt;module {!r}&gt;'</span><span class="s1">.format(name) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s4">'&lt;module {!r} ({!r})&gt;'</span><span class="s1">.format(name</span><span class="s3">, </span><span class="s1">loader) 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s4">'&lt;module {!r} from {!r}&gt;'</span><span class="s1">.format(name</span><span class="s3">, </span><span class="s1">filename) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_installed_safely: 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">module): 
+        self._module = module 
+        self._spec = module.__spec__ 
+ 
+    </span><span class="s3">def </span><span class="s1">__enter__(self): 
+        </span><span class="s2"># This must be done before putting the module in sys.modules</span><span class="s1"> 
+        </span><span class="s2"># (otherwise an optimization shortcut in import.c becomes</span><span class="s1"> 
+        </span><span class="s2"># wrong)</span><span class="s1"> 
+        self._spec._initializing = </span><span class="s3">True</span><span class="s1"> 
+        sys.modules[self._spec.name] = self._module 
+ 
+    </span><span class="s3">def </span><span class="s1">__exit__(self</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s3">try</span><span class="s1">: 
+            spec = self._spec 
+            </span><span class="s3">if </span><span class="s1">any(arg </span><span class="s3">is not None for </span><span class="s1">arg </span><span class="s3">in </span><span class="s1">args): 
+                </span><span class="s3">try</span><span class="s1">: 
+                    </span><span class="s3">del </span><span class="s1">sys.modules[spec.name] 
+                </span><span class="s3">except </span><span class="s1">KeyError: 
+                    </span><span class="s3">pass</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                _verbose_message(</span><span class="s4">'import {!r} # {!r}'</span><span class="s3">, </span><span class="s1">spec.name</span><span class="s3">, </span><span class="s1">spec.loader) 
+        </span><span class="s3">finally</span><span class="s1">: 
+            self._spec._initializing = </span><span class="s3">False</span><span class="s1"> 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">ModuleSpec: 
+    </span><span class="s0">&quot;&quot;&quot;The specification for a module, used for loading. 
+ 
+    A module's spec is the source for information about the module.  For 
+    data associated with the module, including source, use the spec's 
+    loader. 
+ 
+    `name` is the absolute name of the module.  `loader` is the loader 
+    to use when loading the module.  `parent` is the name of the 
+    package the module is in.  The parent is derived from the name. 
+ 
+    `is_package` determines if the module is considered a package or 
+    not.  On modules this is reflected by the `__path__` attribute. 
+ 
+    `origin` is the specific location used by the loader from which to 
+    load the module, if that information is available.  When filename is 
+    set, origin will match. 
+ 
+    `has_location` indicates that a spec's &quot;origin&quot; reflects a location. 
+    When this is True, `__file__` attribute of the module is set. 
+ 
+    `cached` is the location of the cached bytecode file, if any.  It 
+    corresponds to the `__cached__` attribute. 
+ 
+    `submodule_search_locations` is the sequence of path entries to 
+    search when importing submodules.  If set, is_package should be 
+    True--and False otherwise. 
+ 
+    Packages are simply modules that (may) have submodules.  If a spec 
+    has a non-None value in `submodule_search_locations`, the import 
+    system will consider modules loaded from the spec as packages. 
+ 
+    Only finders (see importlib.abc.MetaPathFinder and 
+    importlib.abc.PathEntryFinder) should modify ModuleSpec instances. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">name</span><span class="s3">, </span><span class="s1">loader</span><span class="s3">, </span><span class="s1">*</span><span class="s3">, </span><span class="s1">origin=</span><span class="s3">None, </span><span class="s1">loader_state=</span><span class="s3">None,</span><span class="s1"> 
+                 is_package=</span><span class="s3">None</span><span class="s1">): 
+        self.name = name 
+        self.loader = loader 
+        self.origin = origin 
+        self.loader_state = loader_state 
+        self.submodule_search_locations = [] </span><span class="s3">if </span><span class="s1">is_package </span><span class="s3">else None</span><span class="s1"> 
+ 
+        </span><span class="s2"># file-location attributes</span><span class="s1"> 
+        self._set_fileattr = </span><span class="s3">False</span><span class="s1"> 
+        self._cached = </span><span class="s3">None</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        args = [</span><span class="s4">'name={!r}'</span><span class="s1">.format(self.name)</span><span class="s3">,</span><span class="s1"> 
+                </span><span class="s4">'loader={!r}'</span><span class="s1">.format(self.loader)] 
+        </span><span class="s3">if </span><span class="s1">self.origin </span><span class="s3">is not None</span><span class="s1">: 
+            args.append(</span><span class="s4">'origin={!r}'</span><span class="s1">.format(self.origin)) 
+        </span><span class="s3">if </span><span class="s1">self.submodule_search_locations </span><span class="s3">is not None</span><span class="s1">: 
+            args.append(</span><span class="s4">'submodule_search_locations={}'</span><span class="s1"> 
+                        .format(self.submodule_search_locations)) 
+        </span><span class="s3">return </span><span class="s4">'{}({})'</span><span class="s1">.format(self.__class__.__name__</span><span class="s3">, </span><span class="s4">', '</span><span class="s1">.join(args)) 
+ 
+    </span><span class="s3">def </span><span class="s1">__eq__(self</span><span class="s3">, </span><span class="s1">other): 
+        smsl = self.submodule_search_locations 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">(self.name == other.name </span><span class="s3">and</span><span class="s1"> 
+                    self.loader == other.loader </span><span class="s3">and</span><span class="s1"> 
+                    self.origin == other.origin </span><span class="s3">and</span><span class="s1"> 
+                    smsl == other.submodule_search_locations </span><span class="s3">and</span><span class="s1"> 
+                    self.cached == other.cached </span><span class="s3">and</span><span class="s1"> 
+                    self.has_location == other.has_location) 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">return False</span><span class="s1"> 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">cached(self): 
+        </span><span class="s3">if </span><span class="s1">self._cached </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">self.origin </span><span class="s3">is not None and </span><span class="s1">self._set_fileattr: 
+                </span><span class="s3">if </span><span class="s1">_bootstrap_external </span><span class="s3">is None</span><span class="s1">: 
+                    </span><span class="s3">raise </span><span class="s1">NotImplementedError 
+                self._cached = _bootstrap_external._get_cached(self.origin) 
+        </span><span class="s3">return </span><span class="s1">self._cached 
+ 
+    @cached.setter 
+    </span><span class="s3">def </span><span class="s1">cached(self</span><span class="s3">, </span><span class="s1">cached): 
+        self._cached = cached 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">parent(self): 
+        </span><span class="s0">&quot;&quot;&quot;The name of the module's parent.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">self.submodule_search_locations </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">self.name.rpartition(</span><span class="s4">'.'</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">] 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">self.name 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">has_location(self): 
+        </span><span class="s3">return </span><span class="s1">self._set_fileattr 
+ 
+    @has_location.setter 
+    </span><span class="s3">def </span><span class="s1">has_location(self</span><span class="s3">, </span><span class="s1">value): 
+        self._set_fileattr = bool(value) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">spec_from_loader(name</span><span class="s3">, </span><span class="s1">loader</span><span class="s3">, </span><span class="s1">*</span><span class="s3">, </span><span class="s1">origin=</span><span class="s3">None, </span><span class="s1">is_package=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Return a module spec based on various loader methods.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">hasattr(loader</span><span class="s3">, </span><span class="s4">'get_filename'</span><span class="s1">): 
+        </span><span class="s3">if </span><span class="s1">_bootstrap_external </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">NotImplementedError 
+        spec_from_file_location = _bootstrap_external.spec_from_file_location 
+ 
+        </span><span class="s3">if </span><span class="s1">is_package </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">spec_from_file_location(name</span><span class="s3">, </span><span class="s1">loader=loader) 
+        search = [] </span><span class="s3">if </span><span class="s1">is_package </span><span class="s3">else None</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">spec_from_file_location(name</span><span class="s3">, </span><span class="s1">loader=loader</span><span class="s3">,</span><span class="s1"> 
+                                       submodule_search_locations=search) 
+ 
+    </span><span class="s3">if </span><span class="s1">is_package </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">hasattr(loader</span><span class="s3">, </span><span class="s4">'is_package'</span><span class="s1">): 
+            </span><span class="s3">try</span><span class="s1">: 
+                is_package = loader.is_package(name) 
+            </span><span class="s3">except </span><span class="s1">ImportError: 
+                is_package = </span><span class="s3">None  </span><span class="s2"># aka, undefined</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s2"># the default</span><span class="s1"> 
+            is_package = </span><span class="s3">False</span><span class="s1"> 
+ 
+    </span><span class="s3">return </span><span class="s1">ModuleSpec(name</span><span class="s3">, </span><span class="s1">loader</span><span class="s3">, </span><span class="s1">origin=origin</span><span class="s3">, </span><span class="s1">is_package=is_package) 
+ 
+ 
+_POPULATE = object() 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_spec_from_module(module</span><span class="s3">, </span><span class="s1">loader=</span><span class="s3">None, </span><span class="s1">origin=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s2"># This function is meant for use in _setup().</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        spec = module.__spec__ 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">spec </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">spec 
+ 
+    name = module.__name__ 
+    </span><span class="s3">if </span><span class="s1">loader </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">try</span><span class="s1">: 
+            loader = module.__loader__ 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s2"># loader will stay None.</span><span class="s1"> 
+            </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        location = module.__file__ 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        location = </span><span class="s3">None</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">origin </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">location </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">try</span><span class="s1">: 
+                origin = loader._ORIGIN 
+            </span><span class="s3">except </span><span class="s1">AttributeError: 
+                origin = </span><span class="s3">None</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            origin = location 
+    </span><span class="s3">try</span><span class="s1">: 
+        cached = module.__cached__ 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        cached = </span><span class="s3">None</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        submodule_search_locations = list(module.__path__) 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        submodule_search_locations = </span><span class="s3">None</span><span class="s1"> 
+ 
+    spec = ModuleSpec(name</span><span class="s3">, </span><span class="s1">loader</span><span class="s3">, </span><span class="s1">origin=origin) 
+    spec._set_fileattr = </span><span class="s3">False if </span><span class="s1">location </span><span class="s3">is None else True</span><span class="s1"> 
+    spec.cached = cached 
+    spec.submodule_search_locations = submodule_search_locations 
+    </span><span class="s3">return </span><span class="s1">spec 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_init_module_attrs(spec</span><span class="s3">, </span><span class="s1">module</span><span class="s3">, </span><span class="s1">*</span><span class="s3">, </span><span class="s1">override=</span><span class="s3">False</span><span class="s1">): 
+    </span><span class="s2"># The passed-in module may be not support attribute assignment,</span><span class="s1"> 
+    </span><span class="s2"># in which case we simply don't set the attributes.</span><span class="s1"> 
+    </span><span class="s2"># __name__</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">(override </span><span class="s3">or </span><span class="s1">getattr(module</span><span class="s3">, </span><span class="s4">'__name__'</span><span class="s3">, None</span><span class="s1">) </span><span class="s3">is None</span><span class="s1">): 
+        </span><span class="s3">try</span><span class="s1">: 
+            module.__name__ = spec.name 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s2"># __loader__</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">override </span><span class="s3">or </span><span class="s1">getattr(module</span><span class="s3">, </span><span class="s4">'__loader__'</span><span class="s3">, None</span><span class="s1">) </span><span class="s3">is None</span><span class="s1">: 
+        loader = spec.loader 
+        </span><span class="s3">if </span><span class="s1">loader </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s2"># A backward compatibility hack.</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">spec.submodule_search_locations </span><span class="s3">is not None</span><span class="s1">: 
+                </span><span class="s3">if </span><span class="s1">_bootstrap_external </span><span class="s3">is None</span><span class="s1">: 
+                    </span><span class="s3">raise </span><span class="s1">NotImplementedError 
+                _NamespaceLoader = _bootstrap_external._NamespaceLoader 
+ 
+                loader = _NamespaceLoader.__new__(_NamespaceLoader) 
+                loader._path = spec.submodule_search_locations 
+        </span><span class="s3">try</span><span class="s1">: 
+            module.__loader__ = loader 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s2"># __package__</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">override </span><span class="s3">or </span><span class="s1">getattr(module</span><span class="s3">, </span><span class="s4">'__package__'</span><span class="s3">, None</span><span class="s1">) </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">try</span><span class="s1">: 
+            module.__package__ = spec.parent 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s2"># __spec__</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        module.__spec__ = spec 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s2"># __path__</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">override </span><span class="s3">or </span><span class="s1">getattr(module</span><span class="s3">, </span><span class="s4">'__path__'</span><span class="s3">, None</span><span class="s1">) </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">spec.submodule_search_locations </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s3">try</span><span class="s1">: 
+                module.__path__ = spec.submodule_search_locations 
+            </span><span class="s3">except </span><span class="s1">AttributeError: 
+                </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s2"># __file__/__cached__</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">spec.has_location: 
+        </span><span class="s3">if </span><span class="s1">override </span><span class="s3">or </span><span class="s1">getattr(module</span><span class="s3">, </span><span class="s4">'__file__'</span><span class="s3">, None</span><span class="s1">) </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">try</span><span class="s1">: 
+                module.__file__ = spec.origin 
+            </span><span class="s3">except </span><span class="s1">AttributeError: 
+                </span><span class="s3">pass</span><span class="s1"> 
+ 
+        </span><span class="s3">if </span><span class="s1">override </span><span class="s3">or </span><span class="s1">getattr(module</span><span class="s3">, </span><span class="s4">'__cached__'</span><span class="s3">, None</span><span class="s1">) </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">spec.cached </span><span class="s3">is not None</span><span class="s1">: 
+                </span><span class="s3">try</span><span class="s1">: 
+                    module.__cached__ = spec.cached 
+                </span><span class="s3">except </span><span class="s1">AttributeError: 
+                    </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">module 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">module_from_spec(spec): 
+    </span><span class="s0">&quot;&quot;&quot;Create a module based on the provided spec.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2"># Typically loaders will not implement create_module().</span><span class="s1"> 
+    module = </span><span class="s3">None</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">hasattr(spec.loader</span><span class="s3">, </span><span class="s4">'create_module'</span><span class="s1">): 
+        </span><span class="s2"># If create_module() returns `None` then it means default</span><span class="s1"> 
+        </span><span class="s2"># module creation should be used.</span><span class="s1"> 
+        module = spec.loader.create_module(spec) 
+    </span><span class="s3">elif </span><span class="s1">hasattr(spec.loader</span><span class="s3">, </span><span class="s4">'exec_module'</span><span class="s1">): 
+        _warnings.warn(</span><span class="s4">'starting in Python 3.6, loaders defining exec_module() '</span><span class="s1"> 
+                       </span><span class="s4">'must also define create_module()'</span><span class="s3">,</span><span class="s1"> 
+                       DeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">2</span><span class="s1">) 
+    </span><span class="s3">if </span><span class="s1">module </span><span class="s3">is None</span><span class="s1">: 
+        module = _new_module(spec.name) 
+    _init_module_attrs(spec</span><span class="s3">, </span><span class="s1">module) 
+    </span><span class="s3">return </span><span class="s1">module 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_module_repr_from_spec(spec): 
+    </span><span class="s0">&quot;&quot;&quot;Return the repr to use for the module.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2"># We mostly replicate _module_repr() using the spec attributes.</span><span class="s1"> 
+    name = </span><span class="s4">'?' </span><span class="s3">if </span><span class="s1">spec.name </span><span class="s3">is None else </span><span class="s1">spec.name 
+    </span><span class="s3">if </span><span class="s1">spec.origin </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">spec.loader </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s4">'&lt;module {!r}&gt;'</span><span class="s1">.format(name) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s4">'&lt;module {!r} ({!r})&gt;'</span><span class="s1">.format(name</span><span class="s3">, </span><span class="s1">spec.loader) 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">spec.has_location: 
+            </span><span class="s3">return </span><span class="s4">'&lt;module {!r} from {!r}&gt;'</span><span class="s1">.format(name</span><span class="s3">, </span><span class="s1">spec.origin) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s4">'&lt;module {!r} ({})&gt;'</span><span class="s1">.format(spec.name</span><span class="s3">, </span><span class="s1">spec.origin) 
+ 
+ 
+</span><span class="s2"># Used by importlib.reload() and _load_module_shim().</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">_exec(spec</span><span class="s3">, </span><span class="s1">module): 
+    </span><span class="s0">&quot;&quot;&quot;Execute the spec in an existing module's namespace.&quot;&quot;&quot;</span><span class="s1"> 
+    name = spec.name 
+    _imp.acquire_lock() 
+    </span><span class="s3">with </span><span class="s1">_ModuleLockManager(name): 
+        </span><span class="s3">if </span><span class="s1">sys.modules.get(name) </span><span class="s3">is not </span><span class="s1">module: 
+            msg = </span><span class="s4">'module {!r} not in sys.modules'</span><span class="s1">.format(name) 
+            </span><span class="s3">raise </span><span class="s1">ImportError(msg</span><span class="s3">, </span><span class="s1">name=name) 
+        </span><span class="s3">if </span><span class="s1">spec.loader </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">spec.submodule_search_locations </span><span class="s3">is None</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'missing loader'</span><span class="s3">, </span><span class="s1">name=spec.name) 
+            </span><span class="s2"># namespace package</span><span class="s1"> 
+            _init_module_attrs(spec</span><span class="s3">, </span><span class="s1">module</span><span class="s3">, </span><span class="s1">override=</span><span class="s3">True</span><span class="s1">) 
+            </span><span class="s3">return </span><span class="s1">module 
+        _init_module_attrs(spec</span><span class="s3">, </span><span class="s1">module</span><span class="s3">, </span><span class="s1">override=</span><span class="s3">True</span><span class="s1">) 
+        </span><span class="s3">if not </span><span class="s1">hasattr(spec.loader</span><span class="s3">, </span><span class="s4">'exec_module'</span><span class="s1">): 
+            </span><span class="s2"># (issue19713) Once BuiltinImporter and ExtensionFileLoader</span><span class="s1"> 
+            </span><span class="s2"># have exec_module() implemented, we can add a deprecation</span><span class="s1"> 
+            </span><span class="s2"># warning here.</span><span class="s1"> 
+            spec.loader.load_module(name) 
+        </span><span class="s3">else</span><span class="s1">: 
+            spec.loader.exec_module(module) 
+    </span><span class="s3">return </span><span class="s1">sys.modules[name] 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_load_backward_compatible(spec): 
+    </span><span class="s2"># (issue19713) Once BuiltinImporter and ExtensionFileLoader</span><span class="s1"> 
+    </span><span class="s2"># have exec_module() implemented, we can add a deprecation</span><span class="s1"> 
+    </span><span class="s2"># warning here.</span><span class="s1"> 
+    spec.loader.load_module(spec.name) 
+    </span><span class="s2"># The module must be in sys.modules at this point!</span><span class="s1"> 
+    module = sys.modules[spec.name] 
+    </span><span class="s3">if </span><span class="s1">getattr(module</span><span class="s3">, </span><span class="s4">'__loader__'</span><span class="s3">, None</span><span class="s1">) </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">try</span><span class="s1">: 
+            module.__loader__ = spec.loader 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">getattr(module</span><span class="s3">, </span><span class="s4">'__package__'</span><span class="s3">, None</span><span class="s1">) </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s2"># Since module.__path__ may not line up with</span><span class="s1"> 
+            </span><span class="s2"># spec.submodule_search_paths, we can't necessarily rely</span><span class="s1"> 
+            </span><span class="s2"># on spec.parent here.</span><span class="s1"> 
+            module.__package__ = module.__name__ 
+            </span><span class="s3">if not </span><span class="s1">hasattr(module</span><span class="s3">, </span><span class="s4">'__path__'</span><span class="s1">): 
+                module.__package__ = spec.name.rpartition(</span><span class="s4">'.'</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">] 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">getattr(module</span><span class="s3">, </span><span class="s4">'__spec__'</span><span class="s3">, None</span><span class="s1">) </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">try</span><span class="s1">: 
+            module.__spec__ = spec 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">module 
+ 
+</span><span class="s3">def </span><span class="s1">_load_unlocked(spec): 
+    </span><span class="s2"># A helper for direct use by the import system.</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">spec.loader </span><span class="s3">is not None</span><span class="s1">: 
+        </span><span class="s2"># not a namespace package</span><span class="s1"> 
+        </span><span class="s3">if not </span><span class="s1">hasattr(spec.loader</span><span class="s3">, </span><span class="s4">'exec_module'</span><span class="s1">): 
+            </span><span class="s3">return </span><span class="s1">_load_backward_compatible(spec) 
+ 
+    module = module_from_spec(spec) 
+    </span><span class="s3">with </span><span class="s1">_installed_safely(module): 
+        </span><span class="s3">if </span><span class="s1">spec.loader </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">spec.submodule_search_locations </span><span class="s3">is None</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'missing loader'</span><span class="s3">, </span><span class="s1">name=spec.name) 
+            </span><span class="s2"># A namespace package so do nothing.</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            spec.loader.exec_module(module) 
+ 
+    </span><span class="s2"># We don't ensure that the import-related module attributes get</span><span class="s1"> 
+    </span><span class="s2"># set in the sys.modules replacement case.  Such modules are on</span><span class="s1"> 
+    </span><span class="s2"># their own.</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">sys.modules[spec.name] 
+ 
+</span><span class="s2"># A method used during testing of _load_unlocked() and by</span><span class="s1"> 
+</span><span class="s2"># _load_module_shim().</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">_load(spec): 
+    </span><span class="s0">&quot;&quot;&quot;Return a new module object, loaded by the spec's loader. 
+ 
+    The module is not added to its parent. 
+ 
+    If a module is already in sys.modules, that existing module gets 
+    clobbered. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    _imp.acquire_lock() 
+    </span><span class="s3">with </span><span class="s1">_ModuleLockManager(spec.name): 
+        </span><span class="s3">return </span><span class="s1">_load_unlocked(spec) 
+ 
+ 
+</span><span class="s2"># Loaders #####################################################################</span><span class="s1"> 
+ 
+</span><span class="s3">class </span><span class="s1">BuiltinImporter: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Meta path import for built-in modules. 
+ 
+    All methods are either class or static methods to avoid the need to 
+    instantiate the class. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    @staticmethod 
+    </span><span class="s3">def </span><span class="s1">module_repr(module): 
+        </span><span class="s0">&quot;&quot;&quot;Return repr for the module. 
+ 
+        The method is deprecated.  The import machinery does the job itself. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s4">'&lt;module {!r} (built-in)&gt;'</span><span class="s1">.format(module.__name__) 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">find_spec(cls</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">path=</span><span class="s3">None, </span><span class="s1">target=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s3">if </span><span class="s1">path </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s3">return None</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">_imp.is_builtin(fullname): 
+            </span><span class="s3">return </span><span class="s1">spec_from_loader(fullname</span><span class="s3">, </span><span class="s1">cls</span><span class="s3">, </span><span class="s1">origin=</span><span class="s4">'built-in'</span><span class="s1">) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return None</span><span class="s1"> 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">find_module(cls</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">path=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Find the built-in module. 
+ 
+        If 'path' is ever specified then the search is considered a failure. 
+ 
+        This method is deprecated.  Use find_spec() instead. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        spec = cls.find_spec(fullname</span><span class="s3">, </span><span class="s1">path) 
+        </span><span class="s3">return </span><span class="s1">spec.loader </span><span class="s3">if </span><span class="s1">spec </span><span class="s3">is not None else None</span><span class="s1"> 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">create_module(self</span><span class="s3">, </span><span class="s1">spec): 
+        </span><span class="s0">&quot;&quot;&quot;Create a built-in module&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">spec.name </span><span class="s3">not in </span><span class="s1">sys.builtin_module_names: 
+            </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'{!r} is not a built-in module'</span><span class="s1">.format(spec.name)</span><span class="s3">,</span><span class="s1"> 
+                              name=spec.name) 
+        </span><span class="s3">return </span><span class="s1">_call_with_frames_removed(_imp.create_builtin</span><span class="s3">, </span><span class="s1">spec) 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">exec_module(self</span><span class="s3">, </span><span class="s1">module): 
+        </span><span class="s0">&quot;&quot;&quot;Exec a built-in module&quot;&quot;&quot;</span><span class="s1"> 
+        _call_with_frames_removed(_imp.exec_builtin</span><span class="s3">, </span><span class="s1">module) 
+ 
+    @classmethod 
+    @_requires_builtin 
+    </span><span class="s3">def </span><span class="s1">get_code(cls</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return None as built-in modules do not have code objects.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return None</span><span class="s1"> 
+ 
+    @classmethod 
+    @_requires_builtin 
+    </span><span class="s3">def </span><span class="s1">get_source(cls</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return None as built-in modules do not have source code.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return None</span><span class="s1"> 
+ 
+    @classmethod 
+    @_requires_builtin 
+    </span><span class="s3">def </span><span class="s1">is_package(cls</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return False as built-in modules are never packages.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return False</span><span class="s1"> 
+ 
+    load_module = classmethod(_load_module_shim) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">FrozenImporter: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Meta path import for frozen modules. 
+ 
+    All methods are either class or static methods to avoid the need to 
+    instantiate the class. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    @staticmethod 
+    </span><span class="s3">def </span><span class="s1">module_repr(m): 
+        </span><span class="s0">&quot;&quot;&quot;Return repr for the module. 
+ 
+        The method is deprecated.  The import machinery does the job itself. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s4">'&lt;module {!r} (frozen)&gt;'</span><span class="s1">.format(m.__name__) 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">find_spec(cls</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">path=</span><span class="s3">None, </span><span class="s1">target=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s3">if </span><span class="s1">_imp.is_frozen(fullname): 
+            </span><span class="s3">return </span><span class="s1">spec_from_loader(fullname</span><span class="s3">, </span><span class="s1">cls</span><span class="s3">, </span><span class="s1">origin=</span><span class="s4">'frozen'</span><span class="s1">) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return None</span><span class="s1"> 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">find_module(cls</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">path=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Find a frozen module. 
+ 
+        This method is deprecated.  Use find_spec() instead. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">cls </span><span class="s3">if </span><span class="s1">_imp.is_frozen(fullname) </span><span class="s3">else None</span><span class="s1"> 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">create_module(cls</span><span class="s3">, </span><span class="s1">spec): 
+        </span><span class="s0">&quot;&quot;&quot;Use default semantics for module creation.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    @staticmethod 
+    </span><span class="s3">def </span><span class="s1">exec_module(module): 
+        name = module.__spec__.name 
+        </span><span class="s3">if not </span><span class="s1">_imp.is_frozen(name): 
+            </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'{!r} is not a frozen module'</span><span class="s1">.format(name)</span><span class="s3">,</span><span class="s1"> 
+                              name=name) 
+        code = _call_with_frames_removed(_imp.get_frozen_object</span><span class="s3">, </span><span class="s1">name) 
+        exec(code</span><span class="s3">, </span><span class="s1">module.__dict__) 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">load_module(cls</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Load a frozen module. 
+ 
+        This method is deprecated.  Use exec_module() instead. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">_load_module_shim(cls</span><span class="s3">, </span><span class="s1">fullname) 
+ 
+    @classmethod 
+    @_requires_frozen 
+    </span><span class="s3">def </span><span class="s1">get_code(cls</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return the code object for the frozen module.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">_imp.get_frozen_object(fullname) 
+ 
+    @classmethod 
+    @_requires_frozen 
+    </span><span class="s3">def </span><span class="s1">get_source(cls</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return None as frozen modules do not have source code.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return None</span><span class="s1"> 
+ 
+    @classmethod 
+    @_requires_frozen 
+    </span><span class="s3">def </span><span class="s1">is_package(cls</span><span class="s3">, </span><span class="s1">fullname): 
+        </span><span class="s0">&quot;&quot;&quot;Return True if the frozen module is a package.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">_imp.is_frozen_package(fullname) 
+ 
+ 
+</span><span class="s2"># Import itself ###############################################################</span><span class="s1"> 
+ 
+</span><span class="s3">class </span><span class="s1">_ImportLockContext: 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Context manager for the import lock.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__enter__(self): 
+        </span><span class="s0">&quot;&quot;&quot;Acquire the import lock.&quot;&quot;&quot;</span><span class="s1"> 
+        _imp.acquire_lock() 
+ 
+    </span><span class="s3">def </span><span class="s1">__exit__(self</span><span class="s3">, </span><span class="s1">exc_type</span><span class="s3">, </span><span class="s1">exc_value</span><span class="s3">, </span><span class="s1">exc_traceback): 
+        </span><span class="s0">&quot;&quot;&quot;Release the import lock regardless of any raised exceptions.&quot;&quot;&quot;</span><span class="s1"> 
+        _imp.release_lock() 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_resolve_name(name</span><span class="s3">, </span><span class="s1">package</span><span class="s3">, </span><span class="s1">level): 
+    </span><span class="s0">&quot;&quot;&quot;Resolve a relative module name to an absolute one.&quot;&quot;&quot;</span><span class="s1"> 
+    bits = package.rsplit(</span><span class="s4">'.'</span><span class="s3">, </span><span class="s1">level - </span><span class="s5">1</span><span class="s1">) 
+    </span><span class="s3">if </span><span class="s1">len(bits) &lt; level: 
+        </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'attempted relative import beyond top-level package'</span><span class="s1">) 
+    base = bits[</span><span class="s5">0</span><span class="s1">] 
+    </span><span class="s3">return </span><span class="s4">'{}.{}'</span><span class="s1">.format(base</span><span class="s3">, </span><span class="s1">name) </span><span class="s3">if </span><span class="s1">name </span><span class="s3">else </span><span class="s1">base 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_find_spec_legacy(finder</span><span class="s3">, </span><span class="s1">name</span><span class="s3">, </span><span class="s1">path): 
+    </span><span class="s2"># This would be a good place for a DeprecationWarning if</span><span class="s1"> 
+    </span><span class="s2"># we ended up going that route.</span><span class="s1"> 
+    loader = finder.find_module(name</span><span class="s3">, </span><span class="s1">path) 
+    </span><span class="s3">if </span><span class="s1">loader </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">return None</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">spec_from_loader(name</span><span class="s3">, </span><span class="s1">loader) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_find_spec(name</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">target=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Find a module's loader.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">sys.meta_path </span><span class="s3">is not None and not </span><span class="s1">sys.meta_path: 
+        _warnings.warn(</span><span class="s4">'sys.meta_path is empty'</span><span class="s3">, </span><span class="s1">ImportWarning) 
+    </span><span class="s2"># We check sys.modules here for the reload case.  While a passed-in</span><span class="s1"> 
+    </span><span class="s2"># target will usually indicate a reload there is no guarantee, whereas</span><span class="s1"> 
+    </span><span class="s2"># sys.modules provides one.</span><span class="s1"> 
+    is_reload = name </span><span class="s3">in </span><span class="s1">sys.modules 
+    </span><span class="s3">for </span><span class="s1">finder </span><span class="s3">in </span><span class="s1">sys.meta_path: 
+        </span><span class="s3">with </span><span class="s1">_ImportLockContext(): 
+            </span><span class="s3">try</span><span class="s1">: 
+                find_spec = finder.find_spec 
+            </span><span class="s3">except </span><span class="s1">AttributeError: 
+                spec = _find_spec_legacy(finder</span><span class="s3">, </span><span class="s1">name</span><span class="s3">, </span><span class="s1">path) 
+                </span><span class="s3">if </span><span class="s1">spec </span><span class="s3">is None</span><span class="s1">: 
+                    </span><span class="s3">continue</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                spec = find_spec(name</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">target) 
+        </span><span class="s3">if </span><span class="s1">spec </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s2"># The parent import may have already imported this module.</span><span class="s1"> 
+            </span><span class="s3">if not </span><span class="s1">is_reload </span><span class="s3">and </span><span class="s1">name </span><span class="s3">in </span><span class="s1">sys.modules: 
+                module = sys.modules[name] 
+                </span><span class="s3">try</span><span class="s1">: 
+                    __spec__ = module.__spec__ 
+                </span><span class="s3">except </span><span class="s1">AttributeError: 
+                    </span><span class="s2"># We use the found spec since that is the one that</span><span class="s1"> 
+                    </span><span class="s2"># we would have used if the parent module hadn't</span><span class="s1"> 
+                    </span><span class="s2"># beaten us to the punch.</span><span class="s1"> 
+                    </span><span class="s3">return </span><span class="s1">spec 
+                </span><span class="s3">else</span><span class="s1">: 
+                    </span><span class="s3">if </span><span class="s1">__spec__ </span><span class="s3">is None</span><span class="s1">: 
+                        </span><span class="s3">return </span><span class="s1">spec 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        </span><span class="s3">return </span><span class="s1">__spec__ 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">return </span><span class="s1">spec 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return None</span><span class="s1"> 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_sanity_check(name</span><span class="s3">, </span><span class="s1">package</span><span class="s3">, </span><span class="s1">level): 
+    </span><span class="s0">&quot;&quot;&quot;Verify arguments are &quot;sane&quot;.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if not </span><span class="s1">isinstance(name</span><span class="s3">, </span><span class="s1">str): 
+        </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">'module name must be str, not {}'</span><span class="s1">.format(type(name))) 
+    </span><span class="s3">if </span><span class="s1">level &lt; </span><span class="s5">0</span><span class="s1">: 
+        </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'level must be &gt;= 0'</span><span class="s1">) 
+    </span><span class="s3">if </span><span class="s1">level &gt; </span><span class="s5">0</span><span class="s1">: 
+        </span><span class="s3">if not </span><span class="s1">isinstance(package</span><span class="s3">, </span><span class="s1">str): 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">'__package__ not set to a string'</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">package </span><span class="s3">not in </span><span class="s1">sys.modules: 
+            msg = (</span><span class="s4">'Parent module {!r} not loaded, cannot perform relative '</span><span class="s1"> 
+                   </span><span class="s4">'import'</span><span class="s1">) 
+            </span><span class="s3">raise </span><span class="s1">SystemError(msg.format(package)) 
+    </span><span class="s3">if not </span><span class="s1">name </span><span class="s3">and </span><span class="s1">level == </span><span class="s5">0</span><span class="s1">: 
+        </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'Empty module name'</span><span class="s1">) 
+ 
+ 
+_ERR_MSG_PREFIX = </span><span class="s4">'No module named '</span><span class="s1"> 
+_ERR_MSG = _ERR_MSG_PREFIX + </span><span class="s4">'{!r}'</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">_find_and_load_unlocked(name</span><span class="s3">, </span><span class="s1">import_): 
+    path = </span><span class="s3">None</span><span class="s1"> 
+    parent = name.rpartition(</span><span class="s4">'.'</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">] 
+    </span><span class="s3">if </span><span class="s1">parent: 
+        </span><span class="s3">if </span><span class="s1">parent </span><span class="s3">not in </span><span class="s1">sys.modules: 
+            _call_with_frames_removed(import_</span><span class="s3">, </span><span class="s1">parent) 
+        </span><span class="s2"># Crazy side-effects!</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">name </span><span class="s3">in </span><span class="s1">sys.modules: 
+            </span><span class="s3">return </span><span class="s1">sys.modules[name] 
+        parent_module = sys.modules[parent] 
+        </span><span class="s3">try</span><span class="s1">: 
+            path = parent_module.__path__ 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            msg = (_ERR_MSG + </span><span class="s4">'; {!r} is not a package'</span><span class="s1">).format(name</span><span class="s3">, </span><span class="s1">parent) 
+            </span><span class="s3">raise </span><span class="s1">ImportError(msg</span><span class="s3">, </span><span class="s1">name=name) </span><span class="s3">from None</span><span class="s1"> 
+    spec = _find_spec(name</span><span class="s3">, </span><span class="s1">path) 
+    </span><span class="s3">if </span><span class="s1">spec </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">raise </span><span class="s1">ImportError(_ERR_MSG.format(name)</span><span class="s3">, </span><span class="s1">name=name) 
+    </span><span class="s3">else</span><span class="s1">: 
+        module = _load_unlocked(spec) 
+    </span><span class="s3">if </span><span class="s1">parent: 
+        </span><span class="s2"># Set the module as an attribute on its parent.</span><span class="s1"> 
+        parent_module = sys.modules[parent] 
+        setattr(parent_module</span><span class="s3">, </span><span class="s1">name.rpartition(</span><span class="s4">'.'</span><span class="s1">)[</span><span class="s5">2</span><span class="s1">]</span><span class="s3">, </span><span class="s1">module) 
+    </span><span class="s3">return </span><span class="s1">module 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_find_and_load(name</span><span class="s3">, </span><span class="s1">import_): 
+    </span><span class="s0">&quot;&quot;&quot;Find and load the module, and release the import lock.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">with </span><span class="s1">_ModuleLockManager(name): 
+        </span><span class="s3">return </span><span class="s1">_find_and_load_unlocked(name</span><span class="s3">, </span><span class="s1">import_) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_gcd_import(name</span><span class="s3">, </span><span class="s1">package=</span><span class="s3">None, </span><span class="s1">level=</span><span class="s5">0</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Import and return the module based on its name, the package the call is 
+    being made from, and the level adjustment. 
+ 
+    This function represents the greatest common denominator of functionality 
+    between import_module and __import__. This includes setting __package__ if 
+    the loader did not. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    _sanity_check(name</span><span class="s3">, </span><span class="s1">package</span><span class="s3">, </span><span class="s1">level) 
+    </span><span class="s3">if </span><span class="s1">level &gt; </span><span class="s5">0</span><span class="s1">: 
+        name = _resolve_name(name</span><span class="s3">, </span><span class="s1">package</span><span class="s3">, </span><span class="s1">level) 
+    _imp.acquire_lock() 
+    </span><span class="s3">if </span><span class="s1">name </span><span class="s3">not in </span><span class="s1">sys.modules: 
+        </span><span class="s3">return </span><span class="s1">_find_and_load(name</span><span class="s3">, </span><span class="s1">_gcd_import) 
+    module = sys.modules[name] 
+    </span><span class="s3">if </span><span class="s1">module </span><span class="s3">is None</span><span class="s1">: 
+        _imp.release_lock() 
+        message = (</span><span class="s4">'import of {} halted; '</span><span class="s1"> 
+                   </span><span class="s4">'None in sys.modules'</span><span class="s1">.format(name)) 
+        </span><span class="s3">raise </span><span class="s1">ImportError(message</span><span class="s3">, </span><span class="s1">name=name) 
+    _lock_unlock_module(name) 
+    </span><span class="s3">return </span><span class="s1">module 
+ 
+</span><span class="s3">def </span><span class="s1">_handle_fromlist(module</span><span class="s3">, </span><span class="s1">fromlist</span><span class="s3">, </span><span class="s1">import_): 
+    </span><span class="s0">&quot;&quot;&quot;Figure out what __import__ should return. 
+ 
+    The import_ parameter is a callable which takes the name of module to 
+    import. It is required to decouple the function from assuming importlib's 
+    import implementation is desired. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2"># The hell that is fromlist ...</span><span class="s1"> 
+    </span><span class="s2"># If a package was imported, try to import stuff from fromlist.</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">hasattr(module</span><span class="s3">, </span><span class="s4">'__path__'</span><span class="s1">): 
+        </span><span class="s3">if </span><span class="s4">'*' </span><span class="s3">in </span><span class="s1">fromlist: 
+            fromlist = list(fromlist) 
+            fromlist.remove(</span><span class="s4">'*'</span><span class="s1">) 
+            </span><span class="s3">if </span><span class="s1">hasattr(module</span><span class="s3">, </span><span class="s4">'__all__'</span><span class="s1">): 
+                fromlist.extend(module.__all__) 
+        </span><span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">fromlist: 
+            </span><span class="s3">if not </span><span class="s1">hasattr(module</span><span class="s3">, </span><span class="s1">x): 
+                from_name = </span><span class="s4">'{}.{}'</span><span class="s1">.format(module.__name__</span><span class="s3">, </span><span class="s1">x) 
+                </span><span class="s3">try</span><span class="s1">: 
+                    _call_with_frames_removed(import_</span><span class="s3">, </span><span class="s1">from_name) 
+                </span><span class="s3">except </span><span class="s1">ImportError </span><span class="s3">as </span><span class="s1">exc: 
+                    </span><span class="s2"># Backwards-compatibility dictates we ignore failed</span><span class="s1"> 
+                    </span><span class="s2"># imports triggered by fromlist for modules that don't</span><span class="s1"> 
+                    </span><span class="s2"># exist.</span><span class="s1"> 
+                    </span><span class="s3">if </span><span class="s1">str(exc).startswith(_ERR_MSG_PREFIX): 
+                        </span><span class="s3">if </span><span class="s1">exc.name == from_name: 
+                            </span><span class="s3">continue</span><span class="s1"> 
+                    </span><span class="s3">raise</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">module 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_calc___package__(globals): 
+    </span><span class="s0">&quot;&quot;&quot;Calculate what __package__ should be. 
+ 
+    __package__ is not guaranteed to be defined or could be set to None 
+    to represent that its proper value is unknown. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    package = globals.get(</span><span class="s4">'__package__'</span><span class="s1">) 
+    </span><span class="s3">if </span><span class="s1">package </span><span class="s3">is None</span><span class="s1">: 
+        package = globals[</span><span class="s4">'__name__'</span><span class="s1">] 
+        </span><span class="s3">if </span><span class="s4">'__path__' </span><span class="s3">not in </span><span class="s1">globals: 
+            package = package.rpartition(</span><span class="s4">'.'</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">] 
+    </span><span class="s3">return </span><span class="s1">package 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">__import__(name</span><span class="s3">, </span><span class="s1">globals=</span><span class="s3">None, </span><span class="s1">locals=</span><span class="s3">None, </span><span class="s1">fromlist=()</span><span class="s3">, </span><span class="s1">level=</span><span class="s5">0</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Import a module. 
+ 
+    The 'globals' argument is used to infer where the import is occurring from 
+    to handle relative imports. The 'locals' argument is ignored. The 
+    'fromlist' argument specifies what should exist as attributes on the module 
+    being imported (e.g. ``from module import &lt;fromlist&gt;``).  The 'level' 
+    argument represents the package location to import from in a relative 
+    import (e.g. ``from ..pkg import mod`` would have a 'level' of 2). 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">level == </span><span class="s5">0</span><span class="s1">: 
+        module = _gcd_import(name) 
+    </span><span class="s3">else</span><span class="s1">: 
+        globals_ = globals </span><span class="s3">if </span><span class="s1">globals </span><span class="s3">is not None else </span><span class="s1">{} 
+        package = _calc___package__(globals_) 
+        module = _gcd_import(name</span><span class="s3">, </span><span class="s1">package</span><span class="s3">, </span><span class="s1">level) 
+    </span><span class="s3">if not </span><span class="s1">fromlist: 
+        </span><span class="s2"># Return up to the first dot in 'name'. This is complicated by the fact</span><span class="s1"> 
+        </span><span class="s2"># that 'name' may be relative.</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">level == </span><span class="s5">0</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">_gcd_import(name.partition(</span><span class="s4">'.'</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">]) 
+        </span><span class="s3">elif not </span><span class="s1">name: 
+            </span><span class="s3">return </span><span class="s1">module 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s2"># Figure out where to slice the module's name up to the first dot</span><span class="s1"> 
+            </span><span class="s2"># in 'name'.</span><span class="s1"> 
+            cut_off = len(name) - len(name.partition(</span><span class="s4">'.'</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">]) 
+            </span><span class="s2"># Slice end needs to be positive to alleviate need to special-case</span><span class="s1"> 
+            </span><span class="s2"># when ``'.' not in name``.</span><span class="s1"> 
+            </span><span class="s3">return </span><span class="s1">sys.modules[module.__name__[:len(module.__name__)-cut_off]] 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">_handle_fromlist(module</span><span class="s3">, </span><span class="s1">fromlist</span><span class="s3">, </span><span class="s1">_gcd_import) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_builtin_from_name(name): 
+    spec = BuiltinImporter.find_spec(name) 
+    </span><span class="s3">if </span><span class="s1">spec </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'no built-in module named ' </span><span class="s1">+ name) 
+    </span><span class="s3">return </span><span class="s1">_load_unlocked(spec) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_setup(sys_module</span><span class="s3">, </span><span class="s1">_imp_module): 
+    </span><span class="s0">&quot;&quot;&quot;Setup importlib by importing needed built-in modules and injecting them 
+    into the global namespace. 
+ 
+    As sys is needed for sys.modules access and _imp is needed to load built-in 
+    modules, those two modules must be explicitly passed in. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">global </span><span class="s1">_imp</span><span class="s3">, </span><span class="s1">sys 
+    _imp = _imp_module 
+    sys = sys_module 
+ 
+    </span><span class="s2"># Set up the spec for existing builtin/frozen modules.</span><span class="s1"> 
+    module_type = type(sys) 
+    </span><span class="s3">for </span><span class="s1">name</span><span class="s3">, </span><span class="s1">module </span><span class="s3">in </span><span class="s1">sys.modules.items(): 
+        </span><span class="s3">if </span><span class="s1">isinstance(module</span><span class="s3">, </span><span class="s1">module_type): 
+            </span><span class="s3">if </span><span class="s1">name </span><span class="s3">in </span><span class="s1">sys.builtin_module_names: 
+                loader = BuiltinImporter 
+            </span><span class="s3">elif </span><span class="s1">_imp.is_frozen(name): 
+                loader = FrozenImporter 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">continue</span><span class="s1"> 
+            spec = _spec_from_module(module</span><span class="s3">, </span><span class="s1">loader) 
+            _init_module_attrs(spec</span><span class="s3">, </span><span class="s1">module) 
+ 
+    </span><span class="s2"># Directly load built-in modules needed during bootstrap.</span><span class="s1"> 
+    self_module = sys.modules[__name__] 
+    </span><span class="s3">for </span><span class="s1">builtin_name </span><span class="s3">in </span><span class="s1">(</span><span class="s4">'_warnings'</span><span class="s3">,</span><span class="s1">): 
+        </span><span class="s3">if </span><span class="s1">builtin_name </span><span class="s3">not in </span><span class="s1">sys.modules: 
+            builtin_module = _builtin_from_name(builtin_name) 
+        </span><span class="s3">else</span><span class="s1">: 
+            builtin_module = sys.modules[builtin_name] 
+        setattr(self_module</span><span class="s3">, </span><span class="s1">builtin_name</span><span class="s3">, </span><span class="s1">builtin_module) 
+ 
+    </span><span class="s2"># Directly load the _thread module (needed during bootstrap).</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        thread_module = _builtin_from_name(</span><span class="s4">'_thread'</span><span class="s1">) 
+    </span><span class="s3">except </span><span class="s1">ImportError: 
+        </span><span class="s2"># Python was built without threads</span><span class="s1"> 
+        thread_module = </span><span class="s3">None</span><span class="s1"> 
+    setattr(self_module</span><span class="s3">, </span><span class="s4">'_thread'</span><span class="s3">, </span><span class="s1">thread_module) 
+ 
+    </span><span class="s2"># Directly load the _weakref module (needed during bootstrap).</span><span class="s1"> 
+    weakref_module = _builtin_from_name(</span><span class="s4">'_weakref'</span><span class="s1">) 
+    setattr(self_module</span><span class="s3">, </span><span class="s4">'_weakref'</span><span class="s3">, </span><span class="s1">weakref_module) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_install(sys_module</span><span class="s3">, </span><span class="s1">_imp_module): 
+    </span><span class="s0">&quot;&quot;&quot;Install importlib as the implementation of import.&quot;&quot;&quot;</span><span class="s1"> 
+    _setup(sys_module</span><span class="s3">, </span><span class="s1">_imp_module) 
+ 
+    sys.meta_path.append(BuiltinImporter) 
+    sys.meta_path.append(FrozenImporter) 
+ 
+    </span><span class="s3">global </span><span class="s1">_bootstrap_external 
+    </span><span class="s3">import </span><span class="s1">_frozen_importlib_external 
+    _bootstrap_external = _frozen_importlib_external 
+    _frozen_importlib_external._install(sys.modules[__name__]) 
+</span></pre>
+</body>
+</html>

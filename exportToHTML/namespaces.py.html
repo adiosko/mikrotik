@@ -1,0 +1,130 @@
+<html>
+<head>
+<title>namespaces.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+namespaces.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">import </span><span class="s1">os 
+</span><span class="s0">from </span><span class="s1">distutils </span><span class="s0">import </span><span class="s1">log 
+</span><span class="s0">import </span><span class="s1">itertools 
+ 
+</span><span class="s0">from </span><span class="s1">setuptools.extern.six.moves </span><span class="s0">import </span><span class="s1">map 
+ 
+ 
+flatten = itertools.chain.from_iterable 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">Installer: 
+ 
+    nspkg_ext = </span><span class="s2">'-nspkg.pth'</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">install_namespaces(self): 
+        nsp = self._get_all_ns_packages() 
+        </span><span class="s0">if not </span><span class="s1">nsp: 
+            </span><span class="s0">return</span><span class="s1"> 
+        filename</span><span class="s0">, </span><span class="s1">ext = os.path.splitext(self._get_target()) 
+        filename += self.nspkg_ext 
+        self.outputs.append(filename) 
+        log.info(</span><span class="s2">&quot;Installing %s&quot;</span><span class="s0">, </span><span class="s1">filename) 
+        lines = map(self._gen_nspkg_line</span><span class="s0">, </span><span class="s1">nsp) 
+ 
+        </span><span class="s0">if </span><span class="s1">self.dry_run: 
+            </span><span class="s3"># always generate the lines, even in dry run</span><span class="s1"> 
+            list(lines) 
+            </span><span class="s0">return</span><span class="s1"> 
+ 
+        </span><span class="s0">with </span><span class="s1">open(filename</span><span class="s0">, </span><span class="s2">'wt'</span><span class="s1">) </span><span class="s0">as </span><span class="s1">f: 
+            f.writelines(lines) 
+ 
+    </span><span class="s0">def </span><span class="s1">uninstall_namespaces(self): 
+        filename</span><span class="s0">, </span><span class="s1">ext = os.path.splitext(self._get_target()) 
+        filename += self.nspkg_ext 
+        </span><span class="s0">if not </span><span class="s1">os.path.exists(filename): 
+            </span><span class="s0">return</span><span class="s1"> 
+        log.info(</span><span class="s2">&quot;Removing %s&quot;</span><span class="s0">, </span><span class="s1">filename) 
+        os.remove(filename) 
+ 
+    </span><span class="s0">def </span><span class="s1">_get_target(self): 
+        </span><span class="s0">return </span><span class="s1">self.target 
+ 
+    _nspkg_tmpl = ( 
+        </span><span class="s2">&quot;import sys, types, os&quot;</span><span class="s0">,</span><span class="s1"> 
+        </span><span class="s2">&quot;has_mfs = sys.version_info &gt; (3, 5)&quot;</span><span class="s0">,</span><span class="s1"> 
+        </span><span class="s2">&quot;p = os.path.join(%(root)s, *%(pth)r)&quot;</span><span class="s0">,</span><span class="s1"> 
+        </span><span class="s2">&quot;importlib = has_mfs and __import__('importlib.util')&quot;</span><span class="s0">,</span><span class="s1"> 
+        </span><span class="s2">&quot;has_mfs and __import__('importlib.machinery')&quot;</span><span class="s0">,</span><span class="s1"> 
+        </span><span class="s2">&quot;m = has_mfs and &quot;</span><span class="s1"> 
+            </span><span class="s2">&quot;sys.modules.setdefault(%(pkg)r, &quot;</span><span class="s1"> 
+                </span><span class="s2">&quot;importlib.util.module_from_spec(&quot;</span><span class="s1"> 
+                    </span><span class="s2">&quot;importlib.machinery.PathFinder.find_spec(%(pkg)r, &quot;</span><span class="s1"> 
+                        </span><span class="s2">&quot;[os.path.dirname(p)])))&quot;</span><span class="s0">,</span><span class="s1"> 
+        </span><span class="s2">&quot;m = m or &quot;</span><span class="s1"> 
+            </span><span class="s2">&quot;sys.modules.setdefault(%(pkg)r, types.ModuleType(%(pkg)r))&quot;</span><span class="s0">,</span><span class="s1"> 
+        </span><span class="s2">&quot;mp = (m or []) and m.__dict__.setdefault('__path__',[])&quot;</span><span class="s0">,</span><span class="s1"> 
+        </span><span class="s2">&quot;(p not in mp) and mp.append(p)&quot;</span><span class="s0">,</span><span class="s1"> 
+    ) 
+    </span><span class="s2">&quot;lines for the namespace installer&quot;</span><span class="s1"> 
+ 
+    _nspkg_tmpl_multi = ( 
+        </span><span class="s2">'m and setattr(sys.modules[%(parent)r], %(child)r, m)'</span><span class="s0">,</span><span class="s1"> 
+    ) 
+    </span><span class="s2">&quot;additional line(s) when a parent package is indicated&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">_get_root(self): 
+        </span><span class="s0">return </span><span class="s2">&quot;sys._getframe(1).f_locals['sitedir']&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">_gen_nspkg_line(self</span><span class="s0">, </span><span class="s1">pkg): 
+        </span><span class="s3"># ensure pkg is not a unicode string under Python 2.7</span><span class="s1"> 
+        pkg = str(pkg) 
+        pth = tuple(pkg.split(</span><span class="s2">'.'</span><span class="s1">)) 
+        root = self._get_root() 
+        tmpl_lines = self._nspkg_tmpl 
+        parent</span><span class="s0">, </span><span class="s1">sep</span><span class="s0">, </span><span class="s1">child = pkg.rpartition(</span><span class="s2">'.'</span><span class="s1">) 
+        </span><span class="s0">if </span><span class="s1">parent: 
+            tmpl_lines += self._nspkg_tmpl_multi 
+        </span><span class="s0">return </span><span class="s2">';'</span><span class="s1">.join(tmpl_lines) % locals() + </span><span class="s2">'</span><span class="s0">\n</span><span class="s2">'</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">_get_all_ns_packages(self): 
+        </span><span class="s4">&quot;&quot;&quot;Return sorted list of all package namespaces&quot;&quot;&quot;</span><span class="s1"> 
+        pkgs = self.distribution.namespace_packages </span><span class="s0">or </span><span class="s1">[] 
+        </span><span class="s0">return </span><span class="s1">sorted(flatten(map(self._pkg_names</span><span class="s0">, </span><span class="s1">pkgs))) 
+ 
+    @staticmethod 
+    </span><span class="s0">def </span><span class="s1">_pkg_names(pkg): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Given a namespace package, yield the components of that 
+        package. 
+ 
+        &gt;&gt;&gt; names = Installer._pkg_names('a.b.c') 
+        &gt;&gt;&gt; set(names) == set(['a', 'a.b', 'a.b.c']) 
+        True 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        parts = pkg.split(</span><span class="s2">'.'</span><span class="s1">) 
+        </span><span class="s0">while </span><span class="s1">parts: 
+            </span><span class="s0">yield </span><span class="s2">'.'</span><span class="s1">.join(parts) 
+            parts.pop() 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">DevelopInstaller(Installer): 
+    </span><span class="s0">def </span><span class="s1">_get_root(self): 
+        </span><span class="s0">return </span><span class="s1">repr(str(self.egg_path)) 
+ 
+    </span><span class="s0">def </span><span class="s1">_get_target(self): 
+        </span><span class="s0">return </span><span class="s1">self.egg_link 
+</span></pre>
+</body>
+</html>
