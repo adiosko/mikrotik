@@ -41,7 +41,7 @@ from switch import SwitchGeeral, SwitchPorts, SwitchHost, SwitchVlan, SwitchRule
 from bridge import BridgeGeneral, BridgeSettings, BridgePorts, BridgeHosts, BridgeMdb, bridgeNat, bridgeArp
 from bridge import bridgeNatAdvanced,bridgeNatGeneral, bridgeNatStp,bridgeFilter,bridgeFilterAction,bridgeFilterAdvanced
 from bridge import bridgeFIlterArp,bridgeFIlterArp,bridgeFilterStp,bridgeMSTI,bridgePortMstOverride,bridgeVlan,bridgeNatAction
-from ppp import activeConnections,interfaceL2tpCLient,interfaceL2tpClientSetGeneral,interfaceL2tpServer,interfaceL2tpServerBinding
+from ppp import activeConnections,interfaceL2tpCLient,interfaceL2tpClientSetGeneral,interfaceL2tpServer,intclass centralControl:
 from ppp import interfaceL2tpSet,interfaceOvpnClient,interfaceOvpnClientSetDialOut,interfacePppClientSetGeneral,interfaceOvpnServer
 from ppp import interfacePppClient,interfacePppClientSetPpp,interfacePppClientSetGeneral,interfacePppoe,interfacePppoeClientSetDialOut
 from ppp import interfacePppoeSet,interfacePppoeSetGeneral,interfacePppServer,interfacePppServerSetDialIn,interfacePppServerSetGeneral
@@ -316,10 +316,10 @@ class Mikrotik:
         self.l2tpclient = interfaceL2tpCLient.interfaceL2tpClientServer( address, username, password )
         self.l2tpclientgeneral = interfaceL2tpClientSetGeneral.interfaceL2tpClientSetGeneral( address, username, password )
         self.l2tpserver = interfaceL2tpServer.interfaceL2tpServer( address, username, password )
-        self.l2tpserverbind = interfaceL2tpServerBinding.interfaceL2tpServerBinding( address, username, password )
+        #self.l2tpserverbind = interfaceL2tpServerBinding.interfaceL2tpServerBinding( address, username, password )
         self.l2tpset = interfaceL2tpSet.interfaceL2tpServerSet( address, username, password )
         self.l2tpclient = interfaceL2tpCLient.interfaceL2tpClientServer( address, username, password )
-        self.l2tpserverbind = interfaceL2tpServerBinding.interfaceL2tpServerBinding( address, username, password )
+        #self.l2tpserverbind = interfaceL2tpServerBinding.interfaceL2tpServerBinding( address, username, password )
         self.l2tpset1 = interfaceL2tpSet.interfaceL2tpServerSet( address, username, password )
         self.ovpnclient = interfaceOvpnClient.interfaceOvpnClient( address, username, password )
         self.ovpnclientdial = interfaceOvpnClientSetDialOut.interfaceOvpnClientSetDialOut( address, username, password )
