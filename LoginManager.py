@@ -119,7 +119,14 @@ class LoginManager:
         print( deviceList )
         if address:
             print('mactelnet {} -u {} -p {}'.format( address, username, password ))
-            os.system( 'mactelnet {} -u {} -p {}'.format( address, username, password ) )
+            os.system( 'mactelnet {} -u {} -p {} 2>&1 > outputMactelnet'.format( address, username, password ))
+            with open("outputMactelnet","r") as file:
+                if "Login failed" in file.read():
+                    print("Conenction failed")
+                    return 1
+                else:
+                    print("Connection established")
+                    return 0
         elif deviceList:
             print( 'mactelnet {} -u {} -p {}'.format( deviceList[0], username, password ) )
             os.system( 'mactelnet {} -u {} -p {}'.format( deviceList[0], username, password ) )

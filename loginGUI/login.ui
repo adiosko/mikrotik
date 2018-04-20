@@ -23,6 +23,9 @@
       <height>29</height>
      </rect>
     </property>
+    <property name="text">
+     <string/>
+    </property>
     <property name="echoMode">
      <enum>QLineEdit::Normal</enum>
     </property>
@@ -170,46 +173,20 @@
      <string>Cancel</string>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="macList">
+   <widget class="QListView" name="ipList">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>180</x>
       <y>250</y>
-      <width>151</width>
+      <width>181</width>
       <height>211</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_7">
+   <widget class="QListView" name="macList">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>220</y>
-      <width>151</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>MAC address</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lineEdit_8">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>220</y>
-      <width>151</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IP address</string>
-    </property>
-   </widget>
-   <widget class="QTextBrowser" name="ipList">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
       <y>250</y>
       <width>151</width>
       <height>211</height>

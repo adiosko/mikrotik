@@ -13,3 +13,5 @@ import dhcpClient
 #print(api.talk(['/ip/address/print']))
 #dhcp = dhcpClient.DhcpClient("ether2","64:d1:54:53:59:72")
 #dhcp.dhcp("admin","admin")
+api = tikapy.TikapyClient("192.168.1.1")
+api.login("admin","admin")
