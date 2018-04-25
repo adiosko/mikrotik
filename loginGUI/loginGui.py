@@ -18,10 +18,11 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
         self.init_buttons()
-        user = self.userField.text()
-        pwd = self.passwordField.text()
-        self.loginmanager = LoginManager( user, pwd )
-        self.loginIpManager = centralControl( user )
+        self.user = self.userField.text()
+        self.pwd = self.passwordField.text()
+        self.server = self.addressField.text()
+        self.loginmanager = LoginManager( self.user, self.pwd )
+        self.loginIpManager = centralControl( self.user )
         #self.recordIPAddress()
         #self.recordMacAddress()
         #self.ui.calc_tax_button.clicked.connect(self.calculateTax())
@@ -38,9 +39,9 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def loginLogin(self):
-        user = self.userField.text()
-        pwd = self.passwordField.text()
-        server = self.addressField.text()
+        self.user = self.userField.text()
+        self.pwd = self.passwordField.text()
+        self.server = self.addressField.text()
         self.loginIP()
     """
     def recordMacAddress(self):
@@ -57,28 +58,28 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
     """
 
     def loginMac(self):
-        server = self.addressField.text()
-        user = self.userField.text()
-        pwd = self.passwordField.text()
-        result = self.loginmanager.mactelnetLoginToSingleDevice(user,pwd,server)
+        self.server = self.addressField.text()
+        self.user = self.userField.text()
+        self.pwd = self.passwordField.text()
+        result = self.loginmanager.mactelnetLoginToSingleDevice(self.user,self.pwd,self.server)
         if result == 0:
-            self.nd = loginMikrotik()
+            self.nd = loginMikrotik(self.user,self.pwd,self.server)
             self.nd.show()
             client = tikapy.TikapyClient("192.168.1.1")
-            client.login(user,pwd)
+            client.login(self.user,self.pwd)
             print(client.talk(['/ip/address/print']))
         else:
             print("retry")
 
 
     def loginIP(self):
-        server = self.addressField.text()
-        user = self.userField.text()
-        pwd = self.passwordField.text()
-        mikrotik = tikapy.TikapyClient( server)
-        result = mikrotik.login(user,pwd)
+        self.server = self.addressField.text()
+        self.user = self.userField.text()
+        self.pwd = self.passwordField.text()
+        mikrotik = tikapy.TikapyClient( self.server)
+        result = mikrotik.login(self.user,self.pwd)
         if result is None:
-            self.nd = loginMikrotik()
+            self.nd = loginMikrotik(self.user,self.pwd,self.server)
             self.nd.show()
             """
             login = mikrotik.talk(['/ip/address/print'])
