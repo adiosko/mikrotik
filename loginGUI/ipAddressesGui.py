@@ -65,6 +65,31 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
         self.addr.removeAddress(str(current))
         self.listAddresses()
 
+    # funguje na 30 percent
+    def setAddress(self):
+        current = self.ipAddressValues.currentRow()
+        itemAddress = self.ipAddressValues.item( current)
+        self.addr.setAddress( str( current),itemAddress)
+        itemAddress.setFlags(Qt.ItemIsEditable)
+        self.listAddresses()
+
+    # funguje na 30 percent
+    def setNetwork(self):
+        current = self.networkValues.currentRow()
+        itemNetwork = self.networkValues.item( current )
+        self.addr.setNetwork( str( current ),itemNetwork )
+        itemNetwork.setFlags( Qt.ItemIsEditable )
+        self.listAddresses()
+
+    #funguje na 30 percent
+    def setInterface(self):
+        current = self.interfaceValues.currentRow()
+        itemInterface = self.interfaceValues.item( current )
+        itemInterfaceSet = self.interfaceValues.toPlainText()
+        itemInterface.setFlags( Qt.ItemIsEditable )
+        self.addr.setNetwork( str( current ), itemInterfaceSet )
+        self.listAddresses()
+
 
     def init_buttons(self):
         self.addButton.clicked.connect( self.addAddress )

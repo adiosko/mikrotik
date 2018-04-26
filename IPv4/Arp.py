@@ -20,13 +20,15 @@ class Arp:
                 print(ipv4[i]['address']+"\t"+ipv4[i]['mac-address']+"\t"+ipv4[i]['interface'])
         return ipv4
 
-    def addArp(self,interface):
+    def addArp(self,interface,address,mac):
         """
         Method will add arp entry
         :param interface:
+        :param address:
+        :param mac:
         :return:
         """
-        ipv4 = self.client.talk(['/ip/arp/add','=interface='+interface])
+        ipv4 = self.client.talk(['/ip/arp/add','=interface='+interface,'=address='+address,'=mac-address='+mac])
         return ipv4
 
     def removeArp(self,number):

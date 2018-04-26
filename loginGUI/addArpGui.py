@@ -1,39 +1,36 @@
-import sys
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
 from PyQt4 import QtCore, QtGui, uic
 #import  LoginManager
 #my designed file
-from IPv4.Addresses import  Addresses
+from IPv4.Arp import  Arp
+import sys
 
-qtCreatorFile = "addAddress.ui"
+qtCreatorFile = "addArp.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-class addAddressGui(QtGui.QMainWindow,Ui_MainWindow):
-    def __init__(self,user,pwd, server, address_window):
+class addArpGui(QtGui.QMainWindow,Ui_MainWindow):
+    def __init__(self,user,pwd, server, arp_window):
         #super( loginMikrotik, self ).__init__( )
         #self.setupUi(self)
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.user = user
-        self.address_window = address_window
+        self.arp_window = arp_window
         self.pwd = pwd
         self.server = server
         self.setupUi(self)
         self.init_buttons()
-        self.addr = Addresses(self.server,self.user,self.pwd)
+        self.addr = Arp( self.server, self.user, self.pwd )
 
     def okLogin(self):
         address = self.addressField.toPlainText()
-        network = self.networkField.toPlainText()
+        mac = self.macField.toPlainText()
         interface = self.interfaceField.toPlainText()
-        self.addr.addAddreses(address,interface)
-        self.address_window.listAddresses()
-        self.close()
+        self.addr.addArp(interface,address,mac)
+        self.arp_window.listArp()
 
     def cancelLogin(self):
-        sys.exit()
+         sys.exit()
 
     def init_buttons(self):
         self.cancelButton.clicked.connect(self.cancelLogin)
