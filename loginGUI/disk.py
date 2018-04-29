@@ -39,4 +39,4 @@ class disks(QtGui.QMainWindow,Ui_MainWindow):
             self.sizeField.addItem(devices[i]['size'])
 
     def init_buttons(self):
-        pass
+        self.refreshButton.clicked.connect( self.listDisks )

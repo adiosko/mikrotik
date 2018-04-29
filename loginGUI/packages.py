@@ -56,3 +56,4 @@ class packages(QtGui.QMainWindow,Ui_MainWindow):
     def init_buttons(self):
         self.enableButton.clicked.connect( self.enablePackage )
         self.disableButton.clicked.connect( self.disablePackage )
+        self.refreshButton.clicked.connect( self.listPackages )

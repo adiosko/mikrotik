@@ -6,57 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>858</width>
-    <height>464</height>
+    <width>743</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>History log</string>
+   <string>IRQ status</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="version">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>10</y>
-      <width>271</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Action</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="version_3">
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>10</y>
-      <width>131</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Policy</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="timeField">
+   <widget class="QListWidget" name="irqField">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
+      <y>50</y>
       <width>161</width>
-      <height>411</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="policyField">
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>40</y>
-      <width>131</width>
-      <height>411</height>
+      <height>201</height>
      </rect>
     </property>
    </widget>
@@ -64,59 +28,95 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>20</y>
       <width>161</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>Time</string>
+     <string>IRQ</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_3">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>20</y>
+      <width>131</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Count</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="version_2">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>10</y>
+      <x>330</x>
+      <y>20</y>
       <width>121</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>By</string>
+     <string>Active connections</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="actionField">
+   <widget class="QLineEdit" name="version">
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>40</y>
-      <width>271</width>
-      <height>401</height>
+      <y>20</y>
+      <width>161</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Users</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="countField">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>50</y>
+      <width>131</width>
+      <height>201</height>
      </rect>
     </property>
    </widget>
-   <widget class="QListWidget" name="byField">
+   <widget class="QListWidget" name="connectionField">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>40</y>
+      <x>330</x>
+      <y>50</y>
       <width>121</width>
-      <height>401</height>
+      <height>201</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="refreshButton">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>10</y>
+      <x>600</x>
+      <y>20</y>
       <width>121</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
      <string>Refresh</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="userField">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>50</y>
+      <width>161</width>
+      <height>201</height>
+     </rect>
     </property>
    </widget>
   </widget>

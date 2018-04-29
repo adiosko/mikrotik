@@ -38,4 +38,4 @@ class history(QtGui.QMainWindow,Ui_MainWindow):
             self.policyField.addItem(devices[i]['policy'])
 
     def init_buttons(self):
-        pass
+        self.refreshButton.clicked.connect( self.listHistory )

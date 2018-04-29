@@ -96,3 +96,4 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
         self.enableButton.clicked.connect(self.enableAddress)
         self.disableButton.clicked.connect(self.disableAddress)
         self.removeButton.clicked.connect(self.removeAddress)
+        self.refreshButton.clicked.connect( self.listAddresses )

@@ -6,117 +6,117 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>858</width>
-    <height>464</height>
+    <width>720</width>
+    <height>298</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>History log</string>
+   <string>CPU status</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="version">
+   <widget class="QListWidget" name="cpuField">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>10</y>
-      <width>271</width>
-      <height>29</height>
+      <x>10</x>
+      <y>60</y>
+      <width>161</width>
+      <height>191</height>
      </rect>
-    </property>
-    <property name="text">
-     <string>Action</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="version_3">
     <property name="geometry">
      <rect>
-      <x>560</x>
-      <y>10</y>
+      <x>440</x>
+      <y>30</y>
       <width>131</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>Policy</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="timeField">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>161</width>
-      <height>411</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="policyField">
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>40</y>
-      <width>131</width>
-      <height>411</height>
-     </rect>
+     <string>Disk [%]</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="package_2">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>30</y>
       <width>161</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>Time</string>
+     <string>CPU</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="version_2">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>10</y>
+      <x>320</x>
+      <y>30</y>
       <width>121</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>By</string>
+     <string>IRQ [%]</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="actionField">
+   <widget class="QLineEdit" name="version">
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>40</y>
-      <width>271</width>
-      <height>401</height>
+      <y>30</y>
+      <width>151</width>
+      <height>29</height>
      </rect>
     </property>
+    <property name="text">
+     <string> Load [%]</string>
+    </property>
    </widget>
-   <widget class="QListWidget" name="byField">
+   <widget class="QListWidget" name="diskField">
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>40</y>
+      <y>60</y>
+      <width>131</width>
+      <height>191</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="irqField">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>60</y>
       <width>121</width>
-      <height>401</height>
+      <height>191</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="refreshButton">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>10</y>
+      <x>580</x>
+      <y>30</y>
       <width>121</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
      <string>Refresh</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="loadField">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>60</y>
+      <width>151</width>
+      <height>191</height>
+     </rect>
     </property>
    </widget>
   </widget>

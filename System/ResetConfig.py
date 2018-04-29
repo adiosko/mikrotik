@@ -23,3 +23,19 @@ class ResetConfig:
             reset = self.client.talk(['/system/reset-configuration','=keep-users='+keepConfig,'=no-defaults='+noDeafult
                                       ,'=caps-mode='+CAPS,'=skip-backup='+backup, '=run-after-reset'+run])
         return reset
+
+    def capsReset(self):
+        reset = self.client.talk(['/system/reset-configuration','=caps-mode=yes'])
+        return reset
+
+    def keepUser(self):
+        reset = self.client.talk( ['/system/reset-configuration', '=keep-user=yes'] )
+        return reset
+
+    def noDefault(self):
+        reset = self.client.talk( ['/system/reset-configuration', '=no-defaults=yes'] )
+        return reset
+
+    def skipbackup(self):
+        reset = self.client.talk( ['/system/reset-configuration', '=skip-backup=yes'] )
+        return reset

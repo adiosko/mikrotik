@@ -6,94 +6,94 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>878</width>
-    <height>475</height>
+    <width>617</width>
+    <height>236</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>System log</string>
+   <string>PCI status</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="version">
+   <widget class="QListWidget" name="nameField">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>10</y>
-      <width>161</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Topics</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="messageField">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
+      <x>330</x>
       <y>40</y>
-      <width>391</width>
-      <height>401</height>
+      <width>121</width>
+      <height>201</height>
      </rect>
     </property>
    </widget>
    <widget class="QLineEdit" name="package_2">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>10</y>
       <width>161</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>Time</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="version_2">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>10</y>
-      <width>391</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Message</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="timeField">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>40</y>
-      <width>161</width>
-      <height>401</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="topicsField">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>40</y>
-      <width>161</width>
-      <height>401</height>
-     </rect>
+     <string>Device</string>
     </property>
    </widget>
    <widget class="QPushButton" name="refreshButton">
     <property name="geometry">
      <rect>
-      <x>750</x>
+      <x>460</x>
       <y>10</y>
-      <width>88</width>
+      <width>121</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
      <string>Refresh</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>10</y>
+      <width>161</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Vendor</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="vendorField">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>40</y>
+      <width>161</width>
+      <height>201</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_2">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>10</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Name</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="deviceField">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>161</width>
+      <height>201</height>
+     </rect>
     </property>
    </widget>
   </widget>

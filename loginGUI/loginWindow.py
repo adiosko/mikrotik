@@ -15,6 +15,12 @@ from loginGUI.history import history
 from loginGUI.logGui import logGui
 from loginGUI.fileGui import fileGui
 from loginGUI.restoreGui import restoreGui
+from loginGUI.resetGui import resetGui
+from loginGUI.hostname import hostnameGui
+from loginGUI.irqGui import irqGui
+from loginGUI.cpuGui import cpuGui
+from loginGUI.usbGui import usbGui
+from loginGUI.pciGui import pciGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -38,7 +44,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.menuBridge = self.menu.addMenu( "Bridge" )
         self.menuSystem = self.menu.addMenu( "System" )
         self.menuMaintenance = self.menu.addMenu("Maintenance")
-        self.menuFiles = self.menu.addMenu( "Files" )
+        #self.menuFiles = self.menu.addMenu( "Files" )
         self.menuLog = self.menu.addMenu("Log")
         self.menuQuit = self.menu.addMenu("About")
         #vytvorenie podtlacitka Addresses
@@ -46,9 +52,9 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.menuIP.addAction(self.actionIP)
         self.actionIP.triggered.connect(self.openAddressesWindow)
         # vytvorenie podtlacitka Files
-        self.actionFiles = QAction( "File Manager", self )
-        self.menuFiles.addAction( self.actionFiles )
-        self.actionFiles.triggered.connect( self.files )
+        #self.actionFiles = QAction( "File Manager", self )
+        #self.menuFiles.addAction( self.actionFiles )
+        #self.actionFiles.triggered.connect( self.files )
         #vytvorenie podtlacitka ARP
         self.actionArp =QAction("ARP",self)
         self.menuIP.addAction( self.actionArp )
@@ -61,6 +67,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionDhcpServer = QAction( "DHCP Server", self )
         self.menuIP.addAction( self.actionDhcpServer )
         self.actionDhcpServer.triggered.connect( self.my_func1 )
+        # vytvorenie DHCP server leases
+        self.actionDhcpServerLeases = QAction( "DHCP Assigned Addresses", self )
+        self.menuIP.addAction( self.actionDhcpServerLeases )
+        self.actionDhcpServerLeases.triggered.connect( self.my_func1 )
         # vytvorenie Filter rules
         self.actionFilter = QAction( "Filter rules", self )
         self.menuIP.addAction( self.actionFilter )
@@ -136,10 +146,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #Hostname
         self.actionIdentity = QAction( "System hostname", self )
         self.menuSystem.addAction( self.actionIdentity )
-        self.actionIdentity.triggered.connect( self.identity )
+        self.actionIdentity.triggered.connect( self.identity)
         #Reset Config
         self.actionReset = QAction( "Reset configuration", self )
-        self.menuSystem.addAction( self.actionReset )
+        self.menuMaintenance.addAction( self.actionReset )
         self.actionReset.triggered.connect( self.reset )
         #Resource IRQ
         self.actionIrq = QAction( "IRQ info", self )
@@ -149,12 +159,20 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionCpu = QAction( "CPU info", self )
         self.menuSystem.addAction( self.actionCpu )
         self.actionCpu.triggered.connect( self.cpu )
+        # Resource USB
+        self.actionUsb = QAction( "USB info", self )
+        self.menuSystem.addAction( self.actionUsb )
+        self.actionUsb.triggered.connect( self.usb)
+        # Resource PCI
+        self.actionPci = QAction( "PCI info", self )
+        self.menuSystem.addAction( self.actionPci)
+        self.actionPci.triggered.connect( self.pci )
         #Users
         self.actionUsers = QAction( "System users", self )
         self.menuSystem.addAction( self.actionUsers )
         self.actionUsers.triggered.connect( self.users )
-        #Usergroup
-        self.actionGroup = QAction( "System user groups", self )
+        #Active users
+        self.actionGroup = QAction( "Active users", self )
         self.menuSystem.addAction( self.actionGroup )
         self.actionGroup.triggered.connect( self.group)
         #log
@@ -163,13 +181,39 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionLog.triggered.connect( self.log )
         #restore
         self.actionRestore = QAction("Restore configuration",self)
-        self.menuMaintenance .addAction(self.actionRestore)
+        self.menuMaintenance.addAction(self.actionRestore)
         self.actionRestore.triggered.connect(self.restore)
+        #Bridge global
+        self.actionBridge = QAction("Bridge",self)
+        self.menuBridge.addAction(self.actionBridge)
+        self.actionBridge.triggered.connect(self.my_func1)
+        #Bridge ports
+        self.actionBridgePort = QAction( "Ports", self )
+        self.menuBridge.addAction( self.actionBridgePort )
+        self.actionBridgePort.triggered.connect( self.my_func1 )
+        # Bridge VLAN
+        self.actionBridgeVlan = QAction( "VLAN", self )
+        self.menuBridge.addAction( self.actionBridgeVlan )
+        self.actionBridgeVlan.triggered.connect( self.my_func1 )
+        # Bridge connections
+        self.actionBridgeConnections = QAction( "Connections", self )
+        self.menuBridge.addAction( self.actionBridgeConnections )
+        self.actionBridgeConnections.triggered.connect( self.my_func1 )
+        # Wireless
+        self.actionWifi = QAction( "Virtual interface", self )
+        self.menuWireless.addAction( self.actionWifi )
+        self.actionWifi.triggered.connect( self.my_func1 )
+        # Wireless Security
+        self.actionWifiSec = QAction( "Security", self )
+        self.menuWireless.addAction( self.actionWifiSec )
+        self.actionWifiSec.triggered.connect( self.my_func1 )
+        # Wireless conenctions
+        self.actionWifiCon = QAction( "Connection list", self )
+        self.menuWireless.addAction( self.actionWifiCon )
+        self.actionWifiCon.triggered.connect( self.my_func1 )
 
     def init_buttons(self):
         pass
-
-
 
     def openAddressesWindow(self):
         print("test")
@@ -237,16 +281,29 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window.show()
 
     def identity(self):
-        pass
+        self.opened_window = hostnameGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
 
     def reset(self):
-        pass
+        self.opened_window = resetGui( self.user, self.pwd, self.server )
+        self.opened_window.show()
 
     def irq(self):
-        pass
+        self.opened_window = irqGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
 
     def cpu(self):
-        pass
+        self.opened_window = cpuGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def usb(self):
+        self.opened_window = usbGui( self.user, self.pwd, self.server )
+        self.opened_window.show()
+
+    def pci(self):
+        self.opened_window = pciGui( self.user, self.pwd, self.server )
+        self.opened_window.show()
+
 
     def users(self):
         pass

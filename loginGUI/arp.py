@@ -71,4 +71,6 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
         self.enableButton.clicked.connect( self.enableArp )
         self.disableButton.clicked.connect( self.disableArp )
         self.removeButton.clicked.connect( self.removeArp )
+        self.refreshButton.clicked.connect( self.listArp )
+
 

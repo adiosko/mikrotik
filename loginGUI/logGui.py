@@ -36,4 +36,4 @@ class logGui(QtGui.QMainWindow,Ui_MainWindow):
             self.messageField.addItem(devices[i]['message'])
 
     def init_buttons(self):
-        pass
+        self.refreshButton.clicked.connect( self.listlog )

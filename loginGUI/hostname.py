@@ -2,15 +2,16 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4 import QtCore, QtGui, uic
-import tikapy
+#import  LoginManager
+from loginGUI.addAddressGui import addAddressGui
 #my designed file
+from System.Identity import Identity
 
-
-qtCreatorFile = "drivers.ui"
+qtCreatorFile = "hostname.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-class drivers(QtGui.QMainWindow,Ui_MainWindow):
+class hostnameGui(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self,user,pwd,server):
         #super( loginMikrotik, self ).__init__( )
         #self.setupUi(self)
@@ -21,15 +22,15 @@ class drivers(QtGui.QMainWindow,Ui_MainWindow):
         self.server = server
         self.setupUi(self)
         self.init_buttons()
-        self.listDrivers()
+        self.addr = Identity(self.server,self.user,self.pwd)
 
-    def listDrivers(self):
-        api = tikapy.TikapyClient(self.server)
-        api.login(self.user,self.pwd)
-        devices = api.talk(['/driver/print'])
-        self.driverField.clear()
-        for i in devices:
-            self.driverField.addItem( devices[i]['driver'] )
+    def okButon(self):
+        hostname = self.hostnameField.toPlainText()
+        self.addr.setHostname(hostname)
+
+    def cancelButon(self):
+        sys.exit()
 
     def init_buttons(self):
-        self.refreshButton.clicked.connect( self.listDrivers )
+        self.cancelButton.clicked.connect( self.cancelButon )
+        self.okButton.clicked.connect( self.okButon )
