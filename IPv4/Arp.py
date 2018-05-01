@@ -17,7 +17,10 @@ class Arp:
         else:
             print("Address\tMAC\tInterface")
             for i in ipv4:
-                print(ipv4[i]['address']+"\t"+ipv4[i]['mac-address']+"\t"+ipv4[i]['interface'])
+                try:
+                    print(ipv4[i]['address']+"\t"+ipv4[i]['mac-address']+"\t"+ipv4[i]['interface'])
+                except KeyError:
+                    pass
         return ipv4
 
     def addArp(self,interface,address,mac):
@@ -55,6 +58,7 @@ class Arp:
         :param number:
         :return:
         """
+        self.listArp()
         ipv4 = self.client.talk( ['/ip/arp/disable', '=numbers=' + number] )
         return ipv4
 

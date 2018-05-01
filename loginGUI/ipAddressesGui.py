@@ -22,6 +22,7 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
         self.server = server
         self.setupUi(self)
         self.init_buttons()
+        #self.address_to_id = {}
         self.addr = Addresses(self.server,self.user,self.pwd)
         self.listAddresses()
 
@@ -84,10 +85,12 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
     #funguje na 30 percent
     def setInterface(self):
         current = self.interfaceValues.currentRow()
-        itemInterface = self.interfaceValues.item( current )
+        idAddress = self.address_to_id[current.text()]
+        itemInterface = self.interfaceValues.item( idAddress )
         itemInterfaceSet = self.interfaceValues.toPlainText()
-        itemInterface.setFlags( Qt.ItemIsEditable )
-        self.addr.setNetwork( str( current ), itemInterfaceSet )
+        editInterface = itemInterface.setFlags( Qt.ItemIsEditable )
+        print(editInterface)
+        self.addr.setInterface( idAddress, editInterface )
         self.listAddresses()
 
 
@@ -97,3 +100,4 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
         self.disableButton.clicked.connect(self.disableAddress)
         self.removeButton.clicked.connect(self.removeAddress)
         self.refreshButton.clicked.connect( self.listAddresses )
+        self.editButton.clicked.connect(self.setInterface)

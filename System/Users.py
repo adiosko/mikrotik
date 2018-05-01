@@ -20,17 +20,16 @@ class Users:
             print(users[i]['name']+" "+users[i]['disabled']+" "+users[i]['group'])
         return users
 
-    def addUser(self,username,password,disabled,group):
+    def addUser(self,username,password,group):
         """
         Method which add new user to mikrotik
         :param username: setup username name
         :param password: username password
-        :param disabled: setup username disble status (yes or no)
         :param group: setup user group (read, write,full)
         :return:
         """
 
-        users = self.client.talk(['/user/add','=name='+username,'=password='+password,'=disabled='+disabled,'=group='+group])
+        users = self.client.talk(['/user/add','=name='+username,'=password='+password,'=group='+group])
         return users
 
     def deleteUser(self,username):
@@ -63,24 +62,24 @@ class Users:
         users = self.client.talk(['/user/set', '=numbers=' + username, '=name=' + newUser])
         return users
 
-    def enableSystemUser(self,username,disabled):
+    def enableSystemUser(self,username):
         """
         enable disabled user
         :param username: username you want to change
          :param disabled: disable status change to no by default
         :return: users
         """
-        users = self.client.talk(['/user/set','=numbers='+username,"=disabled="+disabled])
+        users = self.client.talk(['/user/enable','=numbers='+username])
         return users
 
-    def disableUser(self,username,disabled):
+    def disableUser(self,username):
         """
         method to disable system user
         :param username: username of user you want to disable
         :param disabled: default yes
         :return: users
         """
-        users = self.client.talk(['/user/set','=numbers='+username,"=disabled="+disabled])
+        users = self.client.talk(['/user/disable','=numbers='+username])
         return users
 
     def changeUserGroup(self,username,group):

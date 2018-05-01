@@ -31,38 +31,67 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
         self.ipAddressValues.clear()
         self.macValues.clear()
         self.interfaceValues.clear()
+        self.address_to_id = {}
         for i in devices:
             self.ipAddressValues.addItem( devices[i]['address'])
             self.macValues.addItem(devices[i]['mac-address'])
             self.interfaceValues.addItem(devices[i]['interface'])
+            self.address_to_id[devices[i]['address']] = devices[i]['.id']
 
     def addArp(self):
         self.nd = addArpGui(self.user, self.pwd, self.server,self)
         self.nd.show()
 
     def enableArp(self):
-        current = self.ipAddressValues.currentRow()
-        itemAddress = self.ipAddressValues.item( current )
-        itemMac = self.macValues.item( current )
-        itemInterface = self.interfaceValues.item( current )
-        self.addr.enableArp(str(current))
+        currentAddress = self.ipAddressValues.currentRow()
+        currentMac = self.macValues.currentRow()
+        currentInterface = self.interfaceValues.currentRow()
+        itemAddress = self.ipAddressValues.item( currentAddress )
+        idAddress = self.address_to_id[itemAddress.text()]
+        itemMac = self.macValues.item( currentMac )
+        idMac = self.address_to_id[itemMac.text()]
+        itemInterface = self.interfaceValues.item( currentInterface )
+        idInterface =self.address_to_id[itemInterface.text()]
+        self.addr.enableArp(str(idAddress))
+        self.addr.enableArp( str( idMac ) )
+        self.addr.enableArp( str( idInterface ) )
         itemAddress.setFlags( Qt.ItemIsSelectable )
         itemMac.setFlags( Qt.ItemIsSelectable)
         itemInterface.setFlags( Qt.ItemIsSelectable)
 
     def disableArp(self):
-        current = self.ipAddressValues.currentRow()
-        itemAddress = self.ipAddressValues.item(current)
-        itemMac = self.macValues.item(current)
-        itemInterface = self.interfaceValues.item(current)
-        self.addr.disableArp( str(current))
+        currentAddress = self.ipAddressValues.currentRow()
+        currentMac = self.macValues.currentRow()
+        currentInterface = self.interfaceValues.currentRow()
+        itemAddress = self.ipAddressValues.item( currentAddress )
+        idAddress = self.address_to_id[itemAddress.text()]
+        itemMac = self.macValues.item( currentMac )
+        idMac = self.address_to_id[itemMac.text()]
+        itemInterface = self.interfaceValues.item( currentInterface )
+        idInterface = self.address_to_id[itemInterface.text()]
+        print("Address is "+str(currentAddress))
+        self.addr.disableArp( str(idAddress))
+        self.addr.disableArp(str(currentMac))
+        self.addr.disableArp(str(currentInterface))
         itemAddress.setFlags(Qt.NoItemFlags)
         itemMac.setFlags( Qt.NoItemFlags )
         itemInterface.setFlags( Qt.NoItemFlags )
 
     def removeArp(self):
-        current = self.ipAddressValues.currentRow()
-        self.addr.removeArp(str(current))
+        currentAddress = self.ipAddressValues.currentRow()
+        currentMac = self.macValues.currentRow()
+        currentInterface = self.interfaceValues.currentRow()
+        itemAddress = self.ipAddressValues.item( currentAddress )
+        idAddress = self.address_to_id[itemAddress.text()]
+        '''
+        itemMac = self.macValues.item( currentMac )
+        idMac = self.address_to_id[itemMac.text()]
+        itemInterface = self.interfaceValues.item( currentInterface )
+        idInterface = self.address_to_id[itemInterface.text()]
+        '''
+        self.addr.removeArp(str(idAddress))
+        #self.addr.removeArp( str( idMac ) )
+        #self.addr.removeArp(str(idInterface))
         self.listArp()
 
     def init_buttons(self):

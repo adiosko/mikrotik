@@ -21,6 +21,9 @@ from loginGUI.irqGui import irqGui
 from loginGUI.cpuGui import cpuGui
 from loginGUI.usbGui import usbGui
 from loginGUI.pciGui import pciGui
+from loginGUI.usersActiveGui import usersActive
+from loginGUI.usersGui import usersGui
+from loginGUI.interfacesGui import interfaceGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -39,11 +42,28 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #sablona mikrotik tlacitka a menu (vytvorenie IP tlacitka)
         self.menu = self.menuBar()
         #velke menu
+        self.menuInterface = self.menu.addMenu("Interface")
         self.menuIP = self.menu.addMenu("IP")
         self.menuWireless = self.menu.addMenu( "Wireless" )
         self.menuBridge = self.menu.addMenu( "Bridge" )
         self.menuSystem = self.menu.addMenu( "System" )
         self.menuMaintenance = self.menu.addMenu("Maintenance")
+        #iface menu
+        self.actionInterface = QAction("Interfaces",self)
+        self.menuInterface.addAction(self.actionInterface)
+        self.actionInterface.triggered.connect(self.interfaces)
+        # iface menu
+        self.actionEthernet= QAction( "Ethernet", self )
+        self.menuInterface.addAction( self.actionEthernet )
+        self.actionEthernet.triggered.connect( self.ethernet )
+        #vlan
+        self.actionVLAN = QAction( "VLAN", self )
+        self.menuInterface.addAction( self.actionVLAN )
+        self.actionVLAN.triggered.connect( self.vlan )
+        #Connections
+        self.actionIfaceCon = QAction( "Connections", self )
+        self.menuInterface.addAction( self.actionIfaceCon )
+        self.actionIfaceCon.triggered.connect( self.interfaceConnections )
         #self.menuFiles = self.menu.addMenu( "Files" )
         self.menuLog = self.menu.addMenu("Log")
         self.menuQuit = self.menu.addMenu("About")
@@ -174,7 +194,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #Active users
         self.actionGroup = QAction( "Active users", self )
         self.menuSystem.addAction( self.actionGroup )
-        self.actionGroup.triggered.connect( self.group)
+        self.actionGroup.triggered.connect( self.listUsers)
         #log
         self.actionLog = QAction( "Log", self )
         self.menuLog.addAction( self.actionLog )
@@ -304,11 +324,25 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window = pciGui( self.user, self.pwd, self.server )
         self.opened_window.show()
 
+    def listUsers(self):
+        self.opened_window = usersActive(self.user,self.pwd,self.server)
+        self.opened_window.show()
 
     def users(self):
+        self.opened_window = usersGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def interfaces(self):
+        self.opened_window = interfaceGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def ethernet(self):
         pass
 
-    def group(self):
+    def vlan(self):
+        pass
+
+    def interfaceConnections(self):
         pass
 
 
