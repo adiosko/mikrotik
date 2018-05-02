@@ -14,16 +14,17 @@ class BridgeGeneral:
         bridge = self.client.talk(['/interface/bridge/print'])
         print("Name\tL2 MTU\tMAC\tProtocol")
         for i in bridge:
-            print(bridge[i]['name']+"\t"+bridge[i]['l2mtu']+"\t"+bridge[i]['mac-address']+"\t"+bridge[i]['protcol-mode'])
+            print(bridge[i]['name']+"\t"+bridge[i]['l2mtu']+"\t"+bridge[i]['mac-address']+"\t"+bridge[i]['protocol-mode'])
         return bridge
 
-    def addBridge(self,name):
+    def addBridge(self,name,protocol):
         """
         Method wil ladd bridge
         :param name:
+        :param protocol: mstp, rstp,stp, none
         :return:
         """
-        bridge = self.client.talk(['/interface/bridge/add','=name='+name])
+        bridge = self.client.talk(['/interface/bridge/add','=name='+name,'=protocol-mode='+protocol])
         return bridge
 
     def removeBridge(self,name):

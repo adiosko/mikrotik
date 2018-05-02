@@ -28,7 +28,7 @@ class bridgeVlan:
         vlan = self.client.talk(['/interface/bridge/vlan/add','=bridge='+interface,'=vlan-ids='+vlanID])
         return vlan
 
-    def removeMst(self, number):
+    def removeVlan(self, number):
         """
     
         :param number:
@@ -37,7 +37,7 @@ class bridgeVlan:
         vlan = self.client.talk( ['/interface/bridge/vlan/remove', '=numbers=' + number] )
         return vlan
 
-    def enableMst(self, number):
+    def enableVlan(self, number):
         """
     
         :param number:
@@ -45,7 +45,7 @@ class bridgeVlan:
         vlan = self.client.talk( ['/interface/bridge/vlan/enable', '=numbers=' + number] )
         return vlan
 
-    def disableMst(self, number):
+    def disableVlan(self, number):
         """
     
         :param number:
@@ -54,7 +54,7 @@ class bridgeVlan:
         vlan = self.client.talk( ['/interface/bridge/vlan/disable', '=numbers=' + number] )
         return vlan
 
-    def commentMst(self, number, comment):
+    def commentVlan(self, number, comment):
         """
     
         :param number:

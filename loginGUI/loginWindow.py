@@ -4,6 +4,7 @@ from PyQt4.QtCore import *
 from PyQt4 import QtCore, QtGui, uic
 from loginGUI.ipAddressesGui import ipAddressesGui
 from loginGUI.arp import  arpGui
+from loginGUI.bridgePorts import bridgePort
 from loginGUI.Maintenance import Maintenance
 #import  LoginManager
 #my designed file
@@ -24,6 +25,9 @@ from loginGUI.pciGui import pciGui
 from loginGUI.usersActiveGui import usersActive
 from loginGUI.usersGui import usersGui
 from loginGUI.interfacesGui import interfaceGui
+from loginGUI.bridgeConnections import bridgeConnections
+from loginGUI.bridgeVlan import bridgeVLAN
+from loginGUI.bridgeGui import bridgeGUI
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -206,19 +210,19 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #Bridge global
         self.actionBridge = QAction("Bridge",self)
         self.menuBridge.addAction(self.actionBridge)
-        self.actionBridge.triggered.connect(self.my_func1)
-        #Bridge ports
-        self.actionBridgePort = QAction( "Ports", self )
-        self.menuBridge.addAction( self.actionBridgePort )
-        self.actionBridgePort.triggered.connect( self.my_func1 )
+        self.actionBridge.triggered.connect(self.bridge)
+        #Bridge ports -canceling, not compatible with API
+        #self.actionBridgePort = QAction( "Ports", self )
+        #self.menuBridge.addAction( self.actionBridgePort )
+        #self.actionBridgePort.triggered.connect( self.bridgePort )
         # Bridge VLAN
         self.actionBridgeVlan = QAction( "VLAN", self )
         self.menuBridge.addAction( self.actionBridgeVlan )
-        self.actionBridgeVlan.triggered.connect( self.my_func1 )
+        self.actionBridgeVlan.triggered.connect( self.bridgeVlan )
         # Bridge connections
         self.actionBridgeConnections = QAction( "Connections", self )
         self.menuBridge.addAction( self.actionBridgeConnections )
-        self.actionBridgeConnections.triggered.connect( self.my_func1 )
+        self.actionBridgeConnections.triggered.connect( self.bridgeHosts )
         # Wireless
         self.actionWifi = QAction( "Virtual interface", self )
         self.menuWireless.addAction( self.actionWifi )
@@ -335,6 +339,23 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
     def interfaces(self):
         self.opened_window = interfaceGui(self.user,self.pwd,self.server)
         self.opened_window.show()
+
+    def bridgeHosts(self):
+        self.opened_window = bridgeConnections(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def bridgeVlan(self):
+        self.opened_window = bridgeVLAN(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def bridgePort(self):
+        self.opened_window = bridgePort(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def bridge(self):
+        self.opened_window = bridgeGUI(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
 
     def ethernet(self):
         pass
