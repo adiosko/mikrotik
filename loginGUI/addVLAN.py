@@ -27,9 +27,10 @@ class addVLANGui(QtGui.QMainWindow,Ui_MainWindow):
         vlan  = self.vlanField.toPlainText()
         self.addr.addVlan(bridge,vlan)
         self.arp_window.listVlan()
+        self.close()
 
     def cancelLogin(self):
-         sys.exit()
+         self.close()
 
     def init_buttons(self):
         self.cancelButton.clicked.connect(self.cancelLogin)

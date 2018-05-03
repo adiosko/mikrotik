@@ -28,6 +28,7 @@ class addArpGui(QtGui.QMainWindow,Ui_MainWindow):
         interface = self.interfaceField.toPlainText()
         self.addr.addArp(interface,address,mac)
         self.arp_window.listArp()
+        self.close()
 
     def cancelLogin(self):
          sys.exit()

@@ -16,13 +16,13 @@ class securityProfile:
             print(wifi[i])
         return wifi
 
-    def addProfile(self,name):
+    def addProfile(self,name,password):
         """
         Method will add profile
         :param name:
         :return:
         """
-        wifi = self.client.talk(['/interface/wireless/security-profiles/add','=name='+name])
+        wifi = self.client.talk(['/interface/wireless/security-profiles/add','=name='+name,'=mode=dynamic-keys','=wpa2-pre-shared-key='+password,'=authentication-types=wpa2-psk'])
         return wifi
 
     def removeProfile(self,name):

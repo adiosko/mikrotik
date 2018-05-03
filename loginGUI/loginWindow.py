@@ -28,6 +28,12 @@ from loginGUI.interfacesGui import interfaceGui
 from loginGUI.bridgeConnections import bridgeConnections
 from loginGUI.bridgeVlan import bridgeVLAN
 from loginGUI.bridgeGui import bridgeGUI
+from loginGUI.WirelessInterfacesGui import wirelessInterfaceGui
+from loginGUI.securityGui import securityGui
+from loginGUI.registrationTable import registrationGui
+from loginGUI.servicesGui import servicesGui
+from loginGUI.nexthops import nextHopGui
+from loginGUI.poolUsedAddresses import poolUsedGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -42,6 +48,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.pwd = pwd
         self.server = server
         self.setupUi(self)
+        self.setWindowTitle( user + "@" + server )
         self.init_buttons()
         #sablona mikrotik tlacitka a menu (vytvorenie IP tlacitka)
         self.menu = self.menuBar()
@@ -87,6 +94,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionDhcpClient = QAction("DHCP Client",self)
         self.menuIP.addAction(self.actionDhcpClient)
         self.actionDhcpClient.triggered.connect(self.my_func1)
+        #dhcp relay
+        self.actionRelay = QAction("DHCP Relay",self)
+        self.menuIP.addAction(self.actionRelay)
+        self.actionRelay.triggered.connect(self.my_func1)
         # vytvorenie DHCP server
         self.actionDhcpServer = QAction( "DHCP Server", self )
         self.menuIP.addAction( self.actionDhcpServer )
@@ -118,7 +129,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         # vytvorenie Pool used addresses
         self.actionPoolAddr = QAction( "Pool used addresses", self )
         self.menuIP.addAction( self.actionPoolAddr )
-        self.actionPoolAddr.triggered.connect( self.my_func1 )
+        self.actionPoolAddr.triggered.connect( self.poolUsed )
         # vytvorenie Route list
         self.actionRouteList = QAction( "Route list", self )
         self.menuIP.addAction( self.actionRouteList )
@@ -126,11 +137,11 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         # vytvorenie Route nexthops
         self.actionRouteNExtHops = QAction( "RouteNext Hop", self )
         self.menuIP.addAction( self.actionRouteNExtHops )
-        self.actionRouteNExtHops.triggered.connect( self.my_func1 )
+        self.actionRouteNExtHops.triggered.connect( self.nexthops )
         # vytvorenie Services
         self.actionServices = QAction( "Services IP", self )
         self.menuIP.addAction( self.actionServices )
-        self.actionServices.triggered.connect( self.my_func1 )
+        self.actionServices.triggered.connect( self.services)
         #System Quit
         self.actionQuit = QAction("Quit",self)
         self.menuQuit.addAction(self.actionQuit)
@@ -224,17 +235,17 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.menuBridge.addAction( self.actionBridgeConnections )
         self.actionBridgeConnections.triggered.connect( self.bridgeHosts )
         # Wireless
-        self.actionWifi = QAction( "Virtual interface", self )
+        self.actionWifi = QAction( "Wifi interfaces", self )
         self.menuWireless.addAction( self.actionWifi )
-        self.actionWifi.triggered.connect( self.my_func1 )
+        self.actionWifi.triggered.connect( self.wirelessInterface )
         # Wireless Security
-        self.actionWifiSec = QAction( "Security", self )
+        self.actionWifiSec = QAction( "WPA2 security", self )
         self.menuWireless.addAction( self.actionWifiSec )
-        self.actionWifiSec.triggered.connect( self.my_func1 )
+        self.actionWifiSec.triggered.connect( self.security)
         # Wireless conenctions
         self.actionWifiCon = QAction( "Connection list", self )
         self.menuWireless.addAction( self.actionWifiCon )
-        self.actionWifiCon.triggered.connect( self.my_func1 )
+        self.actionWifiCon.triggered.connect( self.registrationTable )
 
     def init_buttons(self):
         pass
@@ -354,6 +365,30 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
 
     def bridge(self):
         self.opened_window = bridgeGUI(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def wirelessInterface(self):
+        self.opened_window = wirelessInterfaceGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def security(self):
+        self.opened_window = securityGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def registrationTable(self):
+        self.opened_window = registrationGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def services(self):
+        self.opened_window = servicesGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def nexthops(self):
+        self.opened_window= nextHopGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def poolUsed(self):
+        self.opened_window = poolUsedGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
 

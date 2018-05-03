@@ -16,13 +16,13 @@ class interfaces:
             print(wifi[i])
         return wifi
 
-    def addInterface(self,masterIface):
+    def addInterface(self,name,masterIface,security,vlan):
         """
 
         :param masterIface:
         :return:
         """
-        wifi = self.client.talk( ['/interface/wireless/add','=master-interface='+masterIface] )
+        wifi = self.client.talk( ['/interface/wireless/add','=name='+name,'=mode=ap-bridge','=master-interface='+masterIface,'=security-profile='+security,'=vlan=mode=use-tag','=vlan-id='+vlan] )
         return wifi
 
     def removeInterface(self,name):

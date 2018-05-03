@@ -23,6 +23,7 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         self.server = self.addressField.text()
         self.loginmanager = LoginManager( self.user, self.pwd )
         self.loginIpManager = centralControl( self.user )
+        self.login_windows = []
         #self.recordIPAddress()
         #self.recordMacAddress()
         #self.ui.calc_tax_button.clicked.connect(self.calculateTax())
@@ -35,7 +36,7 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         print("Hello "+strword)
 
     def cancelLogin(self):
-        sys.exit()
+        self.close()
 
 
     def loginLogin(self):
@@ -79,8 +80,10 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         mikrotik = tikapy.TikapyClient( self.server)
         result = mikrotik.login(self.user,self.pwd)
         if result is None:
-            self.nd = loginMikrotik(self.user,self.pwd,self.server)
-            self.nd.show()
+            #self.nd = loginMikrotik(self.user,self.pwd,self.server)
+            #self.nd.show()
+            self.login_windows.append(loginMikrotik(self.user,self.pwd,self.server))
+            self.login_windows[-1].show()
             """
             login = mikrotik.talk(['/ip/address/print'])
             for i in login:

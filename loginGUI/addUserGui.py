@@ -33,7 +33,7 @@ class addUserGui(QtGui.QMainWindow,Ui_MainWindow):
         self.close()
 
     def cancelLogin(self):
-        sys.exit()
+        self.close()
 
     def init_buttons(self):
         self.cancelButton.clicked.connect(self.cancelLogin)

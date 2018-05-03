@@ -15,4 +15,4 @@ import dhcpClient
 #dhcp.dhcp("admin","admin")
 api = tikapy.TikapyClient("192.168.1.1")
 api.login("admin","admin")
-print(api.talk(['/interface/bridge/print']))
+print(api.talk(['/ip/route/nexthop/print']))
