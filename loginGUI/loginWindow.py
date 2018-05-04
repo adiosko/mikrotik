@@ -38,6 +38,7 @@ from loginGUI.routeGui import routeGui
 from loginGUI.poolGui import poolGui
 from loginGUI.neighborGui import neighborList
 from loginGUI.firewallConnectionList import fwConnection
+from loginGUI.natGui import natGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -121,7 +122,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         # vytvorenie Filter rules
         self.actionNat = QAction( "NAT rules", self )
         self.menuIP.addAction( self.actionNat )
-        self.actionNat.triggered.connect( self.my_func1 )
+        self.actionNat.triggered.connect( self.nat )
         # vytvorenie Firewall connection
         self.actionConnection = QAction( "Firewall connections", self )
         self.menuIP.addAction( self.actionConnection )
@@ -423,6 +424,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
 
     def fwcon(self):
         self.opened_window = fwConnection(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def nat(self):
+        self.opened_window = natGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
     def ethernet(self):

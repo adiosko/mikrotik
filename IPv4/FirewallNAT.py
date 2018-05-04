@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class FirewallNAT:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def listRules(self):
@@ -12,14 +12,30 @@ class FirewallNAT:
         :return:
         """
         ip = self.client.talk( ['/ip/firewall/nat/print'] )
-        if ip == {}:
-            print( "No rule found,ssecure your router!!!" )
-        else:
-            print( "Action\tChain\tSrcAddress\tDstAddress\tProtocol\tSrcPort\tDstPort\tInInterface\tOutinterface" )
-            for i in ip:
-                print( ip[i] )
-                # print(ipv6[i]['action']+"\t"+ipv6[i]['chain']+"\t"+ipv6[i]['src-address']+"\t"+ipv6[i]['dst-address']+"\t"+ipv6[i]['protocol']+ipv6[i]['src-port'+"\t"+ipv6[i]['dst-port']+"\t"+ipv6[i]['in-interface']+"\t"+ipv6[i]['out-interface']])
         return ip
+
+    def addMasquarade(self,interface):
+        ip= self.client.talk(['/ip/firewall/nat/add','=chain=srcnat','=action=masquerade','=out-interface='+interface])
+        return ip
+
+    def addSrcNat(self,protocol,toAddress,srcPort=None,toPort=None,outInterface=None):
+        ip = self.client.talk(['/ip/firewall/nat/add','=chain=srcnat','=action=src-nat','=protocol='+protocol,'=to-addresses='+toAddress,'=src-port='+srcPort,'=to-ports='+toPort,'=out-interface='+outInterface])
+        return ip
+
+    def addDstNat(self,protocol,toAddress,dstaddress,dstPort=None,toPort=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/nat/add','=chain=dstnat','=action=dst-nat','=protocol='+protocol,'=to-addresses='+toAddress,'=dst-address='+dstaddress,'=dst-port='+dstPort,'=to-ports='+toPort,'=in-interface='+interface])
+        return ip
+
+    def addSrcAccept(self,srcAddress,dstAddress=None,protocol=None,srcPort=None,dstPort=None):
+        ip = self.client.talk( ['/ip/firewall/nat/add', '=chain=srcnat', '=action=accept', '=src-address=' + srcAddress,
+                                '=dst-address=' + dstAddress, '=protocol=' + protocol, '=src-port=' + srcPort,
+                                '=dst-port=' + dstPort] )
+        return ip
+
+    def addDstAccept(self,dstAddress,srcAddress=None,protocol=None,srcPort=None,dstPort=None):
+        ip = self.client.talk( ['/ip/firewall/nat/add', '=chain=dstnat', '=action=accept', '=dst-address=' + srcAddress,
+                                '=src-address=' + dstAddress, '=protocol=' + protocol, '=src-port=' + srcPort,
+                                '=dst-port=' + dstPort] )
 
     def addRule(self, chain="srcnat"):
         """
