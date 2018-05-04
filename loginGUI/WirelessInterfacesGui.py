@@ -37,9 +37,17 @@ class wirelessInterfaceGui(QtGui.QMainWindow,Ui_MainWindow):
             self.linkdownField.addItem(devices[i]['link-downs'])
 
     def removeInterface(self):
-        current = self.nameField.currentRow()
-        self.addr.removeInterface( str( current ) )
-        self.listInterfaces()
+        try:
+            current = self.nameField.currentRow()
+            self.addr.removeInterface( str( current ) )
+            self.listInterfaces()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Master interface error" )
+            self.msg.setInformativeText( "Cannot remove master interface" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def enableInterface(self):
         current = self.nameField.currentRow()

@@ -25,12 +25,20 @@ class addAddressGui(QtGui.QMainWindow,Ui_MainWindow):
         self.addr = Addresses(self.server,self.user,self.pwd)
 
     def okLogin(self):
-        address = self.addressField.toPlainText()
-        network = self.networkField.toPlainText()
-        interface = self.interfaceField.toPlainText()
-        self.addr.addAddreses(address,interface)
-        self.address_window.listAddresses()
-        self.close()
+        try:
+            address = self.addressField.toPlainText()
+            network = self.networkField.toPlainText()
+            interface = self.interfaceField.toPlainText()
+            self.addr.addAddreses(address,interface)
+            self.address_window.listAddresses()
+            self.close()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Interface error" )
+            self.msg.setInformativeText( "Interface error or address must be with prefix" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def cancelLogin(self):
         self.close()

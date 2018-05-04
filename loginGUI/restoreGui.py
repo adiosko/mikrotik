@@ -23,11 +23,19 @@ class restoreGui(QtGui.QMainWindow,Ui_MainWindow):
         self.init_buttons()
 
     def restoreConfiguration(self):
-        file = self.fileField.toPlainText()
-        password = self.passwordField.toPlainText()
-        api = tikapy.TikapyClient(self.server)
-        api.login(self.user,self.pwd)
-        api.talk(['/system/backup/load','=name='+file,'=password='+password])
+        try:
+            file = self.fileField.toPlainText()
+            password = self.passwordField.toPlainText()
+            api = tikapy.TikapyClient(self.server)
+            api.login(self.user,self.pwd)
+            api.talk(['/system/backup/load','=name='+file,'=password='+password])
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "File not found" )
+            self.msg.setInformativeText( "Cannot find file or password is incorrect" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
 
     def init_buttons(self):

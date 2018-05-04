@@ -37,9 +37,17 @@ class securityGui(QtGui.QMainWindow,Ui_MainWindow):
             self.authField.addItem(devices[i]['authentication-types'])
 
     def removeProfile(self):
-        current = self.nameField.currentRow()
-        self.addr.removeProfile( str( current ) )
-        self.listProfiles()
+        try:
+            current = self.nameField.currentRow()
+            self.addr.removeProfile( str( current ) )
+            self.listProfiles()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Profile error" )
+            self.msg.setInformativeText( "Cannot remove default profile" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
 
     def addProfile(self):

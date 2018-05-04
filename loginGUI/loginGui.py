@@ -74,25 +74,26 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def loginIP(self):
-        self.server = self.addressField.text()
-        self.user = self.userField.text()
-        self.pwd = self.passwordField.text()
-        mikrotik = tikapy.TikapyClient( self.server)
-        result = mikrotik.login(self.user,self.pwd)
-        if result is None:
-            #self.nd = loginMikrotik(self.user,self.pwd,self.server)
-            #self.nd.show()
-            self.login_windows.append(loginMikrotik(self.user,self.pwd,self.server))
-            self.login_windows[-1].show()
-            """
-            login = mikrotik.talk(['/ip/address/print'])
-            for i in login:
-                
-            resulttik = str(self.textCustom.setText(login))
-            self.nd.textCustom.setText(resulttik)
-            """
-        else:
-            self.textEdit.text("Wrong username or password")
+        try:
+            self.server = self.addressField.text()
+            self.user = self.userField.text()
+            self.pwd = self.passwordField.text()
+            mikrotik = tikapy.TikapySslClient( self.server,8729)
+            result = mikrotik.login(self.user,self.pwd)
+            if result is None:
+                #self.nd = loginMikrotik(self.user,self.pwd,self.server)
+                #self.nd.show()
+                self.login_windows.append(loginMikrotik(self.user,self.pwd,self.server))
+                self.login_windows[-1].show()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Authentication error" )
+            self.msg.setInformativeText( "Wrong username or password" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
+
+
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)

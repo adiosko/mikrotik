@@ -23,11 +23,20 @@ class addProfile(QtGui.QMainWindow,Ui_MainWindow):
         self.addr = securityProfile( self.server, self.user, self.pwd )
 
     def okLogin(self):
-        name = self.nameField.toPlainText()
-        password = self.passwordField.toPlainText()
-        self.addr.addProfile(name,password)
-        self.wireless_window.listProfiles()
-        self.close()
+        try:
+            name = self.nameField.toPlainText()
+            password = self.passwordField.toPlainText()
+            self.addr.addProfile(name,password)
+            self.wireless_window.listProfiles()
+            self.close()
+        except Exception as e:
+            from PyQt4.QtGui import QMessageBox
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Password length error" )
+            self.msg.setInformativeText( "Password must be minimaly 8 characters long" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def cancelLogin(self):
          self.close()

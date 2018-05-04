@@ -5,7 +5,7 @@ from pprint import pprint
 
 class Services:
     def __init__(self, address,username,password):
-        self.client = TikapyClient( address, 8729 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def listServices(self):

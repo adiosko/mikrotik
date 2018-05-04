@@ -34,6 +34,8 @@ from loginGUI.registrationTable import registrationGui
 from loginGUI.servicesGui import servicesGui
 from loginGUI.nexthops import nextHopGui
 from loginGUI.poolUsedAddresses import poolUsedGui
+from loginGUI.routeGui import routeGui
+from loginGUI.poolGui import poolGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -125,7 +127,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         # vytvorenie Pool
         self.actionPool = QAction( "Pool", self )
         self.menuIP.addAction( self.actionPool )
-        self.actionPool.triggered.connect( self.my_func1 )
+        self.actionPool.triggered.connect( self.pool)
         # vytvorenie Pool used addresses
         self.actionPoolAddr = QAction( "Pool used addresses", self )
         self.menuIP.addAction( self.actionPoolAddr )
@@ -133,7 +135,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         # vytvorenie Route list
         self.actionRouteList = QAction( "Route list", self )
         self.menuIP.addAction( self.actionRouteList )
-        self.actionRouteList.triggered.connect( self.my_func1 )
+        self.actionRouteList.triggered.connect( self.route )
         # vytvorenie Route nexthops
         self.actionRouteNExtHops = QAction( "RouteNext Hop", self )
         self.menuIP.addAction( self.actionRouteNExtHops )
@@ -264,28 +266,38 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         sys.exit()
 
     def about(self):
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
-        msg.setText("Diploma thesis software")
-        msg.setInformativeText("Diploma thesis software")
-        msg.setWindowTitle("About")
+        print("C")
+        self.msg = QMessageBox()
+        self.msg.setIcon(QMessageBox.Information)
+        self.msg.setText("Info")
+        self.msg.setInformativeText("Diploma thesis software")
+        self.msg.setWindowTitle("About")
+        self.msg.show()
 
     def reboot(self):
-        api = tikapy.TikapyClient(self.server)
+        api = tikapy.TikapySslClient(self.server,8729)
         api.login(self.user,self.pwd)
         api.talk(['/system/reboot'])
         sys.exit()
 
     def shutdown(self):
-        api = tikapy.TikapyClient( self.server )
+        api = tikapy.TikapySslClient( self.server,8729 )
         api.login( self.user, self.pwd )
         api.talk( ['/system/shutdown'] )
         sys.exit()
 
     def upgrade(self):
-        api = tikapy.TikapyClient( self.server )
-        api.login( self.user, self.pwd )
-        api.talk( ['/system/upgrade/download-all'] )
+        try:
+            api = tikapy.TikapySslClient( self.server,8729 )
+            api.login( self.user, self.pwd )
+            api.talk( ['/system/upgrade/download-all'] )
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Connection error" )
+            self.msg.setInformativeText( "Cannot reach server" )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def package(self):
         self.opened_window = packages( self.user, self.pwd, self.server )
@@ -391,6 +403,13 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window = poolUsedGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
+    def route(self):
+        self.opened_window =routeGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def pool(self):
+        self.opened_window = poolGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
 
     def ethernet(self):
         pass

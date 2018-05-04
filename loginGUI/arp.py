@@ -31,11 +31,13 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
         self.ipAddressValues.clear()
         self.macValues.clear()
         self.interfaceValues.clear()
+        self.dynamicField.clear()
         self.address_to_id = {}
         for i in devices:
             self.ipAddressValues.addItem( devices[i]['address'])
             self.macValues.addItem(devices[i]['mac-address'])
             self.interfaceValues.addItem(devices[i]['interface'])
+            self.dynamicField.addItem(devices[i]['dynamic'])
             self.address_to_id[devices[i]['address']] = devices[i]['.id']
 
     def addArp(self):
@@ -78,21 +80,21 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
         itemInterface.setFlags( Qt.NoItemFlags )
 
     def removeArp(self):
-        currentAddress = self.ipAddressValues.currentRow()
-        currentMac = self.macValues.currentRow()
-        currentInterface = self.interfaceValues.currentRow()
-        itemAddress = self.ipAddressValues.item( currentAddress )
-        idAddress = self.address_to_id[itemAddress.text()]
-        '''
-        itemMac = self.macValues.item( currentMac )
-        idMac = self.address_to_id[itemMac.text()]
-        itemInterface = self.interfaceValues.item( currentInterface )
-        idInterface = self.address_to_id[itemInterface.text()]
-        '''
-        self.addr.removeArp(str(idAddress))
-        #self.addr.removeArp( str( idMac ) )
-        #self.addr.removeArp(str(idInterface))
-        self.listArp()
+        try:
+            currentAddress = self.ipAddressValues.currentRow()
+            currentMac = self.macValues.currentRow()
+            currentInterface = self.interfaceValues.currentRow()
+            itemAddress = self.ipAddressValues.item( currentAddress )
+            idAddress = self.address_to_id[itemAddress.text()]
+            self.addr.removeArp(str(idAddress))
+            self.listArp()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Remove error" )
+            self.msg.setInformativeText( "Cannot remove dynamic record" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def init_buttons(self):
         print("text")

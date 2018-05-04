@@ -6,33 +6,66 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>554</width>
-    <height>299</height>
+    <width>886</width>
+    <height>273</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ARP</string>
+   <string>Routes</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="addButton">
+   <widget class="QListWidget" name="gwField">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>160</x>
+      <y>40</y>
+      <width>161</width>
+      <height>201</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="distanceField">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>40</y>
+      <width>161</width>
+      <height>201</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="refreshButton">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
       <y>10</y>
-      <width>88</width>
+      <width>121</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>Add</string>
+     <string>Refresh</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_2">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>10</y>
+      <width>161</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Distance</string>
     </property>
    </widget>
    <widget class="QPushButton" name="removeButton">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>10</y>
-      <width>88</width>
+      <x>670</x>
+      <y>90</y>
+      <width>121</width>
       <height>29</height>
      </rect>
     </property>
@@ -40,81 +73,61 @@
      <string>Remove</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="macValues">
+   <widget class="QPushButton" name="addButton">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>80</y>
-      <width>111</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="interfaceField">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
+      <x>670</x>
       <y>50</y>
-      <width>113</width>
+      <width>121</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>Interface</string>
+     <string>Add</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="interfaceValues">
+   <widget class="QLineEdit" name="version">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>80</y>
-      <width>111</width>
-      <height>192</height>
+      <x>160</x>
+      <y>10</y>
+      <width>161</width>
+      <height>29</height>
      </rect>
     </property>
+    <property name="text">
+     <string>Gateway</string>
+    </property>
    </widget>
-   <widget class="QLineEdit" name="ipField">
+   <widget class="QLineEdit" name="package_2">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
-      <width>113</width>
+      <y>10</y>
+      <width>151</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>IP address</string>
+     <string>Destination</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="networkField">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>50</y>
-      <width>113</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Mac address</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="ipAddressValues">
+   <widget class="QListWidget" name="destField">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
-      <width>111</width>
-      <height>192</height>
+      <y>40</y>
+      <width>151</width>
+      <height>201</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="enableButton">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>10</y>
-      <width>88</width>
+      <x>670</x>
+      <y>130</y>
+      <width>121</width>
       <height>29</height>
      </rect>
     </property>
@@ -125,9 +138,9 @@
    <widget class="QPushButton" name="disableButton">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>10</y>
-      <width>88</width>
+      <x>670</x>
+      <y>170</y>
+      <width>121</width>
       <height>29</height>
      </rect>
     </property>
@@ -135,40 +148,27 @@
      <string>Disable</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="refreshButton">
+   <widget class="QLineEdit" name="version_3">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>480</x>
       <y>10</y>
-      <width>88</width>
+      <width>161</width>
       <height>29</height>
      </rect>
     </property>
     <property name="text">
-     <string>Refresh</string>
+     <string>Route type</string>
     </property>
    </widget>
    <widget class="QListWidget" name="dynamicField">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>80</y>
-      <width>111</width>
-      <height>192</height>
+      <x>480</x>
+      <y>40</y>
+      <width>161</width>
+      <height>201</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="interfaceField_2">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>50</y>
-      <width>113</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Dynamic state</string>
     </property>
    </widget>
   </widget>

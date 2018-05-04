@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class RouteGeneral:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
 
@@ -15,7 +15,7 @@ class RouteGeneral:
         route = self.client.talk(['/ip/route/print'])
         print("Dst address\tGateway\tDistance\tPref source")
         for i in route:
-            print(route[i]['dst-address']+"\t"+route[i]['gateway']+"\t"+route[i]['distance']+"\t"+route[i]['pref-src'])
+            print(route[i]['dst-address']+"\t"+route[i]['gateway']+"\t"+route[i]['distance'])
         return route
 
 
