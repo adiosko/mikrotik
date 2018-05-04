@@ -36,6 +36,8 @@ from loginGUI.nexthops import nextHopGui
 from loginGUI.poolUsedAddresses import poolUsedGui
 from loginGUI.routeGui import routeGui
 from loginGUI.poolGui import poolGui
+from loginGUI.neighborGui import neighborList
+from loginGUI.firewallConnectionList import fwConnection
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -108,6 +110,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionDhcpServerLeases = QAction( "DHCP Assigned Addresses", self )
         self.menuIP.addAction( self.actionDhcpServerLeases )
         self.actionDhcpServerLeases.triggered.connect( self.my_func1 )
+        #DNS
+        self.actionDNS = QAction("DNS",self)
+        self.menuIP.addAction(self.actionDNS)
+        self.actionDNS.triggered.connect(self.my_func1)
         # vytvorenie Filter rules
         self.actionFilter = QAction( "Filter rules", self )
         self.menuIP.addAction( self.actionFilter )
@@ -119,11 +125,11 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         # vytvorenie Firewall connection
         self.actionConnection = QAction( "Firewall connections", self )
         self.menuIP.addAction( self.actionConnection )
-        self.actionConnection.triggered.connect( self.my_func1 )
+        self.actionConnection.triggered.connect( self.fwcon )
         # vytvorenie Neighbors
         self.actionNeighbors = QAction( "Router neighbors", self )
         self.menuIP.addAction( self.actionNeighbors )
-        self.actionNeighbors.triggered.connect( self.my_func1 )
+        self.actionNeighbors.triggered.connect( self.neighbors )
         # vytvorenie Pool
         self.actionPool = QAction( "Pool", self )
         self.menuIP.addAction( self.actionPool )
@@ -409,6 +415,14 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
 
     def pool(self):
         self.opened_window = poolGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def neighbors(self):
+        self.opened_window = neighborList(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def fwcon(self):
+        self.opened_window = fwConnection(self.user,self.pwd,self.server)
         self.opened_window.show()
 
     def ethernet(self):

@@ -3,22 +3,15 @@ from tikapy import TikapySslClient
 
 class FirewallConnections:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
-    def listCOnnections(self):
+    def listConnections(self):
         """
         Method will list all connections
         :return:
         """
         ip = self.client.talk( ['/ip/firewall/connection/print'] )
-        if ip == {}:
-            print( "No connection found" )
-        else:
-            print( "Protocol\tSrc address\tDst address\tTimeout" )
-            for i in ip:
-                print( ip[i]['protocol'] + "\t" + ip[i]['src-address'] + "\t" + ip[i]['dst-address'] + "\t" +
-                       ip[i]['timeout'] )
         return ip
 
     def setTrackingMode(self,mode="yes"):
