@@ -125,6 +125,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionDNS = QAction("Add server",self)
         self.menuDns.addAction(self.actionDNS)
         self.actionDNS.triggered.connect(self.my_func1)
+        #DNS static record
+        self.actionDNS = QAction( "Static records", self )
+        self.menuDns.addAction( self.actionDNS )
+        self.actionDNS.triggered.connect( self.staticrecord )
         # vytvorenie Filter rules
         self.actionFilter = QAction( "Filter rules", self )
         self.menuFirewall.addAction( self.actionFilter )
@@ -462,6 +466,9 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
     def addressList(self):
         self.opened_window = addresslistGui(self.user,self.pwd,self.server)
         self.opened_window.show()
+
+    def staticrecord(self):
+        pass
 
     def ethernet(self):
         pass
