@@ -38,6 +38,7 @@ from loginGUI.routeGui import routeGui
 from loginGUI.poolGui import poolGui
 from loginGUI.neighborGui import neighborList
 from loginGUI.firewallConnectionList import fwConnection
+from loginGUI.filterGui import  fwGui
 from loginGUI.natGui import natGui
 qtCreatorFile = "loginWIndow.ui"
 
@@ -60,9 +61,15 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #velke menu
         self.menuInterface = self.menu.addMenu("Interface")
         self.menuIP = self.menu.addMenu("IP")
+        self.menuDhcp = self.menu.addMenu("DHCP")
+        self.menuPool = self.menu.addMenu("Address pools")
+        self.menuRoute = self.menu.addMenu("Routing management")
+        self.menuFirewall = self.menu.addMenu( "Firewall" )
         self.menuWireless = self.menu.addMenu( "Wireless" )
         self.menuBridge = self.menu.addMenu( "Bridge" )
-        self.menuSystem = self.menu.addMenu( "System" )
+        self.menuSystem = self.menu.addMenu( "Hostname" )
+        self.menuSystemInfo = self.menu.addMenu("System information")
+        self.menuUser = self.menu.addMenu("User management")
         self.menuMaintenance = self.menu.addMenu("Maintenance")
         #iface menu
         self.actionInterface = QAction("Interfaces",self)
@@ -97,19 +104,19 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionArp.triggered.connect( self.openArpWindow)
         #vytvorenie DHCP klient
         self.actionDhcpClient = QAction("DHCP Client",self)
-        self.menuIP.addAction(self.actionDhcpClient)
+        self.menuDhcp.addAction(self.actionDhcpClient)
         self.actionDhcpClient.triggered.connect(self.my_func1)
         #dhcp relay
         self.actionRelay = QAction("DHCP Relay",self)
-        self.menuIP.addAction(self.actionRelay)
+        self.menuDhcp.addAction(self.actionRelay)
         self.actionRelay.triggered.connect(self.my_func1)
         # vytvorenie DHCP server
         self.actionDhcpServer = QAction( "DHCP Server", self )
-        self.menuIP.addAction( self.actionDhcpServer )
+        self.menuDhcp.addAction( self.actionDhcpServer )
         self.actionDhcpServer.triggered.connect( self.my_func1 )
         # vytvorenie DHCP server leases
         self.actionDhcpServerLeases = QAction( "DHCP Assigned Addresses", self )
-        self.menuIP.addAction( self.actionDhcpServerLeases )
+        self.menuDhcp.addAction( self.actionDhcpServerLeases )
         self.actionDhcpServerLeases.triggered.connect( self.my_func1 )
         #DNS
         self.actionDNS = QAction("DNS",self)
@@ -117,35 +124,43 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionDNS.triggered.connect(self.my_func1)
         # vytvorenie Filter rules
         self.actionFilter = QAction( "Filter rules", self )
-        self.menuIP.addAction( self.actionFilter )
-        self.actionFilter.triggered.connect( self.my_func1 )
+        self.menuFirewall.addAction( self.actionFilter )
+        self.actionFilter.triggered.connect( self.filter )
         # vytvorenie Filter rules
         self.actionNat = QAction( "NAT rules", self )
-        self.menuIP.addAction( self.actionNat )
+        self.menuFirewall.addAction( self.actionNat )
         self.actionNat.triggered.connect( self.nat )
         # vytvorenie Firewall connection
-        self.actionConnection = QAction( "Firewall connections", self )
-        self.menuIP.addAction( self.actionConnection )
+        self.actionConnection = QAction( "Connections", self )
+        self.menuFirewall.addAction( self.actionConnection )
         self.actionConnection.triggered.connect( self.fwcon )
+        #Firewall service port
+        self.actionsport = QAction("Service ports",self)
+        self.menuFirewall.addAction(self.actionsport)
+        self.actionsport.triggered.connect(self.firewallConnection)
+        #Address list
+        self.actionadresslist = QAction( "Address list", self )
+        self.menuFirewall.addAction( self.actionadresslist )
+        self.actionadresslist.triggered.connect( self.addressList )
         # vytvorenie Neighbors
         self.actionNeighbors = QAction( "Router neighbors", self )
-        self.menuIP.addAction( self.actionNeighbors )
+        self.menuRoute.addAction( self.actionNeighbors )
         self.actionNeighbors.triggered.connect( self.neighbors )
         # vytvorenie Pool
         self.actionPool = QAction( "Pool", self )
-        self.menuIP.addAction( self.actionPool )
+        self.menuPool.addAction( self.actionPool )
         self.actionPool.triggered.connect( self.pool)
         # vytvorenie Pool used addresses
         self.actionPoolAddr = QAction( "Pool used addresses", self )
-        self.menuIP.addAction( self.actionPoolAddr )
+        self.menuPool.addAction( self.actionPoolAddr )
         self.actionPoolAddr.triggered.connect( self.poolUsed )
         # vytvorenie Route list
         self.actionRouteList = QAction( "Route list", self )
-        self.menuIP.addAction( self.actionRouteList )
+        self.menuRoute.addAction( self.actionRouteList )
         self.actionRouteList.triggered.connect( self.route )
         # vytvorenie Route nexthops
         self.actionRouteNExtHops = QAction( "RouteNext Hop", self )
-        self.menuIP.addAction( self.actionRouteNExtHops )
+        self.menuRoute.addAction( self.actionRouteNExtHops )
         self.actionRouteNExtHops.triggered.connect( self.nexthops )
         # vytvorenie Services
         self.actionServices = QAction( "Services IP", self )
@@ -177,15 +192,15 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionPackages.triggered.connect( self.package )
         #Disks
         self.actionDisks = QAction("System disks", self)
-        self.menuSystem.addAction(self.actionDisks)
+        self.menuSystemInfo.addAction(self.actionDisks)
         self.actionDisks.triggered.connect(self.disks)
         #Driver
         self.actionDriver = QAction( "System driver", self )
-        self.menuSystem.addAction( self.actionDriver )
+        self.menuSystemInfo.addAction( self.actionDriver )
         self.actionDriver.triggered.connect( self.driver )
         #History
         self.actionHistory = QAction( "System history", self )
-        self.menuSystem.addAction( self.actionHistory )
+        self.menuSystemInfo.addAction( self.actionHistory )
         self.actionHistory.triggered.connect( self.history )
         #Hostname
         self.actionIdentity = QAction( "System hostname", self )
@@ -197,27 +212,27 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionReset.triggered.connect( self.reset )
         #Resource IRQ
         self.actionIrq = QAction( "IRQ info", self )
-        self.menuSystem.addAction( self.actionIrq )
+        self.menuSystemInfo.addAction( self.actionIrq )
         self.actionIrq.triggered.connect( self.irq )
         #Resource CPU
         self.actionCpu = QAction( "CPU info", self )
-        self.menuSystem.addAction( self.actionCpu )
+        self.menuSystemInfo.addAction( self.actionCpu )
         self.actionCpu.triggered.connect( self.cpu )
         # Resource USB
         self.actionUsb = QAction( "USB info", self )
-        self.menuSystem.addAction( self.actionUsb )
+        self.menuSystemInfo.addAction( self.actionUsb )
         self.actionUsb.triggered.connect( self.usb)
         # Resource PCI
         self.actionPci = QAction( "PCI info", self )
-        self.menuSystem.addAction( self.actionPci)
+        self.menuSystemInfo.addAction( self.actionPci)
         self.actionPci.triggered.connect( self.pci )
         #Users
         self.actionUsers = QAction( "System users", self )
-        self.menuSystem.addAction( self.actionUsers )
+        self.menuUser.addAction( self.actionUsers )
         self.actionUsers.triggered.connect( self.users )
         #Active users
         self.actionGroup = QAction( "Active users", self )
-        self.menuSystem.addAction( self.actionGroup )
+        self.menuUser.addAction( self.actionGroup )
         self.actionGroup.triggered.connect( self.listUsers)
         #log
         self.actionLog = QAction( "Log", self )
@@ -429,6 +444,16 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
     def nat(self):
         self.opened_window = natGui(self.user,self.pwd,self.server)
         self.opened_window.show()
+
+    def filter(self):
+        self.opened_window = fwGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def firewallConnection(self):
+        pass
+
+    def addressList(self):
+        pass
 
     def ethernet(self):
         pass

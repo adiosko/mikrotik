@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class FirewallFilter:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def listRules(self):
@@ -12,13 +12,6 @@ class FirewallFilter:
         :return:
         """
         ip = self.client.talk( ['/ip/firewall/filter/print'] )
-        if ip == {}:
-            print( "No rule found,ssecure your router!!!" )
-        else:
-            print( "Action\tChain\tSrcAddress\tDstAddress\tProtocol\tSrcPort\tDstPort\tInInterface\tOutinterface" )
-            for i in ip:
-                print( ip[i] )
-                # print(ipv6[i]['action']+"\t"+ipv6[i]['chain']+"\t"+ipv6[i]['src-address']+"\t"+ipv6[i]['dst-address']+"\t"+ipv6[i]['protocol']+ipv6[i]['src-port'+"\t"+ipv6[i]['dst-port']+"\t"+ipv6[i]['in-interface']+"\t"+ipv6[i]['out-interface']])
         return ip
 
     def addRule(self, chain="input"):
@@ -29,6 +22,31 @@ class FirewallFilter:
         """
         ip = self.client.talk( ['/ip/firewall/filter/add', '=chain=' + chain] )
         return ip
+
+    def addinputaccept(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=input','=action=accept','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=in-interface='+interface])
+        return ip
+
+    def addinputreject(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=input','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=in-interface='+interface])
+        return ip
+
+    def addinputdeny(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=input','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=in-interface='+interface])
+        return ip
+
+    def addForwardaccept(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=forward','=action=accept','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addForwardreject(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=input','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addForwarddeny(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=input','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
 
     def removeRule(self, number):
         """

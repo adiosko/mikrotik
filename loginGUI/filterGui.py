@@ -3,20 +3,21 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4 import QtCore, QtGui, uic
 import tikapy
-from IPv4.FirewallNAT import FirewallNAT
-from loginGUI.addMasquaradeGui import addMasquaradeGui
-from loginGUI.addSrcNat import addSrcNatGui
-from loginGUI.addDstNatGui import addDstNatGui
-from loginGUI.addSrcAccept import addSrcAcceptGui
-from loginGUI.addDstAccept import addDstAcceptGui
+from IPv4.FirewallFilter import FirewallFilter
+from loginGUI.addFwInputAccept import addInputAcceptGui
+from loginGUI.addInputReject import addInputRejectGui
+from loginGUI.addInputDrop import addInputDropGui
+from loginGUI.addForwardAccept import addForwardAcceptGui
+from loginGUI.addForwardDrop import addForwardDropGui
+from loginGUI.addForwardReject import addForwardRejectGui
 #my designed file
 
 
-qtCreatorFile = "nat.ui"
+qtCreatorFile = "firewall.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-class natGui(QtGui.QMainWindow,Ui_MainWindow):
+class fwGui(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self,user,pwd,server):
         #super( loginMikrotik, self ).__init__( )
         #self.setupUi(self)
@@ -26,11 +27,11 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
         self.pwd = pwd
         self.server = server
         self.setupUi(self)
-        self.addr = FirewallNAT(self.server,self.user,self.pwd)
+        self.addr = FirewallFilter(self.server,self.user,self.pwd)
         self.init_buttons()
-        self.listNat()
+        self.listRules()
 
-    def listNat(self):
+    def listRules(self):
         devices = self.addr.listRules()
         self.actionField.clear()
         self.chainField.clear()
@@ -39,8 +40,8 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
         self.protField.clear()
         self.srcportField.clear()
         self.dstportField.clear()
-        self.toaddressField.clear()
-        self.toportField.clear()
+        self.ininterfaceField.clear()
+        self.outinterfaceField.clear()
         self.dynamicField.clear()
         self.address_to_id = {}
         for i in devices:
@@ -79,15 +80,15 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
                 statedstport = "any"
             self.dstportField.addItem(statedstport)
             try:
-                statetoadd = devices[i]['to-addresses']
+                statetoadd = devices[i]['in-interface']
             except:
                 statetoadd = "any"
-            self.toaddressField.addItem(statetoadd)
+            self.ininterfaceField.addItem(statetoadd)
             try:
-                statetoport = devices[i]['to-ports']
+                statetoport = devices[i]['out-interface']
             except:
                 statetoport = "any"
-            self.toportField.addItem(statetoport)
+            self.outinterfaceField.addItem(statetoport)
             self.dynamicField.addItem(devices[i]['dynamic'])
             self.address_to_id[devices[i]['action']] = devices[i]['.id']
 
@@ -97,7 +98,7 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
             itemName = self.actionField.item( current )
             idName = self.address_to_id[itemName.text()]
             self.addr.removeRule( str( idName ) )
-            self.listNat()
+            self.listRules()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
@@ -111,19 +112,40 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
         itemName = self.actionField.item( current )
         idName = self.address_to_id[itemName.text()]
         self.addr.enableRule( str( idName ) )
-        self.listNat()
+        self.listRules()
 
     def disableRule(self):
         current = self.actionField.currentRow()
         itemName = self.actionField.item( current )
         idName = self.address_to_id[itemName.text()]
         self.addr.disableRule( str( idName ) )
-        self.listNat()
+        self.listRules()
 
-    def addMasquarade(self):
-        self.nd = addMasquaradeGui( self.user, self.pwd, self.server, self )
+
+    def addInputAccept(self):
+        self.nd = addInputAcceptGui( self.user, self.pwd, self.server, self )
         self.nd.show()
 
+    def addInputReject(self):
+        self.nd = addInputRejectGui( self.user, self.pwd, self.server, self )
+        self.nd.show()
+
+    def addInputDrop(self):
+        self.nd = addInputDropGui( self.user, self.pwd, self.server, self )
+        self.nd.show()
+
+    def addForwardAccept(self):
+        self.nd = addForwardAcceptGui(self.user, self.pwd, self.server, self )
+        self.nd.show()
+
+    def addForwardDrop(self):
+        self.nd = addForwardDropGui( self.user, self.pwd, self.server, self )
+        self.nd.show()
+
+    def addForwardReject(self):
+        self.nd = addForwardRejectGui( self.user, self.pwd, self.server, self )
+        self.nd.show()
+    """
     def addSrcNat(self):
         self.nd = addSrcNatGui( self.user, self.pwd, self.server, self )
         self.nd.show()
@@ -139,14 +161,19 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
     def addDstAccept(self):
         self.nd = addDstAcceptGui( self.user, self.pwd, self.server, self )
         self.nd.show()
+    """
 
     def init_buttons(self):
-        self.refreshButton.clicked.connect( self.listNat)
+        self.refreshButton.clicked.connect( self.listRules)
         self.enableButton.clicked.connect(self.enableRule)
         self.disableButton.clicked.connect(self.disableRule)
-        self.masqButton.clicked.connect(self.addMasquarade)
+        self.inputacceptButton.clicked.connect(self.addInputAccept)
         self.removeButton.clicked.connect(self.removeRule)
-        self.srcButton.clicked.connect(self.addSrcNat)
-        self.dstButton.clicked.connect(self.addDstNat)
-        self.srcacceptButton.clicked.connect(self.addSrcAccept)
-        self.dstacceptButton.clicked.connect(self.addDstAccept)
+        self.inputrejectButton.clicked.connect(self.addInputReject)
+        self.inputdropButton.clicked.connect(self.addInputDrop)
+        self.fwacceptButton.clicked.connect( self.addForwardAccept )
+        self.fwrejectButton.clicked.connect( self.addForwardReject)
+        self.fwdropButton.clicked.connect( self.addForwardDrop)
+        #self.dstButton.clicked.connect(self.addDstNat)
+        #self.srcacceptButton.clicked.connect(self.addSrcAccept)
+        #self.dstacceptButton.clicked.connect(self.addDstAccept)
