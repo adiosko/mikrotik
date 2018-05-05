@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class interfaces:
     def __init__(self, address, username, password):
-        self.client = TikapyClient(address, 8728)
+        self.client = TikapySslClient(address, 8729)
         self.client.login(username, password)
 
     def listInterfaces(self):
@@ -12,8 +12,6 @@ class interfaces:
         :return:
         """
         iface = self.client.talk(['/interface/print'])
-        for i in iface:
-            print(iface[i])
         return iface
 
     def enableInterface(self,name):

@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class FirewallAddressList:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def listAddressList(self):
@@ -20,13 +20,13 @@ class FirewallAddressList:
                 print(ip[i]['list']+"\t"+ip[i]['address'])
         return ip
 
-    def addAddressList(self,name):
+    def addAddressList(self,name,address):
         """
         Method will add address list
         :param name:
         :return:
         """
-        ip = self.client.talk(['/ip/firewall/address-list/add','=list='+name])
+        ip = self.client.talk(['/ip/firewall/address-list/add','=list='+name,'=address='+address])
         return ip
 
     def removeList(self,number):

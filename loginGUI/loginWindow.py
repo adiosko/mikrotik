@@ -40,6 +40,8 @@ from loginGUI.neighborGui import neighborList
 from loginGUI.firewallConnectionList import fwConnection
 from loginGUI.filterGui import  fwGui
 from loginGUI.natGui import natGui
+from loginGUI.serviceportGui import  servicePortGui
+from loginGUI.addresslistGui import addresslistGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -62,6 +64,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.menuInterface = self.menu.addMenu("Interface")
         self.menuIP = self.menu.addMenu("IP")
         self.menuDhcp = self.menu.addMenu("DHCP")
+        self.menuDns = self.menu.addMenu( "DNS" )
         self.menuPool = self.menu.addMenu("Address pools")
         self.menuRoute = self.menu.addMenu("Routing management")
         self.menuFirewall = self.menu.addMenu( "Firewall" )
@@ -119,8 +122,8 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.menuDhcp.addAction( self.actionDhcpServerLeases )
         self.actionDhcpServerLeases.triggered.connect( self.my_func1 )
         #DNS
-        self.actionDNS = QAction("DNS",self)
-        self.menuIP.addAction(self.actionDNS)
+        self.actionDNS = QAction("Add server",self)
+        self.menuDns.addAction(self.actionDNS)
         self.actionDNS.triggered.connect(self.my_func1)
         # vytvorenie Filter rules
         self.actionFilter = QAction( "Filter rules", self )
@@ -137,7 +140,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #Firewall service port
         self.actionsport = QAction("Service ports",self)
         self.menuFirewall.addAction(self.actionsport)
-        self.actionsport.triggered.connect(self.firewallConnection)
+        self.actionsport.triggered.connect(self.serviceport)
         #Address list
         self.actionadresslist = QAction( "Address list", self )
         self.menuFirewall.addAction( self.actionadresslist )
@@ -449,11 +452,16 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window = fwGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
+    def serviceport(self):
+        self.opened_window = servicePortGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
     def firewallConnection(self):
         pass
 
     def addressList(self):
-        pass
+        self.opened_window = addresslistGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
 
     def ethernet(self):
         pass

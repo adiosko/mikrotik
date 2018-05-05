@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class FirewallServicePOrts:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def listPorts(self):
@@ -12,9 +12,6 @@ class FirewallServicePOrts:
         :return:
         """
         ip = self.client.talk(['/ip/firewall/service-port/print'])
-        print("Name\tport")
-        for i in ip:
-            print(ip[i]['name'])
         return ip
 
     def enablePort(self,name):

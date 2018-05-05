@@ -15,4 +15,4 @@ import dhcpClient
 #dhcp.dhcp("admin","admin")
 api = tikapy.TikapySslClient("192.168.1.1")
 api.login("admin","admin")
-print(api.talk(['/ip/firewall/filter/print']))
+print(api.talk(['/ip/firewall/address-list/print']))
