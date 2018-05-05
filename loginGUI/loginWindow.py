@@ -42,6 +42,8 @@ from loginGUI.filterGui import  fwGui
 from loginGUI.natGui import natGui
 from loginGUI.serviceportGui import  servicePortGui
 from loginGUI.addresslistGui import addresslistGui
+from loginGUI.dnsGui import dnsGui
+from loginGUI.ndsstaticGui import dnsstaticGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -124,11 +126,15 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #DNS
         self.actionDNS = QAction("Add server",self)
         self.menuDns.addAction(self.actionDNS)
-        self.actionDNS.triggered.connect(self.my_func1)
+        self.actionDNS.triggered.connect(self.dnsServer)
         #DNS static record
-        self.actionDNS = QAction( "Static records", self )
-        self.menuDns.addAction( self.actionDNS )
-        self.actionDNS.triggered.connect( self.staticrecord )
+        self.actionDNSStatic = QAction( "Static records", self )
+        self.menuDns.addAction( self.actionDNSStatic )
+        self.actionDNSStatic.triggered.connect( self.staticrecord )
+        #DNS cache
+        self.actionDNSCache = QAction("DNS chache",self)
+        self.menuDns.addAction(self.actionDNSCache)
+        self.actionDNSCache.triggered.connect(self.cachedns)
         # vytvorenie Filter rules
         self.actionFilter = QAction( "Filter rules", self )
         self.menuFirewall.addAction( self.actionFilter )
@@ -460,6 +466,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window = servicePortGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
+    def dnsServer(self):
+        self.opened_window = dnsGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
     def firewallConnection(self):
         pass
 
@@ -467,8 +477,12 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window = addresslistGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
-    def staticrecord(self):
+    def cachedns(self):
         pass
+
+    def staticrecord(self):
+        self.opened_window = dnsstaticGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
 
     def ethernet(self):
         pass

@@ -3,16 +3,16 @@ from tikapy import TikapySslClient
 
 class DNSglobal:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
-    def setServers(self,server="8.8.8.8,8.8.4.4"):
+    def setServers(self,server):
         """
         Method will set dns servers
         :param server:
         :return:
         """
-        dns = self.client.talk(['/ip/dns/set','=servers='+server])
+        dns = self.client.talk(['/ip/dns/set','=servers='+server,'=allow-remote-requests=yes'])
         return dns
 
     def allowRemoteRequests(self,rq="yes"):
