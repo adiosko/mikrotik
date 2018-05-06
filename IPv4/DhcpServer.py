@@ -236,21 +236,15 @@ class DhcpServer:
         :return:
         """
         ipv4 = self.client.talk(['/ip/dhcp-server/lease/print'])
-        if ipv4 == {}:
-            print("No lease found")
-        else:
-            print("Address\tMac\tServer\tActive address\tActive mac\tactive-hostname")
-            for i in ipv4:
-                print(ipv4[i]['address']+"\t"+ipv4[i]['mac-address']+"\t"+ipv4[i]['server']+"\t"+ipv4[i]['active-address']+"\t"+ipv4[i]['active-mac-address']+"\t"+ipv4[i]['host-name'])
         return ipv4
 
-    def addLease(self,cid):
+    def addLease(self,address,mac,server):
         """
         Method will add lease
         :param cid: client id == IP address
         :return:
         """
-        ipv4 = self.client.talk(['/ip/dhcp-server/lease/add','=client-id='+cid])
+        ipv4 = self.client.talk(['/ip/dhcp-server/lease/add','=address='+address,'=mac-address='+mac,'=server='+server])
         return ipv4
 
     def removeLease(self,number):
@@ -424,6 +418,10 @@ class DhcpServer:
         :return:
         """
         ipv4 = self.client.talk( ['/ip/dhcp-server/lease/set', '=numbers=' + number, '=address-lists=' + adrlist] )
+        return ipv4
+
+    def makeStatic(self,number):
+        ipv4 = self.client.talk(['/ip/dhcp-server/lease/make-static','=numbers='+number])
         return ipv4
 
     #options

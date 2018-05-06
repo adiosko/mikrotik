@@ -44,6 +44,8 @@ from loginGUI.serviceportGui import  servicePortGui
 from loginGUI.addresslistGui import addresslistGui
 from loginGUI.dnsGui import dnsGui
 from loginGUI.ndsstaticGui import dnsstaticGui
+from loginGUI.dnscacheGui import dnscacheGui
+from loginGUI.dhcpleasesGui import dhcpleaseGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -122,7 +124,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         # vytvorenie DHCP server leases
         self.actionDhcpServerLeases = QAction( "DHCP Assigned Addresses", self )
         self.menuDhcp.addAction( self.actionDhcpServerLeases )
-        self.actionDhcpServerLeases.triggered.connect( self.my_func1 )
+        self.actionDhcpServerLeases.triggered.connect( self.dhcplease )
         #DNS
         self.actionDNS = QAction("Add server",self)
         self.menuDns.addAction(self.actionDNS)
@@ -478,10 +480,15 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window.show()
 
     def cachedns(self):
-        pass
+        self.opened_window = dnscacheGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
 
     def staticrecord(self):
         self.opened_window = dnsstaticGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def dhcplease(self):
+        self.opened_window= dhcpleaseGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
     def ethernet(self):

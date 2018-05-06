@@ -11,12 +11,7 @@ class DNScache:
         Method will list cache buffer
         :return:
         """
-        dns = self.client.talk(['/ip/dns/cache/print'])
-        if dns == {}:
-            print("No object found")
-        else:
-            for i in dns:
-                print(dns[i])
+        dns = self.client.talk(['/ip/dns/cache/all/print'])
         return dns
 
     def flushDNS(self):
