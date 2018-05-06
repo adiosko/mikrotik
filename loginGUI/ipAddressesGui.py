@@ -31,10 +31,12 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
         self.ipAddressValues.clear()
         self.networkValues.clear()
         self.interfaceValues.clear()
+        self.address_to_id = {}
         for i in devices:
             self.ipAddressValues.addItem( devices[i]['address'])
             self.networkValues.addItem(devices[i]['network'])
             self.interfaceValues.addItem(devices[i]['interface'])
+            self.address_to_id[devices[i]['address']] = devices[i]['.id']
 
     def addAddress(self):
         self.nd = addAddressGui(self.user,self.pwd,self.server, self)
@@ -42,29 +44,47 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def enableAddress(self):
-        current = self.ipAddressValues.currentRow()
-        itemAddress = self.ipAddressValues.item( current )
-        itemNetwork = self.networkValues.item( current )
-        itemInterface = self.interfaceValues.item( current )
-        self.addr.enableAddress(str(current))
-        itemAddress.setFlags( Qt.ItemIsSelectable )
-        itemNetwork.setFlags( Qt.ItemIsSelectable)
-        itemInterface.setFlags( Qt.ItemIsSelectable)
+        try:
+            current = self.ipAddressValues.currentRow()
+            itemAddress = self.ipAddressValues.item( current )
+            idAddress = self.address_to_id[itemAddress.text()]
+            self.addr.enableAddress(str(idAddress))
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Remove error" )
+            self.msg.setInformativeText( "Cannot enable dynamic record" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def disableAddress(self):
-        current = self.ipAddressValues.currentRow()
-        itemAddress = self.ipAddressValues.item(current)
-        itemNetwork = self.networkValues.item(current)
-        itemInterface = self.interfaceValues.item(current)
-        self.addr.disableAddress( str(current))
-        itemAddress.setFlags(Qt.NoItemFlags)
-        itemNetwork.setFlags( Qt.NoItemFlags )
-        itemInterface.setFlags( Qt.NoItemFlags )
+        try:
+            current = self.ipAddressValues.currentRow()
+            itemAddress = self.ipAddressValues.item( current )
+            idAddress = self.address_to_id[itemAddress.text()]
+            self.addr.disableAddress( str( idAddress ) )
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Disable error" )
+            self.msg.setInformativeText( "Cannot disable dynamic record" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def removeAddress(self):
-        current = self.ipAddressValues.currentRow()
-        self.addr.removeAddress(str(current))
-        self.listAddresses()
+        try:
+            current = self.ipAddressValues.currentRow()
+            itemAddress = self.ipAddressValues.item( current )
+            idAddress = self.address_to_id[itemAddress.text()]
+            self.addr.removeAddress( str( idAddress ) )
+            self.listAddresses()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Remove error" )
+            self.msg.setInformativeText( "Cannot remove dynamic record" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     # funguje na 30 percent
     def setAddress(self):

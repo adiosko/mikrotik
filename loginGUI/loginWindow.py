@@ -48,6 +48,7 @@ from loginGUI.dnscacheGui import dnscacheGui
 from loginGUI.dhcpleasesGui import dhcpleaseGui
 from loginGUI.dhcpClientGui import dhcpClientGui
 from loginGUI.dhcpRelayGui import dhcpRelayGui
+from loginGUI.dhcpServerGui import dhcpServerGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -69,14 +70,14 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #velke menu
         self.menuInterface = self.menu.addMenu("Interface")
         self.menuIP = self.menu.addMenu("IP")
+        self.menuPool = self.menu.addMenu( "Address pools" )
+        self.menuBridge = self.menu.addMenu( "Bridge" )
+        self.menuRoute = self.menu.addMenu( "Routing management" )
         self.menuDhcp = self.menu.addMenu("DHCP")
         self.menuDns = self.menu.addMenu( "DNS" )
-        self.menuPool = self.menu.addMenu("Address pools")
-        self.menuRoute = self.menu.addMenu("Routing management")
+        self.menuSystem = self.menu.addMenu( "Hostname" )
         self.menuFirewall = self.menu.addMenu( "Firewall" )
         self.menuWireless = self.menu.addMenu( "Wireless" )
-        self.menuBridge = self.menu.addMenu( "Bridge" )
-        self.menuSystem = self.menu.addMenu( "Hostname" )
         self.menuSystemInfo = self.menu.addMenu("System information")
         self.menuUser = self.menu.addMenu("User management")
         self.menuMaintenance = self.menu.addMenu("Maintenance")
@@ -93,9 +94,13 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.menuInterface.addAction( self.actionVLAN )
         self.actionVLAN.triggered.connect( self.vlan )
         #Connections
-        self.actionIfaceCon = QAction( "Connections", self )
+        self.actionIfaceCon = QAction( "Interface list members", self )
         self.menuInterface.addAction( self.actionIfaceCon )
         self.actionIfaceCon.triggered.connect( self.interfaceConnections )
+        # Connections
+        self.actionIfaceList = QAction( "Interface lists", self )
+        self.menuInterface.addAction( self.actionIfaceList )
+        self.actionIfaceList.triggered.connect( self.interfaceConnections )
         #self.menuFiles = self.menu.addMenu( "Files" )
         self.menuLog = self.menu.addMenu("Log")
         self.menuQuit = self.menu.addMenu("About")
@@ -122,7 +127,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         # vytvorenie DHCP server
         self.actionDhcpServer = QAction( "DHCP Server", self )
         self.menuDhcp.addAction( self.actionDhcpServer )
-        self.actionDhcpServer.triggered.connect( self.my_func1 )
+        self.actionDhcpServer.triggered.connect( self.dhcpserver )
         # vytvorenie DHCP server leases
         self.actionDhcpServerLeases = QAction( "DHCP Assigned Addresses", self )
         self.menuDhcp.addAction( self.actionDhcpServerLeases )
@@ -263,10 +268,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionBridge = QAction("Bridge",self)
         self.menuBridge.addAction(self.actionBridge)
         self.actionBridge.triggered.connect(self.bridge)
-        #Bridge ports -canceling, not compatible with API
-        #self.actionBridgePort = QAction( "Ports", self )
-        #self.menuBridge.addAction( self.actionBridgePort )
-        #self.actionBridgePort.triggered.connect( self.bridgePort )
+        #Bridge
+        self.actionBridgePort = QAction( "Ports", self )
+        self.menuBridge.addAction( self.actionBridgePort )
+        self.actionBridgePort.triggered.connect( self.bridgePort )
         # Bridge VLAN
         self.actionBridgeVlan = QAction( "VLAN", self )
         self.menuBridge.addAction( self.actionBridgeVlan )
@@ -499,6 +504,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
 
     def dhcprelay(self):
         self.opened_window = dhcpRelayGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def dhcpserver(self):
+        self.opened_window = dhcpServerGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
     def ethernet(self):

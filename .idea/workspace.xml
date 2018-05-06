@@ -3,9 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IPv4/DhcpCLient.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/DhcpCLient.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IPv4/DhcpRelay.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/DhcpRelay.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/DhcpServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/DhcpServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/BridgePorts.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/BridgePorts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loginGUI/arp.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/arp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loginGUI/bridgePorts.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/bridgePorts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loginGUI/interfaces.ui" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/interfaces.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loginGUI/interfacesGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/interfacesGui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loginGUI/ipAddressesGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/ipAddressesGui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loginGUI/loginWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/loginWindow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/loginGUI/ports.ui" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/ports.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <ignored path="diplomkap3.iws" />
@@ -18,8 +24,8 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/diplomkap3$main.coverage" NAME="main Coverage Results" MODIFIED="1525629393174" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/diplomkap3$loginGui.coverage" NAME="loginGui Coverage Results" MODIFIED="1525629733667" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/loginGUI" />
+    <SUITE FILE_PATH="coverage/diplomkap3$main.coverage" NAME="main Coverage Results" MODIFIED="1525643571743" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/diplomkap3$loginGui.coverage" NAME="loginGui Coverage Results" MODIFIED="1525646033778" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/loginGUI" />
     <SUITE FILE_PATH="coverage/diplomkap3$gui.coverage" NAME="gui Coverage Results" MODIFIED="1523217403732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -50,8 +56,56 @@
       <file leaf-file-name="loginWindow.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/loginGUI/loginWindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="501" column="33" lean-forward="true" selection-start-line="501" selection-start-column="33" selection-end-line="501" selection-end-column="33" />
+            <state relative-caret-position="222">
+              <caret line="87" column="20" lean-forward="true" selection-start-line="87" selection-start-column="20" selection-end-line="87" selection-end-column="20" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="interfacesGui.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/loginGUI/interfacesGui.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="287">
+              <caret line="45" column="33" selection-start-line="45" selection-start-column="33" selection-end-line="45" selection-end-column="33" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="addPort.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/loginGUI/addPort.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="377">
+              <caret line="37" column="56" selection-start-line="37" selection-start-column="56" selection-end-line="37" selection-end-column="56" />
+              <folding>
+                <element signature="e#0#36#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BridgePorts.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bridge/BridgePorts.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="5" column="52" selection-start-line="5" selection-start-column="52" selection-end-line="5" selection-end-column="52" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="bridgePorts.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/loginGUI/bridgePorts.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="422">
+              <caret line="62" column="27" lean-forward="true" selection-start-line="49" selection-start-column="4" selection-end-line="62" selection-end-column="27" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -63,28 +117,16 @@
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="165">
-              <caret line="17" column="31" selection-start-line="17" selection-start-column="31" selection-end-line="17" selection-end-column="31" />
+              <caret line="17" column="40" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="40" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DhcpRelay.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IPv4/DhcpRelay.py">
+      <file leaf-file-name="ipAddressesGui.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/loginGUI/ipAddressesGui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="29" column="68" selection-start-line="29" selection-start-column="68" selection-end-line="29" selection-end-column="68" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="addDhcpClient.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addDhcpClient.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="377">
-              <caret line="36" column="57" selection-end-line="45" selection-end-column="51" />
+            <state relative-caret-position="617">
+              <caret line="55" column="55" selection-start-line="55" selection-start-column="55" selection-end-line="55" selection-end-column="55" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -95,8 +137,8 @@
       <file leaf-file-name="addAddressGui.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/loginGUI/addAddressGui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
-              <caret line="31" column="37" selection-end-line="47" selection-end-column="51" />
+            <state relative-caret-position="420">
+              <caret line="34" column="8" lean-forward="true" selection-start-line="34" selection-start-column="8" selection-end-line="40" selection-end-column="27" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -104,59 +146,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dhcpClientGui.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/dhcpClientGui.py">
+      <file leaf-file-name="addArpGui.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/loginGUI/addArpGui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2220">
-              <caret line="148" column="53" selection-end-line="149" selection-end-column="59" />
+            <state relative-caret-position="302">
+              <caret line="33" column="24" lean-forward="true" selection-end-line="47" selection-end-column="51" />
               <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#0#36#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dhcpRelayGui.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/dhcpRelayGui.py">
+      <file leaf-file-name="poolGui.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/loginGUI/poolGui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="362">
-              <caret line="91" lean-forward="true" selection-start-line="91" selection-end-line="91" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="addDhcpRelayGui.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addDhcpRelayGui.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="525">
-              <caret line="41" column="8" lean-forward="true" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DhcpServer.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IPv4/DhcpServer.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6345">
-              <caret line="424" column="19" selection-start-line="424" selection-start-column="19" selection-end-line="424" selection-end-column="19" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dhcpleasesGui.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/dhcpleasesGui.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="167">
-              <caret line="115" column="22" lean-forward="true" selection-end-line="138" selection-end-column="58" />
+            <state relative-caret-position="407">
+              <caret line="48" column="24" lean-forward="true" selection-start-line="43" selection-start-column="4" selection-end-line="48" selection-end-column="24" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -189,7 +195,6 @@
       <find>restore</find>
       <find>connection</find>
       <find>Pool</find>
-      <find>Bridge</find>
       <find>dynamic</find>
       <find>action</find>
       <find>src-address</find>
@@ -206,6 +211,7 @@
       <find>Dns</find>
       <find>dns</find>
       <find>dhcp</find>
+      <find>Bridge</find>
     </findStrings>
     <replaceStrings>
       <replace>pptp-server</replace>
@@ -235,14 +241,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/IPv4/RouteNexthops.py" />
-        <option value="$PROJECT_DIR$/IPv4/RouteGeneral.py" />
-        <option value="$PROJECT_DIR$/IPv4/PoolUsedAddresses.py" />
-        <option value="$PROJECT_DIR$/IPv4/Pool.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addPoolGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/poolGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/neighborGui.py" />
-        <option value="$PROJECT_DIR$/IPv4/NeighborLIst.py" />
         <option value="$PROJECT_DIR$/IPv4/FirewallCOnnections.py" />
         <option value="$PROJECT_DIR$/loginGUI/firewallConnectionList.py" />
         <option value="$PROJECT_DIR$/loginGUI/addMasquaradeGui.py" />
@@ -276,16 +274,24 @@
         <option value="$PROJECT_DIR$/IPv4/DNScache.py" />
         <option value="$PROJECT_DIR$/loginGUI/dnscacheGui.py" />
         <option value="$PROJECT_DIR$/loginGUI/addSaticDhcpLease.py" />
-        <option value="$PROJECT_DIR$/IPv4/DhcpServer.py" />
         <option value="$PROJECT_DIR$/loginGUI/dhcpleasesGui.py" />
         <option value="$PROJECT_DIR$/IPv4/DhcpCLient.py" />
         <option value="$PROJECT_DIR$/loginGUI/addDhcpClient.py" />
         <option value="$PROJECT_DIR$/loginGUI/dhcpClientGui.py" />
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/IPv4/DhcpRelay.py" />
-        <option value="$PROJECT_DIR$/loginGUI/loginWindow.py" />
         <option value="$PROJECT_DIR$/loginGUI/dhcpRelayGui.py" />
         <option value="$PROJECT_DIR$/loginGUI/addDhcpRelayGui.py" />
+        <option value="$PROJECT_DIR$/IPv4/DhcpServer.py" />
+        <option value="$PROJECT_DIR$/loginGUI/dhcpServerGui.py" />
+        <option value="$PROJECT_DIR$/loginGUI/addDhcpServer.py" />
+        <option value="$PROJECT_DIR$/loginGUI/arp.py" />
+        <option value="$PROJECT_DIR$/loginGUI/ipAddressesGui.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/bridge/BridgePorts.py" />
+        <option value="$PROJECT_DIR$/loginGUI/addPort.py" />
+        <option value="$PROJECT_DIR$/loginGUI/bridgePorts.py" />
+        <option value="$PROJECT_DIR$/loginGUI/loginWindow.py" />
+        <option value="$PROJECT_DIR$/loginGUI/interfacesGui.py" />
       </list>
     </option>
   </component>
@@ -334,6 +340,11 @@
             <path>
               <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
               <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="bridge" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
@@ -626,9 +637,9 @@
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5506937" side_tool="true" weight="0.3135776" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3286638" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4960464" weight="0.3290461" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4960464" weight="0.32829374" />
       <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4493063" visible="true" weight="0.29589632" />
-      <window_info anchor="bottom" x="1931" y="373" width="1897" height="306" id="Terminal" order="9" sideWeight="0.4095941" weight="0.32686085" />
+      <window_info anchor="bottom" x="1931" y="373" width="1897" height="306" id="Terminal" order="9" sideWeight="0.4095941" weight="0.3261339" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15955175" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
@@ -646,21 +657,25 @@
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24934107" />
-      <window_info id="Structure" order="1" weight="0.24986821" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15955175" />
+      <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3286638" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3290461" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.48550344" visible="true" weight="0.44908896" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4960464" weight="0.3290461" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.4095941" weight="0.3279743" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5904059" side_tool="true" weight="0.3290461" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="3" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3290461" />
+      <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4493063" visible="true" weight="0.29589632" />
       <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="11" sideWeight="0.4960464" weight="0.3290461" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39956802" />
+      <window_info anchor="right" id="Database" order="4" />
+      <window_info anchor="bottom" x="1931" y="373" width="1897" height="306" id="Terminal" order="10" sideWeight="0.4095941" weight="0.3261339" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5506937" side_tool="true" weight="0.3135776" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info id="Favorites" order="2" side_tool="true" />
     </layout-to-restore>
   </component>
@@ -696,97 +711,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/IPv4/FirewallCOnnections.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="30" lean-forward="true" selection-start-line="8" selection-start-column="30" selection-end-line="8" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/firewallConnectionList.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="45" column="66" selection-start-line="45" selection-start-column="66" selection-end-line="45" selection-end-column="66" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/neighborGui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="19" column="24" lean-forward="true" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/ipAddressesGui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="40" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMasquaradeGui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="36" column="57" selection-end-line="45" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addSrcNat.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="39" column="41" selection-end-line="49" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addDstNatGui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="34" column="87" lean-forward="true" selection-start-line="34" selection-start-column="87" selection-end-line="34" selection-end-column="87" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/FirewallNAT.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="36" column="37" selection-start-line="36" selection-start-column="37" selection-end-line="36" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addSrcAccept.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="42" column="27" selection-end-line="49" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/FireallGeneralSetup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="50" lean-forward="true" selection-start-line="8" selection-start-column="50" selection-end-line="8" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/loginGUI/natGui.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -918,15 +842,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/arp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-373">
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/IPv4/FirewallAddressist.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
@@ -977,16 +892,6 @@
           <caret line="21" column="57" lean-forward="true" selection-start-line="21" selection-start-column="57" selection-end-line="21" selection-end-column="57" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addPoolGui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="15" column="24" selection-end-line="44" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1071,30 +976,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IPv4/DhcpServer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6345">
-          <caret line="424" column="19" selection-start-line="424" selection-start-column="19" selection-end-line="424" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/loginGUI/dhcpleasesGui.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="167">
           <caret line="115" column="22" lean-forward="true" selection-end-line="138" selection-end-column="58" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addAddressGui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="31" column="37" selection-end-line="47" selection-end-column="51" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
@@ -1111,19 +996,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="17" column="31" selection-start-line="17" selection-start-column="31" selection-end-line="17" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/loginGUI/dhcpClientGui.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2220">
           <caret line="148" column="53" selection-end-line="149" selection-end-column="59" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/addDhcpRelayGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="362">
+          <caret line="38" column="56" lean-forward="true" selection-start-line="38" selection-start-column="56" selection-end-line="38" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/dhcpRelayGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="606">
+          <caret line="91" lean-forward="true" selection-end-line="103" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IPv4/DhcpServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="19" lean-forward="true" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1138,40 +1046,156 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/dhcpServerGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/addDhcpServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="410">
+          <caret line="44" column="11" lean-forward="true" selection-start-line="44" selection-start-column="11" selection-end-line="44" selection-end-column="11" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/IPv4/DhcpRelay.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
-          <caret line="29" column="68" selection-start-line="29" selection-start-column="68" selection-end-line="29" selection-end-column="68" />
+          <caret line="29" column="68" selection-end-line="116" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/addPoolGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="18" column="16" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/arp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1140">
+          <caret line="76" column="56" selection-start-line="76" selection-start-column="56" selection-end-line="76" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/securityGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-180">
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="17" column="40" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/poolGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="407">
+          <caret line="48" column="24" lean-forward="true" selection-start-line="43" selection-start-column="4" selection-end-line="48" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/addAddressGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="34" column="8" lean-forward="true" selection-start-line="34" selection-start-column="8" selection-end-line="40" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/addArpGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="33" column="24" lean-forward="true" selection-end-line="47" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/addPort.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="377">
+          <caret line="37" column="56" selection-start-line="37" selection-start-column="56" selection-end-line="37" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/ipAddressesGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="617">
+          <caret line="55" column="55" selection-start-line="55" selection-start-column="55" selection-end-line="55" selection-end-column="55" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/loginGUI/loginWindow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="501" column="33" lean-forward="true" selection-start-line="501" selection-start-column="33" selection-end-line="501" selection-end-column="33" />
+        <state relative-caret-position="222">
+          <caret line="87" column="20" lean-forward="true" selection-start-line="87" selection-start-column="20" selection-end-line="87" selection-end-column="20" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/dhcpRelayGui.py">
+    <entry file="file://$PROJECT_DIR$/bridge/BridgePorts.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="91" lean-forward="true" selection-start-line="91" selection-end-line="91" />
+        <state relative-caret-position="75">
+          <caret line="5" column="52" selection-start-line="5" selection-start-column="52" selection-end-line="5" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loginGUI/bridgePorts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="422">
+          <caret line="62" column="27" lean-forward="true" selection-start-line="49" selection-start-column="4" selection-end-line="62" selection-end-column="27" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addDhcpRelayGui.py">
+    <entry file="file://$PROJECT_DIR$/loginGUI/interfacesGui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="41" column="8" lean-forward="true" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
+        <state relative-caret-position="287">
+          <caret line="45" column="33" selection-start-line="45" selection-start-column="33" selection-end-line="45" selection-end-column="33" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>

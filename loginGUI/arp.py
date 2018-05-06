@@ -34,8 +34,13 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
         self.dynamicField.clear()
         self.address_to_id = {}
         for i in devices:
+            state = ""
             self.ipAddressValues.addItem( devices[i]['address'])
-            self.macValues.addItem(devices[i]['mac-address'])
+            try:
+                state = devices[i]['mac-address']
+            except:
+                state = "None"
+            self.macValues.addItem( state)
             self.interfaceValues.addItem(devices[i]['interface'])
             self.dynamicField.addItem(devices[i]['dynamic'])
             self.address_to_id[devices[i]['address']] = devices[i]['.id']
@@ -45,48 +50,40 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
         self.nd.show()
 
     def enableArp(self):
-        currentAddress = self.ipAddressValues.currentRow()
-        currentMac = self.macValues.currentRow()
-        currentInterface = self.interfaceValues.currentRow()
-        itemAddress = self.ipAddressValues.item( currentAddress )
-        idAddress = self.address_to_id[itemAddress.text()]
-        itemMac = self.macValues.item( currentMac )
-        idMac = self.address_to_id[itemMac.text()]
-        itemInterface = self.interfaceValues.item( currentInterface )
-        idInterface =self.address_to_id[itemInterface.text()]
-        self.addr.enableArp(str(idAddress))
-        self.addr.enableArp( str( idMac ) )
-        self.addr.enableArp( str( idInterface ) )
-        itemAddress.setFlags( Qt.ItemIsSelectable )
-        itemMac.setFlags( Qt.ItemIsSelectable)
-        itemInterface.setFlags( Qt.ItemIsSelectable)
+        try:
+            currentAddress = self.ipAddressValues.currentRow()
+            itemAddress = self.ipAddressValues.item( currentAddress )
+            idAddress = self.address_to_id[itemAddress.text()]
+            self.addr.enableArp(str(idAddress))
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Enable item error" )
+            self.msg.setInformativeText( "Cannot enable dynamic record" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
+
 
     def disableArp(self):
-        currentAddress = self.ipAddressValues.currentRow()
-        currentMac = self.macValues.currentRow()
-        currentInterface = self.interfaceValues.currentRow()
-        itemAddress = self.ipAddressValues.item( currentAddress )
-        idAddress = self.address_to_id[itemAddress.text()]
-        itemMac = self.macValues.item( currentMac )
-        idMac = self.address_to_id[itemMac.text()]
-        itemInterface = self.interfaceValues.item( currentInterface )
-        idInterface = self.address_to_id[itemInterface.text()]
-        print("Address is "+str(currentAddress))
-        self.addr.disableArp( str(idAddress))
-        self.addr.disableArp(str(currentMac))
-        self.addr.disableArp(str(currentInterface))
-        itemAddress.setFlags(Qt.NoItemFlags)
-        itemMac.setFlags( Qt.NoItemFlags )
-        itemInterface.setFlags( Qt.NoItemFlags )
+        try:
+            currentAddress = self.ipAddressValues.currentRow()
+            itemAddress = self.ipAddressValues.item( currentAddress )
+            idAddress = self.address_to_id[itemAddress.text()]
+            self.addr.disableArp( str( idAddress ) )
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Disable item error" )
+            self.msg.setInformativeText( "Cannot disable dynamic record" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def removeArp(self):
         try:
             currentAddress = self.ipAddressValues.currentRow()
-            currentMac = self.macValues.currentRow()
-            currentInterface = self.interfaceValues.currentRow()
             itemAddress = self.ipAddressValues.item( currentAddress )
             idAddress = self.address_to_id[itemAddress.text()]
-            self.addr.removeArp(str(idAddress))
+            self.addr.removeArp( str( idAddress ) )
             self.listArp()
         except Exception as e:
             self.msg = QMessageBox()

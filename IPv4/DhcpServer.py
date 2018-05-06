@@ -12,21 +12,15 @@ class DhcpServer:
         :return:
         """
         ipv4 = self.client.talk(['/ip/dhcp-server/print'])
-        if ipv4 == {}:
-            print("No dhcp server found")
-        else:
-            print("Name\tInterface\tLease Time\tAddress pool")
-            for i in ipv4:
-                print(ipv4[i]['name']+"\t"+ipv4[i]['interface']+"\t"+ipv4[i]['lease-time']+"\t"+ipv4[i]['address-pool'])
         return ipv4
 
-    def addDhcp(self,interface):
+    def addDhcp(self,name,interface,pool,server,lease):
         """
         Method will add dhcp
         :param interface:
         :return:
         """
-        ipv4 = self.client.talk(['/ip/dhcp-server/add','=interface='+interface])
+        ipv4 = self.client.talk(['/ip/dhcp-server/add','=name='+name,'=interface='+interface,'=address-pool='+pool,'=relay='+server,'=lease-time='+lease])
         return ipv4
 
     def removeDhcp(self,name):

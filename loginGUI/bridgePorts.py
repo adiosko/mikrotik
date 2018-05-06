@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui, uic
 from loginGUI.addAddressGui import addAddressGui
 #my designed file
 from bridge.BridgePorts import  BridgePorts
-#from loginGUI.addVLAN import addVLANGui
+from loginGUI.addPort import addPortGui
 
 qtCreatorFile = "ports.ui"
 
@@ -32,17 +32,74 @@ class bridgePort(QtGui.QMainWindow,Ui_MainWindow):
         self.bridgeField.clear()
         self.priorityField.clear()
         self.costField.clear()
+        self.statusField.clear()
         self.address_to_id = {}
         for i in devices:
+            status = ""
             self.interfaceField.addItem( devices[i]['interface'])
-            self.bridgeField.addItem(devices[i]['bridge'])
+            try:
+                status = devices[i]['bridge']
+            except:
+                status = "Unknown"
+            self.bridgeField.addItem(status)
             self.priorityField.addItem(devices[i]['priority'])
-            self.costField.addItem(devices[i]['internal-path-cost'])
-            self.address_to_id[devices[i]['bridge']] = devices[i]['.id']
+            self.costField.addItem(devices[i]['path-cost'])
+            self.statusField.addItem(devices[i]['status'])
+            self.address_to_id[devices[i]['interface']] = devices[i]['.id']
+
+    def removePort(self):
+        try:
+            current = self.interfaceField.currentRow()
+            itemName = self.interfaceField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.removePort( str( idName) )
+            self.listPorts()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Port error" )
+            self.msg.setInformativeText( "Cannot remove port" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
+
+    def enablePort(self):
+        try:
+            current = self.interfaceField.currentRow()
+            itemName = self.interfaceField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enablePort( str( idName) )
+            self.listPorts()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Port error" )
+            self.msg.setInformativeText( "Cannot remove port" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
+
+    def disablePort(self):
+        try:
+            current = self.interfaceField.currentRow()
+            itemName = self.interfaceField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.disablePort( str( idName) )
+            self.listPorts()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Port error" )
+            self.msg.setInformativeText( "Cannot remove port" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
+
+    def addPort(self):
+        self.nd =addPortGui(self.user,self.pwd,self.server,self)
+        self.nd.show()
 
     def init_buttons(self):
         #self.addButton.clicked.connect( self.addVlan )
-        #self.enableButton.clicked.connect( self.enableVlan )
-        #self.disableButton.clicked.connect( self.disableVlan )
-        #self.removeButton.clicked.connect( self.removeVlan )
+        self.enableButton.clicked.connect( self.enablePort)
+        self.disableButton.clicked.connect( self.disablePort )
+        self.removeButton.clicked.connect( self.removePort)
         self.refreshButton.clicked.connect( self.listPorts )
+        self.addButton.clicked.connect(self.addPort)

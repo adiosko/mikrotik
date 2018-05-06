@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>608</width>
-    <height>263</height>
+    <width>653</width>
+    <height>656</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Interface list</string>
+   <string>Interfaces</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLineEdit" name="version_2">
@@ -59,7 +59,7 @@
       <x>0</x>
       <y>50</y>
       <width>161</width>
-      <height>201</height>
+      <height>551</height>
      </rect>
     </property>
    </widget>
@@ -82,7 +82,7 @@
       <x>160</x>
       <y>50</y>
       <width>161</width>
-      <height>201</height>
+      <height>551</height>
      </rect>
     </property>
    </widget>
@@ -92,8 +92,34 @@
       <x>320</x>
       <y>50</y>
       <width>121</width>
-      <height>201</height>
+      <height>551</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="enableButton">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>60</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enable</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="disableButton">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>100</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disable</string>
     </property>
    </widget>
   </widget>

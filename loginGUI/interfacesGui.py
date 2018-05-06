@@ -30,10 +30,44 @@ class interfaceGui(QtGui.QMainWindow,Ui_MainWindow):
         self.nameField.clear()
         self.typeField.clear()
         self.linkdownField.clear()
+        self.address_to_id = {}
         for i in devices:
             self.nameField.addItem( devices[i]['name'] )
             self.typeField.addItem(devices[i]['type'])
             self.linkdownField.addItem(devices[i]['link-downs'])
+            self.address_to_id[devices[i]['name']] = devices[i]['.id']
+
+    def enableInterface(self):
+        try:
+            current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enableInterface( str( idName) )
+            self.listInterfaces()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Port error" )
+            self.msg.setInformativeText( "Cannot enable interface" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
+
+    def disableInterface(self):
+        try:
+            current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.disableInterface( str( idName) )
+            self.listInterfaces()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Port error" )
+            self.msg.setInformativeText( "Cannot disable interface" )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listInterfaces )
+        self.enableButton.clicked.connect(self.enableInterface)
+        self.disableButton.clicked.connect(self.disableInterface)

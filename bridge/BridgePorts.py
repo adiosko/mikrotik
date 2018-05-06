@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class BridgePorts:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     #opravit!!!!!!!
@@ -13,9 +13,6 @@ class BridgePorts:
         :return:
         """
         bridge = self.client.talk(['/interface/bridge/port/print'])
-        print("Interface\tBridge\tpriority")
-        for i in bridge:
-            print(bridge[i]['interface']+"\t"+bridge[i]['bridge']+"\t"+bridge[i]['priority'])
         return bridge
 
     def addPort(self,interface,bridge):
