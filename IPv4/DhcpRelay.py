@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class DhcpRelay:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def listRelay(self):
@@ -20,14 +20,14 @@ class DhcpRelay:
                 print(ipv4[i]['name']+"\t"+ipv4[i]['interface']+"\t"+ipv4[i]['dhcp-server'])
         return ipv4
 
-    def addRelay(self,interface,server):
+    def addRelay(self,name,interface,server):
         """
         Method will add relay
         :param interface:
         :param server: dhcp server
         :return:
         """
-        ipv4 = self.client.talk(['/ip/dhcp-relay/add','=interface='+interface,'=dhcp-server='+server])
+        ipv4 = self.client.talk(['/ip/dhcp-relay/add','=name='+name,'=interface='+interface,'=dhcp-server='+server])
         return ipv4
 
     def removeRelay(self,name):

@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class DhcpClient:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def listCLients(self):
@@ -12,13 +12,11 @@ class DhcpClient:
         :return:
         """
         ipv4 = self.client.talk(['/ip/dhcp-client/print'])
-        if ipv4 == {}:
-            print("No client found")
-        else:
-            print("Interface\tUse peer dns\tAdd default route\tIP address\tExpires\tStatus")
-            for i in ipv4:
-                print(ipv4[i]['interface']+"\t"+ipv4[i]['use-peer-dns']+"\t"+ipv4[i]['add-default-route']+"\t"+ipv4[i]['address']+"\t"+ipv4[i]['expires-after']+"\t"+ipv4[i]['status'])
         return ipv4
+
+    def addClient(self,interface):
+        ip = self.client.talk(['/ip/dhcp-client/add','=interface='+interface,'=use-peer-dns=yes','=use-peer-ntp=yes','=add-default-route=yes'])
+        return ip
 
     def releaseAddress(self,number):
         """

@@ -46,6 +46,8 @@ from loginGUI.dnsGui import dnsGui
 from loginGUI.ndsstaticGui import dnsstaticGui
 from loginGUI.dnscacheGui import dnscacheGui
 from loginGUI.dhcpleasesGui import dhcpleaseGui
+from loginGUI.dhcpClientGui import dhcpClientGui
+from loginGUI.dhcpRelayGui import dhcpRelayGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -112,11 +114,11 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #vytvorenie DHCP klient
         self.actionDhcpClient = QAction("DHCP Client",self)
         self.menuDhcp.addAction(self.actionDhcpClient)
-        self.actionDhcpClient.triggered.connect(self.my_func1)
+        self.actionDhcpClient.triggered.connect(self.dhcpclient)
         #dhcp relay
         self.actionRelay = QAction("DHCP Relay",self)
         self.menuDhcp.addAction(self.actionRelay)
-        self.actionRelay.triggered.connect(self.my_func1)
+        self.actionRelay.triggered.connect(self.dhcprelay)
         # vytvorenie DHCP server
         self.actionDhcpServer = QAction( "DHCP Server", self )
         self.menuDhcp.addAction( self.actionDhcpServer )
@@ -489,6 +491,14 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
 
     def dhcplease(self):
         self.opened_window= dhcpleaseGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def dhcpclient(self):
+        self.opened_window = dhcpClientGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def dhcprelay(self):
+        self.opened_window = dhcpRelayGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
     def ethernet(self):
