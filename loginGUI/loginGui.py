@@ -28,10 +28,6 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.recordMacAddress()
         #self.ui.calc_tax_button.clicked.connect(self.calculateTax())
 
-    def init_buttons(self):
-        self.cancelButton.clicked.connect(self.cancelLogin)
-        self.loginButton.clicked.connect(self.loginLogin)
-
     def helloWorld(self,strword):
         print("Hello "+strword)
 
@@ -44,20 +40,26 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         self.pwd = self.passwordField.text()
         self.server = self.addressField.text()
         self.loginIP()
-    """
+
     def recordMacAddress(self):
         devices = self.loginmanager.listMikrotikDevices()
         print(devices)
         for device in devices:   
-            self.macList.append(device)
+            self.macList.addItem(str(device))
 
     def recordIPAddress(self):
         devices = self.loginIpManager.listMikrotikDevices()
         print(devices)
         for device in devices:
-            self.ipList.append(device)
-    """
+            self.ipList.addItem(str(device))
 
+    def init_buttons(self):
+        self.cancelButton.clicked.connect(self.cancelLogin)
+        self.loginButton.clicked.connect(self.loginLogin)
+        self.findipButton.clicked.connect(self.recordIPAddress)
+        self.findmacButton.clicked.connect(self.recordMacAddress)
+
+    """
     def loginMac(self):
         self.server = self.addressField.text()
         self.user = self.userField.text()
@@ -71,7 +73,7 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
             print(client.talk(['/ip/address/print']))
         else:
             print("retry")
-
+    """
 
     def loginIP(self):
         try:
@@ -92,6 +94,8 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.setInformativeText( "Wrong username or password" )
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
+
+
 
 
 

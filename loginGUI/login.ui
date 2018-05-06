@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>757</width>
-    <height>519</height>
+    <width>831</width>
+    <height>514</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,7 +101,7 @@
    <widget class="QListView" name="listView">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>40</x>
       <y>220</y>
       <width>631</width>
       <height>241</height>
@@ -150,8 +150,8 @@
    <widget class="QPushButton" name="loginButton">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>10</y>
+      <x>360</x>
+      <y>30</y>
       <width>88</width>
       <height>29</height>
      </rect>
@@ -163,8 +163,8 @@
    <widget class="QPushButton" name="cancelButton">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>50</y>
+      <x>360</x>
+      <y>70</y>
       <width>88</width>
       <height>29</height>
      </rect>
@@ -173,22 +173,48 @@
      <string>Cancel</string>
     </property>
    </widget>
-   <widget class="QListView" name="ipList">
+   <widget class="QPushButton" name="findipButton">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>250</y>
-      <width>181</width>
-      <height>211</height>
+      <x>680</x>
+      <y>220</y>
+      <width>121</width>
+      <height>29</height>
      </rect>
     </property>
+    <property name="text">
+     <string>Find devices IP</string>
+    </property>
    </widget>
-   <widget class="QListView" name="macList">
+   <widget class="QPushButton" name="findmacButton">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>260</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Find devices MAC</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="macList">
     <property name="geometry">
      <rect>
       <x>30</x>
       <y>250</y>
       <width>151</width>
+      <height>211</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="ipList">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>250</y>
+      <width>181</width>
       <height>211</height>
      </rect>
     </property>
@@ -199,7 +225,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>757</width>
+     <width>831</width>
      <height>23</height>
     </rect>
    </property>
