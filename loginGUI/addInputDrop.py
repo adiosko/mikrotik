@@ -39,7 +39,7 @@ class addInputDropGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Input error " )
-            self.msg.setInformativeText( "Wrong data inserted" )
+            self.msg.setInformativeText( str(e) )
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
 

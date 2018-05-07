@@ -36,7 +36,7 @@ class addAddressGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Interface error" )
-            self.msg.setInformativeText( "Interface error or address must be with prefix" )
+            self.msg.setInformativeText(str(e))
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
 

@@ -25,12 +25,20 @@ class addUserGui(QtGui.QMainWindow,Ui_MainWindow):
         self.addr = Users(self.server,self.user,self.pwd)
 
     def okLogin(self):
-        user = self.userField.text()
-        password = self.passwordField.text()
-        group = self.groupField.text()
-        self.addr.addUser(user,password,group)
-        self.address_window.listUsers()
-        self.close()
+        try:
+            user = self.userField.text()
+            password = self.passwordField.text()
+            group = self.groupField.text()
+            self.addr.addUser(user,password,group)
+            self.address_window.listUsers()
+            self.close()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Route error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def cancelLogin(self):
         self.close()

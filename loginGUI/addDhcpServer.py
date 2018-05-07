@@ -26,28 +26,29 @@ class addDhcpServerGui(QtGui.QMainWindow,Ui_MainWindow):
         self.addr = DhcpServer(self.server,self.user,self.pwd)
 
     def okLogin(self):
-        name = self.nameField.toPlainText()
-        interface = self.interfaceField.toPlainText()
-        pool = self.poolField.toPlainText()
-        server = self.serverField.toPlainText()
-        lease = self.leaseField.toPlainText()
-        self.addr.addDhcp(name,interface,pool,server,lease)
-        self.address_window.listAddresses()
-        self.close()
-        """
+        try:
+            name = self.nameField.toPlainText()
+            interface = self.interfaceField.toPlainText()
+            pool = self.poolField.toPlainText()
+            server = self.serverField.toPlainText()
+            lease = self.leaseField.toPlainText()
+            self.addr.addDhcp(name,interface,pool,server,lease)
+            self.address_window.listAddresses()
+            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Interface error" )
-            self.msg.setInformativeText( "Input error" )
+            self.msg.setInformativeText( str(e) )
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
-        """
-    """
+
+    """    
     def pool(self):
         self.nd = addPool( self.user, self.pwd, self.server)
         self.nd.show()
     """
+
 
     def cancelLogin(self):
         self.close()

@@ -38,7 +38,7 @@ class addWirelessInterfaceGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Master interface error" )
-            self.msg.setInformativeText( "Cannot remove master interface" )
+            self.msg.setInformativeText( str(e) )
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
 

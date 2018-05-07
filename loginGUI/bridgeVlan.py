@@ -37,9 +37,17 @@ class bridgeVLAN(QtGui.QMainWindow,Ui_MainWindow):
             self.address_to_id[devices[i]['bridge']] = devices[i]['.id']
 
     def enableVlan(self):
-        current = self.bridgeField.currentRow()
-        self.addr.enableVlan( str( current ) )
-        self.listVlan()
+        try:
+            current = self.bridgeField.currentRow()
+            self.addr.enableVlan( str( current ) )
+            self.listVlan()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Bridge error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
         """
         currentBridge = self.bridgeField.currentRow()
         currentVlan = self.vlanField.currentRow()

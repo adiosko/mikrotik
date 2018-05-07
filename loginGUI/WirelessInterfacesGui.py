@@ -31,33 +31,58 @@ class wirelessInterfaceGui(QtGui.QMainWindow,Ui_MainWindow):
         self.nameField.clear()
         self.typeField.clear()
         self.linkdownField.clear()
+        self.address_to_id = {}
         for i in devices:
             self.nameField.addItem( devices[i]['name'] )
             self.typeField.addItem(devices[i]['type'])
             self.linkdownField.addItem(devices[i]['link-downs'])
+            self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def removeInterface(self):
         try:
             current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
             self.addr.removeInterface( str( current ) )
             self.listInterfaces()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Master interface error" )
-            self.msg.setInformativeText( "Cannot remove master interface" )
+            self.msg.setInformativeText( str(e) )
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
 
     def enableInterface(self):
-        current = self.nameField.currentRow()
-        self.addr.enableInterface( str( current ) )
-        self.listInterfaces()
+        try:
+            current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enableInterface( str( current ) )
+            self.listInterfaces()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Master interface error" )
+            self.msg.setInformativeText( str(e) )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
+
 
     def disableInterface(self):
-        current = self.nameField.currentRow()
-        self.addr.disableInterface( str( current ) )
-        self.listInterfaces()
+        try:
+            current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.disableInterface( str( current ) )
+            self.listInterfaces()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Master interface error" )
+            self.msg.setInformativeText( str(e) )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def addInterface(self):
         self.nd = addWirelessInterfaceGui( self.user, self.pwd, self.server, self )

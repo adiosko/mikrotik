@@ -4,7 +4,7 @@ from tikapy import TikapySslClient
 
 class ethernet:
     def __init__(self, address, username, password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username, password )
 
     def printInterface(self):
@@ -13,8 +13,6 @@ class ethernet:
         :return:
         """
         iface = self.client.talk(['/interface/ethernet/print'])
-        for i in iface:
-            print(iface[i])
         return iface
 
     def enableInterface(self,name):
@@ -43,4 +41,8 @@ class ethernet:
         :return:
         """
         iface = self.client.talk( ['/interface/ethernet/comment', '=numbers=' + name,'=comment='+comment] )
+        return iface
+
+    def resetMac(self,number):
+        iface = self.client.talk(['/interface/ethernet/reset-mac-address','=numbers='+number])
         return iface

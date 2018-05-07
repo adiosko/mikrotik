@@ -29,7 +29,7 @@ class hostnameGui(QtGui.QMainWindow,Ui_MainWindow):
         self.addr.setHostname(hostname)
 
     def cancelButon(self):
-        sys.exit()
+        self.close()
 
     def init_buttons(self):
         self.cancelButton.clicked.connect( self.cancelButon )

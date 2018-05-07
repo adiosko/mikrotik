@@ -36,11 +36,23 @@ class usersGui(QtGui.QMainWindow,Ui_MainWindow):
             self.userField.addItem( devices[i]['name'])
             self.groupField.addItem(devices[i]['group'])
             self.addressField.addItem(devices[i]['address'])
+            self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def removeUser(self):
-        current = self.userField.currentRow()
-        self.addr.deleteUser( str( current ) )
-        self.listUsers()
+        try:
+            current = self.userField.currentRow()
+            itemName = self.userField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.deleteUser( str( current ) )
+            self.listUsers()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "User error" )
+            self.msg.setInformativeText( str( e ) )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
+
 
     def enableUser(self):
         '''
@@ -50,14 +62,35 @@ class usersGui(QtGui.QMainWindow,Ui_MainWindow):
         self.addr.enableSystemUser( idUser)
         itemAddress.setFlags( Qt.ItemIsSelectable )
         '''
-        current = self.userField.currentRow()
-        self.addr.enableSystemUser(str(current))
-        self.listUsers()
+        try:
+            current = self.userField.currentRow()
+            itemName = self.userField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enableSystemUser( str( current ) )
+            self.listUsers()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "User error" )
+            self.msg.setInformativeText( str( e ) )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def disableUser(self):
-        current = self.userField.currentRow()
-        self.addr.disableUser( str( current ) )
-        self.listUsers()
+        try:
+            current = self.userField.currentRow()
+            itemName = self.userField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.disableUser( str( current ) )
+            self.listUsers()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "User error" )
+            self.msg.setInformativeText( str( e ) )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
+
 
     def addUser(self):
         self.nd = addUserGui( self.user, self.pwd, self.server, self )

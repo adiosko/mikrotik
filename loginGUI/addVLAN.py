@@ -23,11 +23,19 @@ class addVLANGui(QtGui.QMainWindow,Ui_MainWindow):
         self.addr = bridgeVlan( self.server, self.user, self.pwd )
 
     def okLogin(self):
-        bridge = self.bridgeField.toPlainText()
-        vlan  = self.vlanField.toPlainText()
-        self.addr.addVlan(bridge,vlan)
-        self.arp_window.listVlan()
-        self.close()
+        try:
+            bridge = self.bridgeField.toPlainText()
+            vlan  = self.vlanField.toPlainText()
+            self.addr.addVlan(bridge,vlan)
+            self.arp_window.listVlan()
+            self.close()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "VLAN error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def cancelLogin(self):
          self.close()

@@ -4,7 +4,7 @@ from tikapy import TikapySslClient
 
 class vlan:
     def __init__(self, address, username, password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username, password )
 
     def listVlan(self):
@@ -13,18 +13,16 @@ class vlan:
         :return:
         """
         vlan = self.client.talk(['/interface/vlan/print'])
-        for i in vlan:
-            print(vlan[i])
         return vlan
 
-    def addVlan(self,vlanId,interface):
+    def addVlan(self,name,vlanId,interface):
         """
 
         :param vlanId:
         :param interface:
         :return:
         """
-        vlan = self.client.talk(['/interface/vlan/add''=vlan-id='+vlanId,'=interface='+interface])
+        vlan = self.client.talk(['/interface/vlan/add','=name='+name,'=interface='+interface,'=vlan-id='+vlanId])
         return vlan
 
     def removeVlan(self,name):

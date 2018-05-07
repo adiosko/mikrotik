@@ -103,23 +103,39 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "NAT error" )
-            self.msg.setInformativeText( "Cannot remove dynamic NAT rule" )
+            self.msg.setInformativeText(str(e) )
             self.msg.setWindowTitle(str(e.args[0]))
             self.msg.show()
 
     def enableRule(self):
-        current = self.actionField.currentRow()
-        itemName = self.actionField.item( current )
-        idName = self.address_to_id[itemName.text()]
-        self.addr.enableRule( str( idName ) )
-        self.listRules()
+        try:
+            current = self.actionField.currentRow()
+            itemName = self.actionField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enableRule( str( idName ) )
+            self.listRules()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "FW error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def disableRule(self):
-        current = self.actionField.currentRow()
-        itemName = self.actionField.item( current )
-        idName = self.address_to_id[itemName.text()]
-        self.addr.disableRule( str( idName ) )
-        self.listRules()
+        try:
+            current = self.actionField.currentRow()
+            itemName = self.actionField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.disableRule( str( idName ) )
+            self.listRules()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "FW error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
 
     def addInputAccept(self):

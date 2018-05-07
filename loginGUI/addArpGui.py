@@ -36,12 +36,12 @@ class addArpGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Addiction error" )
-            self.msg.setInformativeText( "Invalid address or interface" )
+            self.msg.setInformativeText( str(e) )
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
 
     def cancelLogin(self):
-         sys.exit()
+         self.close()
 
     def init_buttons(self):
         self.cancelButton.clicked.connect(self.cancelLogin)

@@ -2,6 +2,7 @@ from PyQt4 import QtCore, QtGui, uic
 #import  LoginManager
 #my designed file
 from bridge.BridgeGeneral import  BridgeGeneral
+from PyQt4.QtGui import *
 import sys
 
 qtCreatorFile = "addBridge.ui"
@@ -23,11 +24,19 @@ class addBridgeGui(QtGui.QMainWindow,Ui_MainWindow):
         self.addr = BridgeGeneral( self.server, self.user, self.pwd )
 
     def okLogin(self):
-        name = self.nameField.toPlainText()
-        protocol = self.protocolField.toPlainText()
-        self.addr.addBridge(name,protocol)
-        self.bridge_window.listBridge()
-        self.close()
+        try:
+            name = self.nameField.toPlainText()
+            protocol = self.protocolField.toPlainText()
+            self.addr.addBridge(name,protocol)
+            self.bridge_window.listBridge()
+            self.close()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Addiction error" )
+            self.msg.setInformativeText( str(e) )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
     def cancelLogin(self):
          sys.exit()

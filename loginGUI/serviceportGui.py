@@ -56,18 +56,34 @@ class servicePortGui(QtGui.QMainWindow,Ui_MainWindow):
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def enableService(self):
-        current = self.nameField.currentRow()
-        itemName = self.nameField.item( current )
-        idName = self.address_to_id[itemName.text()]
-        self.addr.enablePort( str( idName ) )
-        self.listServices()
+        try:
+            current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enablePort( str( idName ) )
+            self.listServices()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Service error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def disableService(self):
-        current = self.nameField.currentRow()
-        itemName = self.nameField.item( current )
-        idName = self.address_to_id[itemName.text()]
-        self.addr.disablePort( str( idName) )
-        self.listServices()
+        try:
+            current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.disablePort( str( idName) )
+            self.listServices()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Service error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listServices )

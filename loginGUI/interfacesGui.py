@@ -30,11 +30,24 @@ class interfaceGui(QtGui.QMainWindow,Ui_MainWindow):
         self.nameField.clear()
         self.typeField.clear()
         self.linkdownField.clear()
+        self.disabledField.clear()
+        self.runField.clear()
+        self.txField.clear()
+        self.rxField.clear()
         self.address_to_id = {}
         for i in devices:
+            state = ""
             self.nameField.addItem( devices[i]['name'] )
             self.typeField.addItem(devices[i]['type'])
             self.linkdownField.addItem(devices[i]['link-downs'])
+            try:
+                state = devices[i]['disabled']
+            except:
+                state = "Unknown"
+            self.disabledField.addItem(state)
+            self.runField.addItem(devices[i]['running'])
+            self.txField.addItem(devices[i]['tx-byte'])
+            self.rxField.addItem(devices[i]['rx-byte'])
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def enableInterface(self):
@@ -48,7 +61,7 @@ class interfaceGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Port error" )
-            self.msg.setInformativeText( "Cannot enable interface" )
+            self.msg.setInformativeText( str(e) )
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
 
@@ -63,7 +76,7 @@ class interfaceGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Port error" )
-            self.msg.setInformativeText( "Cannot disable interface" )
+            self.msg.setInformativeText(str(e) )
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
 

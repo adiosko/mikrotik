@@ -42,16 +42,20 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         self.loginIP()
 
     def recordMacAddress(self):
+        self.macList.clear()
         devices = self.loginmanager.listMikrotikDevices()
         print(devices)
         for device in devices:   
             self.macList.addItem(str(device))
 
+
     def recordIPAddress(self):
+        self.ipList.clear()
         devices = self.loginIpManager.listMikrotikDevices()
         print(devices)
         for device in devices:
             self.ipList.addItem(str(device))
+
 
     def init_buttons(self):
         self.cancelButton.clicked.connect(self.cancelLogin)
@@ -91,7 +95,7 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Authentication error" )
-            self.msg.setInformativeText( "Wrong username or password" )
+            self.msg.setInformativeText(str(e))
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
 

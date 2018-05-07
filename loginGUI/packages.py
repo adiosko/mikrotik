@@ -34,24 +34,40 @@ class packages(QtGui.QMainWindow,Ui_MainWindow):
             self.versionField.addItem( devices[i]['version'])
 
     def enablePackage(self):
-        currentName = self.packageField.currentRow()
-        currentVersion = self.versionField.currentRow()
-        itemName = self.packageField.item( currentName )
-        itemVersion = self.versionField.item( currentVersion )
-        self.addr.enablePackage(str( currentName ) )
-        self.addr.enablePackage( str( currentVersion ) )
-        itemName.setFlags( Qt.ItemIsSelectable )
-        itemVersion.setFlags( Qt.ItemIsSelectable )
+        try:
+            currentName = self.packageField.currentRow()
+            currentVersion = self.versionField.currentRow()
+            itemName = self.packageField.item( currentName )
+            itemVersion = self.versionField.item( currentVersion )
+            self.addr.enablePackage(str( currentName ) )
+            self.addr.enablePackage( str( currentVersion ) )
+            itemName.setFlags( Qt.ItemIsSelectable )
+            itemVersion.setFlags( Qt.ItemIsSelectable )
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Package error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def disablePackage(self):
-        currentName = self.packageField.currentRow()
-        currentVersion = self.versionField.currentRow()
-        itemName = self.packageField.item( currentName )
-        itemVersion = self.versionField.item( currentVersion )
-        self.addr.disablePackage( str( currentName ) )
-        self.addr.disablePackage(str(currentVersion))
-        itemName.setFlags( Qt.ItemIsSelectable )
-        itemVersion.setFlags( Qt.ItemIsSelectable )
+        try:
+            currentName = self.packageField.currentRow()
+            currentVersion = self.versionField.currentRow()
+            itemName = self.packageField.item( currentName )
+            itemVersion = self.versionField.item( currentVersion )
+            self.addr.disablePackage( str( currentName ) )
+            self.addr.disablePackage(str(currentVersion))
+            itemName.setFlags( Qt.ItemIsSelectable )
+            itemVersion.setFlags( Qt.ItemIsSelectable )
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Package error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def init_buttons(self):
         self.enableButton.clicked.connect( self.enablePackage )

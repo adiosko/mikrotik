@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class interfaceList:
     def __init__(self, address, username, password):
-        self.client = TikapyClient(address, 8728)
+        self.client = TikapySslClient(address, 8729)
         self.client.login(username, password)
 
     def listInterafce(self):
@@ -12,8 +12,6 @@ class interfaceList:
         :return:
         """
         iface = self.client.talk(['/interface/list/member/print'])
-        for i in iface:
-            print(iface[i])
         return iface
 
     def addInterface(self,list,interface):
@@ -23,7 +21,7 @@ class interfaceList:
         :param interface:
         :return:
         """
-        iface = self.client.talk(['/interface/list/member,add','=list='+list,'=interface='+interface])
+        iface = self.client.talk(['/interface/list/member/add','=list='+list,'=interface='+interface])
         return iface
 
     def removeList(self,number):
@@ -61,4 +59,16 @@ class interfaceList:
         :return:
         """
         iface = self.client.talk(['/interface/list/member/comment', '=numbers=' + number,'=comment='+comment])
+        return iface
+
+    def interfaceListMemenrPrint(self):
+        iface = self.client.talk(['/interface/list/print'])
+        return iface
+
+    def addMember(self,name):
+        iface = self.client.talk(['/interface/list/add','=name='+name])
+        return iface
+
+    def removeMemeber(self,number):
+        iface = self.client.talk(['/interface/list/remove','=numbers='+number])
         return iface

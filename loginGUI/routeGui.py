@@ -53,18 +53,34 @@ class routeGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def enableRoute(self):
-        current = self.destField.currentRow()
-        itemName = self.destField.item( current )
-        idName = self.address_to_id[itemName.text()]
-        self.addr.enableRoute( str( idName ) )
-        self.listRoutes()
+        try:
+            current = self.destField.currentRow()
+            itemName = self.destField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enableRoute( str( idName ) )
+            self.listRoutes()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Route error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def disableRoute(self):
-        current = self.destField.currentRow()
-        itemName = self.destField.item( current )
-        idName = self.address_to_id[itemName.text()]
-        self.addr.disableRoute( str( idName ) )
-        self.listRoutes()
+        try:
+            current = self.destField.currentRow()
+            itemName = self.destField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.disableRoute( str( idName ) )
+            self.listRoutes()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Route error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def removeRoute(self):
         try:
@@ -77,7 +93,7 @@ class routeGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Route error" )
-            self.msg.setInformativeText( "Cannot remove dynamic route" )
+            self.msg.setInformativeText( str(e) )
             self.msg.setWindowTitle(str(e.args[0]))
             self.msg.show()
 

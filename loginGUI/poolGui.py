@@ -42,11 +42,19 @@ class poolGui(QtGui.QMainWindow,Ui_MainWindow):
         self.nd.show()
 
     def removePool(self):
-        current = self.nameField.currentRow()
-        itemName = self.nameField.item( current )
-        idName = self.address_to_id[itemName.text()]
-        self.addr.removePool( str( idName) )
-        self.listPools()
+        try:
+            current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.removePool( str( idName) )
+            self.listPools()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Pool error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listPools)

@@ -61,7 +61,7 @@ class addresslistGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Enable item error" )
-            self.msg.setInformativeText( "Cannot enable item" )
+            self.msg.setInformativeText(str(e) )
             self.msg.setWindowTitle(str(e.args[0]))
             self.msg.show()
 
@@ -76,7 +76,7 @@ class addresslistGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Disable error" )
-            self.msg.setInformativeText( "Cannot disable item" )
+            self.msg.setInformativeText(str(e)  )
             self.msg.setWindowTitle(str(e.args[0]))
             self.msg.show()
 
@@ -91,7 +91,7 @@ class addresslistGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
             self.msg.setText( "Item erro" )
-            self.msg.setInformativeText( "Cannot remove item" )
+            self.msg.setInformativeText( str(e)  )
             self.msg.setWindowTitle(str(e.args[0]))
             self.msg.show()
 

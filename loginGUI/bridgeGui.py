@@ -46,14 +46,30 @@ class bridgeGUI(QtGui.QMainWindow,Ui_MainWindow):
         self.listBridge()
 
     def disableBridge(self):
-        current = self.nameField.currentRow()
-        self.addr.disableBridge( str( current ) )
-        self.listBridge()
+        try:
+            current = self.nameField.currentRow()
+            self.addr.disableBridge( str( current ) )
+            self.listBridge()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Bridge error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def removeBridge(self):
-        current = self.nameField.currentRow()
-        self.addr.removeBridge( str( current ) )
-        self.listBridge()
+        try:
+            current = self.nameField.currentRow()
+            self.addr.removeBridge( str( current ) )
+            self.listBridge()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Bridge error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def addBridge(self):
         self.nd = addBridgeGui(self.user, self.pwd, self.server,self)

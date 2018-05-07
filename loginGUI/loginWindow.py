@@ -49,6 +49,10 @@ from loginGUI.dhcpleasesGui import dhcpleaseGui
 from loginGUI.dhcpClientGui import dhcpClientGui
 from loginGUI.dhcpRelayGui import dhcpRelayGui
 from loginGUI.dhcpServerGui import dhcpServerGui
+from loginGUI.interfaceListGui import interfaceListGui
+from loginGUI.interfaceListMembers import interfaceListMemberGui
+from loginGUI.ethernetGui import ethernetGui
+from loginGUI.interfaceVlanGui import interfaceVlanGui
 qtCreatorFile = "loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -92,15 +96,15 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #vlan
         self.actionVLAN = QAction( "VLAN", self )
         self.menuInterface.addAction( self.actionVLAN )
-        self.actionVLAN.triggered.connect( self.vlan )
+        self.actionVLAN.triggered.connect( self.vlanInterface )
         #Connections
         self.actionIfaceCon = QAction( "Interface list members", self )
         self.menuInterface.addAction( self.actionIfaceCon )
-        self.actionIfaceCon.triggered.connect( self.interfaceConnections )
+        self.actionIfaceCon.triggered.connect( self. interfaceList)
         # Connections
         self.actionIfaceList = QAction( "Interface lists", self )
         self.menuInterface.addAction( self.actionIfaceList )
-        self.actionIfaceList.triggered.connect( self.interfaceConnections )
+        self.actionIfaceList.triggered.connect( self.interfaceMembers )
         #self.menuFiles = self.menu.addMenu( "Files" )
         self.menuLog = self.menu.addMenu("Log")
         self.menuQuit = self.menu.addMenu("About")
@@ -511,13 +515,23 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window.show()
 
     def ethernet(self):
-        pass
+        self.opened_window = ethernetGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
 
     def vlan(self):
         pass
 
-    def interfaceConnections(self):
-        pass
+    def interfaceList(self):
+        self.opened_window = interfaceListGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def interfaceMembers(self):
+        self.opened_window = interfaceListMemberGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def vlanInterface(self):
+        self.opened_window = interfaceVlanGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
 
 
     def my_func1(self):
