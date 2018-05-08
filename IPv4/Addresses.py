@@ -13,15 +13,6 @@ class Addresses:
         :return:
         """
         ipv4 = self.client.talk(['/ip/address/print'])
-        if ipv4 == {}:
-            print("No address found")
-        else:
-            print("Address\tNetwork\tInterface")
-            for i in ipv4:
-                print(ipv4[i]['address']+"\t"+ipv4[i]['network']+"\t"+ipv4[i]['interface'])
-                addr = ipv4[i]['address']
-                netw = ipv4[i]['network']
-                iface = ipv4[i]['interface']
         return ipv4
 
     def addAddress(self,address,interface):

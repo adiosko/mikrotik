@@ -33,6 +33,7 @@ class bridgePort(QtGui.QMainWindow,Ui_MainWindow):
         self.priorityField.clear()
         self.costField.clear()
         self.statusField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             status = ""
@@ -45,6 +46,7 @@ class bridgePort(QtGui.QMainWindow,Ui_MainWindow):
             self.priorityField.addItem(devices[i]['priority'])
             self.costField.addItem(devices[i]['path-cost'])
             self.statusField.addItem(devices[i]['status'])
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['interface']] = devices[i]['.id']
 
     def removePort(self):

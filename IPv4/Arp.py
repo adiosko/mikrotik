@@ -12,15 +12,6 @@ class Arp:
         :return:
         """
         ipv4 = self.client.talk(['/ip/arp/print'])
-        if ipv4 == {}:
-            print("No arp entry")
-        else:
-            print("Address\tMAC\tInterface")
-            for i in ipv4:
-                try:
-                    print(ipv4[i]['address']+"\t"+ipv4[i]['mac-address']+"\t"+ipv4[i]['interface'])
-                except KeyError:
-                    pass
         return ipv4
 
     def addArp(self,interface,address,mac):

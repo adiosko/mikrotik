@@ -14,10 +14,6 @@ class Users:
         users = {}
         #client1 = self.client.login('admin','admin')
         users = self.client.talk(['/user/print'])
-        print("System users are: ")
-        print("User Disabled Group")
-        for i in users:
-            print(users[i]['name']+" "+users[i]['disabled']+" "+users[i]['group'])
         return users
 
     def addUser(self,username,password,group):

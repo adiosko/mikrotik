@@ -13,9 +13,6 @@ class RouteGeneral:
         :return:
         """
         route = self.client.talk(['/ip/route/print'])
-        print("Dst address\tGateway\tDistance\tPref source")
-        for i in route:
-            print(route[i]['dst-address']+"\t"+route[i]['gateway']+"\t"+route[i]['distance'])
         return route
 
 

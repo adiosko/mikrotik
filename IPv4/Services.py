@@ -12,9 +12,6 @@ class Services:
         :return:
         """
         service = self.client.talk(['/ip/service/print'])
-        print("Name\tPort")
-        for i in service:
-            print(service[i]['name']+"\t"+service[i]['port'])
         return service
 
     def enableService(self,name):

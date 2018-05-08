@@ -32,6 +32,7 @@ class dnsstaticGui(QtGui.QMainWindow,Ui_MainWindow):
         self.nameField.clear()
         self.addressField.clear()
         self.ttlField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             statettl = ""
@@ -42,6 +43,7 @@ class dnsstaticGui(QtGui.QMainWindow,Ui_MainWindow):
             except:
                 statettl = "None"
             self.ttlField.addItem( statettl)
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def enableItem(self):

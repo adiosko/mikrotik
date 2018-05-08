@@ -35,6 +35,7 @@ class dhcpleaseGui(QtGui.QMainWindow,Ui_MainWindow):
         self.hostField.clear()
         self.statusField.clear()
         self.dynamicField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             stateaddress = ""
@@ -64,6 +65,7 @@ class dhcpleaseGui(QtGui.QMainWindow,Ui_MainWindow):
             except:
                 statestatus = "static"
             self.dynamicField.addItem(statestatus)
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['address']] = devices[i]['.id']
 
     def enableLease(self):

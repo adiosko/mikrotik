@@ -32,6 +32,7 @@ class addresslistGui(QtGui.QMainWindow,Ui_MainWindow):
         self.addressField.clear()
         self.timeField.clear()
         self.createField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             statetime = ""
@@ -48,6 +49,12 @@ class addresslistGui(QtGui.QMainWindow,Ui_MainWindow):
             except:
                 stateCreate = "Unknown"
             self.createField.addItem( stateCreate)
+            statedis = ""
+            try:
+                statedis = devices[i]['disabled']
+            except:
+                statedis = "unknown"
+            self.disableField.addItem( statedis )
             self.address_to_id[devices[i]['list']] = devices[i]['.id']
 
     def enableItem(self):

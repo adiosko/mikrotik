@@ -12,12 +12,6 @@ class DhcpRelay:
         :return:
         """
         ipv4 = self.client.talk(['/ip/dhcp-relay/print'])
-        if ipv4 == {}:
-            print("No relay found")
-        else:
-            print("Name\tInterface\tDHCP server")
-            for i in ipv4:
-                print(ipv4[i]['name']+"\t"+ipv4[i]['interface']+"\t"+ipv4[i]['dhcp-server'])
         return ipv4
 
     def addRelay(self,name,interface,server):

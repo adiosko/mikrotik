@@ -30,15 +30,14 @@ class interfaceListMemberGui(QtGui.QMainWindow,Ui_MainWindow):
         devices = self.addr.listInterafce()
         self.listField.clear()
         self.interfaceField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             state = ""
-            try:
-                state = devices[i]['list']
-            except:
-                state = "None"
-            self.listField.addItem(state)
+            statedisable = ""
+            self.listField.addItem(devices[i]['list'])
             self.interfaceField.addItem(devices[i]['interface'])
+            self.disableField.addItem( devices[i]['disabled'] )
             self.address_to_id[devices[i]['list']] = devices[i]['.id']
 
     def removeInterface(self):

@@ -12,9 +12,6 @@ class Pool:
         :return:
         """
         pool = self.client.talk(['/ip/pool/print'])
-        print("Name\tAddresses")
-        for i in pool:
-            print(pool[i]['name']+"\t"+pool[i]['ranges'])
         return pool
 
     def addPool(self,name,addressRangeSubnet):

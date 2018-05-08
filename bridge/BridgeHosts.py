@@ -12,7 +12,4 @@ class BridgeHosts:
         :return:
         """
         bridge = self.client.talk(['/interface/bridge/host/print'])
-        print("Mac\tOut iface\tAge\tBridge")
-        for i in bridge:
-            print(bridge[i]['mac-address']+"\t"+bridge[i]['on-interface']+"\t"+bridge[i]['age']+"\t"+bridge[i]['bridge'])
         return bridge

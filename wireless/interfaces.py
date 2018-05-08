@@ -12,8 +12,6 @@ class interfaces:
         :return:
         """
         wifi = self.client.talk(['/interface/wireless/print'])
-        for i in wifi:
-            print(wifi[i])
         return wifi
 
     def addInterface(self,name,masterIface,security,vlan):

@@ -33,11 +33,13 @@ class routeGui(QtGui.QMainWindow,Ui_MainWindow):
         self.gwField.clear()
         self.distanceField.clear()
         self.dynamicField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             self.destField.addItem( devices[i]['dst-address'])
             self.gwField.addItem(devices[i]['gateway-status'])
             self.distanceField.addItem(devices[i]['distance'])
+            self.disableField.addItem(devices[i]['disabled'])
             state = ""
             try:
                 devices[i]['dynamic']

@@ -15,4 +15,4 @@ import dhcpClient
 #dhcp.dhcp("admin","admin")
 api = tikapy.TikapySslClient("192.168.1.1")
 api.login("admin","admin")
-print(api.talk(['/user/print']))
+print(api.talk(['/interface/wireless/print']))

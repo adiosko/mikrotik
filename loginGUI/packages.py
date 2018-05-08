@@ -29,20 +29,26 @@ class packages(QtGui.QMainWindow,Ui_MainWindow):
         devices = self.addr.listPackages()
         self.packageField.clear()
         self.versionField.clear()
+        self.disableField.clear()
+        self.address_to_id = {}
         for i in devices:
             self.packageField.addItem( devices[i]['name'])
             self.versionField.addItem( devices[i]['version'])
+            state = ""
+            try:
+                state = devices[i]['disabled']
+            except:
+                state = "Unknown"
+            self.disableField.addItem(state)
+            self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def enablePackage(self):
         try:
-            currentName = self.packageField.currentRow()
-            currentVersion = self.versionField.currentRow()
-            itemName = self.packageField.item( currentName )
-            itemVersion = self.versionField.item( currentVersion )
-            self.addr.enablePackage(str( currentName ) )
-            self.addr.enablePackage( str( currentVersion ) )
-            itemName.setFlags( Qt.ItemIsSelectable )
-            itemVersion.setFlags( Qt.ItemIsSelectable )
+            current = self.packageField.currentRow()
+            itemName = self.packageField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enablePackage(str( current ) )
+            self.listPackages()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
@@ -53,14 +59,11 @@ class packages(QtGui.QMainWindow,Ui_MainWindow):
 
     def disablePackage(self):
         try:
-            currentName = self.packageField.currentRow()
-            currentVersion = self.versionField.currentRow()
-            itemName = self.packageField.item( currentName )
-            itemVersion = self.versionField.item( currentVersion )
-            self.addr.disablePackage( str( currentName ) )
-            self.addr.disablePackage(str(currentVersion))
-            itemName.setFlags( Qt.ItemIsSelectable )
-            itemVersion.setFlags( Qt.ItemIsSelectable )
+            current = self.packageField.currentRow()
+            itemName = self.packageField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enablePackage( str( current ) )
+            self.listPackages()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

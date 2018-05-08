@@ -12,12 +12,6 @@ class DNSstatic:
         :return:
         """
         dns = self.client.talk(['/ip/dns/static/print'])
-        if dns == {}:
-            print("No record found")
-        else:
-            print("Name\tAddress\tTTL")
-            for i in dns:
-                print(dns[i]['name']+"\t"+dns[i]['address']+"\t"+dns[i]['ttl'])
         return dns
 
     def addRecord(self,name,address):

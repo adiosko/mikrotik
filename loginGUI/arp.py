@@ -32,6 +32,7 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
         self.macValues.clear()
         self.interfaceValues.clear()
         self.dynamicField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             state = ""
@@ -43,6 +44,7 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
             self.macValues.addItem( state)
             self.interfaceValues.addItem(devices[i]['interface'])
             self.dynamicField.addItem(devices[i]['dynamic'])
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['address']] = devices[i]['.id']
 
     def addArp(self):
@@ -55,6 +57,7 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
             itemAddress = self.ipAddressValues.item( currentAddress )
             idAddress = self.address_to_id[itemAddress.text()]
             self.addr.enableArp(str(idAddress))
+            self.listArp()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
@@ -70,6 +73,7 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
             itemAddress = self.ipAddressValues.item( currentAddress )
             idAddress = self.address_to_id[itemAddress.text()]
             self.addr.disableArp( str( idAddress ) )
+            self.listArp()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

@@ -32,6 +32,7 @@ class dhcpRelayGui(QtGui.QMainWindow,Ui_MainWindow):
         self.interfaceField.clear()
         self.dhcpField.clear()
         self.localField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             statelocal = ""
@@ -43,6 +44,7 @@ class dhcpRelayGui(QtGui.QMainWindow,Ui_MainWindow):
             except:
                 statelocal = "None"
             self.localField.addItem(statelocal)
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def enableAddress(self):

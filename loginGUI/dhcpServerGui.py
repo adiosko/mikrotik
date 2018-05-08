@@ -33,6 +33,7 @@ class dhcpServerGui(QtGui.QMainWindow,Ui_MainWindow):
         self.leaseField.clear()
         self.poolField.clear()
         self.dynamicField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             statelocal = ""
@@ -50,6 +51,7 @@ class dhcpServerGui(QtGui.QMainWindow,Ui_MainWindow):
             except:
                 statedynamic = "Static"
             self.dynamicField.addItem(statedynamic)
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def enableAddress(self):

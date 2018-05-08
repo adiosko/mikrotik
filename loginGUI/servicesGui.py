@@ -31,11 +31,13 @@ class servicesGui(QtGui.QMainWindow,Ui_MainWindow):
         self.nameField.clear()
         self.portField.clear()
         self.availableField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             self.nameField.addItem( devices[i]['name'] )
             self.portField.addItem(devices[i]['port'])
             self.availableField.addItem(devices[i]['address'])
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def enableService(self):

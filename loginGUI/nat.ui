@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1214</width>
+    <width>1278</width>
     <height>626</height>
    </rect>
   </property>
@@ -86,7 +86,7 @@
    <widget class="QPushButton" name="refreshButton">
     <property name="geometry">
      <rect>
-      <x>940</x>
+      <x>1000</x>
       <y>0</y>
       <width>121</width>
       <height>29</height>
@@ -119,7 +119,7 @@
    <widget class="QPushButton" name="removeButton">
     <property name="geometry">
      <rect>
-      <x>940</x>
+      <x>1000</x>
       <y>30</y>
       <width>121</width>
       <height>29</height>
@@ -132,7 +132,7 @@
    <widget class="QPushButton" name="enableButton">
     <property name="geometry">
      <rect>
-      <x>940</x>
+      <x>1000</x>
       <y>60</y>
       <width>121</width>
       <height>29</height>
@@ -145,7 +145,7 @@
    <widget class="QPushButton" name="disableButton">
     <property name="geometry">
      <rect>
-      <x>940</x>
+      <x>1000</x>
       <y>90</y>
       <width>121</width>
       <height>29</height>
@@ -158,7 +158,7 @@
    <widget class="QPushButton" name="srcacceptButton">
     <property name="geometry">
      <rect>
-      <x>1070</x>
+      <x>1130</x>
       <y>0</y>
       <width>141</width>
       <height>29</height>
@@ -171,7 +171,7 @@
    <widget class="QPushButton" name="dstacceptButton">
     <property name="geometry">
      <rect>
-      <x>1070</x>
+      <x>1130</x>
       <y>30</y>
       <width>141</width>
       <height>29</height>
@@ -184,7 +184,7 @@
    <widget class="QPushButton" name="dstButton">
     <property name="geometry">
      <rect>
-      <x>1070</x>
+      <x>1130</x>
       <y>60</y>
       <width>141</width>
       <height>29</height>
@@ -197,7 +197,7 @@
    <widget class="QPushButton" name="srcButton">
     <property name="geometry">
      <rect>
-      <x>1070</x>
+      <x>1130</x>
       <y>90</y>
       <width>141</width>
       <height>29</height>
@@ -210,7 +210,7 @@
    <widget class="QPushButton" name="masqButton">
     <property name="geometry">
      <rect>
-      <x>1070</x>
+      <x>1130</x>
       <y>120</y>
       <width>141</width>
       <height>29</height>
@@ -359,6 +359,29 @@
       <width>81</width>
       <height>501</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="disableField">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>30</y>
+      <width>81</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_10">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>0</y>
+      <width>81</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disabled</string>
     </property>
    </widget>
   </widget>

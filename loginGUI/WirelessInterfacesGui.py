@@ -31,11 +31,25 @@ class wirelessInterfaceGui(QtGui.QMainWindow,Ui_MainWindow):
         self.nameField.clear()
         self.typeField.clear()
         self.linkdownField.clear()
+        self.runField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             self.nameField.addItem( devices[i]['name'] )
             self.typeField.addItem(devices[i]['type'])
             self.linkdownField.addItem(devices[i]['link-downs'])
+            state = ""
+            try:
+                state = devices[i]['running']
+            except:
+                state = "Unknown"
+            self.runField.addItem(state)
+            statedis = ""
+            try:
+                statedis = devices[i]['disabled']
+            except:
+                statedis = "Unknown"
+            self.disableField.addItem(statedis)
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def removeInterface(self):

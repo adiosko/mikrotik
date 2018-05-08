@@ -31,11 +31,13 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
         self.ipAddressValues.clear()
         self.networkValues.clear()
         self.interfaceValues.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             self.ipAddressValues.addItem( devices[i]['address'])
             self.networkValues.addItem(devices[i]['network'])
             self.interfaceValues.addItem(devices[i]['interface'])
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['address']] = devices[i]['.id']
 
     def addAddress(self):
@@ -49,6 +51,7 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
             itemAddress = self.ipAddressValues.item( current )
             idAddress = self.address_to_id[itemAddress.text()]
             self.addr.enableAddress(str(idAddress))
+            self.listAddresses()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
@@ -63,6 +66,7 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
             itemAddress = self.ipAddressValues.item( current )
             idAddress = self.address_to_id[itemAddress.text()]
             self.addr.disableAddress( str( idAddress ) )
+            self.listAddresses()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
@@ -120,4 +124,4 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
         self.disableButton.clicked.connect(self.disableAddress)
         self.removeButton.clicked.connect(self.removeAddress)
         self.refreshButton.clicked.connect( self.listAddresses )
-        self.editButton.clicked.connect(self.setInterface)
+        #self.editButton.clicked.connect(self.setInterface)

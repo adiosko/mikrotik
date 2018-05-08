@@ -31,11 +31,18 @@ class usersGui(QtGui.QMainWindow,Ui_MainWindow):
         self.userField.clear()
         self.groupField.clear()
         self.addressField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             self.userField.addItem( devices[i]['name'])
             self.groupField.addItem(devices[i]['group'])
             self.addressField.addItem(devices[i]['address'])
+            state = ""
+            try:
+                state = devices[i]['disabled']
+            except:
+                state = "Unknown"
+            self.disableField.addItem(state)
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def removeUser(self):

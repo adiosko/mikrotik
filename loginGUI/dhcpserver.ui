@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>920</width>
-    <height>380</height>
+    <width>946</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <widget class="QPushButton" name="enableButton">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>810</x>
       <y>120</y>
       <width>121</width>
       <height>29</height>
@@ -89,7 +89,7 @@
    <widget class="QPushButton" name="disableButton">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>810</x>
       <y>160</y>
       <width>121</width>
       <height>29</height>
@@ -112,7 +112,7 @@
    <widget class="QPushButton" name="removeButton">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>810</x>
       <y>80</y>
       <width>121</width>
       <height>29</height>
@@ -148,7 +148,7 @@
    <widget class="QPushButton" name="addButton">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>810</x>
       <y>40</y>
       <width>121</width>
       <height>29</height>
@@ -161,7 +161,7 @@
    <widget class="QPushButton" name="refreshButton">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>810</x>
       <y>0</y>
       <width>121</width>
       <height>29</height>
@@ -192,6 +192,29 @@
     </property>
     <property name="text">
      <string>Dynamic</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="disableField">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>30</y>
+      <width>141</width>
+      <height>311</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_5">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>0</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disabled</string>
     </property>
    </widget>
   </widget>

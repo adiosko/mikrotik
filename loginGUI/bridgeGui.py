@@ -32,22 +32,40 @@ class bridgeGUI(QtGui.QMainWindow,Ui_MainWindow):
         self.mtuField.clear()
         self.protocolField.clear()
         self.macField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
-            self.nameField.addItem( devices[i]['name'])
-            self.mtuField.addItem(devices[i]['l2mtu'])
+            self.nameField.addItem(devices[i]['name'])
+            try:
+                status = devices[i]['l2mtu']
+            except:
+                status = "None"
+            self.mtuField.addItem(status )
             self.protocolField.addItem(devices[i]['protocol-mode'])
             self.macField.addItem(devices[i]['mac-address'])
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 
     def enableBridge(self):
-        current = self.nameField.currentRow()
-        self.addr.enableBridge( str( current ) )
-        self.listBridge()
+        try:
+            current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enableBridge( str( current ) )
+            self.listBridge()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Bridge error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def disableBridge(self):
         try:
             current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
             self.addr.disableBridge( str( current ) )
             self.listBridge()
         except Exception as e:
@@ -61,6 +79,8 @@ class bridgeGUI(QtGui.QMainWindow,Ui_MainWindow):
     def removeBridge(self):
         try:
             current = self.nameField.currentRow()
+            itemName = self.nameField.item( current )
+            idName = self.address_to_id[itemName.text()]
             self.addr.removeBridge( str( current ) )
             self.listBridge()
         except Exception as e:

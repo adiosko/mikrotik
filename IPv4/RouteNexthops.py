@@ -13,7 +13,4 @@ class RouteNexthops:
         :return:
         """
         route = self.client.talk(['/ip/route/nexthop/print'])
-        print("Address\tGateway Status\tScope")
-        for i in route:
-            print(route[i]['address']+"\t"+route[i]['gw-state']+"\t"+route[i]['scope'])
         return route

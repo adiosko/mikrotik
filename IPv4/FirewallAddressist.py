@@ -12,12 +12,6 @@ class FirewallAddressList:
         :return:
         """
         ip = self.client.talk(['/ip/firewall/address-list/print'])
-        if ip == {}:
-            print("No list found")
-        else:
-            print("Name\tAddress")
-            for i in ip:
-                print(ip[i]['list']+"\t"+ip[i]['address'])
         return ip
 
     def addAddressList(self,name,address):

@@ -12,9 +12,6 @@ class bridgeVlan:
         :return:
         """
         vlan = self.client.talk(['/interface/bridge/vlan/print'])
-        print("Bridge\tVLAN")
-        for i in vlan:
-            print(vlan[i]['bridge']+"\t"+vlan[i]['vlan-ids'])
         return vlan
 
 

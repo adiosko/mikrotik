@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
-    <height>267</height>
+    <width>1042</width>
+    <height>248</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="addButton">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>40</y>
+      <x>850</x>
+      <y>50</y>
       <width>121</width>
       <height>29</height>
      </rect>
@@ -53,8 +53,8 @@
    <widget class="QPushButton" name="enableButton">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>120</y>
+      <x>850</x>
+      <y>130</y>
       <width>121</width>
       <height>29</height>
      </rect>
@@ -66,8 +66,8 @@
    <widget class="QPushButton" name="disableButton">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>160</y>
+      <x>850</x>
+      <y>170</y>
       <width>121</width>
       <height>29</height>
      </rect>
@@ -102,8 +102,8 @@
    <widget class="QPushButton" name="removeButton">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>80</y>
+      <x>850</x>
+      <y>90</y>
       <width>121</width>
       <height>29</height>
      </rect>
@@ -125,8 +125,8 @@
    <widget class="QPushButton" name="refreshButton">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>0</y>
+      <x>850</x>
+      <y>10</y>
       <width>121</width>
       <height>29</height>
      </rect>
@@ -169,6 +169,29 @@
     </property>
     <property name="text">
      <string>MAC address</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="disableField">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>30</y>
+      <width>161</width>
+      <height>201</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_4">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>0</y>
+      <width>161</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disabled</string>
     </property>
    </widget>
   </widget>

@@ -30,16 +30,20 @@ class bridgeVLAN(QtGui.QMainWindow,Ui_MainWindow):
         devices = self.addr.listVlan()
         self.bridgeField.clear()
         self.vlanField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             self.bridgeField.addItem( devices[i]['bridge'])
             self.vlanField.addItem(devices[i]['vlan-ids'])
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['bridge']] = devices[i]['.id']
 
     def enableVlan(self):
         try:
             current = self.bridgeField.currentRow()
-            self.addr.enableVlan( str( current ) )
+            itemName = self.bridgeField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.enableVlan( str( idName ) )
             self.listVlan()
         except Exception as e:
             self.msg = QMessageBox()
@@ -48,52 +52,37 @@ class bridgeVLAN(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.setInformativeText( str(e)  )
             self.msg.setWindowTitle(str(e.args[0]))
             self.msg.show()
-        """
-        currentBridge = self.bridgeField.currentRow()
-        currentVlan = self.vlanField.currentRow()
-        itemBridge = self.bridgeField.item( currentBridge )
-        #idBridge = self.address_to_id[itemBridge]
-        itemVlan = self.vlanField.item( currentVlan )
-        #idVlan = self.address_to_id[itemVlan]
-        self.addr.enableVlan( str( itemBridge ) )
-        self.addr.enableVlan( str( itemVlan ) )
-        itemBridge.setFlags( Qt.ItemIsSelectable )
-        itemVlan.setFlags( Qt.ItemIsSelectable )
-        """
 
     def disableVlan(self):
-        current = self.bridgeField.currentRow()
-        self.addr.disableVlan( str( current ) )
-        self.listVlan()
-        """
-        currentBridge = self.bridgeField.currentRow()
-        currentVlan = self.vlanField.currentRow()
-        itemBridge = self.bridgeField.item( currentBridge )
-        #idBridge = self.address_to_id[itemBridge]
-        itemVlan = self.vlanField.item( currentVlan )
-        #idVlan = self.address_to_id[itemVlan]
-        self.addr.disableVlan( str( itemBridge) )
-        self.addr.disableVlan( str( itemVlan ) )
-        itemBridge.setFlags( Qt.ItemIsSelectable )
-        itemVlan.setFlags( Qt.ItemIsSelectable )
-        """
+        try:
+            current = self.bridgeField.currentRow()
+            itemName = self.bridgeField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.disableVlan( str( idName ) )
+            self.listVlan()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Bridge error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
+
 
     def removeVlan(self):
-        current = self.bridgeField.currentRow()
-        self.addr.removeVlan( str( current ) )
-        self.listVlan()
-        """
-        currentBridge = self.bridgeField.currentRow()
-        currentVlan = self.vlanField.currentRow()
-        itemBridge = self.bridgeField.item( currentBridge )
-        #idBridge = self.address_to_id[itemBridge]
-        itemVlan = self.vlanField.item( currentVlan )
-        #idVlan = self.address_to_id[itemVlan]
-        self.addr.removeVlan( str( itemBridge ) )
-        self.addr.removeVlan( str( itemVlan ) )
-        itemBridge.setFlags( Qt.ItemIsSelectable )
-        itemVlan.setFlags( Qt.ItemIsSelectable )
-        """
+        try:
+            current = self.bridgeField.currentRow()
+            itemName = self.bridgeField.item( current )
+            idName = self.address_to_id[itemName.text()]
+            self.addr.removeVlan( str( idName ) )
+            self.listVlan()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Bridge error" )
+            self.msg.setInformativeText( str(e)  )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def addVlan(self):
         self.nd = addVLANGui(self.user, self.pwd, self.server,self)

@@ -12,11 +12,6 @@ class PackageManager:
         :return: list of packages
         """
         packages = self.client.talk(['/system/package/print'])
-        print(packages)
-        print("build-time \t package name \t package version \t disable status \t Scheduled status")
-        for i in packages:
-            print(packages[i]['build-time']+"\t"+packages[i]['name']+"\t"+packages[i]['version']+"\t"+packages[i]
-            ['disabled']+"\t"+packages[i]['scheduled'])
         return packages
 
     def enablePackage(self,packagename):

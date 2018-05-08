@@ -34,6 +34,7 @@ class dhcpClientGui(QtGui.QMainWindow,Ui_MainWindow):
         self.expiresField.clear()
         self.statusField.clear()
         self.dynamicField.clear()
+        self.disableField.clear()
         self.address_to_id = {}
         for i in devices:
             stateaddress = ""
@@ -57,6 +58,7 @@ class dhcpClientGui(QtGui.QMainWindow,Ui_MainWindow):
                 statestatus = "Unknown"
             self.statusField.addItem( statestatus)
             self.dynamicField.addItem( devices[i]['dynamic'] )
+            self.disableField.addItem(devices[i]['disabled'])
             self.address_to_id[devices[i]['interface']] = devices[i]['.id']
 
     def enableAddress(self):
