@@ -12,7 +12,6 @@ class Resources:
         :return:  list
         """
         resource = self.client.talk(["/system/resource/print"])
-        print(resource)
         return resource
 
     def listCPUInfo(self):
@@ -21,9 +20,6 @@ class Resources:
         :return:
         """
         cpu = self.client.talk(["/system/resource/cpu/print"])
-        print("CPU\t\t\t\tload\tIRQ\tdisk")
-        for i in cpu:
-            print(cpu[i]['cpu']+"\t\t\t\t"+cpu[i]['load']+"\t"+cpu[i]['irq']+"\t"+cpu[i]['disk'])
         return cpu
 
     def listIRQ(self):
@@ -32,10 +28,6 @@ class Resources:
         :return: list
         """
         irq = self.client.talk(['/system/resource/irq/print'])
-        print("IRQ\tUSers\t\t\t\tcpu\tactive-cpu\tcount")
-        for i in irq:
-            print(irq[i]['irq']+"\t"+irq[i]['users']+"\t\t\t\t"+irq[i]['cpu']+"\t"+irq[i]['active-cpu']+"\t"+irq[i]
-            ['per-cpu-count'])
         return irq
 
     def setIRQ(self,orderNo):
@@ -53,9 +45,6 @@ class Resources:
         :return: list
         """
         pci = self.client.talk(['/system/resource/pci/print'])
-        print("Device\tVendor\t\t\t\tName\tIRQ")
-        for i in pci:
-            print(pci[i]['device']+"\t"+pci[i]['vendor']+"\t\t\t\t"+pci[i]['name']+"\t"+pci[i]['irq'])
         return pci
 
     def UsbPowerReset(self,bus,slot):
@@ -74,7 +63,6 @@ class Resources:
         :return: list
         """
         usb = self.client.talk(['/system/resource/usb/print'])
-        print(usb)
         return usb
 
     def setUSB(self,oldName, newName):

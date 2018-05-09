@@ -12,8 +12,6 @@ class securityProfile:
         :return:
         """
         wifi = self.client.talk(['/interface/wireless/security-profiles/print'])
-        for i in wifi:
-            print(wifi[i])
         return wifi
 
     def addProfile(self,name,password):

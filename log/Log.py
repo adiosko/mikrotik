@@ -12,10 +12,4 @@ class Log:
         :return:
         """
         log = self.client.talk(['/log/print'])
-        if log == {}:
-            print("No log found")
-        else:
-            print("time\ttopics\tmassage")
-            for i in log:
-                print(log[i]['time']+"\t"+log[i]['topics']+"\t"+log[i]['message'])
         return log

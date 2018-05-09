@@ -8,7 +8,4 @@ class History:
 
     def listHistory(self):
         hist = self.client.talk(['/system/history/print'])
-        print('time\taction\tby\tpolicy')
-        for i in hist:
-            print(hist[i]['time']+"\t"+hist[i]['action']+"\t"+hist[i]['by']+"\t"+hist[i]['policy'])
         return hist

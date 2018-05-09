@@ -13,7 +13,4 @@ class UserActive:
         :return:
         """
         user = self.client.talk(['/user/active/print'])
-        print("Name\tAt\tFrom\tVia\tGroup")
-        for i in user:
-            print(user[i]['name']+"\t"+user[i]['when']+"\t"+user[i]['address']+"\t"+user[i]['via']+"\t"+user[i]['group'])
         return user

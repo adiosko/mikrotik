@@ -29,13 +29,20 @@ class interfaceListGui(QtGui.QMainWindow,Ui_MainWindow):
     def listInterfaces(self):
         devices = self.addr.interfaceListMemenrPrint()
         self.nameField.clear()
+        self.builtField.clear()
         self.address_to_id = {}
         for i in devices:
             state = ""
+            statebuilt = ""
             try:
                 state = devices[i]['name']
             except:
                 state = "None"
+            try:
+                statebuilt = devices[i]['builtin']
+            except:
+                statebuilt = "Custom"
+            self.builtField.addItem(statebuilt)
             self.nameField.addItem(state)
             self.address_to_id[devices[i]['name']] = devices[i]['.id']
 

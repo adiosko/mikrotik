@@ -27,9 +27,8 @@ class addAddressGui(QtGui.QMainWindow,Ui_MainWindow):
     def okLogin(self):
         try:
             address = self.addressField.toPlainText()
-            network = self.networkField.toPlainText()
             interface = self.interfaceField.toPlainText()
-            self.addr.addAddreses(address,interface)
+            self.addr.addAddress(address,interface)
             self.address_window.listAddresses()
             self.close()
         except Exception as e:

@@ -56,4 +56,4 @@ class addDhcpServerGui(QtGui.QMainWindow,Ui_MainWindow):
     def init_buttons(self):
         self.cancelButton.clicked.connect(self.cancelLogin)
         self.okButton.clicked.connect(self.okLogin)
-        self.poolButton.clicked.connect(self.okLogin)
+        #self.poolButton.clicked.connect(self.okLogin)

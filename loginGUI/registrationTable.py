@@ -39,19 +39,35 @@ class registrationGui(QtGui.QMainWindow,Ui_MainWindow):
             self.address_to_id[devices[i]['radio-name']] = devices[i]['.id']
 
     def removeDevice(self):
-        current = self.nameField.currentRow()
-        item = self.nameField.item( current )
-        idItem = self.address_to_id[item.text()]
-        self.addr.removeConnection( str( idItem ) )
-        self.listDevices()
+        try:
+            current = self.nameField.currentRow()
+            item = self.nameField.item( current )
+            idItem = self.address_to_id[item.text()]
+            self.addr.removeConnection( str( idItem ) )
+            self.listDevices()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Dynamic item  error" )
+            self.msg.setInformativeText( str( e ) )
+            self.msg.setWindowTitle( str( e.args[0] ) )
+            self.msg.show()
 
 
     def resetDevice(self):
-        current = self.nameField.currentRow()
-        item = self.nameField.item( current )
-        idItem = self.address_to_id[item.text()]
-        self.addr.resetConnection( str( idItem ) )
-        self.listDevices()
+        try:
+            current = self.nameField.currentRow()
+            item = self.nameField.item( current )
+            idItem = self.address_to_id[item.text()]
+            self.addr.resetConnection( str( idItem ) )
+            self.listDevices()
+        except Exception as e:
+            self.msg = QMessageBox()
+            self.msg.setIcon( QMessageBox.Critical )
+            self.msg.setText( "Dynamic item  error" )
+            self.msg.setInformativeText( str(e) )
+            self.msg.setWindowTitle(str(e.args[0]))
+            self.msg.show()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listDevices )
