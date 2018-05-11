@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui, uic
 #my designed file
 from IPv4.FirewallNAT import  FirewallNAT
 
-qtCreatorFile = "addDstNat.ui"
+qtCreatorFile = "./loginGUI/addDstNat.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

@@ -7,7 +7,7 @@ from System.Resources import Resources
 #my designed file
 
 
-qtCreatorFile = "pci.ui"
+qtCreatorFile = "./loginGUI/pci.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

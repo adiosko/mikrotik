@@ -8,7 +8,7 @@ from loginGUI.addAddressGui import addAddressGui
 from bridge.BridgeGeneral import  BridgeGeneral
 from loginGUI.addBridge import addBridgeGui
 
-qtCreatorFile = "bridge.ui"
+qtCreatorFile = "./loginGUI/bridge.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

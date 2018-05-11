@@ -8,7 +8,7 @@ from loginGUI.addProfile import addProfile
 #my designed file
 
 
-qtCreatorFile = "security.ui"
+qtCreatorFile = "./loginGUI/security.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

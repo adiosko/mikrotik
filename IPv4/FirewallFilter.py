@@ -40,12 +40,26 @@ class FirewallFilter:
         return ip
 
     def addForwardreject(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
-        ip = self.client.talk(['/ip/firewall/filter/add','=chain=input','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=forward','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
         return ip
 
     def addForwarddeny(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
-        ip = self.client.talk(['/ip/firewall/filter/add','=chain=input','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=forward','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
         return ip
+
+    def addOutputaccept(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=output','=action=accept','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addOutputreject(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=output','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addOutputdeny(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/filter/add','=chain=output','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+
 
 
     def removeRule(self, number):

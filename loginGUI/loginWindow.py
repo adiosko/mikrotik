@@ -53,7 +53,7 @@ from loginGUI.interfaceListGui import interfaceListGui
 from loginGUI.interfaceListMembers import interfaceListMemberGui
 from loginGUI.ethernetGui import ethernetGui
 from loginGUI.interfaceVlanGui import interfaceVlanGui
-qtCreatorFile = "loginWIndow.ui"
+qtCreatorFile = "./loginGUI/loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

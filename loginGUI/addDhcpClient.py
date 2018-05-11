@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui, uic
 #my designed file
 from IPv4.DhcpCLient import  DhcpClient
 
-qtCreatorFile = "addDhcpclient.ui"
+qtCreatorFile = "./loginGUI/addDhcpclient.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

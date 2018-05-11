@@ -8,7 +8,7 @@ from IPv4.PoolUsedAddresses import PoolUsedAddresses
 #my designed file
 
 
-qtCreatorFile = "poolUsed.ui"
+qtCreatorFile = "./loginGUI/poolUsed.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

@@ -8,7 +8,7 @@ from wireless.registration import registration
 #my designed file
 
 
-qtCreatorFile = "registration.ui"
+qtCreatorFile = "./loginGUI/registration.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

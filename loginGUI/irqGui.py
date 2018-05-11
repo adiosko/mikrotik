@@ -7,7 +7,7 @@ from System.Resources import Resources
 #my designed file
 
 
-qtCreatorFile = "irq.ui"
+qtCreatorFile = "./loginGUI/irq.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

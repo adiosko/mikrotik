@@ -12,7 +12,7 @@ from loginGUI.addDstAccept import addDstAcceptGui
 #my designed file
 
 
-qtCreatorFile = "nat.ui"
+qtCreatorFile = "./loginGUI/nat.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

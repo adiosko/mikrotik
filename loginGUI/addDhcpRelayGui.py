@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui, uic
 #my designed file
 from IPv4.DhcpRelay import  DhcpRelay
 
-qtCreatorFile = "addDhcpRelay.ui"
+qtCreatorFile = "./loginGUI/addDhcpRelay.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

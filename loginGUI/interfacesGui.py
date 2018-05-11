@@ -7,7 +7,7 @@ from interfaces.interfaces import interfaces
 #my designed file
 
 
-qtCreatorFile = "interfaces.ui"
+qtCreatorFile = "./loginGUI/interfaces.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

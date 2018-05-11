@@ -7,7 +7,7 @@ from System.Resources import Resources
 #my designed file
 
 
-qtCreatorFile = "usb.ui"
+qtCreatorFile = "./loginGUI/usb.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

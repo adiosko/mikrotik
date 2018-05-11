@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui, uic
 #my designed file
 from IPv4.Addresses import  Addresses
 
-qtCreatorFile = "addAddress.ui"
+qtCreatorFile = "./loginGUI/addAddress.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

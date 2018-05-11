@@ -13,7 +13,7 @@ from loginGUI.addForwardReject import addForwardRejectGui
 #my designed file
 
 
-qtCreatorFile = "firewall.ui"
+qtCreatorFile = "./loginGUI/firewall.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

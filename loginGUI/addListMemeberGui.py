@@ -7,7 +7,7 @@ from loginGUI.addAddressGui import addAddressGui
 #my designed file
 from interfaces.interfaceList import interfaceList
 
-qtCreatorFile = "addListMember.ui"
+qtCreatorFile = "./loginGUI/addListMember.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

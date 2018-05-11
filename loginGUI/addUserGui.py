@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui, uic
 #my designed file
 from System.Users import  Users
 
-qtCreatorFile = "addUser.ui"
+qtCreatorFile = "./loginGUI/addUser.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

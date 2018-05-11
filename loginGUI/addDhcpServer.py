@@ -7,7 +7,7 @@ from PyQt4 import QtCore, QtGui, uic
 from IPv4.DhcpServer import  DhcpServer
 from loginGUI.addPoolGui import addPool
 
-qtCreatorFile = "addDhcpServer.ui"
+qtCreatorFile = "./loginGUI/addDhcpServer.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

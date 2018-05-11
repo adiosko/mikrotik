@@ -8,7 +8,7 @@ from loginGUI.addWirelessInterface import addWirelessInterfaceGui
 #my designed file
 
 
-qtCreatorFile = "wirelessInterface.ui"
+qtCreatorFile = "./loginGUI/wirelessInterface.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

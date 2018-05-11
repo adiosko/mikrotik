@@ -4,7 +4,7 @@ from PyQt4 import QtCore, QtGui, uic
 from wireless.securityProfile import  securityProfile
 import sys
 
-qtCreatorFile = "addProfile.ui"
+qtCreatorFile = "./loginGUI/addProfile.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

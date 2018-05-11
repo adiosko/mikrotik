@@ -6,7 +6,7 @@ import tikapy
 #my designed file
 
 
-qtCreatorFile = "files.ui"
+qtCreatorFile = "./loginGUI/files.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

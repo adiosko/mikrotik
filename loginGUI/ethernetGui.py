@@ -7,7 +7,7 @@ from interfaces.ethernet import ethernet
 #my designed file
 
 
-qtCreatorFile = "ethernet.ui"
+qtCreatorFile = "./loginGUI/ethernet.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

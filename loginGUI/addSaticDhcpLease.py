@@ -6,7 +6,7 @@ from IPv4.DhcpServer import  DhcpServer
 import sys
 import tikapy
 
-qtCreatorFile = "addStaticDhcpLease.ui"
+qtCreatorFile = "./loginGUI/addStaticDhcpLease.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

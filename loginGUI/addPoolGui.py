@@ -3,7 +3,7 @@ from PyQt4 import QtCore, QtGui, uic
 #my designed file
 from IPv4.Pool import  Pool
 
-qtCreatorFile = "addPool.ui"
+qtCreatorFile = "./loginGUI/addPool.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

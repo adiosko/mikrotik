@@ -7,7 +7,7 @@ from loginGUI.addAddressGui import addAddressGui
 #my designed file
 from System.PackageManager import PackageManager
 
-qtCreatorFile = "packages.ui"
+qtCreatorFile = "./loginGUI/packages.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

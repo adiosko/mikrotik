@@ -8,7 +8,7 @@ from IPv4.Services import Services
 #my designed file
 
 
-qtCreatorFile = "services.ui"
+qtCreatorFile = "./loginGUI/services.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

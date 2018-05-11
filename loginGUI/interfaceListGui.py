@@ -8,7 +8,7 @@ from loginGUI.addInterfaceList import addInterfaceListGui
 #my designed file
 
 
-qtCreatorFile = "ifaceList.ui"
+qtCreatorFile = "./loginGUI/ifaceList.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

@@ -7,7 +7,7 @@ from IPv4.NeighborLIst import NeighborList
 #my designed file
 
 
-qtCreatorFile = "neighbor.ui"
+qtCreatorFile = "./loginGUI/neighbor.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

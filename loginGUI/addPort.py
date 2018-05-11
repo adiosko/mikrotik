@@ -6,7 +6,7 @@ from PyQt4.QtGui import QMessageBox
 from bridge.BridgePorts import  BridgePorts
 import sys
 
-qtCreatorFile = "addPort.ui"
+qtCreatorFile = "./loginGUI/addPort.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

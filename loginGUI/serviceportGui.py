@@ -8,7 +8,7 @@ from IPv4.FirewallServicePOrts import FirewallServicePOrts
 #my designed file
 
 
-qtCreatorFile = "servicePort.ui"
+qtCreatorFile = "./loginGUI/servicePort.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

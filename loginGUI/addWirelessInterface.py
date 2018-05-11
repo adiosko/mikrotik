@@ -7,7 +7,7 @@ from PyQt4.QtGui import QMessageBox
 from wireless.interfaces import  interfaces
 import sys
 
-qtCreatorFile = "addWirelessInterface.ui"
+qtCreatorFile = "./loginGUI/addWirelessInterface.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

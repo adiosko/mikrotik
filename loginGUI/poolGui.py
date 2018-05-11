@@ -8,7 +8,7 @@ from loginGUI.addPoolGui import addPool
 #my designed file
 
 
-qtCreatorFile = "pool.ui"
+qtCreatorFile = "./loginGUI/pool.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

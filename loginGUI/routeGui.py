@@ -9,7 +9,7 @@ from IPv4.RouteGeneral import  RouteGeneral
 from loginGUI.addRoute import addRoute
 import tikapy
 
-qtCreatorFile = "route.ui"
+qtCreatorFile = "./loginGUI/route.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

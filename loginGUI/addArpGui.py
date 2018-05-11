@@ -6,7 +6,7 @@ from PyQt4.QtGui import QMessageBox
 from IPv4.Arp import  Arp
 import sys
 
-qtCreatorFile = "addArp.ui"
+qtCreatorFile = "./loginGUI/addArp.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

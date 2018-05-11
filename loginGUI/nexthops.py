@@ -8,7 +8,7 @@ from IPv4.RouteNexthops import RouteNexthops
 #my designed file
 
 
-qtCreatorFile = "nexthop.ui"
+qtCreatorFile = "./loginGUI/nexthop.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

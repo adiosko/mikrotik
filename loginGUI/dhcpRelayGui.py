@@ -8,7 +8,7 @@ from loginGUI.addDhcpRelayGui import addDhcpRelayGui
 #my designed file
 
 
-qtCreatorFile = "dhcprelay.ui"
+qtCreatorFile = "./loginGUI/dhcprelay.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class FirewallMangle:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def listRules(self):
@@ -20,6 +20,68 @@ class FirewallMangle:
                 print( ip[i] )
                 # print(ip[i]['action']+"\t"+ip[i]['chain']+"\t"+ip[i]['src-address']+"\t"+ip[i]['dst-address']+"\t"+ip[i]['protocol']+ip[i]['src-port'+"\t"+ip[i]['dst-port']+"\t"+ip[i]['in-interface']+"\t"+ip[i]['out-interface']])
         return ip
+
+    def addinputaccept(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=input','=action=accept','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=in-interface='+interface])
+        return ip
+
+    def addinputreject(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=input','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=in-interface='+interface])
+        return ip
+
+    def addinputdeny(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=input','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=in-interface='+interface])
+        return ip
+
+    def addForwardaccept(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=forward','=action=accept','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addForwardreject(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=forward','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addForwarddeny(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=forward','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addOutputaccept(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=output','=action=accept','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addOutputreject(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=output','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addOutputdeny(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=output','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport,'=out-interface='+interface])
+        return ip
+
+    def addPostroutingaccept(self,dst=None,src=None,protocol=None,sport=None,dport=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=postrouting','=action=accept','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport])
+        return ip
+
+    def addPostroutingreject(self,dst=None,src=None,protocol=None,sport=None,dport=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=postrouting','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport])
+        return ip
+
+    def addPostroutingdeny(self,dst=None,src=None,protocol=None,sport=None,dport=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=postrouting','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport])
+        return ip
+
+    def addPreroutingaccept(self,dst=None,src=None,protocol=None,sport=None,dport=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=prerouting','=action=accept','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport])
+        return ip
+
+    def addPreroutingreject(self,dst=None,src=None,protocol=None,sport=None,dport=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=prerouting','=action=reject','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport])
+        return ip
+
+    def addPreroutingdeny(self,dst=None,src=None,protocol=None,sport=None,dport=None):
+        ip = self.client.talk(['/ip/firewall/mangle/add','=chain=prerouting','=action=drop','=src-address='+src,'=dst-address='+dst,'=protocol='+protocol,'=src-port='+sport,'=dst-port='+dport])
+        return ip
+
+
 
     def addRule(self, chain="input"):
         """

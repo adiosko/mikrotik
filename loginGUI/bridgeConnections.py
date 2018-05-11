@@ -7,7 +7,7 @@ from bridge.BridgeHosts import BridgeHosts
 #my designed file
 
 
-qtCreatorFile = "bridgeConnections.ui"
+qtCreatorFile = "./loginGUI/bridgeConnections.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

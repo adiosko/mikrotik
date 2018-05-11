@@ -6,7 +6,7 @@ import tikapy
 #my designed file
 
 
-qtCreatorFile = "restore.ui"
+qtCreatorFile = "./loginGUI/restore.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

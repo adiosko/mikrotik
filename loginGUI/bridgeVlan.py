@@ -8,7 +8,7 @@ from loginGUI.addAddressGui import addAddressGui
 from bridge.bridgeVlan import  bridgeVlan
 from loginGUI.addVLAN import addVLANGui
 
-qtCreatorFile = "vlan.ui"
+qtCreatorFile = "./loginGUI/vlan.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

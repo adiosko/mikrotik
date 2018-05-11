@@ -6,7 +6,7 @@ import tikapy
 #my designed file
 
 
-qtCreatorFile = "drivers.ui"
+qtCreatorFile = "./loginGUI/drivers.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

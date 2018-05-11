@@ -6,7 +6,7 @@ from PyQt4.QtGui import *
 import tikapy
 import sys
 
-qtCreatorFile = "addInterfaceVlan.ui"
+qtCreatorFile = "./loginGUI/addInterfaceVlan.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

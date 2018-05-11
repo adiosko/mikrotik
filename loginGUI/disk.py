@@ -6,7 +6,7 @@ import tikapy
 #my designed file
 from System.PackageManager import PackageManager
 
-qtCreatorFile = "disk.ui"
+qtCreatorFile = "./loginGUI/disk.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

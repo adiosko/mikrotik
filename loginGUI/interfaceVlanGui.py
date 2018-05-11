@@ -8,7 +8,7 @@ from loginGUI.addInterfaceVlanGui import addVLANInterfaceGui
 #my designed file
 
 
-qtCreatorFile = "interfaceVlan.ui"
+qtCreatorFile = "./loginGUI/interfaceVlan.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

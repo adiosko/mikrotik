@@ -8,7 +8,7 @@ from loginGUI.addAddressListGui import addAddressListGui
 #my designed file
 
 
-qtCreatorFile = "dns.ui"
+qtCreatorFile = "./loginGUI/dns.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

@@ -9,7 +9,7 @@ from loginGUI.addAddressListGui import addAddressListGui
 #my designed file
 
 
-qtCreatorFile = "dnscache.ui"
+qtCreatorFile = "./loginGUI/dnscache.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

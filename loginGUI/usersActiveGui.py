@@ -7,7 +7,7 @@ from System.usersActive import UserActive
 #my designed file
 
 
-qtCreatorFile = "userActive.ui"
+qtCreatorFile = "./loginGUI/userActive.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

@@ -5,7 +5,7 @@ from bridge.BridgeGeneral import  BridgeGeneral
 from PyQt4.QtGui import *
 import sys
 
-qtCreatorFile = "addBridge.ui"
+qtCreatorFile = "./loginGUI/addBridge.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

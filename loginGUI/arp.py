@@ -8,7 +8,7 @@ from loginGUI.addAddressGui import addAddressGui
 from IPv4.Arp import  Arp
 from loginGUI.addArpGui import addArpGui
 
-qtCreatorFile = "arp.ui"
+qtCreatorFile = "./loginGUI/arp.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

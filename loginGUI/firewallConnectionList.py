@@ -7,7 +7,7 @@ from IPv4.FirewallCOnnections import FirewallConnections
 #my designed file
 
 
-qtCreatorFile = "fwconnection.ui"
+qtCreatorFile = "./loginGUI/fwconnection.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

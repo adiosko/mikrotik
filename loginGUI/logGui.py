@@ -7,7 +7,7 @@ from loginGUI.Log import Log
 #my designed file
 
 
-qtCreatorFile = "log.ui"
+qtCreatorFile = "./loginGUI/log.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

@@ -8,7 +8,7 @@ from loginGUI.addDhcpServer import addDhcpServerGui
 #my designed file
 
 
-qtCreatorFile = "dhcpserver.ui"
+qtCreatorFile = "./loginGUI/dhcpserver.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

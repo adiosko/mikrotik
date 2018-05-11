@@ -7,7 +7,7 @@ from System.History import History
 #my designed file
 
 
-qtCreatorFile = "history.ui"
+qtCreatorFile = "./loginGUI/history.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

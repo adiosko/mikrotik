@@ -7,7 +7,7 @@ from loginGUI.addAddressGui import addAddressGui
 #my designed file
 from IPv4.Addresses import  Addresses
 
-qtCreatorFile = "ipAddresses.ui"
+qtCreatorFile = "./loginGUI/ipAddresses.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

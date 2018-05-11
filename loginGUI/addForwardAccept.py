@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui, uic
 #my designed file
 from IPv4.FirewallFilter import  FirewallFilter
 
-qtCreatorFile = "addForwardRule.ui"
+qtCreatorFile = "./loginGUI/addForwardRule.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 

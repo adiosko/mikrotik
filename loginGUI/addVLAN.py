@@ -4,7 +4,7 @@ from PyQt4 import QtCore, QtGui, uic
 from bridge.bridgeVlan import bridgeVlan
 import sys
 
-qtCreatorFile = "addVLAN.ui"
+qtCreatorFile = "./loginGUI/addVLAN.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
