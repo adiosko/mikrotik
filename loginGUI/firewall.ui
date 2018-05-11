@@ -397,6 +397,45 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="outputacceptButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>190</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add output accept rule</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="outputdropButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>250</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add output drop rule</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="outputtrejectButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>220</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add output reject rule</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
