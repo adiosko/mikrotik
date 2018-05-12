@@ -6,11 +6,11 @@ from PyQt4 import QtCore, QtGui, uic
 #my designed file
 from IPv4.FirewallFilter import  FirewallFilter
 
-qtCreatorFile = "./loginGUI/addForwardRule.ui"
+qtCreatorFile = "./loginGUI/addFilterOuputRule.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-class addForwardDropGui(QtGui.QMainWindow,Ui_MainWindow):
+class addOutputRejectGui(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self,user,pwd, server, address_window):
         #super( loginMikrotik, self ).__init__( )
         #self.setupUi(self)
@@ -32,7 +32,7 @@ class addForwardDropGui(QtGui.QMainWindow,Ui_MainWindow):
             srcaddr = self.srcField.toPlainText()
             dstaddr = self.dstField.toPlainText()
             interface = self.interfaceField.toPlainText()
-            self.addr.addForwarddeny(dstaddr,srcaddr,protocol,srcport,dstport,interface)
+            self.addr.addOutputreject(dstaddr,srcaddr,protocol,srcport,dstport,interface)
             self.address_window.listRules()
             self.close()
         except Exception as e:

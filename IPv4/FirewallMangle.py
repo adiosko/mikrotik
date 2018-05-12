@@ -12,13 +12,6 @@ class FirewallMangle:
         :return:
         """
         ip = self.client.talk( ['/ip/firewall/mangle/print'] )
-        if ip == {}:
-            print( "No rule found,ssecure your router!!!" )
-        else:
-            print( "Action\tChain\tSrcAddress\tDstAddress\tProtocol\tSrcPort\tDstPort\tInInterface\tOutinterface" )
-            for i in ip:
-                print( ip[i] )
-                # print(ip[i]['action']+"\t"+ip[i]['chain']+"\t"+ip[i]['src-address']+"\t"+ip[i]['dst-address']+"\t"+ip[i]['protocol']+ip[i]['src-port'+"\t"+ip[i]['dst-port']+"\t"+ip[i]['in-interface']+"\t"+ip[i]['out-interface']])
         return ip
 
     def addinputaccept(self,dst=None,src=None,protocol=None,sport=None,dport=None,interface=None):

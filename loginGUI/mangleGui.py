@@ -3,24 +3,30 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4 import QtCore, QtGui, uic
 import tikapy
-from IPv4.FirewallFilter import FirewallFilter
-from loginGUI.addFwInputAccept import addInputAcceptGui
-from loginGUI.addInputReject import addInputRejectGui
-from loginGUI.addInputDrop import addInputDropGui
-from loginGUI.addForwardAccept import addForwardAcceptGui
-from loginGUI.addForwardDrop import addForwardDropGui
-from loginGUI.addForwardReject import addForwardRejectGui
-from loginGUI.addFilterOutputDeny import addOutputDenyGui
-from loginGUI.addFilterOutputReject import addOutputRejectGui
-from loginGUI.addFilterOutputAccept import addOutputAcceptGui
+from IPv4.FirewallMangle import FirewallMangle
+from loginGUI.addMangleInputAccept import addMangleInput
+from loginGUI.addMangleInputReject import addMangleInputReject
+from loginGUI.addMangleInputDrop import addMangleInputDrop
+from loginGUI.addMangleForwardAccept import addMangleForwardAccept
+from loginGUI.addMangleForwardReject import addMangleForwardReject
+from loginGUI.addMangleForwardDrop import addMangleForwardDrop
+from loginGUI.addMangleOuputAccept import addMangleOutputAccept
+from loginGUI.addMangleOutputDrop import addMangleOutputDrop
+from loginGUI.addMangleOutputReject import addMangleOutputReject
+from loginGUI.addManglePostRouteAccept import addManglePostrouteAccept
+from loginGUI.addPostRoutingDrop import addManglePostrouteDrop
+from loginGUI.addPostReject import addManglePostrouteReject
+from loginGUI.addPrerouteAccept import addManglePrerouteAccept
+from loginGUI.addPrerouteDrop import addManglePrerouteDrop
+from loginGUI.addPrerouteReject import addManglePrerouteReject
 #my designed file
 
 
-qtCreatorFile = "./loginGUI/firewall.ui"
+qtCreatorFile = "./loginGUI/mangle.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-class fwGui(QtGui.QMainWindow,Ui_MainWindow):
+class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self,user,pwd,server):
         #super( loginMikrotik, self ).__init__( )
         #self.setupUi(self)
@@ -30,7 +36,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         self.pwd = pwd
         self.server = server
         self.setupUi(self)
-        self.addr = FirewallFilter(self.server,self.user,self.pwd)
+        self.addr = FirewallMangle(self.server,self.user,self.pwd)
         self.init_buttons()
         self.listRules()
 
@@ -112,7 +118,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
-            self.msg.setText( "NAT error" )
+            self.msg.setText( "Mangle error" )
             self.msg.setInformativeText(str(e) )
             self.msg.setWindowTitle(str(e.args[0]))
             self.msg.show()
@@ -149,57 +155,64 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def addInputAccept(self):
-        self.nd = addInputAcceptGui( self.user, self.pwd, self.server, self )
+        self.nd = addMangleInput( self.user, self.pwd, self.server, self )
         self.nd.show()
 
     def addInputReject(self):
-        self.nd = addInputRejectGui( self.user, self.pwd, self.server, self )
+        self.nd = addMangleInputReject( self.user, self.pwd, self.server, self )
         self.nd.show()
 
     def addInputDrop(self):
-        self.nd = addInputDropGui( self.user, self.pwd, self.server, self )
+        self.nd = addMangleInputDrop( self.user, self.pwd, self.server, self )
         self.nd.show()
 
     def addForwardAccept(self):
-        self.nd = addForwardAcceptGui(self.user, self.pwd, self.server, self )
+        self.nd = addMangleForwardAccept(self.user, self.pwd, self.server, self )
         self.nd.show()
 
     def addForwardDrop(self):
-        self.nd = addForwardDropGui( self.user, self.pwd, self.server, self )
+        self.nd = addMangleForwardDrop( self.user, self.pwd, self.server, self )
         self.nd.show()
 
     def addForwardReject(self):
-        self.nd = addForwardRejectGui( self.user, self.pwd, self.server, self )
+        self.nd = addMangleForwardReject( self.user, self.pwd, self.server, self )
         self.nd.show()
 
     def addOutpuAccept(self):
-        self.nd = addOutputAcceptGui(self.user,self.pwd,self.server,self)
+        self.nd = addMangleOutputAccept(self.user,self.pwd,self.server,self)
         self.nd.show()
 
     def addOutpuDrop(self):
-        self.nd = addOutputDenyGui(self.user,self.pwd,self.server,self)
+        self.nd = addMangleOutputDrop(self.user,self.pwd,self.server,self)
         self.nd.show()
 
     def addOutpuReject(self):
-        self.nd = addOutputRejectGui(self.user,self.pwd,self.server,self)
-        self.nd.show()
-    """
-    def addSrcNat(self):
-        self.nd = addSrcNatGui( self.user, self.pwd, self.server, self )
+        self.nd = addMangleOutputReject(self.user,self.pwd,self.server,self)
         self.nd.show()
 
-    def addDstNat(self):
-        self.nd = addDstNatGui( self.user, self.pwd, self.server, self )
+    def addPostAccept(self):
+        self.nd = addManglePostrouteAccept(self.user,self.pwd,self.server,self)
         self.nd.show()
 
-    def addSrcAccept(self):
-        self.nd = addSrcAcceptGui( self.user, self.pwd, self.server, self )
+    def addPostDrop(self):
+        self.nd = addManglePostrouteDrop(self.user,self.pwd,self.server,self)
         self.nd.show()
 
-    def addDstAccept(self):
-        self.nd = addDstAcceptGui( self.user, self.pwd, self.server, self )
+    def addPostReject(self):
+        self.nd = addManglePostrouteReject(self.user,self.pwd,self.server,self)
         self.nd.show()
-    """
+
+    def addPreAccept(self):
+        self.nd = addManglePrerouteAccept(self.user,self.pwd,self.server,self)
+        self.nd.show()
+
+    def addPreDrop(self):
+        self.nd = addManglePrerouteDrop(self.user,self.pwd,self.server,self)
+        self.nd.show()
+
+    def addPreReject(self):
+        self.nd = addManglePrerouteReject(self.user,self.pwd,self.server,self)
+        self.nd.show()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listRules)
@@ -215,6 +228,9 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         self.outputacceptButton.clicked.connect(self.addOutpuAccept)
         self.outputtrejectButton.clicked.connect(self.addOutpuReject)
         self.outputdropButton.clicked.connect(self.addOutpuDrop)
-        #self.dstButton.clicked.connect(self.addDstNat)
-        #self.srcacceptButton.clicked.connect(self.addSrcAccept)
-        #self.dstacceptButton.clicked.connect(self.addDstAccept)
+        self.postroutetacceptButton.clicked.connect(self.addPostAccept)
+        self.postroutettrejectButton.clicked.connect(self.addPostReject)
+        self.postroutetdropButton.clicked.connect(self.addPostDrop)
+        self.preroutetacceptButton.clicked.connect(self.addPreAccept)
+        self.prerouterejectButton.clicked.connect(self.addPreReject)
+        self.preroutedropButton.clicked.connect(self.addPreDrop)

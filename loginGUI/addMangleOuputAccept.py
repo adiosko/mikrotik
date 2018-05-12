@@ -4,13 +4,13 @@ from PyQt4.QtCore import *
 from PyQt4 import QtCore, QtGui, uic
 #import  LoginManager
 #my designed file
-from IPv4.FirewallFilter import  FirewallFilter
+from IPv4.FirewallMangle import  FirewallMangle
 
-qtCreatorFile = "./loginGUI/addForwardRule.ui"
+qtCreatorFile = "./loginGUI/addMangle.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-class addForwardDropGui(QtGui.QMainWindow,Ui_MainWindow):
+class addMangleOutputAccept(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self,user,pwd, server, address_window):
         #super( loginMikrotik, self ).__init__( )
         #self.setupUi(self)
@@ -22,7 +22,7 @@ class addForwardDropGui(QtGui.QMainWindow,Ui_MainWindow):
         self.server = server
         self.setupUi(self)
         self.init_buttons()
-        self.addr = FirewallFilter(self.server,self.user,self.pwd)
+        self.addr = FirewallMangle(self.server,self.user,self.pwd)
 
     def okLogin(self):
         try:
@@ -31,8 +31,8 @@ class addForwardDropGui(QtGui.QMainWindow,Ui_MainWindow):
             dstport = self.dportField.toPlainText()
             srcaddr = self.srcField.toPlainText()
             dstaddr = self.dstField.toPlainText()
-            interface = self.interfaceField.toPlainText()
-            self.addr.addForwarddeny(dstaddr,srcaddr,protocol,srcport,dstport,interface)
+            interface = self.ifaceField.toPlainText()
+            self.addr.addOutputaccept(dstaddr,srcaddr,protocol,srcport,dstport,interface)
             self.address_window.listRules()
             self.close()
         except Exception as e:

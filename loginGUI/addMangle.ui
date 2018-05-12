@@ -6,68 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>379</width>
-    <height>275</height>
+    <width>387</width>
+    <height>249</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Add Output rule</string>
+   <string>Add Mangle RUle</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>81</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Src address</string>
-    </property>
-   </widget>
    <widget class="QTextEdit" name="srcField">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>10</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>100</y>
-      <width>91</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Protocol</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_7">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>220</y>
-      <width>91</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Out interface</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="sportField">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>130</y>
+      <x>130</x>
+      <y>0</y>
       <width>121</width>
       <height>31</height>
      </rect>
@@ -76,8 +27,8 @@
    <widget class="QPushButton" name="okButton">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>10</y>
+      <x>270</x>
+      <y>0</y>
       <width>88</width>
       <height>29</height>
      </rect>
@@ -86,47 +37,11 @@
      <string>OK</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>91</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Src port</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>101</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Dst address</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="dstField">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>50</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="cancelButton">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>50</y>
+      <x>270</x>
+      <y>40</y>
       <width>88</width>
       <height>29</height>
      </rect>
@@ -135,34 +50,21 @@
      <string>Cancel</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QTextEdit" name="protField">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>180</y>
-      <width>91</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Dst port</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="interfaceField">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>210</y>
+      <x>130</x>
+      <y>80</y>
       <width>121</width>
       <height>31</height>
      </rect>
     </property>
    </widget>
-   <widget class="QTextEdit" name="protField">
+   <widget class="QTextEdit" name="dstField">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>90</y>
+      <x>130</x>
+      <y>40</y>
       <width>121</width>
       <height>31</height>
      </rect>
@@ -171,8 +73,106 @@
    <widget class="QTextEdit" name="dportField">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>130</x>
+      <y>160</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>101</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dst address</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>130</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Src port</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
       <y>170</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dst port</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Src address</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Protocol</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="sportField">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>120</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>210</y>
+      <width>91</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Interface</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="ifaceField">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>200</y>
       <width>121</width>
       <height>31</height>
      </rect>

@@ -53,6 +53,7 @@ from loginGUI.interfaceListGui import interfaceListGui
 from loginGUI.interfaceListMembers import interfaceListMemberGui
 from loginGUI.ethernetGui import ethernetGui
 from loginGUI.interfaceVlanGui import interfaceVlanGui
+from loginGUI.mangleGui import mangleGui
 qtCreatorFile = "./loginGUI/loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -156,6 +157,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionNat = QAction( "NAT rules", self )
         self.menuFirewall.addAction( self.actionNat )
         self.actionNat.triggered.connect( self.nat )
+        #vytvorenie mangle
+        self.actionmangle = QAction("Mangle rules",self)
+        self.menuFirewall.addAction(self.actionmangle)
+        self.actionmangle.triggered.connect(self.mangle)
         # vytvorenie Firewall connection
         self.actionConnection = QAction( "Connections", self )
         self.menuFirewall.addAction( self.actionConnection )
@@ -531,6 +536,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
 
     def vlanInterface(self):
         self.opened_window = interfaceVlanGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def mangle(self):
+        self.opened_window = mangleGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
 

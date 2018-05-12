@@ -41,11 +41,12 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         self.server = self.addressField.text()
         self.loginIP()
 
+
     def recordMacAddress(self):
         self.macList.clear()
         devices = self.loginmanager.listMikrotikDevices()
         print(devices)
-        for device in devices:   
+        for device in devices:
             self.macList.addItem(str(device))
 
 
@@ -91,6 +92,7 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
                 #self.nd.show()
                 self.login_windows.append(loginMikrotik(self.user,self.pwd,self.server))
                 self.login_windows[-1].show()
+                self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )
