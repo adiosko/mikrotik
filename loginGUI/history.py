@@ -28,14 +28,8 @@ class history(QtGui.QMainWindow,Ui_MainWindow):
     def listHistory(self):
         devices = self.addr.listHistory()
         self.timeField.clear()
-        self.actionField.clear()
-        self.byField.clear()
-        self.policyField.clear()
         for i in devices:
-            self.timeField.addItem( devices[i]['time'] )
-            self.actionField.addItem(devices[i]['action'])
-            self.byField.addItem(devices[i]['by'])
-            self.policyField.addItem(devices[i]['policy'])
+            self.timeField.addItem( devices[i]['time'] + "\t"+devices[i]['action']+"\t"+devices[i]['by']+"\t"+devices[i]['policy'])
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listHistory )

@@ -54,6 +54,7 @@ from loginGUI.interfaceListMembers import interfaceListMemberGui
 from loginGUI.ethernetGui import ethernetGui
 from loginGUI.interfaceVlanGui import interfaceVlanGui
 from loginGUI.mangleGui import mangleGui
+from loginGUI.loggingGui import loggingGui
 qtCreatorFile = "./loginGUI/loginWIndow.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -269,6 +270,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.actionLog = QAction( "Log", self )
         self.menuLog.addAction( self.actionLog )
         self.actionLog.triggered.connect( self.log )
+        #logging
+        self.actionlogging = QAction("Logging", self)
+        self.menuLog.addAction(self.actionlogging)
+        self.actionlogging.triggered.connect(self.logging)
         #restore
         self.actionRestore = QAction("Restore configuration",self)
         self.menuMaintenance.addAction(self.actionRestore)
@@ -540,6 +545,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
 
     def mangle(self):
         self.opened_window = mangleGui(self.user,self.pwd,self.server)
+        self.opened_window.show()
+
+    def logging(self):
+        self.opened_window = loggingGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
 

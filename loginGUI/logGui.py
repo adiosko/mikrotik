@@ -28,12 +28,9 @@ class logGui(QtGui.QMainWindow,Ui_MainWindow):
     def listlog(self):
         devices = self.addr.listLog()
         self.timeField.clear()
-        self.topicsField.clear()
-        self.messageField.clear()
         for i in devices:
-            self.timeField.addItem( devices[i]['time'] )
-            self.topicsField.addItem(devices[i]['topics'])
-            self.messageField.addItem(devices[i]['message'])
+            self.timeField.addItem( devices[i]['time'] +"\t"+ devices[i]['topics']+"\t"+devices[i]['message'])
+
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listlog )

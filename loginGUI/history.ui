@@ -45,17 +45,7 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>161</width>
-      <height>411</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="policyField">
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>40</y>
-      <width>131</width>
+      <width>681</width>
       <height>411</height>
      </rect>
     </property>
@@ -84,26 +74,6 @@
     </property>
     <property name="text">
      <string>By</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="actionField">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>40</y>
-      <width>271</width>
-      <height>401</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="byField">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>40</y>
-      <width>121</width>
-      <height>401</height>
-     </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="refreshButton">
