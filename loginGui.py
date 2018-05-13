@@ -28,6 +28,7 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         self.ipList.itemClicked.connect(self.paste)
         self.macList.itemClicked.connect(self.pastemac)
         #self.recordIPAddress()
+        self.userField.setText("admin")
         #self.recordMacAddress()
         #self.ui.calc_tax_button.clicked.connect(self.calculateTax())
 

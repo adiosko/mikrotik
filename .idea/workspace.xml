@@ -5,18 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoginManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/LoginManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/centralControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/centralControl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/history.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/history.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/history.ui" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/history.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/log.ui" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/log.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/login.ui" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/login.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/loginGui.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/loginWIndow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/loginWIndow.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/loginWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/loginWindow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loginGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mt.output" beforeDir="false" afterPath="$PROJECT_DIR$/mt.output" afterDir="false" />
     </list>
     <ignored path="diplomkap3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -110,8 +99,8 @@
       <file leaf-file-name="loginGui.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/loginGui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="428">
-              <caret line="39" column="55" lean-forward="true" selection-start-line="39" selection-start-column="55" selection-end-line="39" selection-end-column="55" />
+            <state relative-caret-position="443">
+              <caret line="40" column="55" selection-start-line="40" selection-start-column="55" selection-end-line="40" selection-end-column="55" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -1141,8 +1130,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/loginGui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
-          <caret line="39" column="55" lean-forward="true" selection-start-line="39" selection-start-column="55" selection-end-line="39" selection-end-column="55" />
+        <state relative-caret-position="443">
+          <caret line="40" column="55" selection-start-line="40" selection-start-column="55" selection-end-line="40" selection-end-column="55" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
