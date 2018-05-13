@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>py27compat.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+py27compat.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; 
+Compatibility Support for Python 2.7 and earlier 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">platform 
+ 
+</span><span class="s2">from </span><span class="s1">setuptools.extern </span><span class="s2">import </span><span class="s1">six 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">get_all_headers(message</span><span class="s2">, </span><span class="s1">key): 
+    </span><span class="s0">&quot;&quot;&quot; 
+    Given an HTTPMessage, return all headers matching a given key. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">message.get_all(key) 
+ 
+ 
+</span><span class="s2">if </span><span class="s1">six.PY2: 
+    </span><span class="s2">def </span><span class="s1">get_all_headers(message</span><span class="s2">, </span><span class="s1">key): 
+        </span><span class="s2">return </span><span class="s1">message.getheaders(key) 
+ 
+ 
+linux_py2_ascii = ( 
+    platform.system() == </span><span class="s3">'Linux' </span><span class="s2">and</span><span class="s1"> 
+    six.PY2 
+) 
+ 
+rmtree_safe = str </span><span class="s2">if </span><span class="s1">linux_py2_ascii </span><span class="s2">else lambda </span><span class="s1">x: x 
+</span><span class="s3">&quot;&quot;&quot;Workaround for http://bugs.python.org/issue24672&quot;&quot;&quot;</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

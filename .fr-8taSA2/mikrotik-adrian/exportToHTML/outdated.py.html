@@ -1,0 +1,186 @@
+<html>
+<head>
+<title>outdated.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+outdated.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">import </span><span class="s1">datetime 
+</span><span class="s0">import </span><span class="s1">json 
+</span><span class="s0">import </span><span class="s1">logging 
+</span><span class="s0">import </span><span class="s1">os.path 
+</span><span class="s0">import </span><span class="s1">sys 
+ 
+</span><span class="s0">from </span><span class="s1">pip._vendor </span><span class="s0">import </span><span class="s1">lockfile 
+</span><span class="s0">from </span><span class="s1">pip._vendor.packaging </span><span class="s0">import </span><span class="s1">version </span><span class="s0">as </span><span class="s1">packaging_version 
+ 
+</span><span class="s0">from </span><span class="s1">pip.compat </span><span class="s0">import </span><span class="s1">total_seconds</span><span class="s0">, </span><span class="s1">WINDOWS 
+</span><span class="s0">from </span><span class="s1">pip.models </span><span class="s0">import </span><span class="s1">PyPI 
+</span><span class="s0">from </span><span class="s1">pip.locations </span><span class="s0">import </span><span class="s1">USER_CACHE_DIR</span><span class="s0">, </span><span class="s1">running_under_virtualenv 
+</span><span class="s0">from </span><span class="s1">pip.utils </span><span class="s0">import </span><span class="s1">ensure_dir</span><span class="s0">, </span><span class="s1">get_installed_version 
+</span><span class="s0">from </span><span class="s1">pip.utils.filesystem </span><span class="s0">import </span><span class="s1">check_path_owner 
+ 
+ 
+SELFCHECK_DATE_FMT = </span><span class="s2">&quot;%Y-%m-%dT%H:%M:%SZ&quot;</span><span class="s1"> 
+ 
+ 
+logger = logging.getLogger(__name__) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">VirtualenvSelfCheckState(object): 
+    </span><span class="s0">def </span><span class="s1">__init__(self): 
+        self.statefile_path = os.path.join(sys.prefix</span><span class="s0">, </span><span class="s2">&quot;pip-selfcheck.json&quot;</span><span class="s1">) 
+ 
+        </span><span class="s3"># Load the existing state</span><span class="s1"> 
+        </span><span class="s0">try</span><span class="s1">: 
+            </span><span class="s0">with </span><span class="s1">open(self.statefile_path) </span><span class="s0">as </span><span class="s1">statefile: 
+                self.state = json.load(statefile) 
+        </span><span class="s0">except </span><span class="s1">(IOError</span><span class="s0">, </span><span class="s1">ValueError): 
+            self.state = {} 
+ 
+    </span><span class="s0">def </span><span class="s1">save(self</span><span class="s0">, </span><span class="s1">pypi_version</span><span class="s0">, </span><span class="s1">current_time): 
+        </span><span class="s3"># Attempt to write out our version check file</span><span class="s1"> 
+        </span><span class="s0">with </span><span class="s1">open(self.statefile_path</span><span class="s0">, </span><span class="s2">&quot;w&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">statefile: 
+            json.dump( 
+                { 
+                    </span><span class="s2">&quot;last_check&quot;</span><span class="s1">: current_time.strftime(SELFCHECK_DATE_FMT)</span><span class="s0">,</span><span class="s1"> 
+                    </span><span class="s2">&quot;pypi_version&quot;</span><span class="s1">: pypi_version</span><span class="s0">,</span><span class="s1"> 
+                }</span><span class="s0">,</span><span class="s1"> 
+                statefile</span><span class="s0">,</span><span class="s1"> 
+                sort_keys=</span><span class="s0">True,</span><span class="s1"> 
+                separators=(</span><span class="s2">&quot;,&quot;</span><span class="s0">, </span><span class="s2">&quot;:&quot;</span><span class="s1">) 
+            ) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">GlobalSelfCheckState(object): 
+    </span><span class="s0">def </span><span class="s1">__init__(self): 
+        self.statefile_path = os.path.join(USER_CACHE_DIR</span><span class="s0">, </span><span class="s2">&quot;selfcheck.json&quot;</span><span class="s1">) 
+ 
+        </span><span class="s3"># Load the existing state</span><span class="s1"> 
+        </span><span class="s0">try</span><span class="s1">: 
+            </span><span class="s0">with </span><span class="s1">open(self.statefile_path) </span><span class="s0">as </span><span class="s1">statefile: 
+                self.state = json.load(statefile)[sys.prefix] 
+        </span><span class="s0">except </span><span class="s1">(IOError</span><span class="s0">, </span><span class="s1">ValueError</span><span class="s0">, </span><span class="s1">KeyError): 
+            self.state = {} 
+ 
+    </span><span class="s0">def </span><span class="s1">save(self</span><span class="s0">, </span><span class="s1">pypi_version</span><span class="s0">, </span><span class="s1">current_time): 
+        </span><span class="s3"># Check to make sure that we own the directory</span><span class="s1"> 
+        </span><span class="s0">if not </span><span class="s1">check_path_owner(os.path.dirname(self.statefile_path)): 
+            </span><span class="s0">return</span><span class="s1"> 
+ 
+        </span><span class="s3"># Now that we've ensured the directory is owned by this user, we'll go</span><span class="s1"> 
+        </span><span class="s3"># ahead and make sure that all our directories are created.</span><span class="s1"> 
+        ensure_dir(os.path.dirname(self.statefile_path)) 
+ 
+        </span><span class="s3"># Attempt to write out our version check file</span><span class="s1"> 
+        </span><span class="s0">with </span><span class="s1">lockfile.LockFile(self.statefile_path): 
+            </span><span class="s0">if </span><span class="s1">os.path.exists(self.statefile_path): 
+                </span><span class="s0">with </span><span class="s1">open(self.statefile_path) </span><span class="s0">as </span><span class="s1">statefile: 
+                    state = json.load(statefile) 
+            </span><span class="s0">else</span><span class="s1">: 
+                state = {} 
+ 
+            state[sys.prefix] = { 
+                </span><span class="s2">&quot;last_check&quot;</span><span class="s1">: current_time.strftime(SELFCHECK_DATE_FMT)</span><span class="s0">,</span><span class="s1"> 
+                </span><span class="s2">&quot;pypi_version&quot;</span><span class="s1">: pypi_version</span><span class="s0">,</span><span class="s1"> 
+            } 
+ 
+            </span><span class="s0">with </span><span class="s1">open(self.statefile_path</span><span class="s0">, </span><span class="s2">&quot;w&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">statefile: 
+                json.dump(state</span><span class="s0">, </span><span class="s1">statefile</span><span class="s0">, </span><span class="s1">sort_keys=</span><span class="s0">True,</span><span class="s1"> 
+                          separators=(</span><span class="s2">&quot;,&quot;</span><span class="s0">, </span><span class="s2">&quot;:&quot;</span><span class="s1">)) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">load_selfcheck_statefile(): 
+    </span><span class="s0">if </span><span class="s1">running_under_virtualenv(): 
+        </span><span class="s0">return </span><span class="s1">VirtualenvSelfCheckState() 
+    </span><span class="s0">else</span><span class="s1">: 
+        </span><span class="s0">return </span><span class="s1">GlobalSelfCheckState() 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">pip_version_check(session): 
+    </span><span class="s4">&quot;&quot;&quot;Check for an update for pip. 
+ 
+    Limit the frequency of checks to once per week. State is stored either in 
+    the active virtualenv or in the user's USER_CACHE_DIR keyed off the prefix 
+    of the pip script path. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    installed_version = get_installed_version(</span><span class="s2">&quot;pip&quot;</span><span class="s1">) 
+    </span><span class="s0">if </span><span class="s1">installed_version </span><span class="s0">is None</span><span class="s1">: 
+        </span><span class="s0">return</span><span class="s1"> 
+ 
+    pip_version = packaging_version.parse(installed_version) 
+    pypi_version = </span><span class="s0">None</span><span class="s1"> 
+ 
+    </span><span class="s0">try</span><span class="s1">: 
+        state = load_selfcheck_statefile() 
+ 
+        current_time = datetime.datetime.utcnow() 
+        </span><span class="s3"># Determine if we need to refresh the state</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s2">&quot;last_check&quot; </span><span class="s0">in </span><span class="s1">state.state </span><span class="s0">and </span><span class="s2">&quot;pypi_version&quot; </span><span class="s0">in </span><span class="s1">state.state: 
+            last_check = datetime.datetime.strptime( 
+                state.state[</span><span class="s2">&quot;last_check&quot;</span><span class="s1">]</span><span class="s0">,</span><span class="s1"> 
+                SELFCHECK_DATE_FMT 
+            ) 
+            </span><span class="s0">if </span><span class="s1">total_seconds(current_time - last_check) &lt; </span><span class="s5">7 </span><span class="s1">* </span><span class="s5">24 </span><span class="s1">* </span><span class="s5">60 </span><span class="s1">* </span><span class="s5">60</span><span class="s1">: 
+                pypi_version = state.state[</span><span class="s2">&quot;pypi_version&quot;</span><span class="s1">] 
+ 
+        </span><span class="s3"># Refresh the version if we need to or just see if we need to warn</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">pypi_version </span><span class="s0">is None</span><span class="s1">: 
+            resp = session.get( 
+                PyPI.pip_json_url</span><span class="s0">,</span><span class="s1"> 
+                headers={</span><span class="s2">&quot;Accept&quot;</span><span class="s1">: </span><span class="s2">&quot;application/json&quot;</span><span class="s1">}</span><span class="s0">,</span><span class="s1"> 
+            ) 
+            resp.raise_for_status() 
+            pypi_version = [ 
+                v </span><span class="s0">for </span><span class="s1">v </span><span class="s0">in </span><span class="s1">sorted( 
+                    list(resp.json()[</span><span class="s2">&quot;releases&quot;</span><span class="s1">])</span><span class="s0">,</span><span class="s1"> 
+                    key=packaging_version.parse</span><span class="s0">,</span><span class="s1"> 
+                ) 
+                </span><span class="s0">if not </span><span class="s1">packaging_version.parse(v).is_prerelease 
+            ][-</span><span class="s5">1</span><span class="s1">] 
+ 
+            </span><span class="s3"># save that we've performed a check</span><span class="s1"> 
+            state.save(pypi_version</span><span class="s0">, </span><span class="s1">current_time) 
+ 
+        remote_version = packaging_version.parse(pypi_version) 
+ 
+        </span><span class="s3"># Determine if our pypi_version is older</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">(pip_version &lt; remote_version </span><span class="s0">and</span><span class="s1"> 
+                pip_version.base_version != remote_version.base_version): 
+            </span><span class="s3"># Advise &quot;python -m pip&quot; on Windows to avoid issues</span><span class="s1"> 
+            </span><span class="s3"># with overwriting pip.exe.</span><span class="s1"> 
+            </span><span class="s0">if </span><span class="s1">WINDOWS: 
+                pip_cmd = </span><span class="s2">&quot;python -m pip&quot;</span><span class="s1"> 
+            </span><span class="s0">else</span><span class="s1">: 
+                pip_cmd = </span><span class="s2">&quot;pip&quot;</span><span class="s1"> 
+            logger.warning( 
+                </span><span class="s2">&quot;You are using pip version %s, however version %s is &quot;</span><span class="s1"> 
+                </span><span class="s2">&quot;available.</span><span class="s0">\n</span><span class="s2">You should consider upgrading via the &quot;</span><span class="s1"> 
+                </span><span class="s2">&quot;'%s install --upgrade pip' command.&quot;</span><span class="s0">,</span><span class="s1"> 
+                pip_version</span><span class="s0">, </span><span class="s1">pypi_version</span><span class="s0">, </span><span class="s1">pip_cmd 
+            ) 
+ 
+    </span><span class="s0">except </span><span class="s1">Exception: 
+        logger.debug( 
+            </span><span class="s2">&quot;There was an error checking the latest version of pip&quot;</span><span class="s0">,</span><span class="s1"> 
+            exc_info=</span><span class="s0">True,</span><span class="s1"> 
+        ) 
+</span></pre>
+</body>
+</html>

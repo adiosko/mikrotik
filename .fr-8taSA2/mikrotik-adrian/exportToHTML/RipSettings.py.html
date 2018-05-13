@@ -1,0 +1,154 @@
+<html>
+<head>
+<title>RipSettings.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+RipSettings.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">RipSettings: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setDefaultDistribution(self</span><span class="s0">,</span><span class="s1">distribution=</span><span class="s3">&quot;never&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set default redistribution 
+        :param distribution: never, always, if-installed 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk([</span><span class="s3">'/routing/rip/set'</span><span class="s0">,</span><span class="s3">'=distribute-default='</span><span class="s1">+distribution]) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">redistributeStaticRoutes(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will redistribute static routes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=redistribute-static=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">redistributeConnectedRoutes(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will redistribute connected networks 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=redistribute-connected=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">redistributeOspf(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will redistribute ospf 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=redistribute-ospf=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">redistributeBgp(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will redistribute bgp routes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=redistribute-bgp=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setDefaultMetric(self</span><span class="s0">,</span><span class="s1">metric=</span><span class="s3">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set default emtric 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=metric-default='</span><span class="s1">+metric] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setStaticRoutesMetric(self</span><span class="s0">, </span><span class="s1">metric=</span><span class="s3">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set default emtric 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=metric-static=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setConnectedNetworksMetric(self</span><span class="s0">, </span><span class="s1">metric=</span><span class="s3">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set default emtric 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=metric-connected=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setOspfMetric(self</span><span class="s0">, </span><span class="s1">metric=</span><span class="s3">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set default emtric 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=metric-ospf=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpMetric(self</span><span class="s0">, </span><span class="s1">metric=</span><span class="s3">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set default emtric 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=metric-bgp=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setUpdateTimer(self</span><span class="s0">,</span><span class="s1">timer=</span><span class="s3">&quot;00:00:30&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set rip update timer 
+        :param timer: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=update-timer=' </span><span class="s1">+ timer] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTimeOutTimer(self</span><span class="s0">,</span><span class="s1">timer=</span><span class="s3">&quot;00:03:00&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set timeout timer 
+        :param timer: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=timeout-timer=' </span><span class="s1">+ timer] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setGarbageTimer(self</span><span class="s0">,</span><span class="s1">timer=</span><span class="s3">&quot;00:02:00&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set garbage timer 
+        :param timer: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=garbage-timer=' </span><span class="s1">+ timer] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setRoutingTable(self</span><span class="s0">,</span><span class="s1">table=</span><span class="s3">&quot;main&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set routing table 
+        :param table: main, or custom routing table 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s3">'/routing/rip/set'</span><span class="s0">, </span><span class="s3">'=routing-table=' </span><span class="s1">+ table] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+ 
+</span></pre>
+</body>
+</html>

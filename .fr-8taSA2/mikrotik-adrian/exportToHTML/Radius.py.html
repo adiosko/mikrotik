@@ -1,0 +1,266 @@
+<html>
+<head>
+<title>Radius.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Radius.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Radius: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listRadius(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list radius settings 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk([</span><span class="s4">'/radius/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">radius == {}: 
+            print(</span><span class="s4">&quot;No radius server is set up&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Service</span><span class="s0">\t</span><span class="s4">CalledID</span><span class="s0">\t</span><span class="s4">Domain</span><span class="s0">\t</span><span class="s4">address</span><span class="s0">\t</span><span class="s4">secret&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">radius: 
+                print(radius[i][</span><span class="s4">'service'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+radius[i][</span><span class="s4">'called-id'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+radius[i][</span><span class="s4">'domain'</span><span class="s1">]+ 
+                      </span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+radius[i][</span><span class="s4">'address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+radius[i][</span><span class="s4">'secret'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">addRadius(self</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add radius with its address 
+        :param address: IP of radius 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk([</span><span class="s4">'/radius/add'</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+address]) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">removeRadius(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove radius server 
+        :param number: order no 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">disableRadius(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable radius server 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">enableRadius(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable radius server 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">commentRadius(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set comment 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">printIncommingSettings(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set incoming settings 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/incoming/print'</span><span class="s1">] ) 
+        print(radius) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">enableIncomming(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable incomming communication 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/incoming/set'</span><span class="s0">,</span><span class="s4">'=accept=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setIncommingPort(self</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;3379&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set custom incomming port 
+        :param port:  def 3379 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/incoming/set'</span><span class="s0">, </span><span class="s4">'=port='</span><span class="s1">+port] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">disableIncommingTraffic(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable incomming traffic 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/incoming/set'</span><span class="s0">, </span><span class="s4">'=accept=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">resetIncommingCounters(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reset incoming stats 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/incoming/reset-counters'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">resetAllRadiusCounters(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reset all stats 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/reset-counters'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">monitorRadius(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;5s&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all stats in time interval 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/monitor'</span><span class="s0">, </span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=interval='</span><span class="s1">+interval] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setRadiusService(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">service): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set service on number 
+        :param number: 
+        :param service: ppp, hotspot,dhcp,login,wireless,ipsec 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=service='</span><span class="s1">+service] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setCalledId(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">ID): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set called id 
+        :param number: number to use 
+        :param ID: ID 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=called-id=' </span><span class="s1">+ID] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setDomain(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">domain): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set domain of radius 
+        :param number: 
+        :param domain: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=domain=' </span><span class="s1">+ domain] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set radius address 
+        :param number: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setSecret(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">secret): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set radius password 
+        :param number: 
+        :param secret: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=secret=' </span><span class="s1">+ secret] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthenticationPort(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;1812&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set custom authentication port 
+        :param number: 
+        :param port: def 1812 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=authentication-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setAccountingPort(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;1813&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set accounting port 
+        :param number: 
+        :param port: def 1813 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=accounting-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setTimeout(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">timeout=</span><span class="s4">&quot;300&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set custom timeout 
+        :param number: 
+        :param timeout: 00:00:00:010 - 00:00:10 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">enableAccountingBackup(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set enable backup 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=accounting-backup=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">disableAccountingBackup(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable accounting backup 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=accounting-backup=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setRealm(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">realm): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set realm for backup for accounting 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=realm='</span><span class="s1">+realm] ) 
+        </span><span class="s0">return </span><span class="s1">radius 
+ 
+    </span><span class="s0">def </span><span class="s1">setSourceAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">src): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address for accounting backup 
+        :param number: 
+        :param src: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        radius = self.client.talk( [</span><span class="s4">'/radius/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=src-address='</span><span class="s1">+src] ) 
+        </span><span class="s0">return </span><span class="s1">radius</span></pre>
+</body>
+</html>

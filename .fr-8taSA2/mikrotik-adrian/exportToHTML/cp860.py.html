@@ -1,0 +1,721 @@
+<html>
+<head>
+<title>cp860.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(106,135,89); }
+.s1 { color: rgb(128,128,128); }
+.s2 { color: rgb(169,183,198); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+cp860.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; Python Character Mapping Codec generated from 'VENDORS/MICSFT/PC/CP860.TXT' with gencodec.py. 
+ 
+&quot;&quot;&quot;</span><span class="s1">#&quot;</span><span class="s2"> 
+ 
+</span><span class="s3">import </span><span class="s2">codecs 
+ 
+</span><span class="s1">### Codec APIs</span><span class="s2"> 
+ 
+</span><span class="s3">class </span><span class="s2">Codec(codecs.Codec): 
+ 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_encode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">encoding_map) 
+ 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_decode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">decoding_table) 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalEncoder(codecs.IncrementalEncoder): 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_encode(input</span><span class="s3">,</span><span class="s2">self.errors</span><span class="s3">,</span><span class="s2">encoding_map)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalDecoder(codecs.IncrementalDecoder): 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_decode(input</span><span class="s3">,</span><span class="s2">self.errors</span><span class="s3">,</span><span class="s2">decoding_table)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">StreamWriter(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamWriter): 
+    </span><span class="s3">pass</span><span class="s2"> 
+ 
+</span><span class="s3">class </span><span class="s2">StreamReader(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamReader): 
+    </span><span class="s3">pass</span><span class="s2"> 
+ 
+</span><span class="s1">### encodings module API</span><span class="s2"> 
+ 
+</span><span class="s3">def </span><span class="s2">getregentry(): 
+    </span><span class="s3">return </span><span class="s2">codecs.CodecInfo( 
+        name=</span><span class="s0">'cp860'</span><span class="s3">,</span><span class="s2"> 
+        encode=Codec().encode</span><span class="s3">,</span><span class="s2"> 
+        decode=Codec().decode</span><span class="s3">,</span><span class="s2"> 
+        incrementalencoder=IncrementalEncoder</span><span class="s3">,</span><span class="s2"> 
+        incrementaldecoder=IncrementalDecoder</span><span class="s3">,</span><span class="s2"> 
+        streamreader=StreamReader</span><span class="s3">,</span><span class="s2"> 
+        streamwriter=StreamWriter</span><span class="s3">,</span><span class="s2"> 
+    ) 
+ 
+</span><span class="s1">### Decoding Map</span><span class="s2"> 
+ 
+decoding_map = codecs.make_identity_dict(range(</span><span class="s4">256</span><span class="s2">)) 
+decoding_map.update({ 
+    </span><span class="s4">0x0080</span><span class="s2">: </span><span class="s4">0x00c7</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER C WITH CEDILLA</span><span class="s2"> 
+    </span><span class="s4">0x0081</span><span class="s2">: </span><span class="s4">0x00fc</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER U WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s4">0x0082</span><span class="s2">: </span><span class="s4">0x00e9</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER E WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x0083</span><span class="s2">: </span><span class="s4">0x00e2</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x0084</span><span class="s2">: </span><span class="s4">0x00e3</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x0085</span><span class="s2">: </span><span class="s4">0x00e0</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x0086</span><span class="s2">: </span><span class="s4">0x00c1</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x0087</span><span class="s2">: </span><span class="s4">0x00e7</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER C WITH CEDILLA</span><span class="s2"> 
+    </span><span class="s4">0x0088</span><span class="s2">: </span><span class="s4">0x00ea</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER E WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x0089</span><span class="s2">: </span><span class="s4">0x00ca</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER E WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x008a</span><span class="s2">: </span><span class="s4">0x00e8</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER E WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x008b</span><span class="s2">: </span><span class="s4">0x00cd</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER I WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x008c</span><span class="s2">: </span><span class="s4">0x00d4</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x008d</span><span class="s2">: </span><span class="s4">0x00ec</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER I WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x008e</span><span class="s2">: </span><span class="s4">0x00c3</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x008f</span><span class="s2">: </span><span class="s4">0x00c2</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x0090</span><span class="s2">: </span><span class="s4">0x00c9</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER E WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x0091</span><span class="s2">: </span><span class="s4">0x00c0</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x0092</span><span class="s2">: </span><span class="s4">0x00c8</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER E WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x0093</span><span class="s2">: </span><span class="s4">0x00f4</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x0094</span><span class="s2">: </span><span class="s4">0x00f5</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x0095</span><span class="s2">: </span><span class="s4">0x00f2</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x0096</span><span class="s2">: </span><span class="s4">0x00da</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER U WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x0097</span><span class="s2">: </span><span class="s4">0x00f9</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER U WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x0098</span><span class="s2">: </span><span class="s4">0x00cc</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER I WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x0099</span><span class="s2">: </span><span class="s4">0x00d5</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x009a</span><span class="s2">: </span><span class="s4">0x00dc</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER U WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s4">0x009b</span><span class="s2">: </span><span class="s4">0x00a2</span><span class="s3">,     </span><span class="s1">#  CENT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x009c</span><span class="s2">: </span><span class="s4">0x00a3</span><span class="s3">,     </span><span class="s1">#  POUND SIGN</span><span class="s2"> 
+    </span><span class="s4">0x009d</span><span class="s2">: </span><span class="s4">0x00d9</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER U WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x009e</span><span class="s2">: </span><span class="s4">0x20a7</span><span class="s3">,     </span><span class="s1">#  PESETA SIGN</span><span class="s2"> 
+    </span><span class="s4">0x009f</span><span class="s2">: </span><span class="s4">0x00d3</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00a0</span><span class="s2">: </span><span class="s4">0x00e1</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00a1</span><span class="s2">: </span><span class="s4">0x00ed</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER I WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00a2</span><span class="s2">: </span><span class="s4">0x00f3</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00a3</span><span class="s2">: </span><span class="s4">0x00fa</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER U WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00a4</span><span class="s2">: </span><span class="s4">0x00f1</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER N WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x00a5</span><span class="s2">: </span><span class="s4">0x00d1</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER N WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x00a6</span><span class="s2">: </span><span class="s4">0x00aa</span><span class="s3">,     </span><span class="s1">#  FEMININE ORDINAL INDICATOR</span><span class="s2"> 
+    </span><span class="s4">0x00a7</span><span class="s2">: </span><span class="s4">0x00ba</span><span class="s3">,     </span><span class="s1">#  MASCULINE ORDINAL INDICATOR</span><span class="s2"> 
+    </span><span class="s4">0x00a8</span><span class="s2">: </span><span class="s4">0x00bf</span><span class="s3">,     </span><span class="s1">#  INVERTED QUESTION MARK</span><span class="s2"> 
+    </span><span class="s4">0x00a9</span><span class="s2">: </span><span class="s4">0x00d2</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00aa</span><span class="s2">: </span><span class="s4">0x00ac</span><span class="s3">,     </span><span class="s1">#  NOT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00ab</span><span class="s2">: </span><span class="s4">0x00bd</span><span class="s3">,     </span><span class="s1">#  VULGAR FRACTION ONE HALF</span><span class="s2"> 
+    </span><span class="s4">0x00ac</span><span class="s2">: </span><span class="s4">0x00bc</span><span class="s3">,     </span><span class="s1">#  VULGAR FRACTION ONE QUARTER</span><span class="s2"> 
+    </span><span class="s4">0x00ad</span><span class="s2">: </span><span class="s4">0x00a1</span><span class="s3">,     </span><span class="s1">#  INVERTED EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x00ae</span><span class="s2">: </span><span class="s4">0x00ab</span><span class="s3">,     </span><span class="s1">#  LEFT-POINTING DOUBLE ANGLE QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x00af</span><span class="s2">: </span><span class="s4">0x00bb</span><span class="s3">,     </span><span class="s1">#  RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x00b0</span><span class="s2">: </span><span class="s4">0x2591</span><span class="s3">,     </span><span class="s1">#  LIGHT SHADE</span><span class="s2"> 
+    </span><span class="s4">0x00b1</span><span class="s2">: </span><span class="s4">0x2592</span><span class="s3">,     </span><span class="s1">#  MEDIUM SHADE</span><span class="s2"> 
+    </span><span class="s4">0x00b2</span><span class="s2">: </span><span class="s4">0x2593</span><span class="s3">,     </span><span class="s1">#  DARK SHADE</span><span class="s2"> 
+    </span><span class="s4">0x00b3</span><span class="s2">: </span><span class="s4">0x2502</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT VERTICAL</span><span class="s2"> 
+    </span><span class="s4">0x00b4</span><span class="s2">: </span><span class="s4">0x2524</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT VERTICAL AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x00b5</span><span class="s2">: </span><span class="s4">0x2561</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL SINGLE AND LEFT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x00b6</span><span class="s2">: </span><span class="s4">0x2562</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL DOUBLE AND LEFT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x00b7</span><span class="s2">: </span><span class="s4">0x2556</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN DOUBLE AND LEFT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x00b8</span><span class="s2">: </span><span class="s4">0x2555</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN SINGLE AND LEFT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x00b9</span><span class="s2">: </span><span class="s4">0x2563</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE VERTICAL AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x00ba</span><span class="s2">: </span><span class="s4">0x2551</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE VERTICAL</span><span class="s2"> 
+    </span><span class="s4">0x00bb</span><span class="s2">: </span><span class="s4">0x2557</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE DOWN AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x00bc</span><span class="s2">: </span><span class="s4">0x255d</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE UP AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x00bd</span><span class="s2">: </span><span class="s4">0x255c</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP DOUBLE AND LEFT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x00be</span><span class="s2">: </span><span class="s4">0x255b</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP SINGLE AND LEFT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x00bf</span><span class="s2">: </span><span class="s4">0x2510</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT DOWN AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x00c0</span><span class="s2">: </span><span class="s4">0x2514</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT UP AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x00c1</span><span class="s2">: </span><span class="s4">0x2534</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT UP AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x00c2</span><span class="s2">: </span><span class="s4">0x252c</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT DOWN AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x00c3</span><span class="s2">: </span><span class="s4">0x251c</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT VERTICAL AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x00c4</span><span class="s2">: </span><span class="s4">0x2500</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x00c5</span><span class="s2">: </span><span class="s4">0x253c</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x00c6</span><span class="s2">: </span><span class="s4">0x255e</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL SINGLE AND RIGHT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x00c7</span><span class="s2">: </span><span class="s4">0x255f</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL DOUBLE AND RIGHT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x00c8</span><span class="s2">: </span><span class="s4">0x255a</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE UP AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x00c9</span><span class="s2">: </span><span class="s4">0x2554</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE DOWN AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x00ca</span><span class="s2">: </span><span class="s4">0x2569</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE UP AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x00cb</span><span class="s2">: </span><span class="s4">0x2566</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE DOWN AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x00cc</span><span class="s2">: </span><span class="s4">0x2560</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE VERTICAL AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x00cd</span><span class="s2">: </span><span class="s4">0x2550</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x00ce</span><span class="s2">: </span><span class="s4">0x256c</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE VERTICAL AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x00cf</span><span class="s2">: </span><span class="s4">0x2567</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP SINGLE AND HORIZONTAL DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x00d0</span><span class="s2">: </span><span class="s4">0x2568</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP DOUBLE AND HORIZONTAL SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x00d1</span><span class="s2">: </span><span class="s4">0x2564</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN SINGLE AND HORIZONTAL DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x00d2</span><span class="s2">: </span><span class="s4">0x2565</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN DOUBLE AND HORIZONTAL SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x00d3</span><span class="s2">: </span><span class="s4">0x2559</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP DOUBLE AND RIGHT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x00d4</span><span class="s2">: </span><span class="s4">0x2558</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP SINGLE AND RIGHT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x00d5</span><span class="s2">: </span><span class="s4">0x2552</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN SINGLE AND RIGHT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x00d6</span><span class="s2">: </span><span class="s4">0x2553</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN DOUBLE AND RIGHT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x00d7</span><span class="s2">: </span><span class="s4">0x256b</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL DOUBLE AND HORIZONTAL SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x00d8</span><span class="s2">: </span><span class="s4">0x256a</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL SINGLE AND HORIZONTAL DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x00d9</span><span class="s2">: </span><span class="s4">0x2518</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT UP AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x00da</span><span class="s2">: </span><span class="s4">0x250c</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT DOWN AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x00db</span><span class="s2">: </span><span class="s4">0x2588</span><span class="s3">,     </span><span class="s1">#  FULL BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x00dc</span><span class="s2">: </span><span class="s4">0x2584</span><span class="s3">,     </span><span class="s1">#  LOWER HALF BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x00dd</span><span class="s2">: </span><span class="s4">0x258c</span><span class="s3">,     </span><span class="s1">#  LEFT HALF BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x00de</span><span class="s2">: </span><span class="s4">0x2590</span><span class="s3">,     </span><span class="s1">#  RIGHT HALF BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x00df</span><span class="s2">: </span><span class="s4">0x2580</span><span class="s3">,     </span><span class="s1">#  UPPER HALF BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x00e0</span><span class="s2">: </span><span class="s4">0x03b1</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER ALPHA</span><span class="s2"> 
+    </span><span class="s4">0x00e1</span><span class="s2">: </span><span class="s4">0x00df</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER SHARP S</span><span class="s2"> 
+    </span><span class="s4">0x00e2</span><span class="s2">: </span><span class="s4">0x0393</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER GAMMA</span><span class="s2"> 
+    </span><span class="s4">0x00e3</span><span class="s2">: </span><span class="s4">0x03c0</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER PI</span><span class="s2"> 
+    </span><span class="s4">0x00e4</span><span class="s2">: </span><span class="s4">0x03a3</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER SIGMA</span><span class="s2"> 
+    </span><span class="s4">0x00e5</span><span class="s2">: </span><span class="s4">0x03c3</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER SIGMA</span><span class="s2"> 
+    </span><span class="s4">0x00e6</span><span class="s2">: </span><span class="s4">0x00b5</span><span class="s3">,     </span><span class="s1">#  MICRO SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00e7</span><span class="s2">: </span><span class="s4">0x03c4</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER TAU</span><span class="s2"> 
+    </span><span class="s4">0x00e8</span><span class="s2">: </span><span class="s4">0x03a6</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER PHI</span><span class="s2"> 
+    </span><span class="s4">0x00e9</span><span class="s2">: </span><span class="s4">0x0398</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER THETA</span><span class="s2"> 
+    </span><span class="s4">0x00ea</span><span class="s2">: </span><span class="s4">0x03a9</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER OMEGA</span><span class="s2"> 
+    </span><span class="s4">0x00eb</span><span class="s2">: </span><span class="s4">0x03b4</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER DELTA</span><span class="s2"> 
+    </span><span class="s4">0x00ec</span><span class="s2">: </span><span class="s4">0x221e</span><span class="s3">,     </span><span class="s1">#  INFINITY</span><span class="s2"> 
+    </span><span class="s4">0x00ed</span><span class="s2">: </span><span class="s4">0x03c6</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER PHI</span><span class="s2"> 
+    </span><span class="s4">0x00ee</span><span class="s2">: </span><span class="s4">0x03b5</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER EPSILON</span><span class="s2"> 
+    </span><span class="s4">0x00ef</span><span class="s2">: </span><span class="s4">0x2229</span><span class="s3">,     </span><span class="s1">#  INTERSECTION</span><span class="s2"> 
+    </span><span class="s4">0x00f0</span><span class="s2">: </span><span class="s4">0x2261</span><span class="s3">,     </span><span class="s1">#  IDENTICAL TO</span><span class="s2"> 
+    </span><span class="s4">0x00f1</span><span class="s2">: </span><span class="s4">0x00b1</span><span class="s3">,     </span><span class="s1">#  PLUS-MINUS SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00f2</span><span class="s2">: </span><span class="s4">0x2265</span><span class="s3">,     </span><span class="s1">#  GREATER-THAN OR EQUAL TO</span><span class="s2"> 
+    </span><span class="s4">0x00f3</span><span class="s2">: </span><span class="s4">0x2264</span><span class="s3">,     </span><span class="s1">#  LESS-THAN OR EQUAL TO</span><span class="s2"> 
+    </span><span class="s4">0x00f4</span><span class="s2">: </span><span class="s4">0x2320</span><span class="s3">,     </span><span class="s1">#  TOP HALF INTEGRAL</span><span class="s2"> 
+    </span><span class="s4">0x00f5</span><span class="s2">: </span><span class="s4">0x2321</span><span class="s3">,     </span><span class="s1">#  BOTTOM HALF INTEGRAL</span><span class="s2"> 
+    </span><span class="s4">0x00f6</span><span class="s2">: </span><span class="s4">0x00f7</span><span class="s3">,     </span><span class="s1">#  DIVISION SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00f7</span><span class="s2">: </span><span class="s4">0x2248</span><span class="s3">,     </span><span class="s1">#  ALMOST EQUAL TO</span><span class="s2"> 
+    </span><span class="s4">0x00f8</span><span class="s2">: </span><span class="s4">0x00b0</span><span class="s3">,     </span><span class="s1">#  DEGREE SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00f9</span><span class="s2">: </span><span class="s4">0x2219</span><span class="s3">,     </span><span class="s1">#  BULLET OPERATOR</span><span class="s2"> 
+    </span><span class="s4">0x00fa</span><span class="s2">: </span><span class="s4">0x00b7</span><span class="s3">,     </span><span class="s1">#  MIDDLE DOT</span><span class="s2"> 
+    </span><span class="s4">0x00fb</span><span class="s2">: </span><span class="s4">0x221a</span><span class="s3">,     </span><span class="s1">#  SQUARE ROOT</span><span class="s2"> 
+    </span><span class="s4">0x00fc</span><span class="s2">: </span><span class="s4">0x207f</span><span class="s3">,     </span><span class="s1">#  SUPERSCRIPT LATIN SMALL LETTER N</span><span class="s2"> 
+    </span><span class="s4">0x00fd</span><span class="s2">: </span><span class="s4">0x00b2</span><span class="s3">,     </span><span class="s1">#  SUPERSCRIPT TWO</span><span class="s2"> 
+    </span><span class="s4">0x00fe</span><span class="s2">: </span><span class="s4">0x25a0</span><span class="s3">,     </span><span class="s1">#  BLACK SQUARE</span><span class="s2"> 
+    </span><span class="s4">0x00ff</span><span class="s2">: </span><span class="s4">0x00a0</span><span class="s3">,     </span><span class="s1">#  NO-BREAK SPACE</span><span class="s2"> 
+}) 
+ 
+</span><span class="s1">### Decoding Table</span><span class="s2"> 
+ 
+decoding_table = ( 
+    </span><span class="s0">'</span><span class="s3">\x00</span><span class="s0">'     </span><span class="s1">#  0x0000 -&gt; NULL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x01</span><span class="s0">'     </span><span class="s1">#  0x0001 -&gt; START OF HEADING</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x02</span><span class="s0">'     </span><span class="s1">#  0x0002 -&gt; START OF TEXT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x03</span><span class="s0">'     </span><span class="s1">#  0x0003 -&gt; END OF TEXT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x04</span><span class="s0">'     </span><span class="s1">#  0x0004 -&gt; END OF TRANSMISSION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x05</span><span class="s0">'     </span><span class="s1">#  0x0005 -&gt; ENQUIRY</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x06</span><span class="s0">'     </span><span class="s1">#  0x0006 -&gt; ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x07</span><span class="s0">'     </span><span class="s1">#  0x0007 -&gt; BELL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x08</span><span class="s0">'     </span><span class="s1">#  0x0008 -&gt; BACKSPACE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\t</span><span class="s0">'       </span><span class="s1">#  0x0009 -&gt; HORIZONTAL TABULATION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\n</span><span class="s0">'       </span><span class="s1">#  0x000a -&gt; LINE FEED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0b</span><span class="s0">'     </span><span class="s1">#  0x000b -&gt; VERTICAL TABULATION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0c</span><span class="s0">'     </span><span class="s1">#  0x000c -&gt; FORM FEED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\r</span><span class="s0">'       </span><span class="s1">#  0x000d -&gt; CARRIAGE RETURN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0e</span><span class="s0">'     </span><span class="s1">#  0x000e -&gt; SHIFT OUT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0f</span><span class="s0">'     </span><span class="s1">#  0x000f -&gt; SHIFT IN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x10</span><span class="s0">'     </span><span class="s1">#  0x0010 -&gt; DATA LINK ESCAPE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x11</span><span class="s0">'     </span><span class="s1">#  0x0011 -&gt; DEVICE CONTROL ONE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x12</span><span class="s0">'     </span><span class="s1">#  0x0012 -&gt; DEVICE CONTROL TWO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x13</span><span class="s0">'     </span><span class="s1">#  0x0013 -&gt; DEVICE CONTROL THREE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x14</span><span class="s0">'     </span><span class="s1">#  0x0014 -&gt; DEVICE CONTROL FOUR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x15</span><span class="s0">'     </span><span class="s1">#  0x0015 -&gt; NEGATIVE ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x16</span><span class="s0">'     </span><span class="s1">#  0x0016 -&gt; SYNCHRONOUS IDLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x17</span><span class="s0">'     </span><span class="s1">#  0x0017 -&gt; END OF TRANSMISSION BLOCK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x18</span><span class="s0">'     </span><span class="s1">#  0x0018 -&gt; CANCEL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x19</span><span class="s0">'     </span><span class="s1">#  0x0019 -&gt; END OF MEDIUM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1a</span><span class="s0">'     </span><span class="s1">#  0x001a -&gt; SUBSTITUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1b</span><span class="s0">'     </span><span class="s1">#  0x001b -&gt; ESCAPE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1c</span><span class="s0">'     </span><span class="s1">#  0x001c -&gt; FILE SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1d</span><span class="s0">'     </span><span class="s1">#  0x001d -&gt; GROUP SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1e</span><span class="s0">'     </span><span class="s1">#  0x001e -&gt; RECORD SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1f</span><span class="s0">'     </span><span class="s1">#  0x001f -&gt; UNIT SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">' '        </span><span class="s1">#  0x0020 -&gt; SPACE</span><span class="s2"> 
+    </span><span class="s0">'!'        </span><span class="s1">#  0x0021 -&gt; EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s0">'&quot;'        </span><span class="s1">#  0x0022 -&gt; QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s0">'#'        </span><span class="s1">#  0x0023 -&gt; NUMBER SIGN</span><span class="s2"> 
+    </span><span class="s0">'$'        </span><span class="s1">#  0x0024 -&gt; DOLLAR SIGN</span><span class="s2"> 
+    </span><span class="s0">'%'        </span><span class="s1">#  0x0025 -&gt; PERCENT SIGN</span><span class="s2"> 
+    </span><span class="s0">'&amp;'        </span><span class="s1">#  0x0026 -&gt; AMPERSAND</span><span class="s2"> 
+    </span><span class="s0">&quot;'&quot;        </span><span class="s1">#  0x0027 -&gt; APOSTROPHE</span><span class="s2"> 
+    </span><span class="s0">'('        </span><span class="s1">#  0x0028 -&gt; LEFT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s0">')'        </span><span class="s1">#  0x0029 -&gt; RIGHT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s0">'*'        </span><span class="s1">#  0x002a -&gt; ASTERISK</span><span class="s2"> 
+    </span><span class="s0">'+'        </span><span class="s1">#  0x002b -&gt; PLUS SIGN</span><span class="s2"> 
+    </span><span class="s0">','        </span><span class="s1">#  0x002c -&gt; COMMA</span><span class="s2"> 
+    </span><span class="s0">'-'        </span><span class="s1">#  0x002d -&gt; HYPHEN-MINUS</span><span class="s2"> 
+    </span><span class="s0">'.'        </span><span class="s1">#  0x002e -&gt; FULL STOP</span><span class="s2"> 
+    </span><span class="s0">'/'        </span><span class="s1">#  0x002f -&gt; SOLIDUS</span><span class="s2"> 
+    </span><span class="s0">'0'        </span><span class="s1">#  0x0030 -&gt; DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s0">'1'        </span><span class="s1">#  0x0031 -&gt; DIGIT ONE</span><span class="s2"> 
+    </span><span class="s0">'2'        </span><span class="s1">#  0x0032 -&gt; DIGIT TWO</span><span class="s2"> 
+    </span><span class="s0">'3'        </span><span class="s1">#  0x0033 -&gt; DIGIT THREE</span><span class="s2"> 
+    </span><span class="s0">'4'        </span><span class="s1">#  0x0034 -&gt; DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s0">'5'        </span><span class="s1">#  0x0035 -&gt; DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s0">'6'        </span><span class="s1">#  0x0036 -&gt; DIGIT SIX</span><span class="s2"> 
+    </span><span class="s0">'7'        </span><span class="s1">#  0x0037 -&gt; DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s0">'8'        </span><span class="s1">#  0x0038 -&gt; DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s0">'9'        </span><span class="s1">#  0x0039 -&gt; DIGIT NINE</span><span class="s2"> 
+    </span><span class="s0">':'        </span><span class="s1">#  0x003a -&gt; COLON</span><span class="s2"> 
+    </span><span class="s0">';'        </span><span class="s1">#  0x003b -&gt; SEMICOLON</span><span class="s2"> 
+    </span><span class="s0">'&lt;'        </span><span class="s1">#  0x003c -&gt; LESS-THAN SIGN</span><span class="s2"> 
+    </span><span class="s0">'='        </span><span class="s1">#  0x003d -&gt; EQUALS SIGN</span><span class="s2"> 
+    </span><span class="s0">'&gt;'        </span><span class="s1">#  0x003e -&gt; GREATER-THAN SIGN</span><span class="s2"> 
+    </span><span class="s0">'?'        </span><span class="s1">#  0x003f -&gt; QUESTION MARK</span><span class="s2"> 
+    </span><span class="s0">'@'        </span><span class="s1">#  0x0040 -&gt; COMMERCIAL AT</span><span class="s2"> 
+    </span><span class="s0">'A'        </span><span class="s1">#  0x0041 -&gt; LATIN CAPITAL LETTER A</span><span class="s2"> 
+    </span><span class="s0">'B'        </span><span class="s1">#  0x0042 -&gt; LATIN CAPITAL LETTER B</span><span class="s2"> 
+    </span><span class="s0">'C'        </span><span class="s1">#  0x0043 -&gt; LATIN CAPITAL LETTER C</span><span class="s2"> 
+    </span><span class="s0">'D'        </span><span class="s1">#  0x0044 -&gt; LATIN CAPITAL LETTER D</span><span class="s2"> 
+    </span><span class="s0">'E'        </span><span class="s1">#  0x0045 -&gt; LATIN CAPITAL LETTER E</span><span class="s2"> 
+    </span><span class="s0">'F'        </span><span class="s1">#  0x0046 -&gt; LATIN CAPITAL LETTER F</span><span class="s2"> 
+    </span><span class="s0">'G'        </span><span class="s1">#  0x0047 -&gt; LATIN CAPITAL LETTER G</span><span class="s2"> 
+    </span><span class="s0">'H'        </span><span class="s1">#  0x0048 -&gt; LATIN CAPITAL LETTER H</span><span class="s2"> 
+    </span><span class="s0">'I'        </span><span class="s1">#  0x0049 -&gt; LATIN CAPITAL LETTER I</span><span class="s2"> 
+    </span><span class="s0">'J'        </span><span class="s1">#  0x004a -&gt; LATIN CAPITAL LETTER J</span><span class="s2"> 
+    </span><span class="s0">'K'        </span><span class="s1">#  0x004b -&gt; LATIN CAPITAL LETTER K</span><span class="s2"> 
+    </span><span class="s0">'L'        </span><span class="s1">#  0x004c -&gt; LATIN CAPITAL LETTER L</span><span class="s2"> 
+    </span><span class="s0">'M'        </span><span class="s1">#  0x004d -&gt; LATIN CAPITAL LETTER M</span><span class="s2"> 
+    </span><span class="s0">'N'        </span><span class="s1">#  0x004e -&gt; LATIN CAPITAL LETTER N</span><span class="s2"> 
+    </span><span class="s0">'O'        </span><span class="s1">#  0x004f -&gt; LATIN CAPITAL LETTER O</span><span class="s2"> 
+    </span><span class="s0">'P'        </span><span class="s1">#  0x0050 -&gt; LATIN CAPITAL LETTER P</span><span class="s2"> 
+    </span><span class="s0">'Q'        </span><span class="s1">#  0x0051 -&gt; LATIN CAPITAL LETTER Q</span><span class="s2"> 
+    </span><span class="s0">'R'        </span><span class="s1">#  0x0052 -&gt; LATIN CAPITAL LETTER R</span><span class="s2"> 
+    </span><span class="s0">'S'        </span><span class="s1">#  0x0053 -&gt; LATIN CAPITAL LETTER S</span><span class="s2"> 
+    </span><span class="s0">'T'        </span><span class="s1">#  0x0054 -&gt; LATIN CAPITAL LETTER T</span><span class="s2"> 
+    </span><span class="s0">'U'        </span><span class="s1">#  0x0055 -&gt; LATIN CAPITAL LETTER U</span><span class="s2"> 
+    </span><span class="s0">'V'        </span><span class="s1">#  0x0056 -&gt; LATIN CAPITAL LETTER V</span><span class="s2"> 
+    </span><span class="s0">'W'        </span><span class="s1">#  0x0057 -&gt; LATIN CAPITAL LETTER W</span><span class="s2"> 
+    </span><span class="s0">'X'        </span><span class="s1">#  0x0058 -&gt; LATIN CAPITAL LETTER X</span><span class="s2"> 
+    </span><span class="s0">'Y'        </span><span class="s1">#  0x0059 -&gt; LATIN CAPITAL LETTER Y</span><span class="s2"> 
+    </span><span class="s0">'Z'        </span><span class="s1">#  0x005a -&gt; LATIN CAPITAL LETTER Z</span><span class="s2"> 
+    </span><span class="s0">'['        </span><span class="s1">#  0x005b -&gt; LEFT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\\</span><span class="s0">'       </span><span class="s1">#  0x005c -&gt; REVERSE SOLIDUS</span><span class="s2"> 
+    </span><span class="s0">']'        </span><span class="s1">#  0x005d -&gt; RIGHT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s0">'^'        </span><span class="s1">#  0x005e -&gt; CIRCUMFLEX ACCENT</span><span class="s2"> 
+    </span><span class="s0">'_'        </span><span class="s1">#  0x005f -&gt; LOW LINE</span><span class="s2"> 
+    </span><span class="s0">'`'        </span><span class="s1">#  0x0060 -&gt; GRAVE ACCENT</span><span class="s2"> 
+    </span><span class="s0">'a'        </span><span class="s1">#  0x0061 -&gt; LATIN SMALL LETTER A</span><span class="s2"> 
+    </span><span class="s0">'b'        </span><span class="s1">#  0x0062 -&gt; LATIN SMALL LETTER B</span><span class="s2"> 
+    </span><span class="s0">'c'        </span><span class="s1">#  0x0063 -&gt; LATIN SMALL LETTER C</span><span class="s2"> 
+    </span><span class="s0">'d'        </span><span class="s1">#  0x0064 -&gt; LATIN SMALL LETTER D</span><span class="s2"> 
+    </span><span class="s0">'e'        </span><span class="s1">#  0x0065 -&gt; LATIN SMALL LETTER E</span><span class="s2"> 
+    </span><span class="s0">'f'        </span><span class="s1">#  0x0066 -&gt; LATIN SMALL LETTER F</span><span class="s2"> 
+    </span><span class="s0">'g'        </span><span class="s1">#  0x0067 -&gt; LATIN SMALL LETTER G</span><span class="s2"> 
+    </span><span class="s0">'h'        </span><span class="s1">#  0x0068 -&gt; LATIN SMALL LETTER H</span><span class="s2"> 
+    </span><span class="s0">'i'        </span><span class="s1">#  0x0069 -&gt; LATIN SMALL LETTER I</span><span class="s2"> 
+    </span><span class="s0">'j'        </span><span class="s1">#  0x006a -&gt; LATIN SMALL LETTER J</span><span class="s2"> 
+    </span><span class="s0">'k'        </span><span class="s1">#  0x006b -&gt; LATIN SMALL LETTER K</span><span class="s2"> 
+    </span><span class="s0">'l'        </span><span class="s1">#  0x006c -&gt; LATIN SMALL LETTER L</span><span class="s2"> 
+    </span><span class="s0">'m'        </span><span class="s1">#  0x006d -&gt; LATIN SMALL LETTER M</span><span class="s2"> 
+    </span><span class="s0">'n'        </span><span class="s1">#  0x006e -&gt; LATIN SMALL LETTER N</span><span class="s2"> 
+    </span><span class="s0">'o'        </span><span class="s1">#  0x006f -&gt; LATIN SMALL LETTER O</span><span class="s2"> 
+    </span><span class="s0">'p'        </span><span class="s1">#  0x0070 -&gt; LATIN SMALL LETTER P</span><span class="s2"> 
+    </span><span class="s0">'q'        </span><span class="s1">#  0x0071 -&gt; LATIN SMALL LETTER Q</span><span class="s2"> 
+    </span><span class="s0">'r'        </span><span class="s1">#  0x0072 -&gt; LATIN SMALL LETTER R</span><span class="s2"> 
+    </span><span class="s0">'s'        </span><span class="s1">#  0x0073 -&gt; LATIN SMALL LETTER S</span><span class="s2"> 
+    </span><span class="s0">'t'        </span><span class="s1">#  0x0074 -&gt; LATIN SMALL LETTER T</span><span class="s2"> 
+    </span><span class="s0">'u'        </span><span class="s1">#  0x0075 -&gt; LATIN SMALL LETTER U</span><span class="s2"> 
+    </span><span class="s0">'v'        </span><span class="s1">#  0x0076 -&gt; LATIN SMALL LETTER V</span><span class="s2"> 
+    </span><span class="s0">'w'        </span><span class="s1">#  0x0077 -&gt; LATIN SMALL LETTER W</span><span class="s2"> 
+    </span><span class="s0">'x'        </span><span class="s1">#  0x0078 -&gt; LATIN SMALL LETTER X</span><span class="s2"> 
+    </span><span class="s0">'y'        </span><span class="s1">#  0x0079 -&gt; LATIN SMALL LETTER Y</span><span class="s2"> 
+    </span><span class="s0">'z'        </span><span class="s1">#  0x007a -&gt; LATIN SMALL LETTER Z</span><span class="s2"> 
+    </span><span class="s0">'{'        </span><span class="s1">#  0x007b -&gt; LEFT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s0">'|'        </span><span class="s1">#  0x007c -&gt; VERTICAL LINE</span><span class="s2"> 
+    </span><span class="s0">'}'        </span><span class="s1">#  0x007d -&gt; RIGHT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s0">'~'        </span><span class="s1">#  0x007e -&gt; TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x7f</span><span class="s0">'     </span><span class="s1">#  0x007f -&gt; DELETE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc7</span><span class="s0">'     </span><span class="s1">#  0x0080 -&gt; LATIN CAPITAL LETTER C WITH CEDILLA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xfc</span><span class="s0">'     </span><span class="s1">#  0x0081 -&gt; LATIN SMALL LETTER U WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe9</span><span class="s0">'     </span><span class="s1">#  0x0082 -&gt; LATIN SMALL LETTER E WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe2</span><span class="s0">'     </span><span class="s1">#  0x0083 -&gt; LATIN SMALL LETTER A WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe3</span><span class="s0">'     </span><span class="s1">#  0x0084 -&gt; LATIN SMALL LETTER A WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe0</span><span class="s0">'     </span><span class="s1">#  0x0085 -&gt; LATIN SMALL LETTER A WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc1</span><span class="s0">'     </span><span class="s1">#  0x0086 -&gt; LATIN CAPITAL LETTER A WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe7</span><span class="s0">'     </span><span class="s1">#  0x0087 -&gt; LATIN SMALL LETTER C WITH CEDILLA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xea</span><span class="s0">'     </span><span class="s1">#  0x0088 -&gt; LATIN SMALL LETTER E WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xca</span><span class="s0">'     </span><span class="s1">#  0x0089 -&gt; LATIN CAPITAL LETTER E WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe8</span><span class="s0">'     </span><span class="s1">#  0x008a -&gt; LATIN SMALL LETTER E WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xcd</span><span class="s0">'     </span><span class="s1">#  0x008b -&gt; LATIN CAPITAL LETTER I WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd4</span><span class="s0">'     </span><span class="s1">#  0x008c -&gt; LATIN CAPITAL LETTER O WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xec</span><span class="s0">'     </span><span class="s1">#  0x008d -&gt; LATIN SMALL LETTER I WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc3</span><span class="s0">'     </span><span class="s1">#  0x008e -&gt; LATIN CAPITAL LETTER A WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc2</span><span class="s0">'     </span><span class="s1">#  0x008f -&gt; LATIN CAPITAL LETTER A WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc9</span><span class="s0">'     </span><span class="s1">#  0x0090 -&gt; LATIN CAPITAL LETTER E WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc0</span><span class="s0">'     </span><span class="s1">#  0x0091 -&gt; LATIN CAPITAL LETTER A WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc8</span><span class="s0">'     </span><span class="s1">#  0x0092 -&gt; LATIN CAPITAL LETTER E WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf4</span><span class="s0">'     </span><span class="s1">#  0x0093 -&gt; LATIN SMALL LETTER O WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf5</span><span class="s0">'     </span><span class="s1">#  0x0094 -&gt; LATIN SMALL LETTER O WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf2</span><span class="s0">'     </span><span class="s1">#  0x0095 -&gt; LATIN SMALL LETTER O WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xda</span><span class="s0">'     </span><span class="s1">#  0x0096 -&gt; LATIN CAPITAL LETTER U WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf9</span><span class="s0">'     </span><span class="s1">#  0x0097 -&gt; LATIN SMALL LETTER U WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xcc</span><span class="s0">'     </span><span class="s1">#  0x0098 -&gt; LATIN CAPITAL LETTER I WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd5</span><span class="s0">'     </span><span class="s1">#  0x0099 -&gt; LATIN CAPITAL LETTER O WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xdc</span><span class="s0">'     </span><span class="s1">#  0x009a -&gt; LATIN CAPITAL LETTER U WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa2</span><span class="s0">'     </span><span class="s1">#  0x009b -&gt; CENT SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa3</span><span class="s0">'     </span><span class="s1">#  0x009c -&gt; POUND SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd9</span><span class="s0">'     </span><span class="s1">#  0x009d -&gt; LATIN CAPITAL LETTER U WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u20a7</span><span class="s0">'   </span><span class="s1">#  0x009e -&gt; PESETA SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd3</span><span class="s0">'     </span><span class="s1">#  0x009f -&gt; LATIN CAPITAL LETTER O WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe1</span><span class="s0">'     </span><span class="s1">#  0x00a0 -&gt; LATIN SMALL LETTER A WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xed</span><span class="s0">'     </span><span class="s1">#  0x00a1 -&gt; LATIN SMALL LETTER I WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf3</span><span class="s0">'     </span><span class="s1">#  0x00a2 -&gt; LATIN SMALL LETTER O WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xfa</span><span class="s0">'     </span><span class="s1">#  0x00a3 -&gt; LATIN SMALL LETTER U WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf1</span><span class="s0">'     </span><span class="s1">#  0x00a4 -&gt; LATIN SMALL LETTER N WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd1</span><span class="s0">'     </span><span class="s1">#  0x00a5 -&gt; LATIN CAPITAL LETTER N WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xaa</span><span class="s0">'     </span><span class="s1">#  0x00a6 -&gt; FEMININE ORDINAL INDICATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xba</span><span class="s0">'     </span><span class="s1">#  0x00a7 -&gt; MASCULINE ORDINAL INDICATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbf</span><span class="s0">'     </span><span class="s1">#  0x00a8 -&gt; INVERTED QUESTION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd2</span><span class="s0">'     </span><span class="s1">#  0x00a9 -&gt; LATIN CAPITAL LETTER O WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xac</span><span class="s0">'     </span><span class="s1">#  0x00aa -&gt; NOT SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbd</span><span class="s0">'     </span><span class="s1">#  0x00ab -&gt; VULGAR FRACTION ONE HALF</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbc</span><span class="s0">'     </span><span class="s1">#  0x00ac -&gt; VULGAR FRACTION ONE QUARTER</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa1</span><span class="s0">'     </span><span class="s1">#  0x00ad -&gt; INVERTED EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xab</span><span class="s0">'     </span><span class="s1">#  0x00ae -&gt; LEFT-POINTING DOUBLE ANGLE QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbb</span><span class="s0">'     </span><span class="s1">#  0x00af -&gt; RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2591</span><span class="s0">'   </span><span class="s1">#  0x00b0 -&gt; LIGHT SHADE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2592</span><span class="s0">'   </span><span class="s1">#  0x00b1 -&gt; MEDIUM SHADE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2593</span><span class="s0">'   </span><span class="s1">#  0x00b2 -&gt; DARK SHADE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2502</span><span class="s0">'   </span><span class="s1">#  0x00b3 -&gt; BOX DRAWINGS LIGHT VERTICAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2524</span><span class="s0">'   </span><span class="s1">#  0x00b4 -&gt; BOX DRAWINGS LIGHT VERTICAL AND LEFT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2561</span><span class="s0">'   </span><span class="s1">#  0x00b5 -&gt; BOX DRAWINGS VERTICAL SINGLE AND LEFT DOUBLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2562</span><span class="s0">'   </span><span class="s1">#  0x00b6 -&gt; BOX DRAWINGS VERTICAL DOUBLE AND LEFT SINGLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2556</span><span class="s0">'   </span><span class="s1">#  0x00b7 -&gt; BOX DRAWINGS DOWN DOUBLE AND LEFT SINGLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2555</span><span class="s0">'   </span><span class="s1">#  0x00b8 -&gt; BOX DRAWINGS DOWN SINGLE AND LEFT DOUBLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2563</span><span class="s0">'   </span><span class="s1">#  0x00b9 -&gt; BOX DRAWINGS DOUBLE VERTICAL AND LEFT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2551</span><span class="s0">'   </span><span class="s1">#  0x00ba -&gt; BOX DRAWINGS DOUBLE VERTICAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2557</span><span class="s0">'   </span><span class="s1">#  0x00bb -&gt; BOX DRAWINGS DOUBLE DOWN AND LEFT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u255d</span><span class="s0">'   </span><span class="s1">#  0x00bc -&gt; BOX DRAWINGS DOUBLE UP AND LEFT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u255c</span><span class="s0">'   </span><span class="s1">#  0x00bd -&gt; BOX DRAWINGS UP DOUBLE AND LEFT SINGLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u255b</span><span class="s0">'   </span><span class="s1">#  0x00be -&gt; BOX DRAWINGS UP SINGLE AND LEFT DOUBLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2510</span><span class="s0">'   </span><span class="s1">#  0x00bf -&gt; BOX DRAWINGS LIGHT DOWN AND LEFT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2514</span><span class="s0">'   </span><span class="s1">#  0x00c0 -&gt; BOX DRAWINGS LIGHT UP AND RIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2534</span><span class="s0">'   </span><span class="s1">#  0x00c1 -&gt; BOX DRAWINGS LIGHT UP AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u252c</span><span class="s0">'   </span><span class="s1">#  0x00c2 -&gt; BOX DRAWINGS LIGHT DOWN AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u251c</span><span class="s0">'   </span><span class="s1">#  0x00c3 -&gt; BOX DRAWINGS LIGHT VERTICAL AND RIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2500</span><span class="s0">'   </span><span class="s1">#  0x00c4 -&gt; BOX DRAWINGS LIGHT HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u253c</span><span class="s0">'   </span><span class="s1">#  0x00c5 -&gt; BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u255e</span><span class="s0">'   </span><span class="s1">#  0x00c6 -&gt; BOX DRAWINGS VERTICAL SINGLE AND RIGHT DOUBLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u255f</span><span class="s0">'   </span><span class="s1">#  0x00c7 -&gt; BOX DRAWINGS VERTICAL DOUBLE AND RIGHT SINGLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u255a</span><span class="s0">'   </span><span class="s1">#  0x00c8 -&gt; BOX DRAWINGS DOUBLE UP AND RIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2554</span><span class="s0">'   </span><span class="s1">#  0x00c9 -&gt; BOX DRAWINGS DOUBLE DOWN AND RIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2569</span><span class="s0">'   </span><span class="s1">#  0x00ca -&gt; BOX DRAWINGS DOUBLE UP AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2566</span><span class="s0">'   </span><span class="s1">#  0x00cb -&gt; BOX DRAWINGS DOUBLE DOWN AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2560</span><span class="s0">'   </span><span class="s1">#  0x00cc -&gt; BOX DRAWINGS DOUBLE VERTICAL AND RIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2550</span><span class="s0">'   </span><span class="s1">#  0x00cd -&gt; BOX DRAWINGS DOUBLE HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u256c</span><span class="s0">'   </span><span class="s1">#  0x00ce -&gt; BOX DRAWINGS DOUBLE VERTICAL AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2567</span><span class="s0">'   </span><span class="s1">#  0x00cf -&gt; BOX DRAWINGS UP SINGLE AND HORIZONTAL DOUBLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2568</span><span class="s0">'   </span><span class="s1">#  0x00d0 -&gt; BOX DRAWINGS UP DOUBLE AND HORIZONTAL SINGLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2564</span><span class="s0">'   </span><span class="s1">#  0x00d1 -&gt; BOX DRAWINGS DOWN SINGLE AND HORIZONTAL DOUBLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2565</span><span class="s0">'   </span><span class="s1">#  0x00d2 -&gt; BOX DRAWINGS DOWN DOUBLE AND HORIZONTAL SINGLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2559</span><span class="s0">'   </span><span class="s1">#  0x00d3 -&gt; BOX DRAWINGS UP DOUBLE AND RIGHT SINGLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2558</span><span class="s0">'   </span><span class="s1">#  0x00d4 -&gt; BOX DRAWINGS UP SINGLE AND RIGHT DOUBLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2552</span><span class="s0">'   </span><span class="s1">#  0x00d5 -&gt; BOX DRAWINGS DOWN SINGLE AND RIGHT DOUBLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2553</span><span class="s0">'   </span><span class="s1">#  0x00d6 -&gt; BOX DRAWINGS DOWN DOUBLE AND RIGHT SINGLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u256b</span><span class="s0">'   </span><span class="s1">#  0x00d7 -&gt; BOX DRAWINGS VERTICAL DOUBLE AND HORIZONTAL SINGLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u256a</span><span class="s0">'   </span><span class="s1">#  0x00d8 -&gt; BOX DRAWINGS VERTICAL SINGLE AND HORIZONTAL DOUBLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2518</span><span class="s0">'   </span><span class="s1">#  0x00d9 -&gt; BOX DRAWINGS LIGHT UP AND LEFT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u250c</span><span class="s0">'   </span><span class="s1">#  0x00da -&gt; BOX DRAWINGS LIGHT DOWN AND RIGHT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2588</span><span class="s0">'   </span><span class="s1">#  0x00db -&gt; FULL BLOCK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2584</span><span class="s0">'   </span><span class="s1">#  0x00dc -&gt; LOWER HALF BLOCK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u258c</span><span class="s0">'   </span><span class="s1">#  0x00dd -&gt; LEFT HALF BLOCK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2590</span><span class="s0">'   </span><span class="s1">#  0x00de -&gt; RIGHT HALF BLOCK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2580</span><span class="s0">'   </span><span class="s1">#  0x00df -&gt; UPPER HALF BLOCK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03b1</span><span class="s0">'   </span><span class="s1">#  0x00e0 -&gt; GREEK SMALL LETTER ALPHA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xdf</span><span class="s0">'     </span><span class="s1">#  0x00e1 -&gt; LATIN SMALL LETTER SHARP S</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0393</span><span class="s0">'   </span><span class="s1">#  0x00e2 -&gt; GREEK CAPITAL LETTER GAMMA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03c0</span><span class="s0">'   </span><span class="s1">#  0x00e3 -&gt; GREEK SMALL LETTER PI</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03a3</span><span class="s0">'   </span><span class="s1">#  0x00e4 -&gt; GREEK CAPITAL LETTER SIGMA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03c3</span><span class="s0">'   </span><span class="s1">#  0x00e5 -&gt; GREEK SMALL LETTER SIGMA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb5</span><span class="s0">'     </span><span class="s1">#  0x00e6 -&gt; MICRO SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03c4</span><span class="s0">'   </span><span class="s1">#  0x00e7 -&gt; GREEK SMALL LETTER TAU</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03a6</span><span class="s0">'   </span><span class="s1">#  0x00e8 -&gt; GREEK CAPITAL LETTER PHI</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u0398</span><span class="s0">'   </span><span class="s1">#  0x00e9 -&gt; GREEK CAPITAL LETTER THETA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03a9</span><span class="s0">'   </span><span class="s1">#  0x00ea -&gt; GREEK CAPITAL LETTER OMEGA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03b4</span><span class="s0">'   </span><span class="s1">#  0x00eb -&gt; GREEK SMALL LETTER DELTA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u221e</span><span class="s0">'   </span><span class="s1">#  0x00ec -&gt; INFINITY</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03c6</span><span class="s0">'   </span><span class="s1">#  0x00ed -&gt; GREEK SMALL LETTER PHI</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u03b5</span><span class="s0">'   </span><span class="s1">#  0x00ee -&gt; GREEK SMALL LETTER EPSILON</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2229</span><span class="s0">'   </span><span class="s1">#  0x00ef -&gt; INTERSECTION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2261</span><span class="s0">'   </span><span class="s1">#  0x00f0 -&gt; IDENTICAL TO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb1</span><span class="s0">'     </span><span class="s1">#  0x00f1 -&gt; PLUS-MINUS SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2265</span><span class="s0">'   </span><span class="s1">#  0x00f2 -&gt; GREATER-THAN OR EQUAL TO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2264</span><span class="s0">'   </span><span class="s1">#  0x00f3 -&gt; LESS-THAN OR EQUAL TO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2320</span><span class="s0">'   </span><span class="s1">#  0x00f4 -&gt; TOP HALF INTEGRAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2321</span><span class="s0">'   </span><span class="s1">#  0x00f5 -&gt; BOTTOM HALF INTEGRAL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf7</span><span class="s0">'     </span><span class="s1">#  0x00f6 -&gt; DIVISION SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2248</span><span class="s0">'   </span><span class="s1">#  0x00f7 -&gt; ALMOST EQUAL TO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb0</span><span class="s0">'     </span><span class="s1">#  0x00f8 -&gt; DEGREE SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u2219</span><span class="s0">'   </span><span class="s1">#  0x00f9 -&gt; BULLET OPERATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb7</span><span class="s0">'     </span><span class="s1">#  0x00fa -&gt; MIDDLE DOT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u221a</span><span class="s0">'   </span><span class="s1">#  0x00fb -&gt; SQUARE ROOT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u207f</span><span class="s0">'   </span><span class="s1">#  0x00fc -&gt; SUPERSCRIPT LATIN SMALL LETTER N</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb2</span><span class="s0">'     </span><span class="s1">#  0x00fd -&gt; SUPERSCRIPT TWO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u25a0</span><span class="s0">'   </span><span class="s1">#  0x00fe -&gt; BLACK SQUARE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa0</span><span class="s0">'     </span><span class="s1">#  0x00ff -&gt; NO-BREAK SPACE</span><span class="s2"> 
+) 
+ 
+</span><span class="s1">### Encoding Map</span><span class="s2"> 
+ 
+encoding_map = { 
+    </span><span class="s4">0x0000</span><span class="s2">: </span><span class="s4">0x0000</span><span class="s3">,     </span><span class="s1">#  NULL</span><span class="s2"> 
+    </span><span class="s4">0x0001</span><span class="s2">: </span><span class="s4">0x0001</span><span class="s3">,     </span><span class="s1">#  START OF HEADING</span><span class="s2"> 
+    </span><span class="s4">0x0002</span><span class="s2">: </span><span class="s4">0x0002</span><span class="s3">,     </span><span class="s1">#  START OF TEXT</span><span class="s2"> 
+    </span><span class="s4">0x0003</span><span class="s2">: </span><span class="s4">0x0003</span><span class="s3">,     </span><span class="s1">#  END OF TEXT</span><span class="s2"> 
+    </span><span class="s4">0x0004</span><span class="s2">: </span><span class="s4">0x0004</span><span class="s3">,     </span><span class="s1">#  END OF TRANSMISSION</span><span class="s2"> 
+    </span><span class="s4">0x0005</span><span class="s2">: </span><span class="s4">0x0005</span><span class="s3">,     </span><span class="s1">#  ENQUIRY</span><span class="s2"> 
+    </span><span class="s4">0x0006</span><span class="s2">: </span><span class="s4">0x0006</span><span class="s3">,     </span><span class="s1">#  ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s4">0x0007</span><span class="s2">: </span><span class="s4">0x0007</span><span class="s3">,     </span><span class="s1">#  BELL</span><span class="s2"> 
+    </span><span class="s4">0x0008</span><span class="s2">: </span><span class="s4">0x0008</span><span class="s3">,     </span><span class="s1">#  BACKSPACE</span><span class="s2"> 
+    </span><span class="s4">0x0009</span><span class="s2">: </span><span class="s4">0x0009</span><span class="s3">,     </span><span class="s1">#  HORIZONTAL TABULATION</span><span class="s2"> 
+    </span><span class="s4">0x000a</span><span class="s2">: </span><span class="s4">0x000a</span><span class="s3">,     </span><span class="s1">#  LINE FEED</span><span class="s2"> 
+    </span><span class="s4">0x000b</span><span class="s2">: </span><span class="s4">0x000b</span><span class="s3">,     </span><span class="s1">#  VERTICAL TABULATION</span><span class="s2"> 
+    </span><span class="s4">0x000c</span><span class="s2">: </span><span class="s4">0x000c</span><span class="s3">,     </span><span class="s1">#  FORM FEED</span><span class="s2"> 
+    </span><span class="s4">0x000d</span><span class="s2">: </span><span class="s4">0x000d</span><span class="s3">,     </span><span class="s1">#  CARRIAGE RETURN</span><span class="s2"> 
+    </span><span class="s4">0x000e</span><span class="s2">: </span><span class="s4">0x000e</span><span class="s3">,     </span><span class="s1">#  SHIFT OUT</span><span class="s2"> 
+    </span><span class="s4">0x000f</span><span class="s2">: </span><span class="s4">0x000f</span><span class="s3">,     </span><span class="s1">#  SHIFT IN</span><span class="s2"> 
+    </span><span class="s4">0x0010</span><span class="s2">: </span><span class="s4">0x0010</span><span class="s3">,     </span><span class="s1">#  DATA LINK ESCAPE</span><span class="s2"> 
+    </span><span class="s4">0x0011</span><span class="s2">: </span><span class="s4">0x0011</span><span class="s3">,     </span><span class="s1">#  DEVICE CONTROL ONE</span><span class="s2"> 
+    </span><span class="s4">0x0012</span><span class="s2">: </span><span class="s4">0x0012</span><span class="s3">,     </span><span class="s1">#  DEVICE CONTROL TWO</span><span class="s2"> 
+    </span><span class="s4">0x0013</span><span class="s2">: </span><span class="s4">0x0013</span><span class="s3">,     </span><span class="s1">#  DEVICE CONTROL THREE</span><span class="s2"> 
+    </span><span class="s4">0x0014</span><span class="s2">: </span><span class="s4">0x0014</span><span class="s3">,     </span><span class="s1">#  DEVICE CONTROL FOUR</span><span class="s2"> 
+    </span><span class="s4">0x0015</span><span class="s2">: </span><span class="s4">0x0015</span><span class="s3">,     </span><span class="s1">#  NEGATIVE ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s4">0x0016</span><span class="s2">: </span><span class="s4">0x0016</span><span class="s3">,     </span><span class="s1">#  SYNCHRONOUS IDLE</span><span class="s2"> 
+    </span><span class="s4">0x0017</span><span class="s2">: </span><span class="s4">0x0017</span><span class="s3">,     </span><span class="s1">#  END OF TRANSMISSION BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x0018</span><span class="s2">: </span><span class="s4">0x0018</span><span class="s3">,     </span><span class="s1">#  CANCEL</span><span class="s2"> 
+    </span><span class="s4">0x0019</span><span class="s2">: </span><span class="s4">0x0019</span><span class="s3">,     </span><span class="s1">#  END OF MEDIUM</span><span class="s2"> 
+    </span><span class="s4">0x001a</span><span class="s2">: </span><span class="s4">0x001a</span><span class="s3">,     </span><span class="s1">#  SUBSTITUTE</span><span class="s2"> 
+    </span><span class="s4">0x001b</span><span class="s2">: </span><span class="s4">0x001b</span><span class="s3">,     </span><span class="s1">#  ESCAPE</span><span class="s2"> 
+    </span><span class="s4">0x001c</span><span class="s2">: </span><span class="s4">0x001c</span><span class="s3">,     </span><span class="s1">#  FILE SEPARATOR</span><span class="s2"> 
+    </span><span class="s4">0x001d</span><span class="s2">: </span><span class="s4">0x001d</span><span class="s3">,     </span><span class="s1">#  GROUP SEPARATOR</span><span class="s2"> 
+    </span><span class="s4">0x001e</span><span class="s2">: </span><span class="s4">0x001e</span><span class="s3">,     </span><span class="s1">#  RECORD SEPARATOR</span><span class="s2"> 
+    </span><span class="s4">0x001f</span><span class="s2">: </span><span class="s4">0x001f</span><span class="s3">,     </span><span class="s1">#  UNIT SEPARATOR</span><span class="s2"> 
+    </span><span class="s4">0x0020</span><span class="s2">: </span><span class="s4">0x0020</span><span class="s3">,     </span><span class="s1">#  SPACE</span><span class="s2"> 
+    </span><span class="s4">0x0021</span><span class="s2">: </span><span class="s4">0x0021</span><span class="s3">,     </span><span class="s1">#  EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x0022</span><span class="s2">: </span><span class="s4">0x0022</span><span class="s3">,     </span><span class="s1">#  QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x0023</span><span class="s2">: </span><span class="s4">0x0023</span><span class="s3">,     </span><span class="s1">#  NUMBER SIGN</span><span class="s2"> 
+    </span><span class="s4">0x0024</span><span class="s2">: </span><span class="s4">0x0024</span><span class="s3">,     </span><span class="s1">#  DOLLAR SIGN</span><span class="s2"> 
+    </span><span class="s4">0x0025</span><span class="s2">: </span><span class="s4">0x0025</span><span class="s3">,     </span><span class="s1">#  PERCENT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x0026</span><span class="s2">: </span><span class="s4">0x0026</span><span class="s3">,     </span><span class="s1">#  AMPERSAND</span><span class="s2"> 
+    </span><span class="s4">0x0027</span><span class="s2">: </span><span class="s4">0x0027</span><span class="s3">,     </span><span class="s1">#  APOSTROPHE</span><span class="s2"> 
+    </span><span class="s4">0x0028</span><span class="s2">: </span><span class="s4">0x0028</span><span class="s3">,     </span><span class="s1">#  LEFT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s4">0x0029</span><span class="s2">: </span><span class="s4">0x0029</span><span class="s3">,     </span><span class="s1">#  RIGHT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s4">0x002a</span><span class="s2">: </span><span class="s4">0x002a</span><span class="s3">,     </span><span class="s1">#  ASTERISK</span><span class="s2"> 
+    </span><span class="s4">0x002b</span><span class="s2">: </span><span class="s4">0x002b</span><span class="s3">,     </span><span class="s1">#  PLUS SIGN</span><span class="s2"> 
+    </span><span class="s4">0x002c</span><span class="s2">: </span><span class="s4">0x002c</span><span class="s3">,     </span><span class="s1">#  COMMA</span><span class="s2"> 
+    </span><span class="s4">0x002d</span><span class="s2">: </span><span class="s4">0x002d</span><span class="s3">,     </span><span class="s1">#  HYPHEN-MINUS</span><span class="s2"> 
+    </span><span class="s4">0x002e</span><span class="s2">: </span><span class="s4">0x002e</span><span class="s3">,     </span><span class="s1">#  FULL STOP</span><span class="s2"> 
+    </span><span class="s4">0x002f</span><span class="s2">: </span><span class="s4">0x002f</span><span class="s3">,     </span><span class="s1">#  SOLIDUS</span><span class="s2"> 
+    </span><span class="s4">0x0030</span><span class="s2">: </span><span class="s4">0x0030</span><span class="s3">,     </span><span class="s1">#  DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s4">0x0031</span><span class="s2">: </span><span class="s4">0x0031</span><span class="s3">,     </span><span class="s1">#  DIGIT ONE</span><span class="s2"> 
+    </span><span class="s4">0x0032</span><span class="s2">: </span><span class="s4">0x0032</span><span class="s3">,     </span><span class="s1">#  DIGIT TWO</span><span class="s2"> 
+    </span><span class="s4">0x0033</span><span class="s2">: </span><span class="s4">0x0033</span><span class="s3">,     </span><span class="s1">#  DIGIT THREE</span><span class="s2"> 
+    </span><span class="s4">0x0034</span><span class="s2">: </span><span class="s4">0x0034</span><span class="s3">,     </span><span class="s1">#  DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s4">0x0035</span><span class="s2">: </span><span class="s4">0x0035</span><span class="s3">,     </span><span class="s1">#  DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s4">0x0036</span><span class="s2">: </span><span class="s4">0x0036</span><span class="s3">,     </span><span class="s1">#  DIGIT SIX</span><span class="s2"> 
+    </span><span class="s4">0x0037</span><span class="s2">: </span><span class="s4">0x0037</span><span class="s3">,     </span><span class="s1">#  DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s4">0x0038</span><span class="s2">: </span><span class="s4">0x0038</span><span class="s3">,     </span><span class="s1">#  DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s4">0x0039</span><span class="s2">: </span><span class="s4">0x0039</span><span class="s3">,     </span><span class="s1">#  DIGIT NINE</span><span class="s2"> 
+    </span><span class="s4">0x003a</span><span class="s2">: </span><span class="s4">0x003a</span><span class="s3">,     </span><span class="s1">#  COLON</span><span class="s2"> 
+    </span><span class="s4">0x003b</span><span class="s2">: </span><span class="s4">0x003b</span><span class="s3">,     </span><span class="s1">#  SEMICOLON</span><span class="s2"> 
+    </span><span class="s4">0x003c</span><span class="s2">: </span><span class="s4">0x003c</span><span class="s3">,     </span><span class="s1">#  LESS-THAN SIGN</span><span class="s2"> 
+    </span><span class="s4">0x003d</span><span class="s2">: </span><span class="s4">0x003d</span><span class="s3">,     </span><span class="s1">#  EQUALS SIGN</span><span class="s2"> 
+    </span><span class="s4">0x003e</span><span class="s2">: </span><span class="s4">0x003e</span><span class="s3">,     </span><span class="s1">#  GREATER-THAN SIGN</span><span class="s2"> 
+    </span><span class="s4">0x003f</span><span class="s2">: </span><span class="s4">0x003f</span><span class="s3">,     </span><span class="s1">#  QUESTION MARK</span><span class="s2"> 
+    </span><span class="s4">0x0040</span><span class="s2">: </span><span class="s4">0x0040</span><span class="s3">,     </span><span class="s1">#  COMMERCIAL AT</span><span class="s2"> 
+    </span><span class="s4">0x0041</span><span class="s2">: </span><span class="s4">0x0041</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A</span><span class="s2"> 
+    </span><span class="s4">0x0042</span><span class="s2">: </span><span class="s4">0x0042</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER B</span><span class="s2"> 
+    </span><span class="s4">0x0043</span><span class="s2">: </span><span class="s4">0x0043</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER C</span><span class="s2"> 
+    </span><span class="s4">0x0044</span><span class="s2">: </span><span class="s4">0x0044</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER D</span><span class="s2"> 
+    </span><span class="s4">0x0045</span><span class="s2">: </span><span class="s4">0x0045</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER E</span><span class="s2"> 
+    </span><span class="s4">0x0046</span><span class="s2">: </span><span class="s4">0x0046</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER F</span><span class="s2"> 
+    </span><span class="s4">0x0047</span><span class="s2">: </span><span class="s4">0x0047</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER G</span><span class="s2"> 
+    </span><span class="s4">0x0048</span><span class="s2">: </span><span class="s4">0x0048</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER H</span><span class="s2"> 
+    </span><span class="s4">0x0049</span><span class="s2">: </span><span class="s4">0x0049</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER I</span><span class="s2"> 
+    </span><span class="s4">0x004a</span><span class="s2">: </span><span class="s4">0x004a</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER J</span><span class="s2"> 
+    </span><span class="s4">0x004b</span><span class="s2">: </span><span class="s4">0x004b</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER K</span><span class="s2"> 
+    </span><span class="s4">0x004c</span><span class="s2">: </span><span class="s4">0x004c</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER L</span><span class="s2"> 
+    </span><span class="s4">0x004d</span><span class="s2">: </span><span class="s4">0x004d</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER M</span><span class="s2"> 
+    </span><span class="s4">0x004e</span><span class="s2">: </span><span class="s4">0x004e</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER N</span><span class="s2"> 
+    </span><span class="s4">0x004f</span><span class="s2">: </span><span class="s4">0x004f</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O</span><span class="s2"> 
+    </span><span class="s4">0x0050</span><span class="s2">: </span><span class="s4">0x0050</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER P</span><span class="s2"> 
+    </span><span class="s4">0x0051</span><span class="s2">: </span><span class="s4">0x0051</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER Q</span><span class="s2"> 
+    </span><span class="s4">0x0052</span><span class="s2">: </span><span class="s4">0x0052</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER R</span><span class="s2"> 
+    </span><span class="s4">0x0053</span><span class="s2">: </span><span class="s4">0x0053</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER S</span><span class="s2"> 
+    </span><span class="s4">0x0054</span><span class="s2">: </span><span class="s4">0x0054</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER T</span><span class="s2"> 
+    </span><span class="s4">0x0055</span><span class="s2">: </span><span class="s4">0x0055</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER U</span><span class="s2"> 
+    </span><span class="s4">0x0056</span><span class="s2">: </span><span class="s4">0x0056</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER V</span><span class="s2"> 
+    </span><span class="s4">0x0057</span><span class="s2">: </span><span class="s4">0x0057</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER W</span><span class="s2"> 
+    </span><span class="s4">0x0058</span><span class="s2">: </span><span class="s4">0x0058</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER X</span><span class="s2"> 
+    </span><span class="s4">0x0059</span><span class="s2">: </span><span class="s4">0x0059</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER Y</span><span class="s2"> 
+    </span><span class="s4">0x005a</span><span class="s2">: </span><span class="s4">0x005a</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER Z</span><span class="s2"> 
+    </span><span class="s4">0x005b</span><span class="s2">: </span><span class="s4">0x005b</span><span class="s3">,     </span><span class="s1">#  LEFT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s4">0x005c</span><span class="s2">: </span><span class="s4">0x005c</span><span class="s3">,     </span><span class="s1">#  REVERSE SOLIDUS</span><span class="s2"> 
+    </span><span class="s4">0x005d</span><span class="s2">: </span><span class="s4">0x005d</span><span class="s3">,     </span><span class="s1">#  RIGHT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s4">0x005e</span><span class="s2">: </span><span class="s4">0x005e</span><span class="s3">,     </span><span class="s1">#  CIRCUMFLEX ACCENT</span><span class="s2"> 
+    </span><span class="s4">0x005f</span><span class="s2">: </span><span class="s4">0x005f</span><span class="s3">,     </span><span class="s1">#  LOW LINE</span><span class="s2"> 
+    </span><span class="s4">0x0060</span><span class="s2">: </span><span class="s4">0x0060</span><span class="s3">,     </span><span class="s1">#  GRAVE ACCENT</span><span class="s2"> 
+    </span><span class="s4">0x0061</span><span class="s2">: </span><span class="s4">0x0061</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A</span><span class="s2"> 
+    </span><span class="s4">0x0062</span><span class="s2">: </span><span class="s4">0x0062</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER B</span><span class="s2"> 
+    </span><span class="s4">0x0063</span><span class="s2">: </span><span class="s4">0x0063</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER C</span><span class="s2"> 
+    </span><span class="s4">0x0064</span><span class="s2">: </span><span class="s4">0x0064</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER D</span><span class="s2"> 
+    </span><span class="s4">0x0065</span><span class="s2">: </span><span class="s4">0x0065</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER E</span><span class="s2"> 
+    </span><span class="s4">0x0066</span><span class="s2">: </span><span class="s4">0x0066</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER F</span><span class="s2"> 
+    </span><span class="s4">0x0067</span><span class="s2">: </span><span class="s4">0x0067</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER G</span><span class="s2"> 
+    </span><span class="s4">0x0068</span><span class="s2">: </span><span class="s4">0x0068</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER H</span><span class="s2"> 
+    </span><span class="s4">0x0069</span><span class="s2">: </span><span class="s4">0x0069</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER I</span><span class="s2"> 
+    </span><span class="s4">0x006a</span><span class="s2">: </span><span class="s4">0x006a</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER J</span><span class="s2"> 
+    </span><span class="s4">0x006b</span><span class="s2">: </span><span class="s4">0x006b</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER K</span><span class="s2"> 
+    </span><span class="s4">0x006c</span><span class="s2">: </span><span class="s4">0x006c</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER L</span><span class="s2"> 
+    </span><span class="s4">0x006d</span><span class="s2">: </span><span class="s4">0x006d</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER M</span><span class="s2"> 
+    </span><span class="s4">0x006e</span><span class="s2">: </span><span class="s4">0x006e</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER N</span><span class="s2"> 
+    </span><span class="s4">0x006f</span><span class="s2">: </span><span class="s4">0x006f</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O</span><span class="s2"> 
+    </span><span class="s4">0x0070</span><span class="s2">: </span><span class="s4">0x0070</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER P</span><span class="s2"> 
+    </span><span class="s4">0x0071</span><span class="s2">: </span><span class="s4">0x0071</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER Q</span><span class="s2"> 
+    </span><span class="s4">0x0072</span><span class="s2">: </span><span class="s4">0x0072</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER R</span><span class="s2"> 
+    </span><span class="s4">0x0073</span><span class="s2">: </span><span class="s4">0x0073</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER S</span><span class="s2"> 
+    </span><span class="s4">0x0074</span><span class="s2">: </span><span class="s4">0x0074</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER T</span><span class="s2"> 
+    </span><span class="s4">0x0075</span><span class="s2">: </span><span class="s4">0x0075</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER U</span><span class="s2"> 
+    </span><span class="s4">0x0076</span><span class="s2">: </span><span class="s4">0x0076</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER V</span><span class="s2"> 
+    </span><span class="s4">0x0077</span><span class="s2">: </span><span class="s4">0x0077</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER W</span><span class="s2"> 
+    </span><span class="s4">0x0078</span><span class="s2">: </span><span class="s4">0x0078</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER X</span><span class="s2"> 
+    </span><span class="s4">0x0079</span><span class="s2">: </span><span class="s4">0x0079</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER Y</span><span class="s2"> 
+    </span><span class="s4">0x007a</span><span class="s2">: </span><span class="s4">0x007a</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER Z</span><span class="s2"> 
+    </span><span class="s4">0x007b</span><span class="s2">: </span><span class="s4">0x007b</span><span class="s3">,     </span><span class="s1">#  LEFT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s4">0x007c</span><span class="s2">: </span><span class="s4">0x007c</span><span class="s3">,     </span><span class="s1">#  VERTICAL LINE</span><span class="s2"> 
+    </span><span class="s4">0x007d</span><span class="s2">: </span><span class="s4">0x007d</span><span class="s3">,     </span><span class="s1">#  RIGHT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s4">0x007e</span><span class="s2">: </span><span class="s4">0x007e</span><span class="s3">,     </span><span class="s1">#  TILDE</span><span class="s2"> 
+    </span><span class="s4">0x007f</span><span class="s2">: </span><span class="s4">0x007f</span><span class="s3">,     </span><span class="s1">#  DELETE</span><span class="s2"> 
+    </span><span class="s4">0x00a0</span><span class="s2">: </span><span class="s4">0x00ff</span><span class="s3">,     </span><span class="s1">#  NO-BREAK SPACE</span><span class="s2"> 
+    </span><span class="s4">0x00a1</span><span class="s2">: </span><span class="s4">0x00ad</span><span class="s3">,     </span><span class="s1">#  INVERTED EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x00a2</span><span class="s2">: </span><span class="s4">0x009b</span><span class="s3">,     </span><span class="s1">#  CENT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00a3</span><span class="s2">: </span><span class="s4">0x009c</span><span class="s3">,     </span><span class="s1">#  POUND SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00aa</span><span class="s2">: </span><span class="s4">0x00a6</span><span class="s3">,     </span><span class="s1">#  FEMININE ORDINAL INDICATOR</span><span class="s2"> 
+    </span><span class="s4">0x00ab</span><span class="s2">: </span><span class="s4">0x00ae</span><span class="s3">,     </span><span class="s1">#  LEFT-POINTING DOUBLE ANGLE QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x00ac</span><span class="s2">: </span><span class="s4">0x00aa</span><span class="s3">,     </span><span class="s1">#  NOT SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00b0</span><span class="s2">: </span><span class="s4">0x00f8</span><span class="s3">,     </span><span class="s1">#  DEGREE SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00b1</span><span class="s2">: </span><span class="s4">0x00f1</span><span class="s3">,     </span><span class="s1">#  PLUS-MINUS SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00b2</span><span class="s2">: </span><span class="s4">0x00fd</span><span class="s3">,     </span><span class="s1">#  SUPERSCRIPT TWO</span><span class="s2"> 
+    </span><span class="s4">0x00b5</span><span class="s2">: </span><span class="s4">0x00e6</span><span class="s3">,     </span><span class="s1">#  MICRO SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00b7</span><span class="s2">: </span><span class="s4">0x00fa</span><span class="s3">,     </span><span class="s1">#  MIDDLE DOT</span><span class="s2"> 
+    </span><span class="s4">0x00ba</span><span class="s2">: </span><span class="s4">0x00a7</span><span class="s3">,     </span><span class="s1">#  MASCULINE ORDINAL INDICATOR</span><span class="s2"> 
+    </span><span class="s4">0x00bb</span><span class="s2">: </span><span class="s4">0x00af</span><span class="s3">,     </span><span class="s1">#  RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s4">0x00bc</span><span class="s2">: </span><span class="s4">0x00ac</span><span class="s3">,     </span><span class="s1">#  VULGAR FRACTION ONE QUARTER</span><span class="s2"> 
+    </span><span class="s4">0x00bd</span><span class="s2">: </span><span class="s4">0x00ab</span><span class="s3">,     </span><span class="s1">#  VULGAR FRACTION ONE HALF</span><span class="s2"> 
+    </span><span class="s4">0x00bf</span><span class="s2">: </span><span class="s4">0x00a8</span><span class="s3">,     </span><span class="s1">#  INVERTED QUESTION MARK</span><span class="s2"> 
+    </span><span class="s4">0x00c0</span><span class="s2">: </span><span class="s4">0x0091</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00c1</span><span class="s2">: </span><span class="s4">0x0086</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00c2</span><span class="s2">: </span><span class="s4">0x008f</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x00c3</span><span class="s2">: </span><span class="s4">0x008e</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER A WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x00c7</span><span class="s2">: </span><span class="s4">0x0080</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER C WITH CEDILLA</span><span class="s2"> 
+    </span><span class="s4">0x00c8</span><span class="s2">: </span><span class="s4">0x0092</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER E WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00c9</span><span class="s2">: </span><span class="s4">0x0090</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER E WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00ca</span><span class="s2">: </span><span class="s4">0x0089</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER E WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x00cc</span><span class="s2">: </span><span class="s4">0x0098</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER I WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00cd</span><span class="s2">: </span><span class="s4">0x008b</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER I WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00d1</span><span class="s2">: </span><span class="s4">0x00a5</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER N WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x00d2</span><span class="s2">: </span><span class="s4">0x00a9</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00d3</span><span class="s2">: </span><span class="s4">0x009f</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00d4</span><span class="s2">: </span><span class="s4">0x008c</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x00d5</span><span class="s2">: </span><span class="s4">0x0099</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER O WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x00d9</span><span class="s2">: </span><span class="s4">0x009d</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER U WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00da</span><span class="s2">: </span><span class="s4">0x0096</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER U WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00dc</span><span class="s2">: </span><span class="s4">0x009a</span><span class="s3">,     </span><span class="s1">#  LATIN CAPITAL LETTER U WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s4">0x00df</span><span class="s2">: </span><span class="s4">0x00e1</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER SHARP S</span><span class="s2"> 
+    </span><span class="s4">0x00e0</span><span class="s2">: </span><span class="s4">0x0085</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00e1</span><span class="s2">: </span><span class="s4">0x00a0</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00e2</span><span class="s2">: </span><span class="s4">0x0083</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x00e3</span><span class="s2">: </span><span class="s4">0x0084</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER A WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x00e7</span><span class="s2">: </span><span class="s4">0x0087</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER C WITH CEDILLA</span><span class="s2"> 
+    </span><span class="s4">0x00e8</span><span class="s2">: </span><span class="s4">0x008a</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER E WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00e9</span><span class="s2">: </span><span class="s4">0x0082</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER E WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00ea</span><span class="s2">: </span><span class="s4">0x0088</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER E WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x00ec</span><span class="s2">: </span><span class="s4">0x008d</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER I WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00ed</span><span class="s2">: </span><span class="s4">0x00a1</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER I WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00f1</span><span class="s2">: </span><span class="s4">0x00a4</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER N WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x00f2</span><span class="s2">: </span><span class="s4">0x0095</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00f3</span><span class="s2">: </span><span class="s4">0x00a2</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00f4</span><span class="s2">: </span><span class="s4">0x0093</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s4">0x00f5</span><span class="s2">: </span><span class="s4">0x0094</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER O WITH TILDE</span><span class="s2"> 
+    </span><span class="s4">0x00f7</span><span class="s2">: </span><span class="s4">0x00f6</span><span class="s3">,     </span><span class="s1">#  DIVISION SIGN</span><span class="s2"> 
+    </span><span class="s4">0x00f9</span><span class="s2">: </span><span class="s4">0x0097</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER U WITH GRAVE</span><span class="s2"> 
+    </span><span class="s4">0x00fa</span><span class="s2">: </span><span class="s4">0x00a3</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER U WITH ACUTE</span><span class="s2"> 
+    </span><span class="s4">0x00fc</span><span class="s2">: </span><span class="s4">0x0081</span><span class="s3">,     </span><span class="s1">#  LATIN SMALL LETTER U WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s4">0x0393</span><span class="s2">: </span><span class="s4">0x00e2</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER GAMMA</span><span class="s2"> 
+    </span><span class="s4">0x0398</span><span class="s2">: </span><span class="s4">0x00e9</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER THETA</span><span class="s2"> 
+    </span><span class="s4">0x03a3</span><span class="s2">: </span><span class="s4">0x00e4</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER SIGMA</span><span class="s2"> 
+    </span><span class="s4">0x03a6</span><span class="s2">: </span><span class="s4">0x00e8</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER PHI</span><span class="s2"> 
+    </span><span class="s4">0x03a9</span><span class="s2">: </span><span class="s4">0x00ea</span><span class="s3">,     </span><span class="s1">#  GREEK CAPITAL LETTER OMEGA</span><span class="s2"> 
+    </span><span class="s4">0x03b1</span><span class="s2">: </span><span class="s4">0x00e0</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER ALPHA</span><span class="s2"> 
+    </span><span class="s4">0x03b4</span><span class="s2">: </span><span class="s4">0x00eb</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER DELTA</span><span class="s2"> 
+    </span><span class="s4">0x03b5</span><span class="s2">: </span><span class="s4">0x00ee</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER EPSILON</span><span class="s2"> 
+    </span><span class="s4">0x03c0</span><span class="s2">: </span><span class="s4">0x00e3</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER PI</span><span class="s2"> 
+    </span><span class="s4">0x03c3</span><span class="s2">: </span><span class="s4">0x00e5</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER SIGMA</span><span class="s2"> 
+    </span><span class="s4">0x03c4</span><span class="s2">: </span><span class="s4">0x00e7</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER TAU</span><span class="s2"> 
+    </span><span class="s4">0x03c6</span><span class="s2">: </span><span class="s4">0x00ed</span><span class="s3">,     </span><span class="s1">#  GREEK SMALL LETTER PHI</span><span class="s2"> 
+    </span><span class="s4">0x207f</span><span class="s2">: </span><span class="s4">0x00fc</span><span class="s3">,     </span><span class="s1">#  SUPERSCRIPT LATIN SMALL LETTER N</span><span class="s2"> 
+    </span><span class="s4">0x20a7</span><span class="s2">: </span><span class="s4">0x009e</span><span class="s3">,     </span><span class="s1">#  PESETA SIGN</span><span class="s2"> 
+    </span><span class="s4">0x2219</span><span class="s2">: </span><span class="s4">0x00f9</span><span class="s3">,     </span><span class="s1">#  BULLET OPERATOR</span><span class="s2"> 
+    </span><span class="s4">0x221a</span><span class="s2">: </span><span class="s4">0x00fb</span><span class="s3">,     </span><span class="s1">#  SQUARE ROOT</span><span class="s2"> 
+    </span><span class="s4">0x221e</span><span class="s2">: </span><span class="s4">0x00ec</span><span class="s3">,     </span><span class="s1">#  INFINITY</span><span class="s2"> 
+    </span><span class="s4">0x2229</span><span class="s2">: </span><span class="s4">0x00ef</span><span class="s3">,     </span><span class="s1">#  INTERSECTION</span><span class="s2"> 
+    </span><span class="s4">0x2248</span><span class="s2">: </span><span class="s4">0x00f7</span><span class="s3">,     </span><span class="s1">#  ALMOST EQUAL TO</span><span class="s2"> 
+    </span><span class="s4">0x2261</span><span class="s2">: </span><span class="s4">0x00f0</span><span class="s3">,     </span><span class="s1">#  IDENTICAL TO</span><span class="s2"> 
+    </span><span class="s4">0x2264</span><span class="s2">: </span><span class="s4">0x00f3</span><span class="s3">,     </span><span class="s1">#  LESS-THAN OR EQUAL TO</span><span class="s2"> 
+    </span><span class="s4">0x2265</span><span class="s2">: </span><span class="s4">0x00f2</span><span class="s3">,     </span><span class="s1">#  GREATER-THAN OR EQUAL TO</span><span class="s2"> 
+    </span><span class="s4">0x2320</span><span class="s2">: </span><span class="s4">0x00f4</span><span class="s3">,     </span><span class="s1">#  TOP HALF INTEGRAL</span><span class="s2"> 
+    </span><span class="s4">0x2321</span><span class="s2">: </span><span class="s4">0x00f5</span><span class="s3">,     </span><span class="s1">#  BOTTOM HALF INTEGRAL</span><span class="s2"> 
+    </span><span class="s4">0x2500</span><span class="s2">: </span><span class="s4">0x00c4</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x2502</span><span class="s2">: </span><span class="s4">0x00b3</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT VERTICAL</span><span class="s2"> 
+    </span><span class="s4">0x250c</span><span class="s2">: </span><span class="s4">0x00da</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT DOWN AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x2510</span><span class="s2">: </span><span class="s4">0x00bf</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT DOWN AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x2514</span><span class="s2">: </span><span class="s4">0x00c0</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT UP AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x2518</span><span class="s2">: </span><span class="s4">0x00d9</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT UP AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x251c</span><span class="s2">: </span><span class="s4">0x00c3</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT VERTICAL AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x2524</span><span class="s2">: </span><span class="s4">0x00b4</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT VERTICAL AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x252c</span><span class="s2">: </span><span class="s4">0x00c2</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT DOWN AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x2534</span><span class="s2">: </span><span class="s4">0x00c1</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT UP AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x253c</span><span class="s2">: </span><span class="s4">0x00c5</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x2550</span><span class="s2">: </span><span class="s4">0x00cd</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x2551</span><span class="s2">: </span><span class="s4">0x00ba</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE VERTICAL</span><span class="s2"> 
+    </span><span class="s4">0x2552</span><span class="s2">: </span><span class="s4">0x00d5</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN SINGLE AND RIGHT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x2553</span><span class="s2">: </span><span class="s4">0x00d6</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN DOUBLE AND RIGHT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x2554</span><span class="s2">: </span><span class="s4">0x00c9</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE DOWN AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x2555</span><span class="s2">: </span><span class="s4">0x00b8</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN SINGLE AND LEFT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x2556</span><span class="s2">: </span><span class="s4">0x00b7</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN DOUBLE AND LEFT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x2557</span><span class="s2">: </span><span class="s4">0x00bb</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE DOWN AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x2558</span><span class="s2">: </span><span class="s4">0x00d4</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP SINGLE AND RIGHT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x2559</span><span class="s2">: </span><span class="s4">0x00d3</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP DOUBLE AND RIGHT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x255a</span><span class="s2">: </span><span class="s4">0x00c8</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE UP AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x255b</span><span class="s2">: </span><span class="s4">0x00be</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP SINGLE AND LEFT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x255c</span><span class="s2">: </span><span class="s4">0x00bd</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP DOUBLE AND LEFT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x255d</span><span class="s2">: </span><span class="s4">0x00bc</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE UP AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x255e</span><span class="s2">: </span><span class="s4">0x00c6</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL SINGLE AND RIGHT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x255f</span><span class="s2">: </span><span class="s4">0x00c7</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL DOUBLE AND RIGHT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x2560</span><span class="s2">: </span><span class="s4">0x00cc</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE VERTICAL AND RIGHT</span><span class="s2"> 
+    </span><span class="s4">0x2561</span><span class="s2">: </span><span class="s4">0x00b5</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL SINGLE AND LEFT DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x2562</span><span class="s2">: </span><span class="s4">0x00b6</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL DOUBLE AND LEFT SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x2563</span><span class="s2">: </span><span class="s4">0x00b9</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE VERTICAL AND LEFT</span><span class="s2"> 
+    </span><span class="s4">0x2564</span><span class="s2">: </span><span class="s4">0x00d1</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN SINGLE AND HORIZONTAL DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x2565</span><span class="s2">: </span><span class="s4">0x00d2</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOWN DOUBLE AND HORIZONTAL SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x2566</span><span class="s2">: </span><span class="s4">0x00cb</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE DOWN AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x2567</span><span class="s2">: </span><span class="s4">0x00cf</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP SINGLE AND HORIZONTAL DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x2568</span><span class="s2">: </span><span class="s4">0x00d0</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS UP DOUBLE AND HORIZONTAL SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x2569</span><span class="s2">: </span><span class="s4">0x00ca</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE UP AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x256a</span><span class="s2">: </span><span class="s4">0x00d8</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL SINGLE AND HORIZONTAL DOUBLE</span><span class="s2"> 
+    </span><span class="s4">0x256b</span><span class="s2">: </span><span class="s4">0x00d7</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS VERTICAL DOUBLE AND HORIZONTAL SINGLE</span><span class="s2"> 
+    </span><span class="s4">0x256c</span><span class="s2">: </span><span class="s4">0x00ce</span><span class="s3">,     </span><span class="s1">#  BOX DRAWINGS DOUBLE VERTICAL AND HORIZONTAL</span><span class="s2"> 
+    </span><span class="s4">0x2580</span><span class="s2">: </span><span class="s4">0x00df</span><span class="s3">,     </span><span class="s1">#  UPPER HALF BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x2584</span><span class="s2">: </span><span class="s4">0x00dc</span><span class="s3">,     </span><span class="s1">#  LOWER HALF BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x2588</span><span class="s2">: </span><span class="s4">0x00db</span><span class="s3">,     </span><span class="s1">#  FULL BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x258c</span><span class="s2">: </span><span class="s4">0x00dd</span><span class="s3">,     </span><span class="s1">#  LEFT HALF BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x2590</span><span class="s2">: </span><span class="s4">0x00de</span><span class="s3">,     </span><span class="s1">#  RIGHT HALF BLOCK</span><span class="s2"> 
+    </span><span class="s4">0x2591</span><span class="s2">: </span><span class="s4">0x00b0</span><span class="s3">,     </span><span class="s1">#  LIGHT SHADE</span><span class="s2"> 
+    </span><span class="s4">0x2592</span><span class="s2">: </span><span class="s4">0x00b1</span><span class="s3">,     </span><span class="s1">#  MEDIUM SHADE</span><span class="s2"> 
+    </span><span class="s4">0x2593</span><span class="s2">: </span><span class="s4">0x00b2</span><span class="s3">,     </span><span class="s1">#  DARK SHADE</span><span class="s2"> 
+    </span><span class="s4">0x25a0</span><span class="s2">: </span><span class="s4">0x00fe</span><span class="s3">,     </span><span class="s1">#  BLACK SQUARE</span><span class="s2"> 
+} 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<html>
+<head>
+<title>Snmp.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Snmp.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Snmp: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">enable(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable snmp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk([</span><span class="s4">'/snmp/set'</span><span class="s0">,</span><span class="s4">'=enabled=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">disable(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable snmp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk( [</span><span class="s4">'/snmp/set'</span><span class="s0">, </span><span class="s4">'=enabled=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">setContactInfo(self</span><span class="s0">,</span><span class="s1">contact): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set contact 
+        :param contact: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk([</span><span class="s4">'/snmp/set'</span><span class="s0">,</span><span class="s4">'=contact='</span><span class="s1">+contact]) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">setLocation(self</span><span class="s0">,</span><span class="s1">location): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set location 
+        :param location: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk( [</span><span class="s4">'/snmp/set'</span><span class="s0">, </span><span class="s4">'=location=' </span><span class="s1">+ location] ) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">setEngineId(self</span><span class="s0">,</span><span class="s1">engine): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set engine id 
+        :param engine: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk( [</span><span class="s4">'/snmp/set'</span><span class="s0">, </span><span class="s4">'=engine-id=' </span><span class="s1">+ engine] ) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">setTrapTgt(self</span><span class="s0">,</span><span class="s1">trap): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set trap target 
+        :param trap: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk( [</span><span class="s4">'/snmp/set'</span><span class="s0">, </span><span class="s4">'=trap-target=' </span><span class="s1">+ trap] ) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">setTrapCommunity(self</span><span class="s0">,</span><span class="s1">community=</span><span class="s4">&quot;public&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set community 
+        :param community: public or custom 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk( [</span><span class="s4">'/snmp/set'</span><span class="s0">, </span><span class="s4">'=trap-community=' </span><span class="s1">+ community] ) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">setTrapVersion(self</span><span class="s0">,</span><span class="s1">version=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set trap version 
+        :param version: 1,2,3 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk( [</span><span class="s4">'/snmp/set'</span><span class="s0">, </span><span class="s4">'=trap-version=' </span><span class="s1">+ version] ) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">setTrapGenerator(self</span><span class="s0">,</span><span class="s1">gen=</span><span class="s4">&quot;intrerfaces&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set rrap generator 
+        :param gen: interfaces, start-trap 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk( [</span><span class="s4">'/snmp/set'</span><span class="s0">, </span><span class="s4">'=trap-generators=' </span><span class="s1">+ gen] ) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">setTrapInterface(self</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set trap iface 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk( [</span><span class="s4">'/snmp/set'</span><span class="s0">, </span><span class="s4">'=trap-interfaces=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">snmp 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcAddress(self</span><span class="s0">,</span><span class="s1">src=</span><span class="s4">&quot;::&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address 
+        :param src: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        snmp = self.client.talk( [</span><span class="s4">'/snmp/set'</span><span class="s0">, </span><span class="s4">'=src-address=' </span><span class="s1">+ src] ) 
+        </span><span class="s0">return </span><span class="s1">snmp</span></pre>
+</body>
+</html>

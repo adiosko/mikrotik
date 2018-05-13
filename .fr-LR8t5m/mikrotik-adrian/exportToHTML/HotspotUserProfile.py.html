@@ -1,0 +1,332 @@
+<html>
+<head>
+<title>HotspotUserProfile.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+HotspotUserProfile.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">HotspotUserProfile: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listProfiles(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list profiles 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk([</span><span class="s4">'/ip/hotspot/user/profile/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">hotspot == {}: 
+            print(</span><span class="s4">&quot;No profile found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">Idle timeout</span><span class="s0">\t</span><span class="s4">Shared users&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">hotspot: 
+                print(hotspot[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+hotspot[i][</span><span class="s4">'idle-timeout'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+hotspot[i][</span><span class="s4">'shared-users'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">addProfile(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add progile 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/user/profile/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">removeProfile(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove profile 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/user/profile/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s5">#General</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill rename profile 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newName] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddressPool(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">pool): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pool 
+        :param name: 
+        :param pool: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=address-pool=' </span><span class="s1">+ pool] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setSessionTimeout(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">timeout): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill set session timeout 
+        :param name: 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=session-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setIdleTimeout(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">timeout): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set idle timeout 
+        :param name: 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=idle-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setKeepaliveTimeout(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">timeout=</span><span class="s4">&quot;00:02:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set keepalive timeout 
+        :param name: 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=keepalive-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setStatusAutorefresh(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">refresh=</span><span class="s4">&quot;00:01:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will refresh timeout 
+        :param name: 
+        :param refresh: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=status-autorefresh=' </span><span class="s1">+ refresh] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setSharedUsers(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">shared=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set shared users account 
+        :param name: 
+        :param shared: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=shared-users=' </span><span class="s1">+ shared] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setRateLimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">limit): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set rate limit tx/rx 
+        :param name: 
+        :param limit: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=rate-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">addMacCookie(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable mac cookie 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=add-mac-cookie=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddressList(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">adlist): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address list 
+        :param name: 
+        :param adlist: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=address-list=' </span><span class="s1">+ adlist] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setIncomingFilter(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">filter): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set incoming filter 
+        :param name: 
+        :param filter: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=incoming-filter=' </span><span class="s1">+ filter] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutCOmingFilter(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">filter): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set outcoming filter 
+        :param name: 
+        :param filter: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=outgoing-filter=' </span><span class="s1">+ filter] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setIncomingPacketMark(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mark): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set packet mark 
+        :param name: 
+        :param mark: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=incoming-packet-mark=' </span><span class="s1">+ mark] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutcomingPacketMark(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mark): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set out packet mark 
+        :param name: 
+        :param mark: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=outgoing-packet-mark=' </span><span class="s1">+ mark] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setOpenStatusPage(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">page=</span><span class="s4">&quot;always&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set opening page 
+        :param name: 
+        :param page:always, http-login 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=open-status-page=' </span><span class="s1">+ page] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">useTransparentProxy(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will se ttransparent proxy usage 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=transparent-proxy=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s5">#Queue</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setInsertQueueBefore(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">use=</span><span class="s4">&quot;before&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param use: firs,last,hs&lt;server1&gt; 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=insert-queue-before=' </span><span class="s1">+ use] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setParenQueue(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">queue=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set parent queue 
+        :param name: 
+        :param queue: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=parent-queue=' </span><span class="s1">+ queue] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setQueueType(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">queue=</span><span class="s4">&quot;default-small&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set queue type 
+        :param name: 
+        :param queue: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=queue-type=' </span><span class="s1">+ queue] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s5">#Advertise</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">advertise(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will advertise enable 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=advertise=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setAdvertiseUrl(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">url): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will advertise specific web 
+        :param name: 
+        :param url: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=advertise-url=' </span><span class="s1">+ url] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setAdvertiseInterval(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;00:00:30&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will advertise web 
+        :param name: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=advertise-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setAdvertiseTimeout(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">tieout): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set timeout 
+        :param name: 
+        :param tieout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=advertise-timeout=' </span><span class="s1">+ tieout] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s5">#Scripts</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setOnLoginScript(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">script): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set script on login 
+        :param name: 
+        :param script: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=on-login=' </span><span class="s1">+ script] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot 
+ 
+    </span><span class="s0">def </span><span class="s1">setOnLogoutScript(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">script): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set logout script 
+        :param name: 
+        :param script: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        hotspot = self.client.talk( 
+            [</span><span class="s4">'/ip/hotspot/user/profile/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=on-logout=' </span><span class="s1">+ script] ) 
+        </span><span class="s0">return </span><span class="s1">hotspot</span></pre>
+</body>
+</html>

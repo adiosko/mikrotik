@@ -1,0 +1,241 @@
+<html>
+<head>
+<title>wininst2wheel.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+wininst2wheel.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">#!/usr/bin/env python</span><span class="s1"> 
+</span><span class="s2">import </span><span class="s1">distutils.dist 
+</span><span class="s2">import </span><span class="s1">os.path 
+</span><span class="s2">import </span><span class="s1">re 
+</span><span class="s2">import </span><span class="s1">sys 
+</span><span class="s2">import </span><span class="s1">tempfile 
+</span><span class="s2">import </span><span class="s1">zipfile 
+</span><span class="s2">from </span><span class="s1">argparse </span><span class="s2">import </span><span class="s1">ArgumentParser 
+</span><span class="s2">from </span><span class="s1">glob </span><span class="s2">import </span><span class="s1">iglob 
+</span><span class="s2">from </span><span class="s1">shutil </span><span class="s2">import </span><span class="s1">rmtree 
+ 
+</span><span class="s2">import </span><span class="s1">wheel.bdist_wheel 
+</span><span class="s2">from </span><span class="s1">wheel.archive </span><span class="s2">import </span><span class="s1">archive_wheelfile 
+ 
+egg_info_re = re.compile(</span><span class="s3">r'''(^|/)(?P&lt;name&gt;[^/]+?)-(?P&lt;ver&gt;.+?) 
+    (-(?P&lt;pyver&gt;.+?))?(-(?P&lt;arch&gt;.+?))?.egg-info(/|$)'''</span><span class="s2">, </span><span class="s1">re.VERBOSE) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">parse_info(wininfo_name</span><span class="s2">, </span><span class="s1">egginfo_name): 
+    </span><span class="s4">&quot;&quot;&quot;Extract metadata from filenames. 
+ 
+    Extracts the 4 metadataitems needed (name, version, pyversion, arch) from 
+    the installer filename and the name of the egg-info directory embedded in 
+    the zipfile (if any). 
+ 
+    The egginfo filename has the format:: 
+ 
+        name-ver(-pyver)(-arch).egg-info 
+ 
+    The installer filename has the format:: 
+ 
+        name-ver.arch(-pyver).exe 
+ 
+    Some things to note: 
+ 
+    1. The installer filename is not definitive. An installer can be renamed 
+       and work perfectly well as an installer. So more reliable data should 
+       be used whenever possible. 
+    2. The egg-info data should be preferred for the name and version, because 
+       these come straight from the distutils metadata, and are mandatory. 
+    3. The pyver from the egg-info data should be ignored, as it is 
+       constructed from the version of Python used to build the installer, 
+       which is irrelevant - the installer filename is correct here (even to 
+       the point that when it's not there, any version is implied). 
+    4. The architecture must be taken from the installer filename, as it is 
+       not included in the egg-info data. 
+    5. Architecture-neutral installers still have an architecture because the 
+       installer format itself (being executable) is architecture-specific. We 
+       should therefore ignore the architecture if the content is pure-python. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    egginfo = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">egginfo_name: 
+        egginfo = egg_info_re.search(egginfo_name) 
+        </span><span class="s2">if not </span><span class="s1">egginfo: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;Egg info filename %s is not valid&quot; </span><span class="s1">% (egginfo_name</span><span class="s2">,</span><span class="s1">)) 
+ 
+    </span><span class="s0"># Parse the wininst filename</span><span class="s1"> 
+    </span><span class="s0"># 1. Distribution name (up to the first '-')</span><span class="s1"> 
+    w_name</span><span class="s2">, </span><span class="s1">sep</span><span class="s2">, </span><span class="s1">rest = wininfo_name.partition(</span><span class="s3">'-'</span><span class="s1">) 
+    </span><span class="s2">if not </span><span class="s1">sep: 
+        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;Installer filename %s is not valid&quot; </span><span class="s1">% (wininfo_name</span><span class="s2">,</span><span class="s1">)) 
+ 
+    </span><span class="s0"># Strip '.exe'</span><span class="s1"> 
+    rest = rest[:-</span><span class="s5">4</span><span class="s1">] 
+    </span><span class="s0"># 2. Python version (from the last '-', must start with 'py')</span><span class="s1"> 
+    rest2</span><span class="s2">, </span><span class="s1">sep</span><span class="s2">, </span><span class="s1">w_pyver = rest.rpartition(</span><span class="s3">'-'</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">sep </span><span class="s2">and </span><span class="s1">w_pyver.startswith(</span><span class="s3">'py'</span><span class="s1">): 
+        rest = rest2 
+        w_pyver = w_pyver.replace(</span><span class="s3">'.'</span><span class="s2">, </span><span class="s3">''</span><span class="s1">) 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s0"># Not version specific - use py2.py3. While it is possible that</span><span class="s1"> 
+        </span><span class="s0"># pure-Python code is not compatible with both Python 2 and 3, there</span><span class="s1"> 
+        </span><span class="s0"># is no way of knowing from the wininst format, so we assume the best</span><span class="s1"> 
+        </span><span class="s0"># here (the user can always manually rename the wheel to be more</span><span class="s1"> 
+        </span><span class="s0"># restrictive if needed).</span><span class="s1"> 
+        w_pyver = </span><span class="s3">'py2.py3'</span><span class="s1"> 
+    </span><span class="s0"># 3. Version and architecture</span><span class="s1"> 
+    w_ver</span><span class="s2">, </span><span class="s1">sep</span><span class="s2">, </span><span class="s1">w_arch = rest.rpartition(</span><span class="s3">'.'</span><span class="s1">) 
+    </span><span class="s2">if not </span><span class="s1">sep: 
+        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;Installer filename %s is not valid&quot; </span><span class="s1">% (wininfo_name</span><span class="s2">,</span><span class="s1">)) 
+ 
+    </span><span class="s2">if </span><span class="s1">egginfo: 
+        w_name = egginfo.group(</span><span class="s3">'name'</span><span class="s1">) 
+        w_ver = egginfo.group(</span><span class="s3">'ver'</span><span class="s1">) 
+ 
+    </span><span class="s2">return </span><span class="s1">dict(name=w_name</span><span class="s2">, </span><span class="s1">ver=w_ver</span><span class="s2">, </span><span class="s1">arch=w_arch</span><span class="s2">, </span><span class="s1">pyver=w_pyver) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">bdist_wininst2wheel(path</span><span class="s2">, </span><span class="s1">dest_dir=os.path.curdir): 
+    bdw = zipfile.ZipFile(path) 
+ 
+    </span><span class="s0"># Search for egg-info in the archive</span><span class="s1"> 
+    egginfo_name = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">filename </span><span class="s2">in </span><span class="s1">bdw.namelist(): 
+        </span><span class="s2">if </span><span class="s3">'.egg-info' </span><span class="s2">in </span><span class="s1">filename: 
+            egginfo_name = filename 
+            </span><span class="s2">break</span><span class="s1"> 
+ 
+    info = parse_info(os.path.basename(path)</span><span class="s2">, </span><span class="s1">egginfo_name) 
+ 
+    root_is_purelib = </span><span class="s2">True</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">zipinfo </span><span class="s2">in </span><span class="s1">bdw.infolist(): 
+        </span><span class="s2">if </span><span class="s1">zipinfo.filename.startswith(</span><span class="s3">'PLATLIB'</span><span class="s1">): 
+            root_is_purelib = </span><span class="s2">False</span><span class="s1"> 
+            </span><span class="s2">break</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">root_is_purelib: 
+        paths = {</span><span class="s3">'purelib'</span><span class="s1">: </span><span class="s3">''</span><span class="s1">} 
+    </span><span class="s2">else</span><span class="s1">: 
+        paths = {</span><span class="s3">'platlib'</span><span class="s1">: </span><span class="s3">''</span><span class="s1">} 
+ 
+    dist_info = </span><span class="s3">&quot;%(name)s-%(ver)s&quot; </span><span class="s1">% info 
+    datadir = </span><span class="s3">&quot;%s.data/&quot; </span><span class="s1">% dist_info 
+ 
+    </span><span class="s0"># rewrite paths to trick ZipFile into extracting an egg</span><span class="s1"> 
+    </span><span class="s0"># XXX grab wininst .ini - between .exe, padding, and first zip file.</span><span class="s1"> 
+    members = [] 
+    egginfo_name = </span><span class="s3">''</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">zipinfo </span><span class="s2">in </span><span class="s1">bdw.infolist(): 
+        key</span><span class="s2">, </span><span class="s1">basename = zipinfo.filename.split(</span><span class="s3">'/'</span><span class="s2">, </span><span class="s5">1</span><span class="s1">) 
+        key = key.lower() 
+        basepath = paths.get(key</span><span class="s2">, None</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">basepath </span><span class="s2">is None</span><span class="s1">: 
+            basepath = datadir + key.lower() + </span><span class="s3">'/'</span><span class="s1"> 
+        oldname = zipinfo.filename 
+        newname = basepath + basename 
+        zipinfo.filename = newname 
+        </span><span class="s2">del </span><span class="s1">bdw.NameToInfo[oldname] 
+        bdw.NameToInfo[newname] = zipinfo 
+        </span><span class="s0"># Collect member names, but omit '' (from an entry like &quot;PLATLIB/&quot;</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">newname: 
+            members.append(newname) 
+        </span><span class="s0"># Remember egg-info name for the egg2dist call below</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">egginfo_name: 
+            </span><span class="s2">if </span><span class="s1">newname.endswith(</span><span class="s3">'.egg-info'</span><span class="s1">): 
+                egginfo_name = newname 
+            </span><span class="s2">elif </span><span class="s3">'.egg-info/' </span><span class="s2">in </span><span class="s1">newname: 
+                egginfo_name</span><span class="s2">, </span><span class="s1">sep</span><span class="s2">, </span><span class="s1">_ = newname.rpartition(</span><span class="s3">'/'</span><span class="s1">) 
+    dir = tempfile.mkdtemp(suffix=</span><span class="s3">&quot;_b2w&quot;</span><span class="s1">) 
+    bdw.extractall(dir</span><span class="s2">, </span><span class="s1">members) 
+ 
+    </span><span class="s0"># egg2wheel</span><span class="s1"> 
+    abi = </span><span class="s3">'none'</span><span class="s1"> 
+    pyver = info[</span><span class="s3">'pyver'</span><span class="s1">] 
+    arch = (info[</span><span class="s3">'arch'</span><span class="s1">] </span><span class="s2">or </span><span class="s3">'any'</span><span class="s1">).replace(</span><span class="s3">'.'</span><span class="s2">, </span><span class="s3">'_'</span><span class="s1">).replace(</span><span class="s3">'-'</span><span class="s2">, </span><span class="s3">'_'</span><span class="s1">) 
+    </span><span class="s0"># Wininst installers always have arch even if they are not</span><span class="s1"> 
+    </span><span class="s0"># architecture-specific (because the format itself is).</span><span class="s1"> 
+    </span><span class="s0"># So, assume the content is architecture-neutral if root is purelib.</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">root_is_purelib: 
+        arch = </span><span class="s3">'any'</span><span class="s1"> 
+    </span><span class="s0"># If the installer is architecture-specific, it's almost certainly also</span><span class="s1"> 
+    </span><span class="s0"># CPython-specific.</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">arch != </span><span class="s3">'any'</span><span class="s1">: 
+        pyver = pyver.replace(</span><span class="s3">'py'</span><span class="s2">, </span><span class="s3">'cp'</span><span class="s1">) 
+    wheel_name = </span><span class="s3">'-'</span><span class="s1">.join(( 
+                          dist_info</span><span class="s2">,</span><span class="s1"> 
+                          pyver</span><span class="s2">,</span><span class="s1"> 
+                          abi</span><span class="s2">,</span><span class="s1"> 
+                          arch 
+                          )) 
+    </span><span class="s2">if </span><span class="s1">root_is_purelib: 
+        bw = wheel.bdist_wheel.bdist_wheel(distutils.dist.Distribution()) 
+    </span><span class="s2">else</span><span class="s1">: 
+        bw = _bdist_wheel_tag(distutils.dist.Distribution()) 
+ 
+    bw.root_is_pure = root_is_purelib 
+    bw.python_tag = pyver 
+    bw.plat_name_supplied = </span><span class="s2">True</span><span class="s1"> 
+    bw.plat_name = info[</span><span class="s3">'arch'</span><span class="s1">] </span><span class="s2">or </span><span class="s3">'any'</span><span class="s1"> 
+ 
+    </span><span class="s2">if not </span><span class="s1">root_is_purelib: 
+        bw.full_tag_supplied = </span><span class="s2">True</span><span class="s1"> 
+        bw.full_tag = (pyver</span><span class="s2">, </span><span class="s1">abi</span><span class="s2">, </span><span class="s1">arch) 
+ 
+    dist_info_dir = os.path.join(dir</span><span class="s2">, </span><span class="s3">'%s.dist-info' </span><span class="s1">% dist_info) 
+    bw.egg2dist(os.path.join(dir</span><span class="s2">, </span><span class="s1">egginfo_name)</span><span class="s2">, </span><span class="s1">dist_info_dir) 
+    bw.write_wheelfile(dist_info_dir</span><span class="s2">, </span><span class="s1">generator=</span><span class="s3">'wininst2wheel'</span><span class="s1">) 
+    bw.write_record(dir</span><span class="s2">, </span><span class="s1">dist_info_dir) 
+ 
+    archive_wheelfile(os.path.join(dest_dir</span><span class="s2">, </span><span class="s1">wheel_name)</span><span class="s2">, </span><span class="s1">dir) 
+    rmtree(dir) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">_bdist_wheel_tag(wheel.bdist_wheel.bdist_wheel): 
+    </span><span class="s0"># allow the client to override the default generated wheel tag</span><span class="s1"> 
+    </span><span class="s0"># The default bdist_wheel implementation uses python and abi tags</span><span class="s1"> 
+    </span><span class="s0"># of the running python process. This is not suitable for</span><span class="s1"> 
+    </span><span class="s0"># generating/repackaging prebuild binaries.</span><span class="s1"> 
+ 
+    full_tag_supplied = </span><span class="s2">False</span><span class="s1"> 
+    full_tag = </span><span class="s2">None  </span><span class="s0"># None or a (pytag, soabitag, plattag) triple</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">get_tag(self): 
+        </span><span class="s2">if </span><span class="s1">self.full_tag_supplied </span><span class="s2">and </span><span class="s1">self.full_tag </span><span class="s2">is not None</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">self.full_tag 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">super(_bdist_wheel_tag</span><span class="s2">, </span><span class="s1">self).get_tag() 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">main(): 
+    parser = ArgumentParser() 
+    parser.add_argument(</span><span class="s3">'installers'</span><span class="s2">, </span><span class="s1">nargs=</span><span class="s3">'*'</span><span class="s2">, </span><span class="s1">help=</span><span class="s3">&quot;Installers to convert&quot;</span><span class="s1">) 
+    parser.add_argument(</span><span class="s3">'--dest-dir'</span><span class="s2">, </span><span class="s3">'-d'</span><span class="s2">, </span><span class="s1">default=os.path.curdir</span><span class="s2">,</span><span class="s1"> 
+                        help=</span><span class="s3">&quot;Directory to store wheels (default %(default)s)&quot;</span><span class="s1">) 
+    parser.add_argument(</span><span class="s3">'--verbose'</span><span class="s2">, </span><span class="s3">'-v'</span><span class="s2">, </span><span class="s1">action=</span><span class="s3">'store_true'</span><span class="s1">) 
+    args = parser.parse_args() 
+    </span><span class="s2">for </span><span class="s1">pat </span><span class="s2">in </span><span class="s1">args.installers: 
+        </span><span class="s2">for </span><span class="s1">installer </span><span class="s2">in </span><span class="s1">iglob(pat): 
+            </span><span class="s2">if </span><span class="s1">args.verbose: 
+                sys.stdout.write(</span><span class="s3">&quot;{0}... &quot;</span><span class="s1">.format(installer)) 
+            bdist_wininst2wheel(installer</span><span class="s2">, </span><span class="s1">args.dest_dir) 
+            </span><span class="s2">if </span><span class="s1">args.verbose: 
+                sys.stdout.write(</span><span class="s3">&quot;OK</span><span class="s2">\n</span><span class="s3">&quot;</span><span class="s1">) 
+ 
+ 
+</span><span class="s2">if </span><span class="s1">__name__ == </span><span class="s3">&quot;__main__&quot;</span><span class="s1">: 
+    main() 
+</span></pre>
+</body>
+</html>

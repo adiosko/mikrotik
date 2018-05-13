@@ -1,0 +1,560 @@
+<html>
+<head>
+<title>FirewallAdvancedSetup.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+FirewallAdvancedSetup.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">FirewallAdvancedSetup: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcAddressListFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">addr): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address list 
+        :param number: 
+        :param addr: name of list 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=src-address-list='</span><span class="s1">+addr]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcAddressMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">addr): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address list 
+        :param number: 
+        :param addr: name of list 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=src-address-list=' </span><span class="s1">+ addr] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcAddressListRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">addr): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address list 
+        :param number: 
+        :param addr: name of list 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=src-address-list=' </span><span class="s1">+ addr] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstAddressListFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">addr): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set address list 
+        :param number: 
+        :param addr: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dst-address-list=' </span><span class="s1">+ addr] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstAddressListMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">addr): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set address list 
+        :param number: 
+        :param addr: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dst-address-list=' </span><span class="s1">+ addr] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setContentFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">cont=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set fw content 
+        :param number: 
+        :param cont: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=content=' </span><span class="s1">+ cont] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setContentMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">cont=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set fw content 
+        :param number: 
+        :param cont: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=content=' </span><span class="s1">+ cont] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setContentRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">cont=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set fw content 
+        :param number: 
+        :param cont: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=content=' </span><span class="s1">+ cont] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setCOnnectionByteFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">bt=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set conenction byte 
+        :param number: 
+        :param bt: hexa value or decimal number 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=connection-bytes=' </span><span class="s1">+ bt] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setCOnnectionByteMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">bt=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set conenction byte 
+        :param number: 
+        :param bt: hexa value or decimal number 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=connection-bytes=' </span><span class="s1">+ bt] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setConnectionRatioFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">ratio=</span><span class="s4">&quot;0-4294967295&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set connectionr atio 
+        :param number: 
+        :param ratio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=connection-rate=' </span><span class="s1">+ ratio] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setConnectionRatioMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">ratio=</span><span class="s4">&quot;0-4294967295&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set connectionr atio 
+        :param number: 
+        :param ratio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=connection-rate=' </span><span class="s1">+ ratio] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPerConnectionClassifierFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">classif=</span><span class="s4">&quot;src-address:1/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set classifier 
+        :param number: 
+        :param classif: both-addresses,both-adresses-and-ports,both-ports,dst-address,dst-address-and-port,dst-port,src-address,src-address-and-port,src-port:1/0 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=per-connection-classifier=' </span><span class="s1">+ classif] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPerConnectionClassifierMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">classif=</span><span class="s4">&quot;src-address:1/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set classifier 
+        :param number: 
+        :param classif: both-addresses,both-adresses-and-ports,both-ports,dst-address,dst-address-and-port,dst-port,src-address,src-address-and-port,src-port:1/0 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( 
+            [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=per-connection-classifier=' </span><span class="s1">+ classif] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPerConnectionClassifierRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">classif=</span><span class="s4">&quot;src-address:1/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set classifier 
+        :param number: 
+        :param classif: both-addresses,both-adresses-and-ports,both-ports,dst-address,dst-address-and-port,dst-port,src-address,src-address-and-port,src-port:1/0 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=per-connection-classifier=' </span><span class="s1">+ classif] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcMacAddressFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mac): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src mac address 
+        :param number: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=src-mac-address=' </span><span class="s1">+ mac] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcMacAddressMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">mac): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src mac address 
+        :param number: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=src-mac-address=' </span><span class="s1">+ mac] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcMacAddressRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">mac): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src mac address 
+        :param number: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=src-mac-address=' </span><span class="s1">+ mac] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutBrifgePortFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;ether1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set out bridge port 
+        :param number: 
+        :param port: all-ppp,all-vlan,all-wireless,ether1 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=out-bridge-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutBrifgePortMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">port=</span><span class="s4">&quot;ether1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set out bridge port 
+        :param number: 
+        :param port:all-ppp,all-vlan,all-wireless,ether1 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=out-bridge-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setInBridgePortFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set in bridge port 
+        :param number: 
+        :param port:all-ppp,all-vlan,all-wireless,ether1, all-ethernet 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=in-bridge-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setInBridgePortMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set in bridge port 
+        :param number: 
+        :param port:all-ppp,all-vlan,all-wireless,ether1, all-ethernet 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=in-bridge-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setInBridgePortListFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set in bridge list 
+        :param number: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=in-bridge-port-list=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setInBridgePortListMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">port=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set in bridge list 
+        :param number: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=in-bridge-port-list=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutInterfaceBridgeListFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set out bridge list 
+        :param number: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=out-bridge-port-list=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutInterfaceBridgeListMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">port=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set out bridge list 
+        :param number: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=out-bridge-port-list=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpsecPolicyFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">policy=</span><span class="s4">&quot;in:none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ipsec policy 
+        :param number: 
+        :param policy: in out : none, ipsec 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ipsec-policy=' </span><span class="s1">+ policy] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpsecPolicyMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">policy=</span><span class="s4">&quot;in:none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ipsec policy 
+        :param number: 
+        :param policy: in out : none, ipsec 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ipsec-policy=' </span><span class="s1">+ policy] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpsecPolicyRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">policy=</span><span class="s4">&quot;in:none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ipsec policy 
+        :param number: 
+        :param policy: in out : none, ipsec 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ipsec-policy=' </span><span class="s1">+ policy] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setIngressPriorityFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prio=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ingress priority 
+        :param number: 
+        :param prio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ingress-priority=' </span><span class="s1">+ prio] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setIngressPriorityMAngle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">prio=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ingress priority 
+        :param number: 
+        :param prio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ingress-priority=' </span><span class="s1">+ prio] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setIngressPriorityRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">prio=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ingress priority 
+        :param number: 
+        :param prio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ingress-priority=' </span><span class="s1">+ prio] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriorityFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prio): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set priority of rule 
+        :param number: 
+        :param prio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=priority=' </span><span class="s1">+ prio] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriorityMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">prio): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set priority of rule 
+        :param number: 
+        :param prio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=priority=' </span><span class="s1">+ prio] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriorityRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">prio): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set priority of rule 
+        :param number: 
+        :param prio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=priority=' </span><span class="s1">+ prio] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setDscpFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">dscp=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dscp value 
+        :param number: 
+        :param dscp: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dscp=' </span><span class="s1">+ dscp] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setDscpMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">dscp=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dscp value 
+        :param number: 
+        :param dscp: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dscp=' </span><span class="s1">+ dscp] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setDscpRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">dscp=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dscp value 
+        :param number: 
+        :param dscp: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dscp=' </span><span class="s1">+ dscp] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpMssFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mss=</span><span class="s4">&quot;1460-65535&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tcp mss, tcp flags must be enabled before that! 
+        :param number: 
+        :param mss: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tcp-mss=' </span><span class="s1">+ mss] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpMssMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">mss=</span><span class="s4">&quot;1460-65535&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tcp mss 
+        :param number: 
+        :param mss: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tcp-mss=' </span><span class="s1">+ mss] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpMssRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">mss=</span><span class="s4">&quot;1460-65535&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tcp mss 
+        :param number: 
+        :param mss: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tcp-mss=' </span><span class="s1">+ mss] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPacketSizeFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">packet=</span><span class="s4">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set packet size 
+        :param number: 
+        :param packet: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=packet-size=' </span><span class="s1">+ packet] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPacketSizeMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">packet=</span><span class="s4">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set packet size 
+        :param number: 
+        :param packet: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=packet-size=' </span><span class="s1">+ packet] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPacketSizeRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">packet=</span><span class="s4">&quot;0-65535&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set packet size 
+        :param number: 
+        :param packet: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=packet-size=' </span><span class="s1">+ packet] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setRandomFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">filt=</span><span class="s4">&quot;50&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill set random value 
+        :param number: 
+        :param filt: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=random=' </span><span class="s1">+ filt] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setRandomMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">filt=</span><span class="s4">&quot;50&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill set random value 
+        :param number: 
+        :param filt: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=random=' </span><span class="s1">+ filt] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setRandomRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">filt=</span><span class="s4">&quot;50&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill set random value 
+        :param number: 
+        :param filt: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=random=' </span><span class="s1">+ filt] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpFlagsFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">flag=</span><span class="s4">&quot;ack&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tcp flag 
+        :param number: 
+        :param flag: ack,syn,cwr,ece,fin,psh,rst,urg 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tcp-flags=' </span><span class="s1">+ flag] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpFlagsMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">flag=</span><span class="s4">&quot;ack&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tcp flag 
+        :param number: 
+        :param flag: ack,syn,cwr,ece,fin,psh,rst,urg 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tcp-flags=' </span><span class="s1">+ flag] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpFlagsRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">flag=</span><span class="s4">&quot;ack&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tcp flag 
+        :param number: 
+        :param flag: ack,syn,cwr,ece,fin,psh,rst,urg 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tcp-flags=' </span><span class="s1">+ flag] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setInvertTcpFlagsFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">flag): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill invert tcp flag 
+        :param number: 
+        :param flag: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tcp-flags=!,' </span><span class="s1">+ flag] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setInvertTcpFlagsMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">flag): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill invert tcp flag 
+        :param number: 
+        :param flag: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tcp-flags=!,' </span><span class="s1">+ flag] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setInvertTcpFlagsRaw(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">flag): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill invert tcp flag 
+        :param number: 
+        :param flag: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/firewall/raw/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tcp-flags=!,' </span><span class="s1">+ flag] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6</span></pre>
+</body>
+</html>

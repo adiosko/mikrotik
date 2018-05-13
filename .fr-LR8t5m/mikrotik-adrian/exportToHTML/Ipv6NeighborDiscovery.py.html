@@ -1,0 +1,342 @@
+<html>
+<head>
+<title>Ipv6NeighborDiscovery.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Ipv6NeighborDiscovery.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">IPv6NeighborDiscovery: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listInterfaces(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list interfaces 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/nd/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">ipv6 == {}: 
+            print(</span><span class="s4">&quot;No interface found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">RA interface</span><span class="s0">\t</span><span class="s4">RA Delay</span><span class="s0">\t</span><span class="s4">RA Lifetime</span><span class="s0">\t</span><span class="s4">advertise MAC</span><span class="s0">\t</span><span class="s4">Advertise DNS&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipv6: 
+                </span><span class="s5">#print(ipv6[i])</span><span class="s1"> 
+                print(ipv6[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv6[i][</span><span class="s4">'ra-interval'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv6[i][</span><span class="s4">'ra-lifetime'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv6[i][</span><span class="s4">'advertise-mac-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv6[i][</span><span class="s4">'advertise-dns'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">addInterface(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add interface 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/add'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lremove interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface 
+        :param number: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setRaInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;200-600&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ra interval in seconds 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=ra-interval='</span><span class="s1">+interval] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setRaDelay(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">delay=</span><span class="s4">&quot;3&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set delay in secs 
+        :param number: 
+        :param delay: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ra-delay=' </span><span class="s1">+ delay] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setMtu(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mtu=</span><span class="s4">&quot;1500&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mtu 
+        :param number: 
+        :param mtu: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=mtu=' </span><span class="s1">+ mtu] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setRachableTime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">timeout=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set timeout 
+        :param number: 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=reachable-time=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def  </span><span class="s1">setRetransmitInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set retransmit interval 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=retransmit-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setRaLifetime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">life=</span><span class="s4">&quot;1800&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ra lifetime in secs 
+        :param number: 
+        :param life: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ra-lifetime=' </span><span class="s1">+ life] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setHopLimit(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;64&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set hop limit in secs 
+        :param number: 
+        :param limit: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=hop-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setAdvertiseMacAddress(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will advertise mac 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=advertise-mac-address=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setAdvertiseDns(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will advertise dns 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=advertise-dns=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setManagedAddressConfiguration(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set managed address config 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=managed-address-configuration=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setOtherConfiguration(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set other configuration 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=other-configuration=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+    </span><span class="s5">#Prefixes</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setDefaultAutonomous(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set autinomous nd 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/nd/prefix/default/set'</span><span class="s0">,</span><span class="s4">'=autonomous=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setValidLifetime(self</span><span class="s0">,</span><span class="s1">lifetime=</span><span class="s4">&quot;30d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set valid lifetime 
+        :param number: 
+        :param lifetime: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/default/set'</span><span class="s0">, </span><span class="s4">'=valid-lifetime='</span><span class="s1">+lifetime] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefferedLifetime(self</span><span class="s0">,</span><span class="s1">lifetime=</span><span class="s4">&quot;7d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set preff lifetime 
+        :param lifetime: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/default/set'</span><span class="s0">, </span><span class="s4">'=preferred-lifetime='</span><span class="s1">+lifetime] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s5">#prefixes all</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">listPrefixes(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list prefixes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/print'</span><span class="s1">] ) 
+        </span><span class="s0">if </span><span class="s1">ipv6 == {}: 
+            print(</span><span class="s4">&quot;No prefix found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Prefix</span><span class="s0">\t</span><span class="s4">Interface&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipv6: 
+                print(ipv6[i][</span><span class="s4">'prefix'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv6[i][</span><span class="s4">'interface'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">addPrefix(self</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;ether1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add prefix baed on source interface 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/add'</span><span class="s0">, </span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">removePrefix(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/remove'</span><span class="s0">, </span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">enablePrefix(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/enable'</span><span class="s0">, </span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">disablePrefix(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable rpefix 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/disable'</span><span class="s0">, </span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefix(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefix=</span><span class="s4">&quot;::/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prefix 
+        :param number: 
+        :param prefix: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/nd/prefix/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=prefix='</span><span class="s1">+prefix]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">set6to4Interface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;ether1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set 6to4 iface 
+        :param number: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=6to4-interface=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefixInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;ether1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface 
+        :param number: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setOnLink(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface on-link 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=on-link=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setAutonomous(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prefix autonomous 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=autonomous=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setCustomValidLifetime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">life=</span><span class="s4">&quot;30d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        M 
+        :param number: 
+        :param life: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/default/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">, </span><span class="s4">'=valid-lifetime=' </span><span class="s1">+ life] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setCustomPrefferedLifetime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">life=</span><span class="s4">&quot;7d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set preff lifetime 
+        :param number: 
+        :param life: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/nd/prefix/default/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=preferred-lifetime=' </span><span class="s1">+ life] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6</span></pre>
+</body>
+</html>

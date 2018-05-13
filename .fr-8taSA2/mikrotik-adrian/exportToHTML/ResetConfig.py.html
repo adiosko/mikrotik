@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>ResetConfig.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ResetConfig.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">ResetConfig: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">, </span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">resetConfig(self</span><span class="s0">,</span><span class="s1">keepConfig</span><span class="s0">, </span><span class="s1">noDeafult</span><span class="s0">, </span><span class="s1">CAPS = </span><span class="s0">None, </span><span class="s1">backup = </span><span class="s0">None, </span><span class="s1">run = </span><span class="s0">None</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reset configuration of router 
+        :param keepConfig: keepuser config after reset? yes/no 
+        :param noDeafult: keepNoDefaultConfig yes/no 
+        :param CAPS:  keep caps (optional) 
+        :param backup: (optional) skip backup 
+        :param run: run file after reboot 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">CAPS == </span><span class="s0">None or </span><span class="s1">backup == </span><span class="s0">None or </span><span class="s1">run == </span><span class="s0">None</span><span class="s1">: 
+            reset = self.client.talk([</span><span class="s4">'/system/reset-configuration'</span><span class="s0">,</span><span class="s4">'=keep-users='</span><span class="s1">+keepConfig</span><span class="s0">,</span><span class="s4">'=no-defaults='</span><span class="s1">+noDeafult 
+                                      ]) 
+        </span><span class="s0">else</span><span class="s1">: 
+            reset = self.client.talk([</span><span class="s4">'/system/reset-configuration'</span><span class="s0">,</span><span class="s4">'=keep-users='</span><span class="s1">+keepConfig</span><span class="s0">,</span><span class="s4">'=no-defaults='</span><span class="s1">+noDeafult 
+                                      </span><span class="s0">,</span><span class="s4">'=caps-mode='</span><span class="s1">+CAPS</span><span class="s0">,</span><span class="s4">'=skip-backup='</span><span class="s1">+backup</span><span class="s0">, </span><span class="s4">'=run-after-reset'</span><span class="s1">+run]) 
+        </span><span class="s0">return </span><span class="s1">reset</span></pre>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<html>
+<head>
+<title>OspfInterface.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+OspfInterface.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">OspfInterface: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">listInterfaces(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all ospf ifaces 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk([</span><span class="s4">'/routing/ospf/interface/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">ospf == {}: 
+            print(</span><span class="s4">&quot;No ospf iface defined&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">COst</span><span class="s0">\t</span><span class="s4">Priority</span><span class="s0">\t</span><span class="s4">Authentication</span><span class="s0">\t</span><span class="s4">auth key</span><span class="s0">\t</span><span class="s4">network type</span><span class="s0">\t</span><span class="s4">instance</span><span class="s0">\t</span><span class="s4">area</span><span class="s0">\t</span><span class="s4">neighbors</span><span class="s0">\t</span><span class="s4">state&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ospf: 
+                </span><span class="s5">#print(ospf)</span><span class="s1"> 
+                print(ospf[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'cost'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'priority'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'authentication'</span><span class="s1">] 
+                      +</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'authentication-key'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'network-type'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">addInterface(self</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add interface 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk([</span><span class="s4">'/routing/ospf/interface/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">commentInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment interface 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will echange interface 
+        :param number: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setCost(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">cost=</span><span class="s4">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ospf cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=cost='</span><span class="s1">+cost] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriority(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">priority=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set priority 
+        :param number: 
+        :param priority: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=priority=' </span><span class="s1">+priority] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthentication(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">type=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set authentication 
+        :param number: 
+        :param type: none,simple,MD5 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=authentication=' </span><span class="s1">+ type] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthenticationKey(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">key): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set auth key 
+        :param number: 
+        :param key: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=authentication-key=' </span><span class="s1">+ key] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthenticationKeyId(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">ID=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set auth key id 
+        :param number: 
+        :param ID: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=authentication-key-id='</span><span class="s1">+ID] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setNetworkType(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">type=</span><span class="s4">&quot;broadcast&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set network type 
+        :param number: 
+        :param type: broadcast, default, nbma, point-to-point,ptmp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=network-type=' </span><span class="s1">+ type] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setInstanceId(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">ID=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set instance id 
+        :param number: 
+        :param ID: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=instance-id=' </span><span class="s1">+ ID] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassive(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface passive 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=passive=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetPassive(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface passive 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=passive=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setBfd(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set to use bfd 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=use-bfd=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetBfd(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set to use bfd 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=use-bfd=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRetransmitInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;5&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set retransmit interval 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=retransmit-interval='</span><span class="s1">+interval]) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setTransmitDelay(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">delay=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set delay 
+        :param number: 
+        :param delay: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=transmit-delay='</span><span class="s1">+delay] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setHelloInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set hello interval 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=hello-interval='</span><span class="s1">+interval] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setDeadInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;40&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dead interval 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dead-interval='</span><span class="s1">+interval] ) 
+        </span><span class="s0">return </span><span class="s1">ospf</span></pre>
+</body>
+</html>

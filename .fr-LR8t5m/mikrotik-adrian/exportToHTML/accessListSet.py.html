@@ -1,0 +1,202 @@
+<html>
+<head>
+<title>accessListSet.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+accessListSet.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">accessListSet: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setMacAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mac): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mac address 
+        :param number: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=mac-address='</span><span class="s1">+mac]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setSignal(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">signalFrom=</span><span class="s4">&quot;-120&quot;</span><span class="s0">,</span><span class="s1">signalTo=</span><span class="s4">&quot;120&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set db filter 
+        :param number: 
+        :param signalFrom: 
+        :param signalTo: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=signal-range=' </span><span class="s1">+ signalFrom+</span><span class="s4">&quot;..&quot;</span><span class="s1">+signalTo] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setSignalOutOfRangeInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=allow-signal-out-of-range=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setApTxLimit(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will  set limit 
+        :param number: 
+        :param limit: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ap-tx-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setClientTxLimit(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param limit: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=client-tx-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableAuthentication(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable authentication 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=authentication=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">disableAuthentication(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable authentication 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=authentication=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableForwarding(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will  enable forwarding 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=forwarding=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">disableForwarding(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable authentication 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=forwarding=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setVlanMode(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">vlan=</span><span class="s4">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param vlan:default,no-tag,use-service-tag,use-tag 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=vlan-mode='</span><span class="s1">+vlan] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setVlanId(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">vlan=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param vlan: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=vlan-id=' </span><span class="s1">+ vlan] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrivateKeyAlgorhitm(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mode): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param mode:  40bit-wep,104bit-wep,aes-com,none,tkip 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=private-algo=' </span><span class="s1">+ mode] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrivateKeyValue(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">value): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param value: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=private-key=' </span><span class="s1">+ value] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrivatePreSharedKey(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set private psh 
+        :param number: 
+        :param password: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=private-pre-shared-key=' </span><span class="s1">+ password] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setManagementProtectionKey(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param password: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=management-protection-key=' </span><span class="s1">+ password] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setTime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">timeFrom</span><span class="s0">,</span><span class="s1">timeTo</span><span class="s0">,</span><span class="s1">days): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param timeFrom: 
+        :param timeTo: 
+        :param days: mon,tue,wed,thu,fri,sat,sun 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/access-list/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=time=' </span><span class="s1">+ timeFrom+</span><span class="s4">&quot;-&quot;</span><span class="s1">+timeTo+</span><span class="s4">&quot;,&quot;</span><span class="s1">+days] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+ 
+</span></pre>
+</body>
+</html>

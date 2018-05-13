@@ -1,0 +1,119 @@
+<html>
+<head>
+<title>SmbShare.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+SmbShare.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">SmbShare: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+        </span><span class="s3"># Shared</span><span class="s1"> 
+        </span><span class="s0">def </span><span class="s1">listShares(self): 
+            </span><span class="s4">&quot;&quot;&quot; 
+            Method will list shares 
+            :return: 
+            &quot;&quot;&quot;</span><span class="s1"> 
+            smb = self.client.talk( [</span><span class="s5">'/ip/smb/shares/print'</span><span class="s1">] ) 
+            print( </span><span class="s5">&quot;Name</span><span class="s0">\t</span><span class="s5">Directory</span><span class="s0">\t</span><span class="s5">Max sessions&quot; </span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">smb: 
+                print( smb[i][</span><span class="s5">'name'</span><span class="s1">] + </span><span class="s5">&quot;</span><span class="s0">\t</span><span class="s5">&quot; </span><span class="s1">+ smb[i][</span><span class="s5">'directory'</span><span class="s1">] + </span><span class="s5">&quot;</span><span class="s0">\t</span><span class="s5">&quot; </span><span class="s1">+ smb[i][</span><span class="s5">'max-sessions'</span><span class="s1">] ) 
+            </span><span class="s0">return </span><span class="s1">smb 
+ 
+        </span><span class="s0">def </span><span class="s1">addShare(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">dir): 
+            </span><span class="s4">&quot;&quot;&quot; 
+            Method will remove share 
+            :param name: 
+            :param dir: 
+            :return: 
+            &quot;&quot;&quot;</span><span class="s1"> 
+            smb = self.client.talk( [</span><span class="s5">'/ip/smb/shares/add'</span><span class="s0">, </span><span class="s5">'=name=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s5">'=directory=' </span><span class="s1">+ dir] ) 
+            </span><span class="s0">return </span><span class="s1">smb 
+ 
+        </span><span class="s0">def </span><span class="s1">removeShare(self</span><span class="s0">, </span><span class="s1">name): 
+            </span><span class="s4">&quot;&quot;&quot; 
+            Method will remove share 
+            :param name: 
+            :return: 
+            &quot;&quot;&quot;</span><span class="s1"> 
+            smb = self.client.talk( [</span><span class="s5">'/ip/smb/shares/remove'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ name] ) 
+            </span><span class="s0">return </span><span class="s1">smb 
+ 
+        </span><span class="s0">def </span><span class="s1">enableShare(self</span><span class="s0">, </span><span class="s1">name): 
+            </span><span class="s4">&quot;&quot;&quot; 
+            Method will enable share 
+            :param name: 
+            :return: 
+            &quot;&quot;&quot;</span><span class="s1"> 
+            smb = self.client.talk( [</span><span class="s5">'/ip/smb/shares/enable'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ name] ) 
+            </span><span class="s0">return </span><span class="s1">smb 
+ 
+        </span><span class="s0">def </span><span class="s1">disableShare(self</span><span class="s0">, </span><span class="s1">name): 
+            </span><span class="s4">&quot;&quot;&quot; 
+            Method will disable share 
+            :param name: 
+            :return: 
+            &quot;&quot;&quot;</span><span class="s1"> 
+            smb = self.client.talk( [</span><span class="s5">'/ip/smb/shares/disable'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ name] ) 
+            </span><span class="s0">return </span><span class="s1">smb 
+ 
+        </span><span class="s0">def </span><span class="s1">commentShare(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">comment): 
+            </span><span class="s4">&quot;&quot;&quot; 
+            Method will comment share 
+            :param name: 
+            :param comment: 
+            :return: 
+            &quot;&quot;&quot;</span><span class="s1"> 
+            smb = self.client.talk( [</span><span class="s5">'/ip/smb/shares/comment'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s5">'=comment=' </span><span class="s1">+ comment] ) 
+            </span><span class="s0">return </span><span class="s1">smb 
+ 
+        </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">newName): 
+            </span><span class="s4">&quot;&quot;&quot; 
+            Method will rename share 
+            :param name: 
+            :param newName: 
+            :return: 
+            &quot;&quot;&quot;</span><span class="s1"> 
+            smb = self.client.talk( [</span><span class="s5">'/ip/smb/shares/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s5">'=name=' </span><span class="s1">+ newName] ) 
+            </span><span class="s0">return </span><span class="s1">smb 
+ 
+        </span><span class="s0">def </span><span class="s1">setDirectory(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">directory): 
+            </span><span class="s4">&quot;&quot;&quot; 
+            Method will set dir 
+            :param name: 
+            :param directory: 
+            :return: 
+            &quot;&quot;&quot;</span><span class="s1"> 
+            smb = self.client.talk( [</span><span class="s5">'/ip/smb/shares/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s5">'=directory=' </span><span class="s1">+ directory] ) 
+            </span><span class="s0">return </span><span class="s1">smb 
+ 
+        </span><span class="s0">def </span><span class="s1">setMaxSessions(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">session): 
+            </span><span class="s4">&quot;&quot;&quot; 
+            Method will set max sessions 
+            :param name: 
+            :param session: 
+            :return: 
+            &quot;&quot;&quot;</span><span class="s1"> 
+            smb = self.client.talk( [</span><span class="s5">'/ip/smb/shares/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s5">'=max-sessions=' </span><span class="s1">+ session] ) 
+            </span><span class="s0">return </span><span class="s1">smb</span></pre>
+</body>
+</html>

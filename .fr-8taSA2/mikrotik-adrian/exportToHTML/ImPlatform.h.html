@@ -1,0 +1,104 @@
+<html>
+<head>
+<title>ImPlatform.h</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(171,81,186); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ImPlatform.h</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">/* 
+ * The Python Imaging Library 
+ * $Id$ 
+ * 
+ * platform declarations for the imaging core library 
+ * 
+ * Copyright (c) Fredrik Lundh 1995-2003. 
+ */</span><span class="s1"> 
+ 
+</span><span class="s2">#include </span><span class="s3">&quot;Python.h&quot;</span><span class="s1"> 
+ 
+</span><span class="s0">/* Check that we have an ANSI compliant compiler */</span><span class="s1"> 
+</span><span class="s2">#ifndef </span><span class="s1">HAVE_PROTOTYPES 
+</span><span class="s2">#error </span><span class="s1">Sorry, </span><span class="s4">this </span><span class="s1">library requires support </span><span class="s2">for </span><span class="s1">ANSI prototypes. 
+</span><span class="s2">#endif</span><span class="s1"> 
+</span><span class="s2">#ifndef </span><span class="s1">STDC_HEADERS 
+</span><span class="s2">#error </span><span class="s1">Sorry, </span><span class="s4">this </span><span class="s1">library requires ANSI header files. 
+</span><span class="s2">#endif</span><span class="s1"> 
+ 
+</span><span class="s2">#if </span><span class="s1">defined(PIL_NO_INLINE) 
+</span><span class="s2">#define </span><span class="s4">inline</span><span class="s1">  
+</span><span class="s2">#else</span><span class="s1"> 
+</span><span class="s2">#if </span><span class="s1">defined(_MSC_VER) &amp;&amp; !defined(__GNUC__) 
+</span><span class="s2">#define </span><span class="s4">inline </span><span class="s1">__inline 
+</span><span class="s2">#endif</span><span class="s1"> 
+</span><span class="s2">#endif</span><span class="s1"> 
+ 
+</span><span class="s2">#ifdef </span><span class="s1">_WIN32 
+ 
+</span><span class="s2">#define </span><span class="s1">WIN32_LEAN_AND_MEAN 
+</span><span class="s2">#include </span><span class="s1">&lt;Windows.h&gt; 
+ 
+</span><span class="s2">#else</span><span class="s1"> 
+</span><span class="s0">/* For System that are not Windows, we'll need to define these. */</span><span class="s1"> 
+ 
+</span><span class="s2">#if </span><span class="s1">SIZEOF_SHORT == </span><span class="s5">2</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">INT16 </span><span class="s2">short</span><span class="s1"> 
+#elif SIZEOF_INT == </span><span class="s5">2</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">INT16 </span><span class="s2">int</span><span class="s1"> 
+</span><span class="s2">#else</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">INT16 </span><span class="s2">short </span><span class="s0">/* most things works just fine anyway... */</span><span class="s1"> 
+</span><span class="s2">#endif</span><span class="s1"> 
+ 
+</span><span class="s2">#if </span><span class="s1">SIZEOF_SHORT == </span><span class="s5">4</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">INT32 </span><span class="s2">short</span><span class="s1"> 
+#elif SIZEOF_INT == </span><span class="s5">4</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">INT32 </span><span class="s2">int</span><span class="s1"> 
+#elif SIZEOF_LONG == </span><span class="s5">4</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">INT32 </span><span class="s2">long</span><span class="s1"> 
+</span><span class="s2">#else</span><span class="s1"> 
+</span><span class="s2">#error </span><span class="s1">Cannot find required </span><span class="s5">32</span><span class="s1">-bit integer type 
+</span><span class="s2">#endif</span><span class="s1"> 
+ 
+</span><span class="s2">#if </span><span class="s1">SIZEOF_LONG == </span><span class="s5">8</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">INT64 </span><span class="s2">long</span><span class="s1"> 
+#elif SIZEOF_LONG_LONG == </span><span class="s5">8</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">INT64 </span><span class="s2">long</span><span class="s1"> 
+</span><span class="s2">#endif</span><span class="s1"> 
+ 
+</span><span class="s2">#define </span><span class="s1">INT8  </span><span class="s2">signed char</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">UINT8 </span><span class="s2">unsigned char</span><span class="s1"> 
+ 
+</span><span class="s2">#define </span><span class="s1">UINT16 </span><span class="s2">unsigned </span><span class="s1">INT16 
+</span><span class="s2">#define </span><span class="s1">UINT32 </span><span class="s2">unsigned </span><span class="s1">INT32 
+ 
+</span><span class="s2">#endif</span><span class="s1"> 
+ 
+</span><span class="s0">/* assume IEEE; tweak if necessary (patches are welcome) */</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">FLOAT32 </span><span class="s2">float</span><span class="s1"> 
+</span><span class="s2">#define </span><span class="s1">FLOAT64 </span><span class="s2">double</span><span class="s1"> 
+ 
+</span><span class="s2">#ifdef </span><span class="s1">_MSC_VER 
+</span><span class="s2">typedef signed </span><span class="s1">__int64       int64_t; 
+</span><span class="s2">#endif</span><span class="s1"> 
+ 
+</span><span class="s2">#ifdef </span><span class="s1">__GNUC__ 
+    </span><span class="s2">#define </span><span class="s1">GCC_VERSION (__GNUC__ * </span><span class="s5">10000 </span><span class="s1">\ 
+                       + __GNUC_MINOR__ * </span><span class="s5">100 </span><span class="s1">\ 
+                       + __GNUC_PATCHLEVEL__) 
+</span><span class="s2">#endif</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

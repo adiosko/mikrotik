@@ -1,0 +1,186 @@
+<html>
+<head>
+<title>wheel.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+wheel.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">'''Wheels support.'''</span><span class="s1"> 
+ 
+</span><span class="s2">from </span><span class="s1">distutils.util </span><span class="s2">import </span><span class="s1">get_platform 
+</span><span class="s2">import </span><span class="s1">email 
+</span><span class="s2">import </span><span class="s1">itertools 
+</span><span class="s2">import </span><span class="s1">os 
+</span><span class="s2">import </span><span class="s1">re 
+</span><span class="s2">import </span><span class="s1">zipfile 
+ 
+</span><span class="s2">from </span><span class="s1">pkg_resources </span><span class="s2">import </span><span class="s1">Distribution</span><span class="s2">, </span><span class="s1">PathMetadata</span><span class="s2">, </span><span class="s1">parse_version 
+</span><span class="s2">from </span><span class="s1">pkg_resources.extern.six </span><span class="s2">import </span><span class="s1">PY3 
+</span><span class="s2">from </span><span class="s1">setuptools </span><span class="s2">import </span><span class="s1">Distribution </span><span class="s2">as </span><span class="s1">SetuptoolsDistribution 
+</span><span class="s2">from </span><span class="s1">setuptools </span><span class="s2">import </span><span class="s1">pep425tags 
+</span><span class="s2">from </span><span class="s1">setuptools.command.egg_info </span><span class="s2">import </span><span class="s1">write_requirements 
+ 
+ 
+WHEEL_NAME = re.compile( 
+    </span><span class="s3">r&quot;&quot;&quot;^(?P&lt;project_name&gt;.+?)-(?P&lt;version&gt;\d.*?) 
+    ((-(?P&lt;build&gt;\d.*?))?-(?P&lt;py_version&gt;.+?)-(?P&lt;abi&gt;.+?)-(?P&lt;platform&gt;.+?) 
+    )\.whl$&quot;&quot;&quot;</span><span class="s2">,</span><span class="s1"> 
+re.VERBOSE).match 
+ 
+NAMESPACE_PACKAGE_INIT = </span><span class="s3">'''</span><span class="s2">\ 
+</span><span class="s3">try: 
+    __import__('pkg_resources').declare_namespace(__name__) 
+except ImportError: 
+    __path__ = __import__('pkgutil').extend_path(__path__, __name__) 
+'''</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">unpack(src_dir</span><span class="s2">, </span><span class="s1">dst_dir): 
+    </span><span class="s0">'''Move everything under `src_dir` to `dst_dir`, and delete the former.'''</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">dirpath</span><span class="s2">, </span><span class="s1">dirnames</span><span class="s2">, </span><span class="s1">filenames </span><span class="s2">in </span><span class="s1">os.walk(src_dir): 
+        subdir = os.path.relpath(dirpath</span><span class="s2">, </span><span class="s1">src_dir) 
+        </span><span class="s2">for </span><span class="s1">f </span><span class="s2">in </span><span class="s1">filenames: 
+            src = os.path.join(dirpath</span><span class="s2">, </span><span class="s1">f) 
+            dst = os.path.join(dst_dir</span><span class="s2">, </span><span class="s1">subdir</span><span class="s2">, </span><span class="s1">f) 
+            os.renames(src</span><span class="s2">, </span><span class="s1">dst) 
+        </span><span class="s2">for </span><span class="s1">n</span><span class="s2">, </span><span class="s1">d </span><span class="s2">in </span><span class="s1">reversed(list(enumerate(dirnames))): 
+            src = os.path.join(dirpath</span><span class="s2">, </span><span class="s1">d) 
+            dst = os.path.join(dst_dir</span><span class="s2">, </span><span class="s1">subdir</span><span class="s2">, </span><span class="s1">d) 
+            </span><span class="s2">if not </span><span class="s1">os.path.exists(dst): 
+                </span><span class="s4"># Directory does not exist in destination,</span><span class="s1"> 
+                </span><span class="s4"># rename it and prune it from os.walk list.</span><span class="s1"> 
+                os.renames(src</span><span class="s2">, </span><span class="s1">dst) 
+                </span><span class="s2">del </span><span class="s1">dirnames[n] 
+    </span><span class="s4"># Cleanup.</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">dirpath</span><span class="s2">, </span><span class="s1">dirnames</span><span class="s2">, </span><span class="s1">filenames </span><span class="s2">in </span><span class="s1">os.walk(src_dir</span><span class="s2">, </span><span class="s1">topdown=</span><span class="s2">True</span><span class="s1">): 
+        </span><span class="s2">assert not </span><span class="s1">filenames 
+        os.rmdir(dirpath) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">Wheel(object): 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">filename): 
+        match = WHEEL_NAME(os.path.basename(filename)) 
+        </span><span class="s2">if </span><span class="s1">match </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'invalid wheel name: %r' </span><span class="s1">% filename) 
+        self.filename = filename 
+        </span><span class="s2">for </span><span class="s1">k</span><span class="s2">, </span><span class="s1">v </span><span class="s2">in </span><span class="s1">match.groupdict().items(): 
+            setattr(self</span><span class="s2">, </span><span class="s1">k</span><span class="s2">, </span><span class="s1">v) 
+ 
+    </span><span class="s2">def </span><span class="s1">tags(self): 
+        </span><span class="s0">'''List tags (py_version, abi, platform) supported by this wheel.'''</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">itertools.product(self.py_version.split(</span><span class="s3">'.'</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                                 self.abi.split(</span><span class="s3">'.'</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                                 self.platform.split(</span><span class="s3">'.'</span><span class="s1">)) 
+ 
+    </span><span class="s2">def </span><span class="s1">is_compatible(self): 
+        </span><span class="s0">'''Is the wheel is compatible with the current platform?'''</span><span class="s1"> 
+        supported_tags = pep425tags.get_supported() 
+        </span><span class="s2">return </span><span class="s1">next((</span><span class="s2">True for </span><span class="s1">t </span><span class="s2">in </span><span class="s1">self.tags() </span><span class="s2">if </span><span class="s1">t </span><span class="s2">in </span><span class="s1">supported_tags)</span><span class="s2">, False</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">egg_name(self): 
+        </span><span class="s2">return </span><span class="s1">Distribution( 
+            project_name=self.project_name</span><span class="s2">, </span><span class="s1">version=self.version</span><span class="s2">,</span><span class="s1"> 
+            platform=(</span><span class="s2">None if </span><span class="s1">self.platform == </span><span class="s3">'any' </span><span class="s2">else </span><span class="s1">get_platform())</span><span class="s2">,</span><span class="s1"> 
+        ).egg_name() + </span><span class="s3">'.egg'</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">install_as_egg(self</span><span class="s2">, </span><span class="s1">destination_eggdir): 
+        </span><span class="s0">'''Install wheel as an egg directory.'''</span><span class="s1"> 
+        </span><span class="s2">with </span><span class="s1">zipfile.ZipFile(self.filename) </span><span class="s2">as </span><span class="s1">zf: 
+            dist_basename = </span><span class="s3">'%s-%s' </span><span class="s1">% (self.project_name</span><span class="s2">, </span><span class="s1">self.version) 
+            dist_info = </span><span class="s3">'%s.dist-info' </span><span class="s1">% dist_basename 
+            dist_data = </span><span class="s3">'%s.data' </span><span class="s1">% dist_basename 
+            </span><span class="s2">def </span><span class="s1">get_metadata(name): 
+                </span><span class="s2">with </span><span class="s1">zf.open(</span><span class="s3">'%s/%s' </span><span class="s1">% (dist_info</span><span class="s2">, </span><span class="s1">name)) </span><span class="s2">as </span><span class="s1">fp: 
+                    value = fp.read().decode(</span><span class="s3">'utf-8'</span><span class="s1">) </span><span class="s2">if </span><span class="s1">PY3 </span><span class="s2">else </span><span class="s1">fp.read() 
+                    </span><span class="s2">return </span><span class="s1">email.parser.Parser().parsestr(value) 
+            wheel_metadata = get_metadata(</span><span class="s3">'WHEEL'</span><span class="s1">) 
+            dist_metadata = get_metadata(</span><span class="s3">'METADATA'</span><span class="s1">) 
+            </span><span class="s4"># Check wheel format version is supported.</span><span class="s1"> 
+            wheel_version = parse_version(wheel_metadata.get(</span><span class="s3">'Wheel-Version'</span><span class="s1">)) 
+            </span><span class="s2">if not </span><span class="s1">parse_version(</span><span class="s3">'1.0'</span><span class="s1">) &lt;= wheel_version &lt; parse_version(</span><span class="s3">'2.0dev0'</span><span class="s1">): 
+                </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'unsupported wheel format version: %s' </span><span class="s1">% wheel_version) 
+            </span><span class="s4"># Extract to target directory.</span><span class="s1"> 
+            os.mkdir(destination_eggdir) 
+            zf.extractall(destination_eggdir) 
+            </span><span class="s4"># Convert metadata.</span><span class="s1"> 
+            dist_info = os.path.join(destination_eggdir</span><span class="s2">, </span><span class="s1">dist_info) 
+            dist = Distribution.from_location( 
+                destination_eggdir</span><span class="s2">, </span><span class="s1">dist_info</span><span class="s2">,</span><span class="s1"> 
+                metadata=PathMetadata(destination_eggdir</span><span class="s2">, </span><span class="s1">dist_info) 
+            ) 
+            </span><span class="s4"># Note: we need to evaluate and strip markers now,</span><span class="s1"> 
+            </span><span class="s4"># as we can't easily convert back from the syntax:</span><span class="s1"> 
+            </span><span class="s4"># foobar; &quot;linux&quot; in sys_platform and extra == 'test'</span><span class="s1"> 
+            </span><span class="s2">def </span><span class="s1">raw_req(req): 
+                req.marker = </span><span class="s2">None</span><span class="s1"> 
+                </span><span class="s2">return </span><span class="s1">str(req) 
+            install_requires = list(sorted(map(raw_req</span><span class="s2">, </span><span class="s1">dist.requires()))) 
+            extras_require = { 
+                extra: list(sorted( 
+                    req 
+                    </span><span class="s2">for </span><span class="s1">req </span><span class="s2">in </span><span class="s1">map(raw_req</span><span class="s2">, </span><span class="s1">dist.requires((extra</span><span class="s2">,</span><span class="s1">))) 
+                    </span><span class="s2">if </span><span class="s1">req </span><span class="s2">not in </span><span class="s1">install_requires 
+                )) 
+                </span><span class="s2">for </span><span class="s1">extra </span><span class="s2">in </span><span class="s1">dist.extras 
+            } 
+            egg_info = os.path.join(destination_eggdir</span><span class="s2">, </span><span class="s3">'EGG-INFO'</span><span class="s1">) 
+            os.rename(dist_info</span><span class="s2">, </span><span class="s1">egg_info) 
+            os.rename(os.path.join(egg_info</span><span class="s2">, </span><span class="s3">'METADATA'</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                      os.path.join(egg_info</span><span class="s2">, </span><span class="s3">'PKG-INFO'</span><span class="s1">)) 
+            setup_dist = SetuptoolsDistribution(attrs=dict( 
+                install_requires=install_requires</span><span class="s2">,</span><span class="s1"> 
+                extras_require=extras_require</span><span class="s2">,</span><span class="s1"> 
+            )) 
+            write_requirements(setup_dist.get_command_obj(</span><span class="s3">'egg_info'</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                               </span><span class="s2">None, </span><span class="s1">os.path.join(egg_info</span><span class="s2">, </span><span class="s3">'requires.txt'</span><span class="s1">)) 
+            </span><span class="s4"># Move data entries to their correct location.</span><span class="s1"> 
+            dist_data = os.path.join(destination_eggdir</span><span class="s2">, </span><span class="s1">dist_data) 
+            dist_data_scripts = os.path.join(dist_data</span><span class="s2">, </span><span class="s3">'scripts'</span><span class="s1">) 
+            </span><span class="s2">if </span><span class="s1">os.path.exists(dist_data_scripts): 
+                egg_info_scripts = os.path.join(destination_eggdir</span><span class="s2">,</span><span class="s1"> 
+                                                </span><span class="s3">'EGG-INFO'</span><span class="s2">, </span><span class="s3">'scripts'</span><span class="s1">) 
+                os.mkdir(egg_info_scripts) 
+                </span><span class="s2">for </span><span class="s1">entry </span><span class="s2">in </span><span class="s1">os.listdir(dist_data_scripts): 
+                    </span><span class="s4"># Remove bytecode, as it's not properly handled</span><span class="s1"> 
+                    </span><span class="s4"># during easy_install scripts install phase.</span><span class="s1"> 
+                    </span><span class="s2">if </span><span class="s1">entry.endswith(</span><span class="s3">'.pyc'</span><span class="s1">): 
+                        os.unlink(os.path.join(dist_data_scripts</span><span class="s2">, </span><span class="s1">entry)) 
+                    </span><span class="s2">else</span><span class="s1">: 
+                        os.rename(os.path.join(dist_data_scripts</span><span class="s2">, </span><span class="s1">entry)</span><span class="s2">,</span><span class="s1"> 
+                                  os.path.join(egg_info_scripts</span><span class="s2">, </span><span class="s1">entry)) 
+                os.rmdir(dist_data_scripts) 
+            </span><span class="s2">for </span><span class="s1">subdir </span><span class="s2">in </span><span class="s1">filter(os.path.exists</span><span class="s2">, </span><span class="s1">( 
+                os.path.join(dist_data</span><span class="s2">, </span><span class="s1">d) 
+                </span><span class="s2">for </span><span class="s1">d </span><span class="s2">in </span><span class="s1">(</span><span class="s3">'data'</span><span class="s2">, </span><span class="s3">'headers'</span><span class="s2">, </span><span class="s3">'purelib'</span><span class="s2">, </span><span class="s3">'platlib'</span><span class="s1">) 
+            )): 
+                unpack(subdir</span><span class="s2">, </span><span class="s1">destination_eggdir) 
+            </span><span class="s2">if </span><span class="s1">os.path.exists(dist_data): 
+                os.rmdir(dist_data) 
+            </span><span class="s4"># Fix namespace packages.</span><span class="s1"> 
+            namespace_packages = os.path.join(egg_info</span><span class="s2">, </span><span class="s3">'namespace_packages.txt'</span><span class="s1">) 
+            </span><span class="s2">if </span><span class="s1">os.path.exists(namespace_packages): 
+                </span><span class="s2">with </span><span class="s1">open(namespace_packages) </span><span class="s2">as </span><span class="s1">fp: 
+                    namespace_packages = fp.read().split() 
+                </span><span class="s2">for </span><span class="s1">mod </span><span class="s2">in </span><span class="s1">namespace_packages: 
+                    mod_dir = os.path.join(destination_eggdir</span><span class="s2">, </span><span class="s1">*mod.split(</span><span class="s3">'.'</span><span class="s1">)) 
+                    mod_init = os.path.join(mod_dir</span><span class="s2">, </span><span class="s3">'__init__.py'</span><span class="s1">) 
+                    </span><span class="s2">if </span><span class="s1">os.path.exists(mod_dir) </span><span class="s2">and not </span><span class="s1">os.path.exists(mod_init): 
+                        </span><span class="s2">with </span><span class="s1">open(mod_init</span><span class="s2">, </span><span class="s3">'w'</span><span class="s1">) </span><span class="s2">as </span><span class="s1">fp: 
+                            fp.write(NAMESPACE_PACKAGE_INIT) 
+</span></pre>
+</body>
+</html>

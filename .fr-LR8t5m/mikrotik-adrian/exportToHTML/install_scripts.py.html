@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>install_scripts.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+install_scripts.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">distutils </span><span class="s0">import </span><span class="s1">log 
+</span><span class="s0">import </span><span class="s1">distutils.command.install_scripts </span><span class="s0">as </span><span class="s1">orig 
+</span><span class="s0">import </span><span class="s1">os 
+</span><span class="s0">import </span><span class="s1">sys 
+ 
+</span><span class="s0">from </span><span class="s1">pkg_resources </span><span class="s0">import </span><span class="s1">Distribution</span><span class="s0">, </span><span class="s1">PathMetadata</span><span class="s0">, </span><span class="s1">ensure_directory 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">install_scripts(orig.install_scripts): 
+    </span><span class="s2">&quot;&quot;&quot;Do normal script install, plus any egg_info wrapper scripts&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">initialize_options(self): 
+        orig.install_scripts.initialize_options(self) 
+        self.no_ep = </span><span class="s0">False</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">run(self): 
+        </span><span class="s0">import </span><span class="s1">setuptools.command.easy_install </span><span class="s0">as </span><span class="s1">ei 
+ 
+        self.run_command(</span><span class="s3">&quot;egg_info&quot;</span><span class="s1">) 
+        </span><span class="s0">if </span><span class="s1">self.distribution.scripts: 
+            orig.install_scripts.run(self)  </span><span class="s4"># run first to set up self.outfiles</span><span class="s1"> 
+        </span><span class="s0">else</span><span class="s1">: 
+            self.outfiles = [] 
+        </span><span class="s0">if </span><span class="s1">self.no_ep: 
+            </span><span class="s4"># don't install entry point scripts into .egg file!</span><span class="s1"> 
+            </span><span class="s0">return</span><span class="s1"> 
+ 
+        ei_cmd = self.get_finalized_command(</span><span class="s3">&quot;egg_info&quot;</span><span class="s1">) 
+        dist = Distribution( 
+            ei_cmd.egg_base</span><span class="s0">, </span><span class="s1">PathMetadata(ei_cmd.egg_base</span><span class="s0">, </span><span class="s1">ei_cmd.egg_info)</span><span class="s0">,</span><span class="s1"> 
+            ei_cmd.egg_name</span><span class="s0">, </span><span class="s1">ei_cmd.egg_version</span><span class="s0">,</span><span class="s1"> 
+        ) 
+        bs_cmd = self.get_finalized_command(</span><span class="s3">'build_scripts'</span><span class="s1">) 
+        exec_param = getattr(bs_cmd</span><span class="s0">, </span><span class="s3">'executable'</span><span class="s0">, None</span><span class="s1">) 
+        bw_cmd = self.get_finalized_command(</span><span class="s3">&quot;bdist_wininst&quot;</span><span class="s1">) 
+        is_wininst = getattr(bw_cmd</span><span class="s0">, </span><span class="s3">'_is_running'</span><span class="s0">, False</span><span class="s1">) 
+        writer = ei.ScriptWriter 
+        </span><span class="s0">if </span><span class="s1">is_wininst: 
+            exec_param = </span><span class="s3">&quot;python.exe&quot;</span><span class="s1"> 
+            writer = ei.WindowsScriptWriter 
+        </span><span class="s0">if </span><span class="s1">exec_param == sys.executable: 
+            </span><span class="s4"># In case the path to the Python executable contains a space, wrap</span><span class="s1"> 
+            </span><span class="s4"># it so it's not split up.</span><span class="s1"> 
+            exec_param = [exec_param] 
+        </span><span class="s4"># resolve the writer to the environment</span><span class="s1"> 
+        writer = writer.best() 
+        cmd = writer.command_spec_class.best().from_param(exec_param) 
+        </span><span class="s0">for </span><span class="s1">args </span><span class="s0">in </span><span class="s1">writer.get_args(dist</span><span class="s0">, </span><span class="s1">cmd.as_header()): 
+            self.write_script(*args) 
+ 
+    </span><span class="s0">def </span><span class="s1">write_script(self</span><span class="s0">, </span><span class="s1">script_name</span><span class="s0">, </span><span class="s1">contents</span><span class="s0">, </span><span class="s1">mode=</span><span class="s3">&quot;t&quot;</span><span class="s0">, </span><span class="s1">*ignored): 
+        </span><span class="s2">&quot;&quot;&quot;Write an executable file to the scripts directory&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">from </span><span class="s1">setuptools.command.easy_install </span><span class="s0">import </span><span class="s1">chmod</span><span class="s0">, </span><span class="s1">current_umask 
+ 
+        log.info(</span><span class="s3">&quot;Installing %s script to %s&quot;</span><span class="s0">, </span><span class="s1">script_name</span><span class="s0">, </span><span class="s1">self.install_dir) 
+        target = os.path.join(self.install_dir</span><span class="s0">, </span><span class="s1">script_name) 
+        self.outfiles.append(target) 
+ 
+        mask = current_umask() 
+        </span><span class="s0">if not </span><span class="s1">self.dry_run: 
+            ensure_directory(target) 
+            f = open(target</span><span class="s0">, </span><span class="s3">&quot;w&quot; </span><span class="s1">+ mode) 
+            f.write(contents) 
+            f.close() 
+            chmod(target</span><span class="s0">, </span><span class="s5">0o777 </span><span class="s1">- mask) 
+</span></pre>
+</body>
+</html>

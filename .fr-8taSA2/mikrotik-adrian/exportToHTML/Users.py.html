@@ -1,0 +1,146 @@
+<html>
+<head>
+<title>Users.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Users.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">import </span><span class="s1">LoginManager 
+</span><span class="s0">from </span><span class="s1">os </span><span class="s0">import </span><span class="s1">system 
+</span><span class="s0">import </span><span class="s1">pexpect 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+</span><span class="s0">from </span><span class="s1">pprint </span><span class="s0">import </span><span class="s1">pprint 
+ 
+</span><span class="s0">class </span><span class="s1">Users: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient(address</span><span class="s0">,</span><span class="s2">8728</span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">listUsers(self): 
+        users = {} 
+        </span><span class="s3">#client1 = self.client.login('admin','admin')</span><span class="s1"> 
+        users = self.client.talk([</span><span class="s4">'/user/print'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;System users are: &quot;</span><span class="s1">) 
+        print(</span><span class="s4">&quot;User Disabled Group&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">users: 
+            print(users[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot; &quot;</span><span class="s1">+users[i][</span><span class="s4">'disabled'</span><span class="s1">]+</span><span class="s4">&quot; &quot;</span><span class="s1">+users[i][</span><span class="s4">'group'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">users 
+ 
+    </span><span class="s0">def </span><span class="s1">addUser(self</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password</span><span class="s0">,</span><span class="s1">disabled</span><span class="s0">,</span><span class="s1">group): 
+        </span><span class="s5">&quot;&quot;&quot; 
+        Method which add new user to mikrotik 
+        :param username: setup username name 
+        :param password: username password 
+        :param disabled: setup username disble status (yes or no) 
+        :param group: setup user group (read, write,full) 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        users = self.client.talk([</span><span class="s4">'/user/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+username</span><span class="s0">,</span><span class="s4">'=password='</span><span class="s1">+password</span><span class="s0">,</span><span class="s4">'=disabled='</span><span class="s1">+disabled</span><span class="s0">,</span><span class="s4">'=group='</span><span class="s1">+group]) 
+        </span><span class="s0">return </span><span class="s1">users 
+ 
+    </span><span class="s0">def </span><span class="s1">deleteUser(self</span><span class="s0">,</span><span class="s1">username): 
+        </span><span class="s5">&quot;&quot;&quot; 
+        Method which remove the user 
+        :param username: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">#self.client.login(&quot;admin&quot;,&quot;admin&quot;)</span><span class="s1"> 
+        users = self.client.talk([</span><span class="s4">'/user/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+username]) 
+        </span><span class="s0">return </span><span class="s1">users 
+ 
+    </span><span class="s0">def </span><span class="s1">changeUserPassword(self</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s5">&quot;&quot;&quot; 
+        Method which edit user settings on mikrotik 
+        :param username: username setup 
+        :param password: username new password 
+        :return: users with changed password 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        users = self.client.talk( [</span><span class="s4">'/user/set'</span><span class="s0">, </span><span class="s4">'=numbers='</span><span class="s1">+username</span><span class="s0">, </span><span class="s4">'=password='</span><span class="s1">+password]) 
+        </span><span class="s0">return </span><span class="s1">users 
+ 
+    </span><span class="s0">def </span><span class="s1">changeUsername(self</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">newUser): 
+        </span><span class="s5">&quot;&quot;&quot; 
+ 
+        :param username: 
+        :param newUser: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        users = self.client.talk([</span><span class="s4">'/user/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ username</span><span class="s0">, </span><span class="s4">'=name=' </span><span class="s1">+ newUser]) 
+        </span><span class="s0">return </span><span class="s1">users 
+ 
+    </span><span class="s0">def </span><span class="s1">enableSystemUser(self</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">disabled): 
+        </span><span class="s5">&quot;&quot;&quot; 
+        enable disabled user 
+        :param username: username you want to change 
+         :param disabled: disable status change to no by default 
+        :return: users 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        users = self.client.talk([</span><span class="s4">'/user/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+username</span><span class="s0">,</span><span class="s4">&quot;=disabled=&quot;</span><span class="s1">+disabled]) 
+        </span><span class="s0">return </span><span class="s1">users 
+ 
+    </span><span class="s0">def </span><span class="s1">disableUser(self</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">disabled): 
+        </span><span class="s5">&quot;&quot;&quot; 
+        method to disable system user 
+        :param username: username of user you want to disable 
+        :param disabled: default yes 
+        :return: users 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        users = self.client.talk([</span><span class="s4">'/user/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+username</span><span class="s0">,</span><span class="s4">&quot;=disabled=&quot;</span><span class="s1">+disabled]) 
+        </span><span class="s0">return </span><span class="s1">users 
+ 
+    </span><span class="s0">def </span><span class="s1">changeUserGroup(self</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">group): 
+        </span><span class="s5">&quot;&quot;&quot; 
+        method which will change user group 
+        :param username: user you wanna modify 
+        :param group: new user group i.e read,write,full 
+        :return: users 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">#self.client.login( 'admin', 'admin' )</span><span class="s1"> 
+        users = self.client.talk([</span><span class="s4">'/user/set'</span><span class="s0">, </span><span class="s4">'=numbers='</span><span class="s1">+username</span><span class="s0">, </span><span class="s4">'=group='</span><span class="s1">+group]) 
+        </span><span class="s0">return </span><span class="s1">users 
+ 
+ 
+ 
+ 
+</span><span class="s4">''' 
+testovaci kod 
+users = Users.Users(&quot;192.168.1.1&quot;) 
+#users.addUser(&quot;adrian&quot;,&quot;adrian&quot;,&quot;no&quot;,&quot;full&quot;) 
+#users.addUser(&quot;test&quot;,&quot;test&quot;,&quot;yes&quot;,&quot;read&quot;) 
+#users.listUsers() 
+#users.changeUserPassword(&quot;adrian&quot;,&quot;adrian1&quot;) 
+#users.changeUserGroup(&quot;adrian&quot;,&quot;read&quot;) 
+#print(&quot;</span><span class="s0">\n</span><span class="s4">&quot;) 
+#users.listUsers() 
+#print(&quot;</span><span class="s0">\n</span><span class="s4">&quot;) 
+#users.disableUser(&quot;adrian&quot;,&quot;yes&quot;) 
+#users.listUsers() 
+#users.enableSystemUser(&quot;adrian&quot;,&quot;no&quot;) 
+#users.listUsers() 
+#print(&quot;</span><span class="s0">\n</span><span class="s4">&quot;) 
+#users.deleteUser(&quot;adrian&quot;) 
+#users.deleteUser(&quot;adrian1&quot;) 
+'''</span><span class="s1"> 
+ 
+ 
+ 
+ 
+</span></pre>
+</body>
+</html>

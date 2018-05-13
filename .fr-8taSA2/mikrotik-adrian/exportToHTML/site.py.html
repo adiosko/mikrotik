@@ -1,0 +1,782 @@
+<html>
+<head>
+<title>site.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+site.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Append module search paths for third-party packages to sys.path. 
+ 
+**************************************************************** 
+* This module is automatically imported during initialization. * 
+**************************************************************** 
+ 
+In earlier versions of Python (up to 1.5a3), scripts or modules that 
+needed to use site-specific modules would place ``import site'' 
+somewhere near the top of their code.  Because of the automatic 
+import, this is no longer necessary (but code that does it still 
+works). 
+ 
+This will append site-specific paths to the module search path.  On 
+Unix, it starts with sys.prefix and sys.exec_prefix (if different) and 
+appends lib/python&lt;version&gt;/site-packages as well as lib/site-python. 
+It also supports the Debian convention of 
+lib/python&lt;version&gt;/dist-packages.  On other platforms (mainly Mac and 
+Windows), it uses just sys.prefix (and sys.exec_prefix, if different, 
+but this is unlikely).  The resulting directories, if they exist, are 
+appended to sys.path, and also inspected for path configuration files. 
+ 
+FOR DEBIAN, this sys.path is augmented with directories in /usr/local. 
+Local addons go into /usr/local/lib/python&lt;version&gt;/site-packages 
+(resp. /usr/local/lib/site-python), Debian addons install into 
+/usr/{lib,share}/python&lt;version&gt;/dist-packages. 
+ 
+A path configuration file is a file whose name has the form 
+&lt;package&gt;.pth; its contents are additional directories (one per line) 
+to be added to sys.path.  Non-existing directories (or 
+non-directories) are never added to sys.path; no directory is added to 
+sys.path more than once.  Blank lines and lines beginning with 
+'#' are skipped. Lines starting with 'import' are executed. 
+ 
+For example, suppose sys.prefix and sys.exec_prefix are set to 
+/usr/local and there is a directory /usr/local/lib/python2.X/site-packages 
+with three subdirectories, foo, bar and spam, and two path 
+configuration files, foo.pth and bar.pth.  Assume foo.pth contains the 
+following: 
+ 
+  # foo package configuration 
+  foo 
+  bar 
+  bletch 
+ 
+and bar.pth contains: 
+ 
+  # bar package configuration 
+  bar 
+ 
+Then the following directories are added to sys.path, in this order: 
+ 
+  /usr/local/lib/python2.X/site-packages/bar 
+  /usr/local/lib/python2.X/site-packages/foo 
+ 
+Note that bletch is omitted because it doesn't exist; bar precedes foo 
+because bar.pth comes alphabetically before foo.pth; and spam is 
+omitted because it is not mentioned in either path configuration file. 
+ 
+After these path manipulations, an attempt is made to import a module 
+named sitecustomize, which can perform arbitrary additional 
+site-specific customizations.  If this import fails with an 
+ImportError exception, it is silently ignored. 
+ 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">sys 
+</span><span class="s2">import </span><span class="s1">os 
+</span><span class="s2">try</span><span class="s1">: 
+    </span><span class="s2">import </span><span class="s1">__builtin__ </span><span class="s2">as </span><span class="s1">builtins 
+</span><span class="s2">except </span><span class="s1">ImportError: 
+    </span><span class="s2">import </span><span class="s1">builtins 
+</span><span class="s2">try</span><span class="s1">: 
+    set 
+</span><span class="s2">except </span><span class="s1">NameError: 
+    </span><span class="s2">from </span><span class="s1">sets </span><span class="s2">import </span><span class="s1">Set </span><span class="s2">as </span><span class="s1">set 
+ 
+</span><span class="s3"># Prefixes for site-packages; add additional prefixes like /usr/local here</span><span class="s1"> 
+PREFIXES = [sys.prefix</span><span class="s2">, </span><span class="s1">sys.exec_prefix] 
+</span><span class="s3"># Enable per user site-packages directory</span><span class="s1"> 
+</span><span class="s3"># set it to False to disable the feature or True to force the feature</span><span class="s1"> 
+ENABLE_USER_SITE = </span><span class="s2">None</span><span class="s1"> 
+</span><span class="s3"># for distutils.commands.install</span><span class="s1"> 
+USER_SITE = </span><span class="s2">None</span><span class="s1"> 
+USER_BASE = </span><span class="s2">None</span><span class="s1"> 
+ 
+_is_64bit = (getattr(sys</span><span class="s2">, </span><span class="s4">'maxsize'</span><span class="s2">, None</span><span class="s1">) </span><span class="s2">or </span><span class="s1">getattr(sys</span><span class="s2">, </span><span class="s4">'maxint'</span><span class="s1">)) &gt; </span><span class="s5">2</span><span class="s1">**</span><span class="s5">32</span><span class="s1"> 
+_is_pypy = hasattr(sys</span><span class="s2">, </span><span class="s4">'pypy_version_info'</span><span class="s1">) 
+_is_jython = sys.platform[:</span><span class="s5">4</span><span class="s1">] == </span><span class="s4">'java'</span><span class="s1"> 
+</span><span class="s2">if </span><span class="s1">_is_jython: 
+    ModuleType = type(os) 
+ 
+</span><span class="s2">def </span><span class="s1">makepath(*paths): 
+    dir = os.path.join(*paths) 
+    </span><span class="s2">if </span><span class="s1">_is_jython </span><span class="s2">and </span><span class="s1">(dir == </span><span class="s4">'__classpath__' </span><span class="s2">or</span><span class="s1"> 
+                       dir.startswith(</span><span class="s4">'__pyclasspath__'</span><span class="s1">)): 
+        </span><span class="s2">return </span><span class="s1">dir</span><span class="s2">, </span><span class="s1">dir 
+    dir = os.path.abspath(dir) 
+    </span><span class="s2">return </span><span class="s1">dir</span><span class="s2">, </span><span class="s1">os.path.normcase(dir) 
+ 
+</span><span class="s2">def </span><span class="s1">abs__file__(): 
+    </span><span class="s0">&quot;&quot;&quot;Set all module' __file__ attribute to an absolute path&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">m </span><span class="s2">in </span><span class="s1">sys.modules.values(): 
+        </span><span class="s2">if </span><span class="s1">((_is_jython </span><span class="s2">and not </span><span class="s1">isinstance(m</span><span class="s2">, </span><span class="s1">ModuleType)) </span><span class="s2">or</span><span class="s1"> 
+            hasattr(m</span><span class="s2">, </span><span class="s4">'__loader__'</span><span class="s1">)): 
+            </span><span class="s3"># only modules need the abspath in Jython. and don't mess</span><span class="s1"> 
+            </span><span class="s3"># with a PEP 302-supplied __file__</span><span class="s1"> 
+            </span><span class="s2">continue</span><span class="s1"> 
+        f = getattr(m</span><span class="s2">, </span><span class="s4">'__file__'</span><span class="s2">, None</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">f </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">continue</span><span class="s1"> 
+        m.__file__ = os.path.abspath(f) 
+ 
+</span><span class="s2">def </span><span class="s1">removeduppaths(): 
+    </span><span class="s0">&quot;&quot;&quot; Remove duplicate entries from sys.path along with making them 
+    absolute&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3"># This ensures that the initial path provided by the interpreter contains</span><span class="s1"> 
+    </span><span class="s3"># only absolute pathnames, even if we're running from the build directory.</span><span class="s1"> 
+    L = [] 
+    known_paths = set() 
+    </span><span class="s2">for </span><span class="s1">dir </span><span class="s2">in </span><span class="s1">sys.path: 
+        </span><span class="s3"># Filter out duplicate paths (on case-insensitive file systems also</span><span class="s1"> 
+        </span><span class="s3"># if they only differ in case); turn relative paths into absolute</span><span class="s1"> 
+        </span><span class="s3"># paths.</span><span class="s1"> 
+        dir</span><span class="s2">, </span><span class="s1">dircase = makepath(dir) 
+        </span><span class="s2">if not </span><span class="s1">dircase </span><span class="s2">in </span><span class="s1">known_paths: 
+            L.append(dir) 
+            known_paths.add(dircase) 
+    sys.path[:] = L 
+    </span><span class="s2">return </span><span class="s1">known_paths 
+ 
+</span><span class="s3"># XXX This should not be part of site.py, since it is needed even when</span><span class="s1"> 
+</span><span class="s3"># using the -S option for Python.  See http://www.python.org/sf/586680</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">addbuilddir(): 
+    </span><span class="s0">&quot;&quot;&quot;Append ./build/lib.&lt;platform&gt; in case we're running in the build dir 
+    (especially for Guido :-)&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">from </span><span class="s1">distutils.util </span><span class="s2">import </span><span class="s1">get_platform 
+    s = </span><span class="s4">&quot;build/lib.%s-%.3s&quot; </span><span class="s1">% (get_platform()</span><span class="s2">, </span><span class="s1">sys.version) 
+    </span><span class="s2">if </span><span class="s1">hasattr(sys</span><span class="s2">, </span><span class="s4">'gettotalrefcount'</span><span class="s1">): 
+        s += </span><span class="s4">'-pydebug'</span><span class="s1"> 
+    s = os.path.join(os.path.dirname(sys.path[-</span><span class="s5">1</span><span class="s1">])</span><span class="s2">, </span><span class="s1">s) 
+    sys.path.append(s) 
+ 
+</span><span class="s2">def </span><span class="s1">_init_pathinfo(): 
+    </span><span class="s0">&quot;&quot;&quot;Return a set containing all existing directory entries from sys.path&quot;&quot;&quot;</span><span class="s1"> 
+    d = set() 
+    </span><span class="s2">for </span><span class="s1">dir </span><span class="s2">in </span><span class="s1">sys.path: 
+        </span><span class="s2">try</span><span class="s1">: 
+            </span><span class="s2">if </span><span class="s1">os.path.isdir(dir): 
+                dir</span><span class="s2">, </span><span class="s1">dircase = makepath(dir) 
+                d.add(dircase) 
+        </span><span class="s2">except </span><span class="s1">TypeError: 
+            </span><span class="s2">continue</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">d 
+ 
+</span><span class="s2">def </span><span class="s1">addpackage(sitedir</span><span class="s2">, </span><span class="s1">name</span><span class="s2">, </span><span class="s1">known_paths): 
+    </span><span class="s0">&quot;&quot;&quot;Add a new path to known_paths by combining sitedir and 'name' or execute 
+    sitedir if it starts with 'import'&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">known_paths </span><span class="s2">is None</span><span class="s1">: 
+        _init_pathinfo() 
+        reset = </span><span class="s5">1</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        reset = </span><span class="s5">0</span><span class="s1"> 
+    fullname = os.path.join(sitedir</span><span class="s2">, </span><span class="s1">name) 
+    </span><span class="s2">try</span><span class="s1">: 
+        f = open(fullname</span><span class="s2">, </span><span class="s4">&quot;rU&quot;</span><span class="s1">) 
+    </span><span class="s2">except </span><span class="s1">IOError: 
+        </span><span class="s2">return</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        </span><span class="s2">for </span><span class="s1">line </span><span class="s2">in </span><span class="s1">f: 
+            </span><span class="s2">if </span><span class="s1">line.startswith(</span><span class="s4">&quot;#&quot;</span><span class="s1">): 
+                </span><span class="s2">continue</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">line.startswith(</span><span class="s4">&quot;import&quot;</span><span class="s1">): 
+                exec(line) 
+                </span><span class="s2">continue</span><span class="s1"> 
+            line = line.rstrip() 
+            dir</span><span class="s2">, </span><span class="s1">dircase = makepath(sitedir</span><span class="s2">, </span><span class="s1">line) 
+            </span><span class="s2">if not </span><span class="s1">dircase </span><span class="s2">in </span><span class="s1">known_paths </span><span class="s2">and </span><span class="s1">os.path.exists(dir): 
+                sys.path.append(dir) 
+                known_paths.add(dircase) 
+    </span><span class="s2">finally</span><span class="s1">: 
+        f.close() 
+    </span><span class="s2">if </span><span class="s1">reset: 
+        known_paths = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">known_paths 
+ 
+</span><span class="s2">def </span><span class="s1">addsitedir(sitedir</span><span class="s2">, </span><span class="s1">known_paths=</span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Add 'sitedir' argument to sys.path if missing and handle .pth files in 
+    'sitedir'&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">known_paths </span><span class="s2">is None</span><span class="s1">: 
+        known_paths = _init_pathinfo() 
+        reset = </span><span class="s5">1</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        reset = </span><span class="s5">0</span><span class="s1"> 
+    sitedir</span><span class="s2">, </span><span class="s1">sitedircase = makepath(sitedir) 
+    </span><span class="s2">if not </span><span class="s1">sitedircase </span><span class="s2">in </span><span class="s1">known_paths: 
+        sys.path.append(sitedir)        </span><span class="s3"># Add path component</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        names = os.listdir(sitedir) 
+    </span><span class="s2">except </span><span class="s1">os.error: 
+        </span><span class="s2">return</span><span class="s1"> 
+    names.sort() 
+    </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">names: 
+        </span><span class="s2">if </span><span class="s1">name.endswith(os.extsep + </span><span class="s4">&quot;pth&quot;</span><span class="s1">): 
+            addpackage(sitedir</span><span class="s2">, </span><span class="s1">name</span><span class="s2">, </span><span class="s1">known_paths) 
+    </span><span class="s2">if </span><span class="s1">reset: 
+        known_paths = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">known_paths 
+ 
+</span><span class="s2">def </span><span class="s1">addsitepackages(known_paths</span><span class="s2">, </span><span class="s1">sys_prefix=sys.prefix</span><span class="s2">, </span><span class="s1">exec_prefix=sys.exec_prefix): 
+    </span><span class="s0">&quot;&quot;&quot;Add site-packages (and possibly site-python) to sys.path&quot;&quot;&quot;</span><span class="s1"> 
+    prefixes = [os.path.join(sys_prefix</span><span class="s2">, </span><span class="s4">&quot;local&quot;</span><span class="s1">)</span><span class="s2">, </span><span class="s1">sys_prefix] 
+    </span><span class="s2">if </span><span class="s1">exec_prefix != sys_prefix: 
+        prefixes.append(os.path.join(exec_prefix</span><span class="s2">, </span><span class="s4">&quot;local&quot;</span><span class="s1">)) 
+ 
+    </span><span class="s2">for </span><span class="s1">prefix </span><span class="s2">in </span><span class="s1">prefixes: 
+        </span><span class="s2">if </span><span class="s1">prefix: 
+            </span><span class="s2">if </span><span class="s1">sys.platform </span><span class="s2">in </span><span class="s1">(</span><span class="s4">'os2emx'</span><span class="s2">, </span><span class="s4">'riscos'</span><span class="s1">) </span><span class="s2">or </span><span class="s1">_is_jython: 
+                sitedirs = [os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;Lib&quot;</span><span class="s2">, </span><span class="s4">&quot;site-packages&quot;</span><span class="s1">)] 
+            </span><span class="s2">elif </span><span class="s1">_is_pypy: 
+                sitedirs = [os.path.join(prefix</span><span class="s2">, </span><span class="s4">'site-packages'</span><span class="s1">)] 
+            </span><span class="s2">elif </span><span class="s1">sys.platform == </span><span class="s4">'darwin' </span><span class="s2">and </span><span class="s1">prefix == sys_prefix: 
+ 
+                </span><span class="s2">if </span><span class="s1">prefix.startswith(</span><span class="s4">&quot;/System/Library/Frameworks/&quot;</span><span class="s1">): </span><span class="s3"># Apple's Python</span><span class="s1"> 
+ 
+                    sitedirs = [os.path.join(</span><span class="s4">&quot;/Library/Python&quot;</span><span class="s2">, </span><span class="s1">sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">, </span><span class="s4">&quot;site-packages&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                                os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;Extras&quot;</span><span class="s2">, </span><span class="s4">&quot;lib&quot;</span><span class="s2">, </span><span class="s4">&quot;python&quot;</span><span class="s1">)] 
+ 
+                </span><span class="s2">else</span><span class="s1">: </span><span class="s3"># any other Python distros on OSX work this way</span><span class="s1"> 
+                    sitedirs = [os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;lib&quot;</span><span class="s2">,</span><span class="s1"> 
+                                             </span><span class="s4">&quot;python&quot; </span><span class="s1">+ sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">, </span><span class="s4">&quot;site-packages&quot;</span><span class="s1">)] 
+ 
+            </span><span class="s2">elif </span><span class="s1">os.sep == </span><span class="s4">'/'</span><span class="s1">: 
+                sitedirs = [os.path.join(prefix</span><span class="s2">,</span><span class="s1"> 
+                                         </span><span class="s4">&quot;lib&quot;</span><span class="s2">,</span><span class="s1"> 
+                                         </span><span class="s4">&quot;python&quot; </span><span class="s1">+ sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                                         </span><span class="s4">&quot;site-packages&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                            os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;lib&quot;</span><span class="s2">, </span><span class="s4">&quot;site-python&quot;</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                            os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;python&quot; </span><span class="s1">+ sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">, </span><span class="s4">&quot;lib-dynload&quot;</span><span class="s1">)] 
+                lib64_dir = os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;lib64&quot;</span><span class="s2">, </span><span class="s4">&quot;python&quot; </span><span class="s1">+ sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">, </span><span class="s4">&quot;site-packages&quot;</span><span class="s1">) 
+                </span><span class="s2">if </span><span class="s1">(os.path.exists(lib64_dir) </span><span class="s2">and</span><span class="s1"> 
+                    os.path.realpath(lib64_dir) </span><span class="s2">not in </span><span class="s1">[os.path.realpath(p) </span><span class="s2">for </span><span class="s1">p </span><span class="s2">in </span><span class="s1">sitedirs]): 
+                    </span><span class="s2">if </span><span class="s1">_is_64bit: 
+                        sitedirs.insert(</span><span class="s5">0</span><span class="s2">, </span><span class="s1">lib64_dir) 
+                    </span><span class="s2">else</span><span class="s1">: 
+                        sitedirs.append(lib64_dir) 
+                </span><span class="s2">try</span><span class="s1">: 
+                    </span><span class="s3"># sys.getobjects only available in --with-pydebug build</span><span class="s1"> 
+                    sys.getobjects 
+                    sitedirs.insert(</span><span class="s5">0</span><span class="s2">, </span><span class="s1">os.path.join(sitedirs[</span><span class="s5">0</span><span class="s1">]</span><span class="s2">, </span><span class="s4">'debug'</span><span class="s1">)) 
+                </span><span class="s2">except </span><span class="s1">AttributeError: 
+                    </span><span class="s2">pass</span><span class="s1"> 
+                </span><span class="s3"># Debian-specific dist-packages directories:</span><span class="s1"> 
+                sitedirs.append(os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;local/lib&quot;</span><span class="s2">,</span><span class="s1"> 
+                                             </span><span class="s4">&quot;python&quot; </span><span class="s1">+ sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                                             </span><span class="s4">&quot;dist-packages&quot;</span><span class="s1">)) 
+                </span><span class="s2">if </span><span class="s1">sys.version[</span><span class="s5">0</span><span class="s1">] == </span><span class="s4">'2'</span><span class="s1">: 
+                    sitedirs.append(os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;lib&quot;</span><span class="s2">,</span><span class="s1"> 
+                                                 </span><span class="s4">&quot;python&quot; </span><span class="s1">+ sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                                                 </span><span class="s4">&quot;dist-packages&quot;</span><span class="s1">)) 
+                </span><span class="s2">else</span><span class="s1">: 
+                    sitedirs.append(os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;lib&quot;</span><span class="s2">,</span><span class="s1"> 
+                                                 </span><span class="s4">&quot;python&quot; </span><span class="s1">+ sys.version[</span><span class="s5">0</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                                                 </span><span class="s4">&quot;dist-packages&quot;</span><span class="s1">)) 
+                sitedirs.append(os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;lib&quot;</span><span class="s2">, </span><span class="s4">&quot;dist-python&quot;</span><span class="s1">)) 
+            </span><span class="s2">else</span><span class="s1">: 
+                sitedirs = [prefix</span><span class="s2">, </span><span class="s1">os.path.join(prefix</span><span class="s2">, </span><span class="s4">&quot;lib&quot;</span><span class="s2">, </span><span class="s4">&quot;site-packages&quot;</span><span class="s1">)] 
+            </span><span class="s2">if </span><span class="s1">sys.platform == </span><span class="s4">'darwin'</span><span class="s1">: 
+                </span><span class="s3"># for framework builds *only* we add the standard Apple</span><span class="s1"> 
+                </span><span class="s3"># locations. Currently only per-user, but /Library and</span><span class="s1"> 
+                </span><span class="s3"># /Network/Library could be added too</span><span class="s1"> 
+                </span><span class="s2">if </span><span class="s4">'Python.framework' </span><span class="s2">in </span><span class="s1">prefix: 
+                    home = os.environ.get(</span><span class="s4">'HOME'</span><span class="s1">) 
+                    </span><span class="s2">if </span><span class="s1">home: 
+                        sitedirs.append( 
+                            os.path.join(home</span><span class="s2">,</span><span class="s1"> 
+                                         </span><span class="s4">'Library'</span><span class="s2">,</span><span class="s1"> 
+                                         </span><span class="s4">'Python'</span><span class="s2">,</span><span class="s1"> 
+                                         sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                                         </span><span class="s4">'site-packages'</span><span class="s1">)) 
+            </span><span class="s2">for </span><span class="s1">sitedir </span><span class="s2">in </span><span class="s1">sitedirs: 
+                </span><span class="s2">if </span><span class="s1">os.path.isdir(sitedir): 
+                    addsitedir(sitedir</span><span class="s2">, </span><span class="s1">known_paths) 
+    </span><span class="s2">return None</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">check_enableusersite(): 
+    </span><span class="s0">&quot;&quot;&quot;Check if user site directory is safe for inclusion 
+ 
+    The function tests for the command line flag (including environment var), 
+    process uid/gid equal to effective uid/gid. 
+ 
+    None: Disabled for security reasons 
+    False: Disabled by user (command line option) 
+    True: Safe and enabled 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">hasattr(sys</span><span class="s2">, </span><span class="s4">'flags'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">getattr(sys.flags</span><span class="s2">, </span><span class="s4">'no_user_site'</span><span class="s2">, False</span><span class="s1">): 
+        </span><span class="s2">return False</span><span class="s1"> 
+ 
+    </span><span class="s2">if </span><span class="s1">hasattr(os</span><span class="s2">, </span><span class="s4">&quot;getuid&quot;</span><span class="s1">) </span><span class="s2">and </span><span class="s1">hasattr(os</span><span class="s2">, </span><span class="s4">&quot;geteuid&quot;</span><span class="s1">): 
+        </span><span class="s3"># check process uid == effective uid</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">os.geteuid() != os.getuid(): 
+            </span><span class="s2">return None</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">hasattr(os</span><span class="s2">, </span><span class="s4">&quot;getgid&quot;</span><span class="s1">) </span><span class="s2">and </span><span class="s1">hasattr(os</span><span class="s2">, </span><span class="s4">&quot;getegid&quot;</span><span class="s1">): 
+        </span><span class="s3"># check process gid == effective gid</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">os.getegid() != os.getgid(): 
+            </span><span class="s2">return None</span><span class="s1"> 
+ 
+    </span><span class="s2">return True</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">addusersitepackages(known_paths): 
+    </span><span class="s0">&quot;&quot;&quot;Add a per user site-package to sys.path 
+ 
+    Each user has its own python directory with site-packages in the 
+    home directory. 
+ 
+    USER_BASE is the root directory for all Python versions 
+ 
+    USER_SITE is the user specific site-packages directory 
+ 
+    USER_SITE/.. can be used for data. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">global </span><span class="s1">USER_BASE</span><span class="s2">, </span><span class="s1">USER_SITE</span><span class="s2">, </span><span class="s1">ENABLE_USER_SITE 
+    env_base = os.environ.get(</span><span class="s4">&quot;PYTHONUSERBASE&quot;</span><span class="s2">, None</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">joinuser(*args): 
+        </span><span class="s2">return </span><span class="s1">os.path.expanduser(os.path.join(*args)) 
+ 
+    </span><span class="s3">#if sys.platform in ('os2emx', 'riscos'):</span><span class="s1"> 
+    </span><span class="s3">#    # Don't know what to put here</span><span class="s1"> 
+    </span><span class="s3">#    USER_BASE = ''</span><span class="s1"> 
+    </span><span class="s3">#    USER_SITE = ''</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">os.name == </span><span class="s4">&quot;nt&quot;</span><span class="s1">: 
+        base = os.environ.get(</span><span class="s4">&quot;APPDATA&quot;</span><span class="s1">) </span><span class="s2">or </span><span class="s4">&quot;~&quot;</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">env_base: 
+            USER_BASE = env_base 
+        </span><span class="s2">else</span><span class="s1">: 
+            USER_BASE = joinuser(base</span><span class="s2">, </span><span class="s4">&quot;Python&quot;</span><span class="s1">) 
+        USER_SITE = os.path.join(USER_BASE</span><span class="s2">,</span><span class="s1"> 
+                                 </span><span class="s4">&quot;Python&quot; </span><span class="s1">+ sys.version[</span><span class="s5">0</span><span class="s1">] + sys.version[</span><span class="s5">2</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                                 </span><span class="s4">&quot;site-packages&quot;</span><span class="s1">) 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s2">if </span><span class="s1">env_base: 
+            USER_BASE = env_base 
+        </span><span class="s2">else</span><span class="s1">: 
+            USER_BASE = joinuser(</span><span class="s4">&quot;~&quot;</span><span class="s2">, </span><span class="s4">&quot;.local&quot;</span><span class="s1">) 
+        USER_SITE = os.path.join(USER_BASE</span><span class="s2">, </span><span class="s4">&quot;lib&quot;</span><span class="s2">,</span><span class="s1"> 
+                                 </span><span class="s4">&quot;python&quot; </span><span class="s1">+ sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                                 </span><span class="s4">&quot;site-packages&quot;</span><span class="s1">) 
+ 
+    </span><span class="s2">if </span><span class="s1">ENABLE_USER_SITE </span><span class="s2">and </span><span class="s1">os.path.isdir(USER_SITE): 
+        addsitedir(USER_SITE</span><span class="s2">, </span><span class="s1">known_paths) 
+    </span><span class="s2">if </span><span class="s1">ENABLE_USER_SITE: 
+        </span><span class="s2">for </span><span class="s1">dist_libdir </span><span class="s2">in </span><span class="s1">(</span><span class="s4">&quot;lib&quot;</span><span class="s2">, </span><span class="s4">&quot;local/lib&quot;</span><span class="s1">): 
+            user_site = os.path.join(USER_BASE</span><span class="s2">, </span><span class="s1">dist_libdir</span><span class="s2">,</span><span class="s1"> 
+                                     </span><span class="s4">&quot;python&quot; </span><span class="s1">+ sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                                     </span><span class="s4">&quot;dist-packages&quot;</span><span class="s1">) 
+            </span><span class="s2">if </span><span class="s1">os.path.isdir(user_site): 
+                addsitedir(user_site</span><span class="s2">, </span><span class="s1">known_paths) 
+    </span><span class="s2">return </span><span class="s1">known_paths 
+ 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">setBEGINLIBPATH(): 
+    </span><span class="s0">&quot;&quot;&quot;The OS/2 EMX port has optional extension modules that do double duty 
+    as DLLs (and must use the .DLL file extension) for other extensions. 
+    The library search path needs to be amended so these will be found 
+    during module import.  Use BEGINLIBPATH so that these are at the start 
+    of the library search path. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    dllpath = os.path.join(sys.prefix</span><span class="s2">, </span><span class="s4">&quot;Lib&quot;</span><span class="s2">, </span><span class="s4">&quot;lib-dynload&quot;</span><span class="s1">) 
+    libpath = os.environ[</span><span class="s4">'BEGINLIBPATH'</span><span class="s1">].split(</span><span class="s4">';'</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">libpath[-</span><span class="s5">1</span><span class="s1">]: 
+        libpath.append(dllpath) 
+    </span><span class="s2">else</span><span class="s1">: 
+        libpath[-</span><span class="s5">1</span><span class="s1">] = dllpath 
+    os.environ[</span><span class="s4">'BEGINLIBPATH'</span><span class="s1">] = </span><span class="s4">';'</span><span class="s1">.join(libpath) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">setquit(): 
+    </span><span class="s0">&quot;&quot;&quot;Define new built-ins 'quit' and 'exit'. 
+    These are simply strings that display a hint on how to exit. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">os.sep == </span><span class="s4">':'</span><span class="s1">: 
+        eof = </span><span class="s4">'Cmd-Q'</span><span class="s1"> 
+    </span><span class="s2">elif </span><span class="s1">os.sep == </span><span class="s4">'</span><span class="s2">\\</span><span class="s4">'</span><span class="s1">: 
+        eof = </span><span class="s4">'Ctrl-Z plus Return'</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        eof = </span><span class="s4">'Ctrl-D (i.e. EOF)'</span><span class="s1"> 
+ 
+    </span><span class="s2">class </span><span class="s1">Quitter(object): 
+        </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">name): 
+            self.name = name 
+        </span><span class="s2">def </span><span class="s1">__repr__(self): 
+            </span><span class="s2">return </span><span class="s4">'Use %s() or %s to exit' </span><span class="s1">% (self.name</span><span class="s2">, </span><span class="s1">eof) 
+        </span><span class="s2">def </span><span class="s1">__call__(self</span><span class="s2">, </span><span class="s1">code=</span><span class="s2">None</span><span class="s1">): 
+            </span><span class="s3"># Shells like IDLE catch the SystemExit, but listen when their</span><span class="s1"> 
+            </span><span class="s3"># stdin wrapper is closed.</span><span class="s1"> 
+            </span><span class="s2">try</span><span class="s1">: 
+                sys.stdin.close() 
+            </span><span class="s2">except</span><span class="s1">: 
+                </span><span class="s2">pass</span><span class="s1"> 
+            </span><span class="s2">raise </span><span class="s1">SystemExit(code) 
+    builtins.quit = Quitter(</span><span class="s4">'quit'</span><span class="s1">) 
+    builtins.exit = Quitter(</span><span class="s4">'exit'</span><span class="s1">) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">_Printer(object): 
+    </span><span class="s0">&quot;&quot;&quot;interactive prompt objects for printing the license text, a list of 
+    contributors and the copyright notice.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    MAXLINES = </span><span class="s5">23</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">name</span><span class="s2">, </span><span class="s1">data</span><span class="s2">, </span><span class="s1">files=()</span><span class="s2">, </span><span class="s1">dirs=()): 
+        self.__name = name 
+        self.__data = data 
+        self.__files = files 
+        self.__dirs = dirs 
+        self.__lines = </span><span class="s2">None</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__setup(self): 
+        </span><span class="s2">if </span><span class="s1">self.__lines: 
+            </span><span class="s2">return</span><span class="s1"> 
+        data = </span><span class="s2">None</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">dir </span><span class="s2">in </span><span class="s1">self.__dirs: 
+            </span><span class="s2">for </span><span class="s1">filename </span><span class="s2">in </span><span class="s1">self.__files: 
+                filename = os.path.join(dir</span><span class="s2">, </span><span class="s1">filename) 
+                </span><span class="s2">try</span><span class="s1">: 
+                    fp = open(filename</span><span class="s2">, </span><span class="s4">&quot;rU&quot;</span><span class="s1">) 
+                    data = fp.read() 
+                    fp.close() 
+                    </span><span class="s2">break</span><span class="s1"> 
+                </span><span class="s2">except </span><span class="s1">IOError: 
+                    </span><span class="s2">pass</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">data: 
+                </span><span class="s2">break</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">data: 
+            data = self.__data 
+        self.__lines = data.split(</span><span class="s4">'</span><span class="s2">\n</span><span class="s4">'</span><span class="s1">) 
+        self.__linecnt = len(self.__lines) 
+ 
+    </span><span class="s2">def </span><span class="s1">__repr__(self): 
+        self.__setup() 
+        </span><span class="s2">if </span><span class="s1">len(self.__lines) &lt;= self.MAXLINES: 
+            </span><span class="s2">return </span><span class="s4">&quot;</span><span class="s2">\n</span><span class="s4">&quot;</span><span class="s1">.join(self.__lines) 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s4">&quot;Type %s() to see the full %s text&quot; </span><span class="s1">% ((self.__name</span><span class="s2">,</span><span class="s1">)*</span><span class="s5">2</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">__call__(self): 
+        self.__setup() 
+        prompt = </span><span class="s4">'Hit Return for more, or q (and Return) to quit: '</span><span class="s1"> 
+        lineno = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s2">while </span><span class="s5">1</span><span class="s1">: 
+            </span><span class="s2">try</span><span class="s1">: 
+                </span><span class="s2">for </span><span class="s1">i </span><span class="s2">in </span><span class="s1">range(lineno</span><span class="s2">, </span><span class="s1">lineno + self.MAXLINES): 
+                    print(self.__lines[i]) 
+            </span><span class="s2">except </span><span class="s1">IndexError: 
+                </span><span class="s2">break</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                lineno += self.MAXLINES 
+                key = </span><span class="s2">None</span><span class="s1"> 
+                </span><span class="s2">while </span><span class="s1">key </span><span class="s2">is None</span><span class="s1">: 
+                    </span><span class="s2">try</span><span class="s1">: 
+                        key = raw_input(prompt) 
+                    </span><span class="s2">except </span><span class="s1">NameError: 
+                        key = input(prompt) 
+                    </span><span class="s2">if </span><span class="s1">key </span><span class="s2">not in </span><span class="s1">(</span><span class="s4">''</span><span class="s2">, </span><span class="s4">'q'</span><span class="s1">): 
+                        key = </span><span class="s2">None</span><span class="s1"> 
+                </span><span class="s2">if </span><span class="s1">key == </span><span class="s4">'q'</span><span class="s1">: 
+                    </span><span class="s2">break</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">setcopyright(): 
+    </span><span class="s0">&quot;&quot;&quot;Set 'copyright' and 'credits' in __builtin__&quot;&quot;&quot;</span><span class="s1"> 
+    builtins.copyright = _Printer(</span><span class="s4">&quot;copyright&quot;</span><span class="s2">, </span><span class="s1">sys.copyright) 
+    </span><span class="s2">if </span><span class="s1">_is_jython: 
+        builtins.credits = _Printer( 
+            </span><span class="s4">&quot;credits&quot;</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s4">&quot;Jython is maintained by the Jython developers (www.jython.org).&quot;</span><span class="s1">) 
+    </span><span class="s2">elif </span><span class="s1">_is_pypy: 
+        builtins.credits = _Printer( 
+            </span><span class="s4">&quot;credits&quot;</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s4">&quot;PyPy is maintained by the PyPy developers: http://pypy.org/&quot;</span><span class="s1">) 
+    </span><span class="s2">else</span><span class="s1">: 
+        builtins.credits = _Printer(</span><span class="s4">&quot;credits&quot;</span><span class="s2">, </span><span class="s4">&quot;&quot;&quot;</span><span class="s2">\ 
+</span><span class="s4">    Thanks to CWI, CNRI, BeOpen.com, Zope Corporation and a cast of thousands 
+    for supporting Python development.  See www.python.org for more information.&quot;&quot;&quot;</span><span class="s1">) 
+    here = os.path.dirname(os.__file__) 
+    builtins.license = _Printer( 
+        </span><span class="s4">&quot;license&quot;</span><span class="s2">, </span><span class="s4">&quot;See http://www.python.org/%.3s/license.html&quot; </span><span class="s1">% sys.version</span><span class="s2">,</span><span class="s1"> 
+        [</span><span class="s4">&quot;LICENSE.txt&quot;</span><span class="s2">, </span><span class="s4">&quot;LICENSE&quot;</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+        [os.path.join(here</span><span class="s2">, </span><span class="s1">os.pardir)</span><span class="s2">, </span><span class="s1">here</span><span class="s2">, </span><span class="s1">os.curdir]) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">_Helper(object): 
+    </span><span class="s0">&quot;&quot;&quot;Define the built-in 'help'. 
+    This is a wrapper around pydoc.help (with a twist). 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__repr__(self): 
+        </span><span class="s2">return </span><span class="s4">&quot;Type help() for interactive help, &quot; </span><span class="s1">\ 
+               </span><span class="s4">&quot;or help(object) for help about object.&quot;</span><span class="s1"> 
+    </span><span class="s2">def </span><span class="s1">__call__(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwds): 
+        </span><span class="s2">import </span><span class="s1">pydoc 
+        </span><span class="s2">return </span><span class="s1">pydoc.help(*args</span><span class="s2">, </span><span class="s1">**kwds) 
+ 
+</span><span class="s2">def </span><span class="s1">sethelper(): 
+    builtins.help = _Helper() 
+ 
+</span><span class="s2">def </span><span class="s1">aliasmbcs(): 
+    </span><span class="s0">&quot;&quot;&quot;On Windows, some default encodings are not provided by Python, 
+    while they are always available as &quot;mbcs&quot; in each locale. Make 
+    them usable by aliasing to &quot;mbcs&quot; in such a case.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">sys.platform == </span><span class="s4">'win32'</span><span class="s1">: 
+        </span><span class="s2">import </span><span class="s1">locale</span><span class="s2">, </span><span class="s1">codecs 
+        enc = locale.getdefaultlocale()[</span><span class="s5">1</span><span class="s1">] 
+        </span><span class="s2">if </span><span class="s1">enc.startswith(</span><span class="s4">'cp'</span><span class="s1">):            </span><span class="s3"># &quot;cp***&quot; ?</span><span class="s1"> 
+            </span><span class="s2">try</span><span class="s1">: 
+                codecs.lookup(enc) 
+            </span><span class="s2">except </span><span class="s1">LookupError: 
+                </span><span class="s2">import </span><span class="s1">encodings 
+                encodings._cache[enc] = encodings._unknown 
+                encodings.aliases.aliases[enc] = </span><span class="s4">'mbcs'</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">setencoding(): 
+    </span><span class="s0">&quot;&quot;&quot;Set the string encoding used by the Unicode implementation.  The 
+    default is 'ascii', but if you're willing to experiment, you can 
+    change this.&quot;&quot;&quot;</span><span class="s1"> 
+    encoding = </span><span class="s4">&quot;ascii&quot; </span><span class="s3"># Default value set by _PyUnicode_Init()</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s5">0</span><span class="s1">: 
+        </span><span class="s3"># Enable to support locale aware default string encodings.</span><span class="s1"> 
+        </span><span class="s2">import </span><span class="s1">locale 
+        loc = locale.getdefaultlocale() 
+        </span><span class="s2">if </span><span class="s1">loc[</span><span class="s5">1</span><span class="s1">]: 
+            encoding = loc[</span><span class="s5">1</span><span class="s1">] 
+    </span><span class="s2">if </span><span class="s5">0</span><span class="s1">: 
+        </span><span class="s3"># Enable to switch off string to Unicode coercion and implicit</span><span class="s1"> 
+        </span><span class="s3"># Unicode to string conversion.</span><span class="s1"> 
+        encoding = </span><span class="s4">&quot;undefined&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">encoding != </span><span class="s4">&quot;ascii&quot;</span><span class="s1">: 
+        </span><span class="s3"># On Non-Unicode builds this will raise an AttributeError...</span><span class="s1"> 
+        sys.setdefaultencoding(encoding) </span><span class="s3"># Needs Python Unicode build !</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">execsitecustomize(): 
+    </span><span class="s0">&quot;&quot;&quot;Run custom site specific code, if available.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        </span><span class="s2">import </span><span class="s1">sitecustomize 
+    </span><span class="s2">except </span><span class="s1">ImportError: 
+        </span><span class="s2">pass</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">virtual_install_main_packages(): 
+    f = open(os.path.join(os.path.dirname(__file__)</span><span class="s2">, </span><span class="s4">'orig-prefix.txt'</span><span class="s1">)) 
+    sys.real_prefix = f.read().strip() 
+    f.close() 
+    pos = </span><span class="s5">2</span><span class="s1"> 
+    hardcoded_relative_dirs = [] 
+    </span><span class="s2">if </span><span class="s1">sys.path[</span><span class="s5">0</span><span class="s1">] == </span><span class="s4">''</span><span class="s1">: 
+        pos += </span><span class="s5">1</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">_is_jython: 
+        paths = [os.path.join(sys.real_prefix</span><span class="s2">, </span><span class="s4">'Lib'</span><span class="s1">)] 
+    </span><span class="s2">elif </span><span class="s1">_is_pypy: 
+        </span><span class="s2">if </span><span class="s1">sys.version_info &gt; (</span><span class="s5">3</span><span class="s2">, </span><span class="s5">2</span><span class="s1">): 
+            cpyver = </span><span class="s4">'%d' </span><span class="s1">% sys.version_info[</span><span class="s5">0</span><span class="s1">] 
+        </span><span class="s2">elif </span><span class="s1">sys.pypy_version_info &gt;= (</span><span class="s5">1</span><span class="s2">, </span><span class="s5">5</span><span class="s1">): 
+            cpyver = </span><span class="s4">'%d.%d' </span><span class="s1">% sys.version_info[:</span><span class="s5">2</span><span class="s1">] 
+        </span><span class="s2">else</span><span class="s1">: 
+            cpyver = </span><span class="s4">'%d.%d.%d' </span><span class="s1">% sys.version_info[:</span><span class="s5">3</span><span class="s1">] 
+        paths = [os.path.join(sys.real_prefix</span><span class="s2">, </span><span class="s4">'lib_pypy'</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                 os.path.join(sys.real_prefix</span><span class="s2">, </span><span class="s4">'lib-python'</span><span class="s2">, </span><span class="s1">cpyver)] 
+        </span><span class="s2">if </span><span class="s1">sys.pypy_version_info &lt; (</span><span class="s5">1</span><span class="s2">, </span><span class="s5">9</span><span class="s1">): 
+            paths.insert(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">os.path.join(sys.real_prefix</span><span class="s2">,</span><span class="s1"> 
+                                         </span><span class="s4">'lib-python'</span><span class="s2">, </span><span class="s4">'modified-%s' </span><span class="s1">% cpyver)) 
+        hardcoded_relative_dirs = paths[:] </span><span class="s3"># for the special 'darwin' case below</span><span class="s1"> 
+        </span><span class="s3">#</span><span class="s1"> 
+        </span><span class="s3"># This is hardcoded in the Python executable, but relative to sys.prefix:</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">path </span><span class="s2">in </span><span class="s1">paths[:]: 
+            plat_path = os.path.join(path</span><span class="s2">, </span><span class="s4">'plat-%s' </span><span class="s1">% sys.platform) 
+            </span><span class="s2">if </span><span class="s1">os.path.exists(plat_path): 
+                paths.append(plat_path) 
+    </span><span class="s2">elif </span><span class="s1">sys.platform == </span><span class="s4">'win32'</span><span class="s1">: 
+        paths = [os.path.join(sys.real_prefix</span><span class="s2">, </span><span class="s4">'Lib'</span><span class="s1">)</span><span class="s2">, </span><span class="s1">os.path.join(sys.real_prefix</span><span class="s2">, </span><span class="s4">'DLLs'</span><span class="s1">)] 
+    </span><span class="s2">else</span><span class="s1">: 
+        paths = [os.path.join(sys.real_prefix</span><span class="s2">, </span><span class="s4">'lib'</span><span class="s2">, </span><span class="s4">'python'</span><span class="s1">+sys.version[:</span><span class="s5">3</span><span class="s1">])] 
+        hardcoded_relative_dirs = paths[:] </span><span class="s3"># for the special 'darwin' case below</span><span class="s1"> 
+        lib64_path = os.path.join(sys.real_prefix</span><span class="s2">, </span><span class="s4">'lib64'</span><span class="s2">, </span><span class="s4">'python'</span><span class="s1">+sys.version[:</span><span class="s5">3</span><span class="s1">]) 
+        </span><span class="s2">if </span><span class="s1">os.path.exists(lib64_path): 
+            </span><span class="s2">if </span><span class="s1">_is_64bit: 
+                paths.insert(</span><span class="s5">0</span><span class="s2">, </span><span class="s1">lib64_path) 
+            </span><span class="s2">else</span><span class="s1">: 
+                paths.append(lib64_path) 
+        </span><span class="s3"># This is hardcoded in the Python executable, but relative to</span><span class="s1"> 
+        </span><span class="s3"># sys.prefix.  Debian change: we need to add the multiarch triplet</span><span class="s1"> 
+        </span><span class="s3"># here, which is where the real stuff lives.  As per PEP 421, in</span><span class="s1"> 
+        </span><span class="s3"># Python 3.3+, this lives in sys.implementation, while in Python 2.7</span><span class="s1"> 
+        </span><span class="s3"># it lives in sys.</span><span class="s1"> 
+        </span><span class="s2">try</span><span class="s1">: 
+            arch = getattr(sys</span><span class="s2">, </span><span class="s4">'implementation'</span><span class="s2">, </span><span class="s1">sys)._multiarch 
+        </span><span class="s2">except </span><span class="s1">AttributeError: 
+            </span><span class="s3"># This is a non-multiarch aware Python.  Fallback to the old way.</span><span class="s1"> 
+            arch = sys.platform 
+        plat_path = os.path.join(sys.real_prefix</span><span class="s2">, </span><span class="s4">'lib'</span><span class="s2">,</span><span class="s1"> 
+                                 </span><span class="s4">'python'</span><span class="s1">+sys.version[:</span><span class="s5">3</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                                 </span><span class="s4">'plat-%s' </span><span class="s1">% arch) 
+        </span><span class="s2">if </span><span class="s1">os.path.exists(plat_path): 
+            paths.append(plat_path) 
+    </span><span class="s3"># This is hardcoded in the Python executable, but</span><span class="s1"> 
+    </span><span class="s3"># relative to sys.prefix, so we have to fix up:</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">path </span><span class="s2">in </span><span class="s1">list(paths): 
+        tk_dir = os.path.join(path</span><span class="s2">, </span><span class="s4">'lib-tk'</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">os.path.exists(tk_dir): 
+            paths.append(tk_dir) 
+ 
+    </span><span class="s3"># These are hardcoded in the Apple's Python executable,</span><span class="s1"> 
+    </span><span class="s3"># but relative to sys.prefix, so we have to fix them up:</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">sys.platform == </span><span class="s4">'darwin'</span><span class="s1">: 
+        hardcoded_paths = [os.path.join(relative_dir</span><span class="s2">, </span><span class="s1">module) 
+                           </span><span class="s2">for </span><span class="s1">relative_dir </span><span class="s2">in </span><span class="s1">hardcoded_relative_dirs 
+                           </span><span class="s2">for </span><span class="s1">module </span><span class="s2">in </span><span class="s1">(</span><span class="s4">'plat-darwin'</span><span class="s2">, </span><span class="s4">'plat-mac'</span><span class="s2">, </span><span class="s4">'plat-mac/lib-scriptpackages'</span><span class="s1">)] 
+ 
+        </span><span class="s2">for </span><span class="s1">path </span><span class="s2">in </span><span class="s1">hardcoded_paths: 
+            </span><span class="s2">if </span><span class="s1">os.path.exists(path): 
+                paths.append(path) 
+ 
+    sys.path.extend(paths) 
+ 
+</span><span class="s2">def </span><span class="s1">force_global_eggs_after_local_site_packages(): 
+    </span><span class="s0">&quot;&quot;&quot; 
+    Force easy_installed eggs in the global environment to get placed 
+    in sys.path after all packages inside the virtualenv.  This 
+    maintains the &quot;least surprise&quot; result that packages in the 
+    virtualenv always mask global packages, never the other way 
+    around. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    egginsert = getattr(sys</span><span class="s2">, </span><span class="s4">'__egginsert'</span><span class="s2">, </span><span class="s5">0</span><span class="s1">) 
+    </span><span class="s2">for </span><span class="s1">i</span><span class="s2">, </span><span class="s1">path </span><span class="s2">in </span><span class="s1">enumerate(sys.path): 
+        </span><span class="s2">if </span><span class="s1">i &gt; egginsert </span><span class="s2">and </span><span class="s1">path.startswith(sys.prefix): 
+            egginsert = i 
+    sys.__egginsert = egginsert + </span><span class="s5">1</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">virtual_addsitepackages(known_paths): 
+    force_global_eggs_after_local_site_packages() 
+    </span><span class="s2">return </span><span class="s1">addsitepackages(known_paths</span><span class="s2">, </span><span class="s1">sys_prefix=sys.real_prefix) 
+ 
+</span><span class="s2">def </span><span class="s1">fixclasspath(): 
+    </span><span class="s0">&quot;&quot;&quot;Adjust the special classpath sys.path entries for Jython. These 
+    entries should follow the base virtualenv lib directories. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    paths = [] 
+    classpaths = [] 
+    </span><span class="s2">for </span><span class="s1">path </span><span class="s2">in </span><span class="s1">sys.path: 
+        </span><span class="s2">if </span><span class="s1">path == </span><span class="s4">'__classpath__' </span><span class="s2">or </span><span class="s1">path.startswith(</span><span class="s4">'__pyclasspath__'</span><span class="s1">): 
+            classpaths.append(path) 
+        </span><span class="s2">else</span><span class="s1">: 
+            paths.append(path) 
+    sys.path = paths 
+    sys.path.extend(classpaths) 
+ 
+</span><span class="s2">def </span><span class="s1">execusercustomize(): 
+    </span><span class="s0">&quot;&quot;&quot;Run custom user specific code, if available.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        </span><span class="s2">import </span><span class="s1">usercustomize 
+    </span><span class="s2">except </span><span class="s1">ImportError: 
+        </span><span class="s2">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">main(): 
+    </span><span class="s2">global </span><span class="s1">ENABLE_USER_SITE 
+    virtual_install_main_packages() 
+    abs__file__() 
+    paths_in_sys = removeduppaths() 
+    </span><span class="s2">if </span><span class="s1">(os.name == </span><span class="s4">&quot;posix&quot; </span><span class="s2">and </span><span class="s1">sys.path </span><span class="s2">and</span><span class="s1"> 
+        os.path.basename(sys.path[-</span><span class="s5">1</span><span class="s1">]) == </span><span class="s4">&quot;Modules&quot;</span><span class="s1">): 
+        addbuilddir() 
+    </span><span class="s2">if </span><span class="s1">_is_jython: 
+        fixclasspath() 
+    GLOBAL_SITE_PACKAGES = </span><span class="s2">not </span><span class="s1">os.path.exists(os.path.join(os.path.dirname(__file__)</span><span class="s2">, </span><span class="s4">'no-global-site-packages.txt'</span><span class="s1">)) 
+    </span><span class="s2">if not </span><span class="s1">GLOBAL_SITE_PACKAGES: 
+        ENABLE_USER_SITE = </span><span class="s2">False</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">ENABLE_USER_SITE </span><span class="s2">is None</span><span class="s1">: 
+        ENABLE_USER_SITE = check_enableusersite() 
+    paths_in_sys = addsitepackages(paths_in_sys) 
+    paths_in_sys = addusersitepackages(paths_in_sys) 
+    </span><span class="s2">if </span><span class="s1">GLOBAL_SITE_PACKAGES: 
+        paths_in_sys = virtual_addsitepackages(paths_in_sys) 
+    </span><span class="s2">if </span><span class="s1">sys.platform == </span><span class="s4">'os2emx'</span><span class="s1">: 
+        setBEGINLIBPATH() 
+    setquit() 
+    setcopyright() 
+    sethelper() 
+    aliasmbcs() 
+    setencoding() 
+    execsitecustomize() 
+    </span><span class="s2">if </span><span class="s1">ENABLE_USER_SITE: 
+        execusercustomize() 
+    </span><span class="s3"># Remove sys.setdefaultencoding() so that users cannot change the</span><span class="s1"> 
+    </span><span class="s3"># encoding after initialization.  The test for presence is needed when</span><span class="s1"> 
+    </span><span class="s3"># this module is run as a script, because this code is executed twice.</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">hasattr(sys</span><span class="s2">, </span><span class="s4">&quot;setdefaultencoding&quot;</span><span class="s1">): 
+        </span><span class="s2">del </span><span class="s1">sys.setdefaultencoding 
+ 
+main() 
+ 
+</span><span class="s2">def </span><span class="s1">_script(): 
+    help = </span><span class="s4">&quot;&quot;&quot;</span><span class="s2">\ 
+</span><span class="s4">    %s [--user-base] [--user-site] 
+ 
+    Without arguments print some useful information 
+    With arguments print the value of USER_BASE and/or USER_SITE separated 
+    by '%s'. 
+ 
+    Exit codes with --user-base or --user-site: 
+      0 - user site directory is enabled 
+      1 - user site directory is disabled by user 
+      2 - uses site directory is disabled by super user 
+          or for security reasons 
+     &gt;2 - unknown error 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    args = sys.argv[</span><span class="s5">1</span><span class="s1">:] 
+    </span><span class="s2">if not </span><span class="s1">args: 
+        print(</span><span class="s4">&quot;sys.path = [&quot;</span><span class="s1">) 
+        </span><span class="s2">for </span><span class="s1">dir </span><span class="s2">in </span><span class="s1">sys.path: 
+            print(</span><span class="s4">&quot;    %r,&quot; </span><span class="s1">% (dir</span><span class="s2">,</span><span class="s1">)) 
+        print(</span><span class="s4">&quot;]&quot;</span><span class="s1">) 
+        </span><span class="s2">def </span><span class="s1">exists(path): 
+            </span><span class="s2">if </span><span class="s1">os.path.isdir(path): 
+                </span><span class="s2">return </span><span class="s4">&quot;exists&quot;</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">return </span><span class="s4">&quot;doesn't exist&quot;</span><span class="s1"> 
+        print(</span><span class="s4">&quot;USER_BASE: %r (%s)&quot; </span><span class="s1">% (USER_BASE</span><span class="s2">, </span><span class="s1">exists(USER_BASE))) 
+        print(</span><span class="s4">&quot;USER_SITE: %r (%s)&quot; </span><span class="s1">% (USER_SITE</span><span class="s2">, </span><span class="s1">exists(USER_BASE))) 
+        print(</span><span class="s4">&quot;ENABLE_USER_SITE: %r&quot; </span><span class="s1">%  ENABLE_USER_SITE) 
+        sys.exit(</span><span class="s5">0</span><span class="s1">) 
+ 
+    buffer = [] 
+    </span><span class="s2">if </span><span class="s4">'--user-base' </span><span class="s2">in </span><span class="s1">args: 
+        buffer.append(USER_BASE) 
+    </span><span class="s2">if </span><span class="s4">'--user-site' </span><span class="s2">in </span><span class="s1">args: 
+        buffer.append(USER_SITE) 
+ 
+    </span><span class="s2">if </span><span class="s1">buffer: 
+        print(os.pathsep.join(buffer)) 
+        </span><span class="s2">if </span><span class="s1">ENABLE_USER_SITE: 
+            sys.exit(</span><span class="s5">0</span><span class="s1">) 
+        </span><span class="s2">elif </span><span class="s1">ENABLE_USER_SITE </span><span class="s2">is False</span><span class="s1">: 
+            sys.exit(</span><span class="s5">1</span><span class="s1">) 
+        </span><span class="s2">elif </span><span class="s1">ENABLE_USER_SITE </span><span class="s2">is None</span><span class="s1">: 
+            sys.exit(</span><span class="s5">2</span><span class="s1">) 
+        </span><span class="s2">else</span><span class="s1">: 
+            sys.exit(</span><span class="s5">3</span><span class="s1">) 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s2">import </span><span class="s1">textwrap 
+        print(textwrap.dedent(help % (sys.argv[</span><span class="s5">0</span><span class="s1">]</span><span class="s2">, </span><span class="s1">os.pathsep))) 
+        sys.exit(</span><span class="s5">10</span><span class="s1">) 
+ 
+</span><span class="s2">if </span><span class="s1">__name__ == </span><span class="s4">'__main__'</span><span class="s1">: 
+    _script() 
+</span></pre>
+</body>
+</html>

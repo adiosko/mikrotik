@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>py31compat.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+py31compat.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">import </span><span class="s1">os 
+</span><span class="s0">import </span><span class="s1">errno 
+</span><span class="s0">import </span><span class="s1">sys 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">_makedirs_31(path</span><span class="s0">, </span><span class="s1">exist_ok=</span><span class="s0">False</span><span class="s1">): 
+    </span><span class="s0">try</span><span class="s1">: 
+        os.makedirs(path) 
+    </span><span class="s0">except </span><span class="s1">OSError </span><span class="s0">as </span><span class="s1">exc: 
+        </span><span class="s0">if not </span><span class="s1">exist_ok </span><span class="s0">or </span><span class="s1">exc.errno != errno.EEXIST: 
+            </span><span class="s0">raise</span><span class="s1"> 
+ 
+ 
+</span><span class="s2"># rely on compatibility behavior until mode considerations</span><span class="s1"> 
+</span><span class="s2">#  and exists_ok considerations are disentangled.</span><span class="s1"> 
+</span><span class="s2"># See https://github.com/pypa/setuptools/pull/1083#issuecomment-315168663</span><span class="s1"> 
+needs_makedirs = ( 
+    sys.version_info &lt; (</span><span class="s3">3</span><span class="s0">, </span><span class="s3">2</span><span class="s0">, </span><span class="s3">5</span><span class="s1">) </span><span class="s0">or</span><span class="s1"> 
+    (</span><span class="s3">3</span><span class="s0">, </span><span class="s3">3</span><span class="s1">) &lt;= sys.version_info &lt; (</span><span class="s3">3</span><span class="s0">, </span><span class="s3">3</span><span class="s0">, </span><span class="s3">6</span><span class="s1">) </span><span class="s0">or</span><span class="s1"> 
+    (</span><span class="s3">3</span><span class="s0">, </span><span class="s3">4</span><span class="s1">) &lt;= sys.version_info &lt; (</span><span class="s3">3</span><span class="s0">, </span><span class="s3">4</span><span class="s0">, </span><span class="s3">1</span><span class="s1">) 
+) 
+makedirs = _makedirs_31 </span><span class="s0">if </span><span class="s1">needs_makedirs </span><span class="s0">else </span><span class="s1">os.makedirs 
+</span></pre>
+</body>
+</html>

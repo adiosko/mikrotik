@@ -1,0 +1,231 @@
+<html>
+<head>
+<title>IPsecPolicies.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+IPsecPolicies.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">IPsecPolicy: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">listPolicies(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list ipsec policies 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk([</span><span class="s4">'/ip/ipsec/policy/print'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Src address</span><span class="s0">\t</span><span class="s4">src port</span><span class="s0">\t</span><span class="s4">Dst address</span><span class="s0">\t</span><span class="s4"> Dst port</span><span class="s0">\t</span><span class="s4">protocol</span><span class="s0">\t</span><span class="s4">action</span><span class="s0">\t</span><span class="s4">tunnel&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipsec: 
+            print(ipsec[i][</span><span class="s4">'src-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'src-port'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'dst-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'dst-port'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'protocol'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'action'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'tunnel'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">addPolicy(self</span><span class="s0">,</span><span class="s1">src</span><span class="s0">,</span><span class="s1">dst</span><span class="s0">,</span><span class="s1">srcsa): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will ad policy 
+        :param src: src LAN address 
+        :param dst: dst LAN address 
+        :param srcsa: src WAN address 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk([</span><span class="s4">'/ip/ipsec/policy/add'</span><span class="s0">,</span><span class="s4">'=src-address='</span><span class="s1">+src</span><span class="s0">,</span><span class="s4">'=dst-address='</span><span class="s1">+dst</span><span class="s0">,</span><span class="s4">'=sa-src-address='</span><span class="s1">+srcsa</span><span class="s0">,</span><span class="s4">'=tunnel=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">removePolicy(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove policy 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk([</span><span class="s4">'/ip/ipsec/policy/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">enablePolicy(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable policy 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">disablePolicy(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable policy 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">commentPolicy(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment policy 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s5">#General</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setSrcAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">src): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src address 
+        :param number: 
+        :param src: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=src-address=' </span><span class="s1">+ src] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcPort(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src port 
+        :param number: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=src-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">dst): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tunnel dst address 
+        :param number: 
+        :param dst: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dst-address=' </span><span class="s1">+ dst] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstPort(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dst port 
+        :param number: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dst-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtocol(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">protocol): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set protocol 
+        :param number: 
+        :param protocol: all,ddp,egp,encap,etherip,ggp,gre,hmp,icmp,icmpv6,idpr-cmtp,igmp,ipencap,ipip,ipsec-ah,ipsec-eps,ipv6,ipv6-frag,ipv6-nonxt,ipv6-opts,ipv6-route, 
+        iso-tp4,l2tp,ospf,pim,pup,rdp,rspf,rsvp,st,tcp,udp,vmtp,vrrp,xns-idp,xtp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=protocol=' </span><span class="s1">+ protocol] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setTemplate(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">group=</span><span class="s4">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set template 
+        :param number: 
+        :param group: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=template=yes'</span><span class="s0">,</span><span class="s4">'=group=' </span><span class="s1">+ group] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s5">#Action</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setAction(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">action=</span><span class="s4">&quot;encrypt&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set action 
+        :param number: 
+        :param action: encrypt,discard,none 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=' </span><span class="s1">+ action] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setLevel(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">level=</span><span class="s4">&quot;require&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set level of tunnel 
+        :param number: 
+        :param level:require, unique,use 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=level=' </span><span class="s1">+ level] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpsecProtocols(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prot=</span><span class="s4">&quot;esp&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set connection protocol 
+        :param number: 
+        :param prot: ah, esp, ah-esp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ipsec-protocols=' </span><span class="s1">+ prot] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setTunnel(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ipsec rule as tunnel 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tunnel=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setSaSrc(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">src): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set sa src address 
+        :param number: 
+        :param src: public wan address oif source 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=sa-src-address=' </span><span class="s1">+ src] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setSaDst(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">dst): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dst 
+        :param number: 
+        :param dst: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=sa-dst-address=' </span><span class="s1">+ dst] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setProposal(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">proposal=</span><span class="s4">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set proposal 
+        :param number: 
+        :param proposal: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=proposal=' </span><span class="s1">+ proposal] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriority(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">priority=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set priority 
+        :param number: 
+        :param priority: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/policy/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=priority='</span><span class="s1">+priority] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec</span></pre>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<html>
+<head>
+<title>egg2wheel.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+egg2wheel.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">#!/usr/bin/env python</span><span class="s1"> 
+</span><span class="s2">import </span><span class="s1">distutils.dist 
+</span><span class="s2">import </span><span class="s1">os.path 
+</span><span class="s2">import </span><span class="s1">re 
+</span><span class="s2">import </span><span class="s1">shutil 
+</span><span class="s2">import </span><span class="s1">sys 
+</span><span class="s2">import </span><span class="s1">tempfile 
+</span><span class="s2">import </span><span class="s1">zipfile 
+</span><span class="s2">from </span><span class="s1">argparse </span><span class="s2">import </span><span class="s1">ArgumentParser 
+</span><span class="s2">from </span><span class="s1">distutils.archive_util </span><span class="s2">import </span><span class="s1">make_archive 
+</span><span class="s2">from </span><span class="s1">glob </span><span class="s2">import </span><span class="s1">iglob 
+ 
+</span><span class="s2">import </span><span class="s1">wheel.bdist_wheel 
+</span><span class="s2">from </span><span class="s1">wheel.wininst2wheel </span><span class="s2">import </span><span class="s1">_bdist_wheel_tag 
+ 
+egg_info_re = re.compile(</span><span class="s3">r'''(?P&lt;name&gt;.+?)-(?P&lt;ver&gt;.+?) 
+    (-(?P&lt;pyver&gt;.+?))?(-(?P&lt;arch&gt;.+?))?.egg'''</span><span class="s2">, </span><span class="s1">re.VERBOSE) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">egg2wheel(egg_path</span><span class="s2">, </span><span class="s1">dest_dir): 
+    egg_info = egg_info_re.match(os.path.basename(egg_path)).groupdict() 
+    dir = tempfile.mkdtemp(suffix=</span><span class="s3">&quot;_e2w&quot;</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">os.path.isfile(egg_path): 
+        </span><span class="s0"># assume we have a bdist_egg otherwise</span><span class="s1"> 
+        egg = zipfile.ZipFile(egg_path) 
+        egg.extractall(dir) 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s0"># support buildout-style installed eggs directories</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">pth </span><span class="s2">in </span><span class="s1">os.listdir(egg_path): 
+            src = os.path.join(egg_path</span><span class="s2">, </span><span class="s1">pth) 
+            </span><span class="s2">if </span><span class="s1">os.path.isfile(src): 
+                shutil.copy2(src</span><span class="s2">, </span><span class="s1">dir) 
+            </span><span class="s2">else</span><span class="s1">: 
+                shutil.copytree(src</span><span class="s2">, </span><span class="s1">os.path.join(dir</span><span class="s2">, </span><span class="s1">pth)) 
+ 
+    dist_info = </span><span class="s3">&quot;%s-%s&quot; </span><span class="s1">% (egg_info[</span><span class="s3">'name'</span><span class="s1">]</span><span class="s2">, </span><span class="s1">egg_info[</span><span class="s3">'ver'</span><span class="s1">]) 
+    abi = </span><span class="s3">'none'</span><span class="s1"> 
+    pyver = egg_info[</span><span class="s3">'pyver'</span><span class="s1">].replace(</span><span class="s3">'.'</span><span class="s2">, </span><span class="s3">''</span><span class="s1">) 
+    arch = (egg_info[</span><span class="s3">'arch'</span><span class="s1">] </span><span class="s2">or </span><span class="s3">'any'</span><span class="s1">).replace(</span><span class="s3">'.'</span><span class="s2">, </span><span class="s3">'_'</span><span class="s1">).replace(</span><span class="s3">'-'</span><span class="s2">, </span><span class="s3">'_'</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">arch != </span><span class="s3">'any'</span><span class="s1">: 
+        </span><span class="s0"># assume all binary eggs are for CPython</span><span class="s1"> 
+        pyver = </span><span class="s3">'cp' </span><span class="s1">+ pyver[</span><span class="s4">2</span><span class="s1">:] 
+    wheel_name = </span><span class="s3">'-'</span><span class="s1">.join(( 
+                          dist_info</span><span class="s2">,</span><span class="s1"> 
+                          pyver</span><span class="s2">,</span><span class="s1"> 
+                          abi</span><span class="s2">,</span><span class="s1"> 
+                          arch 
+                          )) 
+    root_is_purelib = egg_info[</span><span class="s3">'arch'</span><span class="s1">] </span><span class="s2">is None</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">root_is_purelib: 
+        bw = wheel.bdist_wheel.bdist_wheel(distutils.dist.Distribution()) 
+    </span><span class="s2">else</span><span class="s1">: 
+        bw = _bdist_wheel_tag(distutils.dist.Distribution()) 
+ 
+    bw.root_is_pure = root_is_purelib 
+    bw.python_tag = pyver 
+    bw.plat_name_supplied = </span><span class="s2">True</span><span class="s1"> 
+    bw.plat_name = egg_info[</span><span class="s3">'arch'</span><span class="s1">] </span><span class="s2">or </span><span class="s3">'any'</span><span class="s1"> 
+    </span><span class="s2">if not </span><span class="s1">root_is_purelib: 
+        bw.full_tag_supplied = </span><span class="s2">True</span><span class="s1"> 
+        bw.full_tag = (pyver</span><span class="s2">, </span><span class="s1">abi</span><span class="s2">, </span><span class="s1">arch) 
+ 
+    dist_info_dir = os.path.join(dir</span><span class="s2">, </span><span class="s3">'%s.dist-info' </span><span class="s1">% dist_info) 
+    bw.egg2dist(os.path.join(dir</span><span class="s2">, </span><span class="s3">'EGG-INFO'</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+                dist_info_dir) 
+    bw.write_wheelfile(dist_info_dir</span><span class="s2">, </span><span class="s1">generator=</span><span class="s3">'egg2wheel'</span><span class="s1">) 
+    bw.write_record(dir</span><span class="s2">, </span><span class="s1">dist_info_dir) 
+    filename = make_archive(os.path.join(dest_dir</span><span class="s2">, </span><span class="s1">wheel_name)</span><span class="s2">, </span><span class="s3">'zip'</span><span class="s2">, </span><span class="s1">root_dir=dir) 
+    os.rename(filename</span><span class="s2">, </span><span class="s1">filename[:-</span><span class="s4">3</span><span class="s1">] + </span><span class="s3">'whl'</span><span class="s1">) 
+    shutil.rmtree(dir) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">main(): 
+    parser = ArgumentParser() 
+    parser.add_argument(</span><span class="s3">'eggs'</span><span class="s2">, </span><span class="s1">nargs=</span><span class="s3">'*'</span><span class="s2">, </span><span class="s1">help=</span><span class="s3">&quot;Eggs to convert&quot;</span><span class="s1">) 
+    parser.add_argument(</span><span class="s3">'--dest-dir'</span><span class="s2">, </span><span class="s3">'-d'</span><span class="s2">, </span><span class="s1">default=os.path.curdir</span><span class="s2">,</span><span class="s1"> 
+                        help=</span><span class="s3">&quot;Directory to store wheels (default %(default)s)&quot;</span><span class="s1">) 
+    parser.add_argument(</span><span class="s3">'--verbose'</span><span class="s2">, </span><span class="s3">'-v'</span><span class="s2">, </span><span class="s1">action=</span><span class="s3">'store_true'</span><span class="s1">) 
+    args = parser.parse_args() 
+    </span><span class="s2">for </span><span class="s1">pat </span><span class="s2">in </span><span class="s1">args.eggs: 
+        </span><span class="s2">for </span><span class="s1">egg </span><span class="s2">in </span><span class="s1">iglob(pat): 
+            </span><span class="s2">if </span><span class="s1">args.verbose: 
+                sys.stdout.write(</span><span class="s3">&quot;{0}... &quot;</span><span class="s1">.format(egg)) 
+            egg2wheel(egg</span><span class="s2">, </span><span class="s1">args.dest_dir) 
+            </span><span class="s2">if </span><span class="s1">args.verbose: 
+                sys.stdout.write(</span><span class="s3">&quot;OK</span><span class="s2">\n</span><span class="s3">&quot;</span><span class="s1">) 
+ 
+ 
+</span><span class="s2">if </span><span class="s1">__name__ == </span><span class="s3">&quot;__main__&quot;</span><span class="s1">: 
+    main() 
+</span></pre>
+</body>
+</html>

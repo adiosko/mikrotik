@@ -1,0 +1,130 @@
+<html>
+<head>
+<title>provisioningSet.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+provisioningSet.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">provisioningSet: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">address</span><span class="s0">, </span><span class="s1">username</span><span class="s0">, </span><span class="s1">password): 
+        self.client = TikapyClient(address</span><span class="s0">, </span><span class="s2">8728</span><span class="s1">) 
+        self.client.login(username</span><span class="s0">, </span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setRadioMac(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mac=</span><span class="s3">&quot;00:00:00:00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s3">'=radio-mac='</span><span class="s1">+mac]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setHwSupportedModels(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">model=</span><span class="s3">&quot;a&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param model:  a,a-turbo,ac,an,b,g,g-turbo,gn 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=hw-supported-modes=' </span><span class="s1">+ model]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setIdentityRegexp(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">regexp): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param regexp: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=identity-regexp=' </span><span class="s1">+ regexp]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setCommonNameRegexp(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">regexp): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param regexp: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=common-name-regexp=' </span><span class="s1">+ regexp]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpRanges(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">ipFrom</span><span class="s0">,</span><span class="s1">ipTo): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param ipFrom: 
+        :param ipTo: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=ip-address-ranges=' </span><span class="s1">+ ipFrom+</span><span class="s3">&quot;-&quot;</span><span class="s1">+ipTo]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setAction(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">action=</span><span class="s3">&quot;create-dynamic-enabled&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param action: create-dynamic-enabled,create-enabled,create-disabled,none 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=action=' </span><span class="s1">+ action]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setMasterCOnfiguration(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">configName): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param configName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=master-configuration=' </span><span class="s1">+ configName]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setSlaveConfiguration(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">configName): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param configName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=slave-configurations=' </span><span class="s1">+ configName]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setNameFormat(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">format=</span><span class="s3">&quot;prefix&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param format: prefix,cap,identity,prefix-identity 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=name-format=' </span><span class="s1">+ format]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setNamePrefix(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefix): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param prefix: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/caps-man/provisioning/set'</span><span class="s0">, </span><span class="s3">'-numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=name-prefix=' </span><span class="s1">+ prefix]) 
+        </span><span class="s0">return </span><span class="s1">wifi</span></pre>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<html>
+<head>
+<title>TrafficEngTraffInterface.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+TrafficEngTraffInterface.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">TrafficEngTraffInterface: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listInterface(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill list interface for traffici\engineering 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk([</span><span class="s4">'/interface/traffic-eng/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">mpls == {}: 
+            print(</span><span class="s4">&quot;No interface found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">MTU&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">mpls: 
+                print(mpls[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mpls[i][</span><span class="s4">'mtu'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">addInterface(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add te interface 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/add'</span><span class="s0">,</span><span class="s4">'=disabled=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInterface(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove interface 
+        :param name: name of interface 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInterface(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill enable interface 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInterface(self</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill enable interface 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">commentInterface(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment iface 
+        :param name: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s5">#general</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new name 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=name=' </span><span class="s1">+ newName] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setMtu(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mtu=</span><span class="s4">&quot;1500&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new mtu 
+        :param name: 
+        :param mtu: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=mtu=' </span><span class="s1">+ mtu] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setToAddress(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface to address 
+        :param name: 
+        :param address: &lt;IP&gt; 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=to-address=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setBandwidth(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">bw=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bw 
+        :param name: 
+        :param bw: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=bandwidth=' </span><span class="s1">+ bw] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrimaryPath(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">path): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set primary path 
+        :param name: 
+        :param path: created from TunnelPath 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=primary-path=' </span><span class="s1">+ path] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setSecondaryPaths(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">path): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set secondary paths created in Tunnel Path 
+        :param name: 
+        :param path: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=secondary-paths=' </span><span class="s1">+ path] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s5">#TE</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setPrimaryRetryInterval(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;00:01:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new retry interval 
+        :param name: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=primary-retry-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriority(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">priority=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set priority 
+        :param name: 
+        :param priority: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=setup-priority=' </span><span class="s1">+ priority] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setHoldingPriority(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">priority=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set hold priority 
+        :param name: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=holding-priority=' </span><span class="s1">+ priority] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">recordRoute(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will record route 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'record-route=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setAffinityIncludeAll(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">incl=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set affinity all 
+        :param name: 
+        :param incl: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=affinity-include-all=' </span><span class="s1">+ incl] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setAffinityIncludeAny(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">incl=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will include any affinity 
+        :param name: 
+        :param incl: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=affinity-include-any=' </span><span class="s1">+ incl] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setExcludeAffinity(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">excl=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set affinity 
+        :param name: 
+        :param excl: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=affinity-exclude=' </span><span class="s1">+ excl] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setReoptimizeInterval(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reoptimize interval 
+        :param name: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=reoptimize-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s5">#BW</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setBwLimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will limit bw 
+        :param name: 
+        :param limit: in % 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=bandwidth-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setAutoBandwidthRange(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">rng=</span><span class="s4">&quot;0-0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set range for bw 
+        :param name: 
+        :param rng: disabled-number,number-number 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=auto-bandwidth-range=' </span><span class="s1">+ rng] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setAutoBwReserve(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">reserve=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bw reserve % 
+        :param name: 
+        :param reserve: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=auto-bandwidth-reserve=' </span><span class="s1">+ reserve] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setAutoBwAvgInterval(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;00:05:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set avg bw interval 
+        :param name: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=auto-bandwidth-avg-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">mpls 
+ 
+    </span><span class="s0">def </span><span class="s1">setAutoBwUpdateInterval(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;01:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set update interval 
+        :param name: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mpls = self.client.talk( [</span><span class="s4">'/interface/traffic-eng/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=auto-bandwidth-update-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">mpls</span></pre>
+</body>
+</html>

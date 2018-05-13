@@ -1,0 +1,157 @@
+<html>
+<head>
+<title>Graphing.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Graphing.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Graphing: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listGraphing(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all graphing 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        graph = self.client.talk([</span><span class="s4">'/tool/graphing/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">graph == {}: 
+            print(</span><span class="s4">&quot;Cannot find grpahing settings or api is not collable&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">graph: 
+                print(graph) 
+        </span><span class="s0">return </span><span class="s1">graph 
+ 
+    </span><span class="s0">def </span><span class="s1">setGraphing(self</span><span class="s0">,</span><span class="s1">storeInterval): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set store interval 
+        :param storeInterval: 5min,24hours,hour 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        graf = self.client.talk([</span><span class="s4">'/tool/graphing/set'</span><span class="s0">,</span><span class="s4">'=store-every='</span><span class="s1">+storeInterval]) 
+        </span><span class="s0">return </span><span class="s1">graf 
+ 
+    </span><span class="s0">def </span><span class="s1">listInterfaceRules(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will list all interface rules 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/tool/graphing/interface/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">iface == {}: 
+            print(</span><span class="s4">&quot;Empty rules&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">Allow address</span><span class="s0">\t</span><span class="s4">store on disk&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">iface: 
+                print(iface[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+iface[i][</span><span class="s4">'allow-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+iface[i][</span><span class="s4">'store-on-disk'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">addInterfaceRule(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">allowAddress</span><span class="s0">,</span><span class="s1">storeOnDisk): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface rule 
+        :param interface: interface : all, or speific  interface f.e ether1 
+        :param allowAddress: f.e 0.0.0.0/0 
+        :param storeOnDisk: yes/no 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/tool/graphing/interface/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface</span><span class="s0">,</span><span class="s4">'=allow-address='</span><span class="s1">+allowAddress</span><span class="s0">,</span><span class="s1"> 
+                                  </span><span class="s4">'=store-on-disk='</span><span class="s1">+storeOnDisk]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInterfaceRule(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove interface from interface list 
+        :param number: number of rule 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/tool/graphing/interface/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">listQueueRules(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all queue rules 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/tool/graphing/queue/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">queue == {}: 
+            print(</span><span class="s4">&quot;No queue rule found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Simplequeue</span><span class="s0">\t</span><span class="s4">allowAddress</span><span class="s0">\t</span><span class="s4">storeOnDisk</span><span class="s0">\t</span><span class="s4">allowTarget&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">queue: 
+                print(queue[i][</span><span class="s4">'simple-queue'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+queue[i][</span><span class="s4">'allow-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+queue[i][</span><span class="s4">'store-on-disk'</span><span class="s1">]+ 
+                      </span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+queue[i][</span><span class="s4">'allow-target'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">addQueueRule(self</span><span class="s0">,</span><span class="s1">simpleQueue</span><span class="s0">,</span><span class="s1">allowAddress</span><span class="s0">,</span><span class="s1">storeOnDisk</span><span class="s0">,</span><span class="s1">allowTarget): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add queue rules to mikrotik 
+        :param simpleQueue:  all 
+        :param allowAddress:  address 
+        :param storeOnDisk: yes/no 
+        :param allowTarget: yes/no 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/tool/graphing/queue/add'</span><span class="s0">,</span><span class="s4">'=simple-queue='</span><span class="s1">+simpleQueue</span><span class="s0">,</span><span class="s4">'=allow-address='</span><span class="s1">+allowAddress</span><span class="s0">,</span><span class="s1"> 
+                                  </span><span class="s4">'=store-on-disk='</span><span class="s1">+storeOnDisk</span><span class="s0">,</span><span class="s4">'=allow-target='</span><span class="s1">+allowTarget]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">removeQueueRule(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove rule under its number 
+        :param number: number of rule 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        queue = self.client.talk([</span><span class="s4">'/tool/graphing/queue/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">queue 
+ 
+    </span><span class="s0">def </span><span class="s1">listResourceRules(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all resource lists 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        resor = self.client.talk([</span><span class="s4">'/tool/graphing/resource/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">resor == {}: 
+            print(</span><span class="s4">&quot;No rule found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Allow address</span><span class="s0">\t</span><span class="s4">Store on disk&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">resor: 
+                print(resor[i][</span><span class="s4">'allow-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+resor[i][</span><span class="s4">'store-on-disk'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">resor 
+ 
+    </span><span class="s0">def </span><span class="s1">addResourceRule(self</span><span class="s0">,</span><span class="s1">allowAddress</span><span class="s0">,</span><span class="s1">StoreOnDisk): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add resource rule 
+        :param allowAddress: address to allow 
+        :param StoreOnDisk: yes/no 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        resor = self.client.talk([</span><span class="s4">'/tool/graphing/resource/add'</span><span class="s0">,</span><span class="s4">'=allow-address='</span><span class="s1">+allowAddress</span><span class="s0">,</span><span class="s4">'=store-on-disk='</span><span class="s1"> 
+                                  +StoreOnDisk]) 
+        </span><span class="s0">return </span><span class="s1">resor 
+ 
+    </span><span class="s0">def </span><span class="s1">removeResourceRule(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove resource rule 
+        :param number: number of rule 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        resor = self.client.talk([</span><span class="s4">'/tool/graphing/resource/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">resor</span></pre>
+</body>
+</html>

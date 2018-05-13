@@ -1,0 +1,264 @@
+<html>
+<head>
+<title>PimInterfaces.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+PimInterfaces.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">PimInterfaces: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listInterfaces(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list pim interfaces 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk([</span><span class="s4">'/routing/pim/interface/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">pim == {}: 
+            print(</span><span class="s4">&quot;No pim iface found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">Protocols</span><span class="s0">\t</span><span class="s4">Dseig router</span><span class="s0">\t</span><span class="s4">alternative subnets&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">pim: 
+                print(pim[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+pim[i][</span><span class="s4">'protocols'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+pim[i][</span><span class="s4">'alternative-subnets'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">addPimInterface(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add interface 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk([</span><span class="s4">'/routing/pim/interface/add'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">removePimInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove pi iface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable pim iface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">commentInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment interface 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/comment'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface 
+        :param number: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtocol(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">protocol=</span><span class="s4">&quot;pim&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set protocol pim 
+        :param number: 
+         :param protocol: pim,igmp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=protocol=' </span><span class="s1">+ protocol] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setDesignatedRouterPriority(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">priority=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set igmp priority 
+        :param number: 
+        :param priority: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dr-priority==' </span><span class="s1">+ priority] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setHelloPeriod(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">period=</span><span class="s4">&quot;00:00:30&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set hello interval 
+        :param number: 
+        :param period: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=hello-period=' </span><span class="s1">+ period] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setHelloTrigerDelay(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">delay=</span><span class="s4">&quot;00:00:05&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set delay 
+        :param number: 
+        :param delay: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=hello-trigerred-delay=' </span><span class="s1">+ delay] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setHelloHoldTime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:01:45&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set hold time 
+        :param number: 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=hello-holdtime=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setPropagationDelay(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">delay=</span><span class="s4">&quot;50&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set delay 
+        :param number: 
+        :param delay: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=propagation-delay=' </span><span class="s1">+ delay] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setOverideInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;250&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set override interval 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=override-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">enableTrackingSupport(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable track support 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tracking-support=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">disableTrackingSupport(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable track support 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=tracking-support=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">requiereHello(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reuqire hello 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=require-hello=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">unrequiereHello(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will not requiere hello interval 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=require-hello=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setJoinPrunePeriod(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">period=</span><span class="s4">&quot;00:01:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will join prune period interval set 
+        :param number: 
+        :param period: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=join-prune-period=' </span><span class="s1">+ period] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setJoinPruneHoldtime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:03:30&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will join holdtime 
+        :param number: 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=join-prune-holdtime=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setAssertTime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:03:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set assert time 
+        :param number: 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=assert-time=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setAssertOverrideInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;00:00:03&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set override interval 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=assert-override-interval='</span><span class="s1">+interval] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setAlternativeSubnet(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">subnet=</span><span class="s4">&quot;0.0.0.0/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        mETHOD will set alternate subnet 
+        :param number: 
+        :param subnet: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=alternative-subnets=' </span><span class="s1">+ subnet] ) 
+        </span><span class="s0">return </span><span class="s1">pim 
+ 
+    </span><span class="s0">def </span><span class="s1">setIgmpVersion(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">version=</span><span class="s4">&quot;IGMPv2&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set igmp version 
+        :param number: 
+        :param version: IGMPv1,IGMPv2,IGMPv3 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        pim = self.client.talk( [</span><span class="s4">'/routing/pim/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=igmp-version=' </span><span class="s1">+ version] ) 
+        </span><span class="s0">return </span><span class="s1">pim</span></pre>
+</body>
+</html>

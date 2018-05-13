@@ -1,0 +1,157 @@
+<html>
+<head>
+<title>MacServer.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+MacServer.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">MacServer: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">enableMAcPingServer(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable mac ping server 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mac = self.client.talk([</span><span class="s4">'/tool/mac-server/ping/set'</span><span class="s0">,</span><span class="s4">'=enabled=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">mac 
+ 
+    </span><span class="s0">def </span><span class="s1">disableMacPingServer(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable mac ping server 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mac = self.client.talk( [</span><span class="s4">'/tool/mac-server/ping/set'</span><span class="s0">, </span><span class="s4">'=enabled=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mac 
+ 
+    </span><span class="s0">def </span><span class="s1">listMactelnetServer(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all mac servers 
+        :return:  list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mac = self.client.talk([</span><span class="s4">'/tool/mac-server/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">mac == {}: 
+            print(</span><span class="s4">&quot;No mac server found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">mac: 
+                print(mac[i][</span><span class="s4">'interface'</span><span class="s1">]) 
+        </span><span class="s0">return  </span><span class="s1">mac 
+ 
+    </span><span class="s0">def </span><span class="s1">addMactelnetServer(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add interface to mactelnet server 
+        :param interface: all or specific interface 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mac = self.client.talk([</span><span class="s4">'/tool/mac-server/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">mac 
+ 
+    </span><span class="s0">def </span><span class="s1">removeMacTelnetServer(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove mac telnet server 
+        :param number: number of server to remove 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mac = self.client.talk([</span><span class="s4">'/tool/mac-server/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">mac 
+ 
+    </span><span class="s0">def </span><span class="s1">enableMactelnetServer(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable mac telnet server 
+        :param number: number of server to enable 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mac = self.client.talk([</span><span class="s4">'/tool/mac-server/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">mac 
+ 
+    </span><span class="s0">def </span><span class="s1">disableMactelnetServer(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable mac telnet server 
+        :param number: list 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mac = self.client.talk([</span><span class="s4">'/tool/mac-server/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">mac 
+ 
+    </span><span class="s0">def </span><span class="s1">listWinboxInterfaces(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all winbox interfaces 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        winbox = self.client.talk([</span><span class="s4">'/tool/mac-server/mac-winbox/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">winbox == {}: 
+            print(</span><span class="s4">&quot;No interface found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">winbox: 
+                print(winbox[i][</span><span class="s4">'interface'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">winbox 
+ 
+    </span><span class="s0">def </span><span class="s1">addWinboxInterface(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add winbox interface 
+        :param interface: interface to add to be accessible via winbox 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        winbox = self.client.talk([</span><span class="s4">'/tool/mac-server/mac-winbox/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">winbox 
+ 
+    </span><span class="s0">def </span><span class="s1">removeWinboxInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove winbox interface 
+        :param number: interafce to remove 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        winbox = self.client.talk([</span><span class="s4">'/tool/mac-server/mac-winbox/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">winbox 
+ 
+    </span><span class="s0">def </span><span class="s1">enableWinboxInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable winbox interface 
+        :param number: interface to enable 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        winbox = self.client.talk([</span><span class="s4">'/tool/mac-server/mac-winbox/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">winbox 
+ 
+    </span><span class="s0">def </span><span class="s1">disableWinboxInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable winbox interface 
+        :param number: interafce to disable 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        winbox = self.client.talk( [</span><span class="s4">'/tool/mac-server/mac-winbox/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">winbox 
+ 
+    </span><span class="s0">def </span><span class="s1">listActiveSessions(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all active sessions 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        session = self.client.talk([</span><span class="s4">'/tool/mac-server/sessions/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">session == {}: 
+            print(</span><span class="s4">&quot;No session found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(session) 
+        </span><span class="s0">return </span><span class="s1">session</span></pre>
+</body>
+</html>

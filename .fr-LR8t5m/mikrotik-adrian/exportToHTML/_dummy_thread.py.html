@@ -1,0 +1,187 @@
+<html>
+<head>
+<title>_dummy_thread.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(204,120,50); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+_dummy_thread.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Drop-in replacement for the thread module. 
+ 
+Meant to be used as a brain-dead substitute so that threaded code does 
+not need to be rewritten for when the thread module is not present. 
+ 
+Suggested usage is:: 
+ 
+    try: 
+        import _thread 
+    except ImportError: 
+        import _dummy_thread as _thread 
+ 
+&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2"># Exports only things specified by thread documentation;</span><span class="s1"> 
+</span><span class="s2"># skipping obsolete synonyms allocate(), start_new(), exit_thread().</span><span class="s1"> 
+__all__ = [</span><span class="s3">'error'</span><span class="s4">, </span><span class="s3">'start_new_thread'</span><span class="s4">, </span><span class="s3">'exit'</span><span class="s4">, </span><span class="s3">'get_ident'</span><span class="s4">, </span><span class="s3">'allocate_lock'</span><span class="s4">,</span><span class="s1"> 
+           </span><span class="s3">'interrupt_main'</span><span class="s4">, </span><span class="s3">'LockType'</span><span class="s1">] 
+ 
+</span><span class="s2"># A dummy value</span><span class="s1"> 
+TIMEOUT_MAX = </span><span class="s5">2</span><span class="s1">**</span><span class="s5">31</span><span class="s1"> 
+ 
+</span><span class="s2"># NOTE: this module can be imported early in the extension building process,</span><span class="s1"> 
+</span><span class="s2"># and so top level imports of other modules should be avoided.  Instead, all</span><span class="s1"> 
+</span><span class="s2"># imports are done when needed on a function-by-function basis.  Since threads</span><span class="s1"> 
+</span><span class="s2"># are disabled, the import lock should not be an issue anyway (??).</span><span class="s1"> 
+ 
+error = RuntimeError 
+ 
+</span><span class="s4">def </span><span class="s1">start_new_thread(function</span><span class="s4">, </span><span class="s1">args</span><span class="s4">, </span><span class="s1">kwargs={}): 
+    </span><span class="s0">&quot;&quot;&quot;Dummy implementation of _thread.start_new_thread(). 
+ 
+    Compatibility is maintained by making sure that ``args`` is a 
+    tuple and ``kwargs`` is a dictionary.  If an exception is raised 
+    and it is SystemExit (which can be done by _thread.exit()) it is 
+    caught and nothing is done; all other exceptions are printed out 
+    by using traceback.print_exc(). 
+ 
+    If the executed function calls interrupt_main the KeyboardInterrupt will be 
+    raised when the function returns. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">type(args) != type(tuple()): 
+        </span><span class="s4">raise </span><span class="s1">TypeError(</span><span class="s3">&quot;2nd arg must be a tuple&quot;</span><span class="s1">) 
+    </span><span class="s4">if </span><span class="s1">type(kwargs) != type(dict()): 
+        </span><span class="s4">raise </span><span class="s1">TypeError(</span><span class="s3">&quot;3rd arg must be a dict&quot;</span><span class="s1">) 
+    </span><span class="s4">global </span><span class="s1">_main 
+    _main = </span><span class="s4">False</span><span class="s1"> 
+    </span><span class="s4">try</span><span class="s1">: 
+        function(*args</span><span class="s4">, </span><span class="s1">**kwargs) 
+    </span><span class="s4">except </span><span class="s1">SystemExit: 
+        </span><span class="s4">pass</span><span class="s1"> 
+    </span><span class="s4">except</span><span class="s1">: 
+        </span><span class="s4">import </span><span class="s1">traceback 
+        traceback.print_exc() 
+    _main = </span><span class="s4">True</span><span class="s1"> 
+    </span><span class="s4">global </span><span class="s1">_interrupt 
+    </span><span class="s4">if </span><span class="s1">_interrupt: 
+        _interrupt = </span><span class="s4">False</span><span class="s1"> 
+        </span><span class="s4">raise </span><span class="s1">KeyboardInterrupt 
+ 
+</span><span class="s4">def </span><span class="s1">exit(): 
+    </span><span class="s0">&quot;&quot;&quot;Dummy implementation of _thread.exit().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">raise </span><span class="s1">SystemExit 
+ 
+</span><span class="s4">def </span><span class="s1">get_ident(): 
+    </span><span class="s0">&quot;&quot;&quot;Dummy implementation of _thread.get_ident(). 
+ 
+    Since this module should only be used when _threadmodule is not 
+    available, it is safe to assume that the current process is the 
+    only thread.  Thus a constant can be safely returned. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">-</span><span class="s5">1</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">allocate_lock(): 
+    </span><span class="s0">&quot;&quot;&quot;Dummy implementation of _thread.allocate_lock().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">LockType() 
+ 
+</span><span class="s4">def </span><span class="s1">stack_size(size=</span><span class="s4">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Dummy implementation of _thread.stack_size().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">size </span><span class="s4">is not None</span><span class="s1">: 
+        </span><span class="s4">raise </span><span class="s1">error(</span><span class="s3">&quot;setting thread stack size not supported&quot;</span><span class="s1">) 
+    </span><span class="s4">return </span><span class="s5">0</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">_set_sentinel(): 
+    </span><span class="s0">&quot;&quot;&quot;Dummy implementation of _thread._set_sentinel().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">return </span><span class="s1">LockType() 
+ 
+</span><span class="s4">class </span><span class="s1">LockType(object): 
+    </span><span class="s0">&quot;&quot;&quot;Class implementing dummy implementation of _thread.LockType. 
+ 
+    Compatibility is maintained by maintaining self.locked_status 
+    which is a boolean that stores the state of the lock.  Pickling of 
+    the lock, though, should not be done since if the _thread module is 
+    then used with an unpickled ``lock()`` from here problems could 
+    occur from this class not having atomic methods. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">__init__(self): 
+        self.locked_status = </span><span class="s4">False</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">acquire(self</span><span class="s4">, </span><span class="s1">waitflag=</span><span class="s4">None, </span><span class="s1">timeout=-</span><span class="s5">1</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Dummy implementation of acquire(). 
+ 
+        For blocking calls, self.locked_status is automatically set to 
+        True and returned appropriately based on value of 
+        ``waitflag``.  If it is non-blocking, then the value is 
+        actually checked and not set if it is already acquired.  This 
+        is all done so that threading.Condition's assert statements 
+        aren't triggered and throw a little fit. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s4">if </span><span class="s1">waitflag </span><span class="s4">is None or </span><span class="s1">waitflag: 
+            self.locked_status = </span><span class="s4">True</span><span class="s1"> 
+            </span><span class="s4">return True</span><span class="s1"> 
+        </span><span class="s4">else</span><span class="s1">: 
+            </span><span class="s4">if not </span><span class="s1">self.locked_status: 
+                self.locked_status = </span><span class="s4">True</span><span class="s1"> 
+                </span><span class="s4">return True</span><span class="s1"> 
+            </span><span class="s4">else</span><span class="s1">: 
+                </span><span class="s4">if </span><span class="s1">timeout &gt; </span><span class="s5">0</span><span class="s1">: 
+                    </span><span class="s4">import </span><span class="s1">time 
+                    time.sleep(timeout) 
+                </span><span class="s4">return False</span><span class="s1"> 
+ 
+    __enter__ = acquire 
+ 
+    </span><span class="s4">def </span><span class="s1">__exit__(self</span><span class="s4">, </span><span class="s1">typ</span><span class="s4">, </span><span class="s1">val</span><span class="s4">, </span><span class="s1">tb): 
+        self.release() 
+ 
+    </span><span class="s4">def </span><span class="s1">release(self): 
+        </span><span class="s0">&quot;&quot;&quot;Release the dummy lock.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2"># XXX Perhaps shouldn't actually bother to test?  Could lead</span><span class="s1"> 
+        </span><span class="s2">#     to problems for complex, threaded code.</span><span class="s1"> 
+        </span><span class="s4">if not </span><span class="s1">self.locked_status: 
+            </span><span class="s4">raise </span><span class="s1">error 
+        self.locked_status = </span><span class="s4">False</span><span class="s1"> 
+        </span><span class="s4">return True</span><span class="s1"> 
+ 
+    </span><span class="s4">def </span><span class="s1">locked(self): 
+        </span><span class="s4">return </span><span class="s1">self.locked_status 
+ 
+    </span><span class="s4">def </span><span class="s1">__repr__(self): 
+        </span><span class="s4">return </span><span class="s3">&quot;&lt;%s %s.%s object at %s&gt;&quot; </span><span class="s1">% ( 
+            </span><span class="s3">&quot;locked&quot; </span><span class="s4">if </span><span class="s1">self.locked_status </span><span class="s4">else </span><span class="s3">&quot;unlocked&quot;</span><span class="s4">,</span><span class="s1"> 
+            self.__class__.__module__</span><span class="s4">,</span><span class="s1"> 
+            self.__class__.__qualname__</span><span class="s4">,</span><span class="s1"> 
+            hex(id(self)) 
+        ) 
+ 
+</span><span class="s2"># Used to signal that interrupt_main was called in a &quot;thread&quot;</span><span class="s1"> 
+_interrupt = </span><span class="s4">False</span><span class="s1"> 
+</span><span class="s2"># True when not executing in a &quot;thread&quot;</span><span class="s1"> 
+_main = </span><span class="s4">True</span><span class="s1"> 
+ 
+</span><span class="s4">def </span><span class="s1">interrupt_main(): 
+    </span><span class="s0">&quot;&quot;&quot;Set _interrupt flag to True to have start_new_thread raise 
+    KeyboardInterrupt upon exiting.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4">if </span><span class="s1">_main: 
+        </span><span class="s4">raise </span><span class="s1">KeyboardInterrupt 
+    </span><span class="s4">else</span><span class="s1">: 
+        </span><span class="s4">global </span><span class="s1">_interrupt 
+        _interrupt = </span><span class="s4">True</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

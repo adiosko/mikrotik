@@ -39,7 +39,7 @@ class centralControl:
                             loadAddress = True
             for i in deviceList:
                 print(i)
-        return deviceList
+        return list(set(deviceList))
 
     def addCredentials(self, login="admin"):
         """

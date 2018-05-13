@@ -1,0 +1,139 @@
+<html>
+<head>
+<title>OspfAreaRanges.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+OspfAreaRanges.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">OspfAreaRanges: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listRanges(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all ranges 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk([</span><span class="s4">'/routing/ospf/area/range/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">ospf == {}: 
+            print(</span><span class="s4">&quot;no range set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Area</span><span class="s0">\t</span><span class="s4">range</span><span class="s0">\t</span><span class="s4">cost</span><span class="s0">\t</span><span class="s4">Advertise&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ospf: 
+                print(ospf[i][</span><span class="s4">'area'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'range'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'cost'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'advertise'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">addRange(self</span><span class="s0">,</span><span class="s1">area=</span><span class="s4">&quot;backbone&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add new area range 
+        :param area: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk([</span><span class="s4">'/routing/ospf/area/range/add'</span><span class="s0">,</span><span class="s4">'=area='</span><span class="s1">+area]) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">removeRange(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove area 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/area/range/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">disableRange(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable range 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/area/range/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">enableRange(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable range 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/area/range/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">commentRange(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment range 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/area/range/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setArea(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">area=</span><span class="s4">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new area for range 
+        :param number: 
+        :param area: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/area/range/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=area='</span><span class="s1">+area] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRange(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">range=</span><span class="s4">&quot;0.0.0.0/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method willset new range 
+        :param number: 
+        :param range: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/area/range/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=range=' </span><span class="s1">+ range] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setCost(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">cost=</span><span class="s4">&quot;calculated&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new cost 
+        :param name: 
+        :param cost: calculated 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/area/range/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=cost=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setAdvertise(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will allow advertise 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/area/range/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=advertise=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetAdvertise(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will allow advertise 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/area/range/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=advertise=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+</span></pre>
+</body>
+</html>

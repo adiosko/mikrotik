@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1449</width>
+    <height>595</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Filter rules</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLineEdit" name="version_7">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>10</y>
+      <width>81</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>In interface</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="srcaddrField">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>40</y>
+      <width>101</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="inputrejectButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>40</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add input reject rule</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_4">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>10</y>
+      <width>81</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Protocol</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="outinterfaceField">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>40</y>
+      <width>81</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="removeButton">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>40</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Remove</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="dstaddrField">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>40</y>
+      <width>101</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_9">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>10</y>
+      <width>81</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dynamic</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="inputdropButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>70</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add input drop rule</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="fwrejectButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>130</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add forward reject rule</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="disableButton">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>100</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disable</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="enableButton">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>70</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enable</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="package_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>101</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Action</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="fwacceptButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>100</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add forward accept rule</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>10</y>
+      <width>111</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Chain</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_2">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>10</y>
+      <width>101</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Src address</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_3">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>10</y>
+      <width>101</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dst address</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="ininterfaceField">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>40</y>
+      <width>81</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="inputacceptButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>10</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add input accept rule</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_6">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>10</y>
+      <width>81</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dst port</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="dynamicField">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>40</y>
+      <width>81</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="srcportField">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>40</y>
+      <width>81</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="refreshButton">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>10</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Refresh</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_8">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>10</y>
+      <width>81</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Out interface</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="protField">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>40</y>
+      <width>81</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="chainField">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>40</y>
+      <width>111</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="dstportField">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>40</y>
+      <width>81</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="actionField">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>101</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_5">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>10</y>
+      <width>81</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Src port</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="fwdropButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>160</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add forward drop rule</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="version_10">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>10</y>
+      <width>81</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disabled</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="disableField">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>40</y>
+      <width>81</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="outputacceptButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>190</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add output accept rule</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="outputdropButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>250</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add output drop rule</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="outputtrejectButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>220</y>
+      <width>141</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add output reject rule</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

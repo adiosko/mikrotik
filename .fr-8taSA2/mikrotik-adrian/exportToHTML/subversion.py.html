@@ -1,0 +1,293 @@
+<html>
+<head>
+<title>subversion.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(104,151,187); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+subversion.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">import </span><span class="s1">logging 
+</span><span class="s0">import </span><span class="s1">os 
+</span><span class="s0">import </span><span class="s1">re 
+ 
+</span><span class="s0">from </span><span class="s1">pip._vendor.six.moves.urllib </span><span class="s0">import </span><span class="s1">parse </span><span class="s0">as </span><span class="s1">urllib_parse 
+ 
+</span><span class="s0">from </span><span class="s1">pip.index </span><span class="s0">import </span><span class="s1">Link 
+</span><span class="s0">from </span><span class="s1">pip.utils </span><span class="s0">import </span><span class="s1">rmtree</span><span class="s0">, </span><span class="s1">display_path 
+</span><span class="s0">from </span><span class="s1">pip.utils.logging </span><span class="s0">import </span><span class="s1">indent_log 
+</span><span class="s0">from </span><span class="s1">pip.vcs </span><span class="s0">import </span><span class="s1">vcs</span><span class="s0">, </span><span class="s1">VersionControl 
+ 
+_svn_xml_url_re = re.compile(</span><span class="s2">'url=&quot;([^&quot;]+)&quot;'</span><span class="s1">) 
+_svn_rev_re = re.compile(</span><span class="s2">'committed-rev=&quot;(\d+)&quot;'</span><span class="s1">) 
+_svn_url_re = re.compile(</span><span class="s2">r'URL: (.+)'</span><span class="s1">) 
+_svn_revision_re = re.compile(</span><span class="s2">r'Revision: (.+)'</span><span class="s1">) 
+_svn_info_xml_rev_re = re.compile(</span><span class="s2">r'\s*revision=&quot;(\d+)&quot;'</span><span class="s1">) 
+_svn_info_xml_url_re = re.compile(</span><span class="s2">r'&lt;url&gt;(.*)&lt;/url&gt;'</span><span class="s1">) 
+ 
+ 
+logger = logging.getLogger(__name__) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">Subversion(VersionControl): 
+    name = </span><span class="s2">'svn'</span><span class="s1"> 
+    dirname = </span><span class="s2">'.svn'</span><span class="s1"> 
+    repo_name = </span><span class="s2">'checkout'</span><span class="s1"> 
+    schemes = (</span><span class="s2">'svn'</span><span class="s0">, </span><span class="s2">'svn+ssh'</span><span class="s0">, </span><span class="s2">'svn+http'</span><span class="s0">, </span><span class="s2">'svn+https'</span><span class="s0">, </span><span class="s2">'svn+svn'</span><span class="s1">) 
+ 
+    </span><span class="s0">def </span><span class="s1">get_info(self</span><span class="s0">, </span><span class="s1">location): 
+        </span><span class="s3">&quot;&quot;&quot;Returns (url, revision), where both are strings&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">assert not </span><span class="s1">location.rstrip(</span><span class="s2">'/'</span><span class="s1">).endswith(self.dirname)</span><span class="s0">, </span><span class="s1">\ 
+            </span><span class="s2">'Bad directory: %s' </span><span class="s1">% location 
+        output = self.run_command( 
+            [</span><span class="s2">'info'</span><span class="s0">, </span><span class="s1">location]</span><span class="s0">,</span><span class="s1"> 
+            show_stdout=</span><span class="s0">False,</span><span class="s1"> 
+            extra_environ={</span><span class="s2">'LANG'</span><span class="s1">: </span><span class="s2">'C'</span><span class="s1">}</span><span class="s0">,</span><span class="s1"> 
+        ) 
+        match = _svn_url_re.search(output) 
+        </span><span class="s0">if not </span><span class="s1">match: 
+            logger.warning( 
+                </span><span class="s2">'Cannot determine URL of svn checkout %s'</span><span class="s0">,</span><span class="s1"> 
+                display_path(location)</span><span class="s0">,</span><span class="s1"> 
+            ) 
+            logger.debug(</span><span class="s2">'Output that cannot be parsed: </span><span class="s0">\n</span><span class="s2">%s'</span><span class="s0">, </span><span class="s1">output) 
+            </span><span class="s0">return None, None</span><span class="s1"> 
+        url = match.group(</span><span class="s4">1</span><span class="s1">).strip() 
+        match = _svn_revision_re.search(output) 
+        </span><span class="s0">if not </span><span class="s1">match: 
+            logger.warning( 
+                </span><span class="s2">'Cannot determine revision of svn checkout %s'</span><span class="s0">,</span><span class="s1"> 
+                display_path(location)</span><span class="s0">,</span><span class="s1"> 
+            ) 
+            logger.debug(</span><span class="s2">'Output that cannot be parsed: </span><span class="s0">\n</span><span class="s2">%s'</span><span class="s0">, </span><span class="s1">output) 
+            </span><span class="s0">return </span><span class="s1">url</span><span class="s0">, None</span><span class="s1"> 
+        </span><span class="s0">return </span><span class="s1">url</span><span class="s0">, </span><span class="s1">match.group(</span><span class="s4">1</span><span class="s1">) 
+ 
+    </span><span class="s0">def </span><span class="s1">export(self</span><span class="s0">, </span><span class="s1">location): 
+        </span><span class="s3">&quot;&quot;&quot;Export the svn repository at the url to the destination location&quot;&quot;&quot;</span><span class="s1"> 
+        url</span><span class="s0">, </span><span class="s1">rev = self.get_url_rev() 
+        rev_options = get_rev_options(url</span><span class="s0">, </span><span class="s1">rev) 
+        url = self.remove_auth_from_url(url) 
+        logger.info(</span><span class="s2">'Exporting svn repository %s to %s'</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">location) 
+        </span><span class="s0">with </span><span class="s1">indent_log(): 
+            </span><span class="s0">if </span><span class="s1">os.path.exists(location): 
+                </span><span class="s5"># Subversion doesn't like to check out over an existing</span><span class="s1"> 
+                </span><span class="s5"># directory --force fixes this, but was only added in svn 1.5</span><span class="s1"> 
+                rmtree(location) 
+            self.run_command( 
+                [</span><span class="s2">'export'</span><span class="s1">] + rev_options + [url</span><span class="s0">, </span><span class="s1">location]</span><span class="s0">,</span><span class="s1"> 
+                show_stdout=</span><span class="s0">False</span><span class="s1">) 
+ 
+    </span><span class="s0">def </span><span class="s1">switch(self</span><span class="s0">, </span><span class="s1">dest</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">rev_options): 
+        self.run_command([</span><span class="s2">'switch'</span><span class="s1">] + rev_options + [url</span><span class="s0">, </span><span class="s1">dest]) 
+ 
+    </span><span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">dest</span><span class="s0">, </span><span class="s1">rev_options): 
+        self.run_command([</span><span class="s2">'update'</span><span class="s1">] + rev_options + [dest]) 
+ 
+    </span><span class="s0">def </span><span class="s1">obtain(self</span><span class="s0">, </span><span class="s1">dest): 
+        url</span><span class="s0">, </span><span class="s1">rev = self.get_url_rev() 
+        rev_options = get_rev_options(url</span><span class="s0">, </span><span class="s1">rev) 
+        url = self.remove_auth_from_url(url) 
+        </span><span class="s0">if </span><span class="s1">rev: 
+            rev_display = </span><span class="s2">' (to revision %s)' </span><span class="s1">% rev 
+        </span><span class="s0">else</span><span class="s1">: 
+            rev_display = </span><span class="s2">''</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self.check_destination(dest</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">rev_options</span><span class="s0">, </span><span class="s1">rev_display): 
+            logger.info( 
+                </span><span class="s2">'Checking out %s%s to %s'</span><span class="s0">,</span><span class="s1"> 
+                url</span><span class="s0">,</span><span class="s1"> 
+                rev_display</span><span class="s0">,</span><span class="s1"> 
+                display_path(dest)</span><span class="s0">,</span><span class="s1"> 
+            ) 
+            self.run_command([</span><span class="s2">'checkout'</span><span class="s0">, </span><span class="s2">'-q'</span><span class="s1">] + rev_options + [url</span><span class="s0">, </span><span class="s1">dest]) 
+ 
+    </span><span class="s0">def </span><span class="s1">get_location(self</span><span class="s0">, </span><span class="s1">dist</span><span class="s0">, </span><span class="s1">dependency_links): 
+        </span><span class="s0">for </span><span class="s1">url </span><span class="s0">in </span><span class="s1">dependency_links: 
+            egg_fragment = Link(url).egg_fragment 
+            </span><span class="s0">if not </span><span class="s1">egg_fragment: 
+                </span><span class="s0">continue</span><span class="s1"> 
+            </span><span class="s0">if </span><span class="s2">'-' </span><span class="s0">in </span><span class="s1">egg_fragment: 
+                </span><span class="s5"># FIXME: will this work when a package has - in the name?</span><span class="s1"> 
+                key = </span><span class="s2">'-'</span><span class="s1">.join(egg_fragment.split(</span><span class="s2">'-'</span><span class="s1">)[:-</span><span class="s4">1</span><span class="s1">]).lower() 
+            </span><span class="s0">else</span><span class="s1">: 
+                key = egg_fragment 
+            </span><span class="s0">if </span><span class="s1">key == dist.key: 
+                </span><span class="s0">return </span><span class="s1">url.split(</span><span class="s2">'#'</span><span class="s0">, </span><span class="s4">1</span><span class="s1">)[</span><span class="s4">0</span><span class="s1">] 
+        </span><span class="s0">return None</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">get_revision(self</span><span class="s0">, </span><span class="s1">location): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Return the maximum revision for all files under a given location 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s5"># Note: taken from setuptools.command.egg_info</span><span class="s1"> 
+        revision = </span><span class="s4">0</span><span class="s1"> 
+ 
+        </span><span class="s0">for </span><span class="s1">base</span><span class="s0">, </span><span class="s1">dirs</span><span class="s0">, </span><span class="s1">files </span><span class="s0">in </span><span class="s1">os.walk(location): 
+            </span><span class="s0">if </span><span class="s1">self.dirname </span><span class="s0">not in </span><span class="s1">dirs: 
+                dirs[:] = [] 
+                </span><span class="s0">continue    </span><span class="s5"># no sense walking uncontrolled subdirs</span><span class="s1"> 
+            dirs.remove(self.dirname) 
+            entries_fn = os.path.join(base</span><span class="s0">, </span><span class="s1">self.dirname</span><span class="s0">, </span><span class="s2">'entries'</span><span class="s1">) 
+            </span><span class="s0">if not </span><span class="s1">os.path.exists(entries_fn): 
+                </span><span class="s5"># FIXME: should we warn?</span><span class="s1"> 
+                </span><span class="s0">continue</span><span class="s1"> 
+ 
+            dirurl</span><span class="s0">, </span><span class="s1">localrev = self._get_svn_url_rev(base) 
+ 
+            </span><span class="s0">if </span><span class="s1">base == location: 
+                base_url = dirurl + </span><span class="s2">'/'   </span><span class="s5"># save the root url</span><span class="s1"> 
+            </span><span class="s0">elif not </span><span class="s1">dirurl </span><span class="s0">or not </span><span class="s1">dirurl.startswith(base_url): 
+                dirs[:] = [] 
+                </span><span class="s0">continue    </span><span class="s5"># not part of the same svn tree, skip it</span><span class="s1"> 
+            revision = max(revision</span><span class="s0">, </span><span class="s1">localrev) 
+        </span><span class="s0">return </span><span class="s1">revision 
+ 
+    </span><span class="s0">def </span><span class="s1">get_url_rev(self): 
+        </span><span class="s5"># hotfix the URL scheme after removing svn+ from svn+ssh:// readd it</span><span class="s1"> 
+        url</span><span class="s0">, </span><span class="s1">rev = super(Subversion</span><span class="s0">, </span><span class="s1">self).get_url_rev() 
+        </span><span class="s0">if </span><span class="s1">url.startswith(</span><span class="s2">'ssh://'</span><span class="s1">): 
+            url = </span><span class="s2">'svn+' </span><span class="s1">+ url 
+        </span><span class="s0">return </span><span class="s1">url</span><span class="s0">, </span><span class="s1">rev 
+ 
+    </span><span class="s0">def </span><span class="s1">get_url(self</span><span class="s0">, </span><span class="s1">location): 
+        </span><span class="s5"># In cases where the source is in a subdirectory, not alongside</span><span class="s1"> 
+        </span><span class="s5"># setup.py we have to look up in the location until we find a real</span><span class="s1"> 
+        </span><span class="s5"># setup.py</span><span class="s1"> 
+        orig_location = location 
+        </span><span class="s0">while not </span><span class="s1">os.path.exists(os.path.join(location</span><span class="s0">, </span><span class="s2">'setup.py'</span><span class="s1">)): 
+            last_location = location 
+            location = os.path.dirname(location) 
+            </span><span class="s0">if </span><span class="s1">location == last_location: 
+                </span><span class="s5"># We've traversed up to the root of the filesystem without</span><span class="s1"> 
+                </span><span class="s5"># finding setup.py</span><span class="s1"> 
+                logger.warning( 
+                    </span><span class="s2">&quot;Could not find setup.py for directory %s (tried all &quot;</span><span class="s1"> 
+                    </span><span class="s2">&quot;parent directories)&quot;</span><span class="s0">,</span><span class="s1"> 
+                    orig_location</span><span class="s0">,</span><span class="s1"> 
+                ) 
+                </span><span class="s0">return None</span><span class="s1"> 
+ 
+        </span><span class="s0">return </span><span class="s1">self._get_svn_url_rev(location)[</span><span class="s4">0</span><span class="s1">] 
+ 
+    </span><span class="s0">def </span><span class="s1">_get_svn_url_rev(self</span><span class="s0">, </span><span class="s1">location): 
+        </span><span class="s0">from </span><span class="s1">pip.exceptions </span><span class="s0">import </span><span class="s1">InstallationError 
+ 
+        entries_path = os.path.join(location</span><span class="s0">, </span><span class="s1">self.dirname</span><span class="s0">, </span><span class="s2">'entries'</span><span class="s1">) 
+        </span><span class="s0">if </span><span class="s1">os.path.exists(entries_path): 
+            </span><span class="s0">with </span><span class="s1">open(entries_path) </span><span class="s0">as </span><span class="s1">f: 
+                data = f.read() 
+        </span><span class="s0">else</span><span class="s1">:  </span><span class="s5"># subversion &gt;= 1.7 does not have the 'entries' file</span><span class="s1"> 
+            data = </span><span class="s2">''</span><span class="s1"> 
+ 
+        </span><span class="s0">if </span><span class="s1">(data.startswith(</span><span class="s2">'8'</span><span class="s1">) </span><span class="s0">or</span><span class="s1"> 
+                data.startswith(</span><span class="s2">'9'</span><span class="s1">) </span><span class="s0">or</span><span class="s1"> 
+                data.startswith(</span><span class="s2">'10'</span><span class="s1">)): 
+            data = list(map(str.splitlines</span><span class="s0">, </span><span class="s1">data.split(</span><span class="s2">'</span><span class="s0">\n\x0c\n</span><span class="s2">'</span><span class="s1">))) 
+            </span><span class="s0">del </span><span class="s1">data[</span><span class="s4">0</span><span class="s1">][</span><span class="s4">0</span><span class="s1">]  </span><span class="s5"># get rid of the '8'</span><span class="s1"> 
+            url = data[</span><span class="s4">0</span><span class="s1">][</span><span class="s4">3</span><span class="s1">] 
+            revs = [int(d[</span><span class="s4">9</span><span class="s1">]) </span><span class="s0">for </span><span class="s1">d </span><span class="s0">in </span><span class="s1">data </span><span class="s0">if </span><span class="s1">len(d) &gt; </span><span class="s4">9 </span><span class="s0">and </span><span class="s1">d[</span><span class="s4">9</span><span class="s1">]] + [</span><span class="s4">0</span><span class="s1">] 
+        </span><span class="s0">elif </span><span class="s1">data.startswith(</span><span class="s2">'&lt;?xml'</span><span class="s1">): 
+            match = _svn_xml_url_re.search(data) 
+            </span><span class="s0">if not </span><span class="s1">match: 
+                </span><span class="s0">raise </span><span class="s1">ValueError(</span><span class="s2">'Badly formatted data: %r' </span><span class="s1">% data) 
+            url = match.group(</span><span class="s4">1</span><span class="s1">)    </span><span class="s5"># get repository URL</span><span class="s1"> 
+            revs = [int(m.group(</span><span class="s4">1</span><span class="s1">)) </span><span class="s0">for </span><span class="s1">m </span><span class="s0">in </span><span class="s1">_svn_rev_re.finditer(data)] + [</span><span class="s4">0</span><span class="s1">] 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">try</span><span class="s1">: 
+                </span><span class="s5"># subversion &gt;= 1.7</span><span class="s1"> 
+                xml = self.run_command( 
+                    [</span><span class="s2">'info'</span><span class="s0">, </span><span class="s2">'--xml'</span><span class="s0">, </span><span class="s1">location]</span><span class="s0">,</span><span class="s1"> 
+                    show_stdout=</span><span class="s0">False,</span><span class="s1"> 
+                ) 
+                url = _svn_info_xml_url_re.search(xml).group(</span><span class="s4">1</span><span class="s1">) 
+                revs = [ 
+                    int(m.group(</span><span class="s4">1</span><span class="s1">)) </span><span class="s0">for </span><span class="s1">m </span><span class="s0">in </span><span class="s1">_svn_info_xml_rev_re.finditer(xml) 
+                ] 
+            </span><span class="s0">except </span><span class="s1">InstallationError: 
+                url</span><span class="s0">, </span><span class="s1">revs = </span><span class="s0">None, </span><span class="s1">[] 
+ 
+        </span><span class="s0">if </span><span class="s1">revs: 
+            rev = max(revs) 
+        </span><span class="s0">else</span><span class="s1">: 
+            rev = </span><span class="s4">0</span><span class="s1"> 
+ 
+        </span><span class="s0">return </span><span class="s1">url</span><span class="s0">, </span><span class="s1">rev 
+ 
+    </span><span class="s0">def </span><span class="s1">get_src_requirement(self</span><span class="s0">, </span><span class="s1">dist</span><span class="s0">, </span><span class="s1">location): 
+        repo = self.get_url(location) 
+        </span><span class="s0">if </span><span class="s1">repo </span><span class="s0">is None</span><span class="s1">: 
+            </span><span class="s0">return None</span><span class="s1"> 
+        </span><span class="s5"># FIXME: why not project name?</span><span class="s1"> 
+        egg_project_name = dist.egg_name().split(</span><span class="s2">'-'</span><span class="s0">, </span><span class="s4">1</span><span class="s1">)[</span><span class="s4">0</span><span class="s1">] 
+        rev = self.get_revision(location) 
+        </span><span class="s0">return </span><span class="s2">'svn+%s@%s#egg=%s' </span><span class="s1">% (repo</span><span class="s0">, </span><span class="s1">rev</span><span class="s0">, </span><span class="s1">egg_project_name) 
+ 
+    </span><span class="s0">def </span><span class="s1">check_version(self</span><span class="s0">, </span><span class="s1">dest</span><span class="s0">, </span><span class="s1">rev_options): 
+        </span><span class="s3">&quot;&quot;&quot;Always assume the versions don't match&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">return False</span><span class="s1"> 
+ 
+    @staticmethod 
+    </span><span class="s0">def </span><span class="s1">remove_auth_from_url(url): 
+        </span><span class="s5"># Return a copy of url with 'username:password@' removed.</span><span class="s1"> 
+        </span><span class="s5"># username/pass params are passed to subversion through flags</span><span class="s1"> 
+        </span><span class="s5"># and are not recognized in the url.</span><span class="s1"> 
+ 
+        </span><span class="s5"># parsed url</span><span class="s1"> 
+        purl = urllib_parse.urlsplit(url) 
+        stripped_netloc = \ 
+            purl.netloc.split(</span><span class="s2">'@'</span><span class="s1">)[-</span><span class="s4">1</span><span class="s1">] 
+ 
+        </span><span class="s5"># stripped url</span><span class="s1"> 
+        url_pieces = ( 
+            purl.scheme</span><span class="s0">, </span><span class="s1">stripped_netloc</span><span class="s0">, </span><span class="s1">purl.path</span><span class="s0">, </span><span class="s1">purl.query</span><span class="s0">, </span><span class="s1">purl.fragment 
+        ) 
+        surl = urllib_parse.urlunsplit(url_pieces) 
+        </span><span class="s0">return </span><span class="s1">surl 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">get_rev_options(url</span><span class="s0">, </span><span class="s1">rev): 
+    </span><span class="s0">if </span><span class="s1">rev: 
+        rev_options = [</span><span class="s2">'-r'</span><span class="s0">, </span><span class="s1">rev] 
+    </span><span class="s0">else</span><span class="s1">: 
+        rev_options = [] 
+ 
+    r = urllib_parse.urlsplit(url) 
+    </span><span class="s0">if </span><span class="s1">hasattr(r</span><span class="s0">, </span><span class="s2">'username'</span><span class="s1">): 
+        </span><span class="s5"># &gt;= Python-2.5</span><span class="s1"> 
+        username</span><span class="s0">, </span><span class="s1">password = r.username</span><span class="s0">, </span><span class="s1">r.password 
+    </span><span class="s0">else</span><span class="s1">: 
+        netloc = r[</span><span class="s4">1</span><span class="s1">] 
+        </span><span class="s0">if </span><span class="s2">'@' </span><span class="s0">in </span><span class="s1">netloc: 
+            auth = netloc.split(</span><span class="s2">'@'</span><span class="s1">)[</span><span class="s4">0</span><span class="s1">] 
+            </span><span class="s0">if </span><span class="s2">':' </span><span class="s0">in </span><span class="s1">auth: 
+                username</span><span class="s0">, </span><span class="s1">password = auth.split(</span><span class="s2">':'</span><span class="s0">, </span><span class="s4">1</span><span class="s1">) 
+            </span><span class="s0">else</span><span class="s1">: 
+                username</span><span class="s0">, </span><span class="s1">password = auth</span><span class="s0">, None</span><span class="s1"> 
+        </span><span class="s0">else</span><span class="s1">: 
+            username</span><span class="s0">, </span><span class="s1">password = </span><span class="s0">None, None</span><span class="s1"> 
+ 
+    </span><span class="s0">if </span><span class="s1">username: 
+        rev_options += [</span><span class="s2">'--username'</span><span class="s0">, </span><span class="s1">username] 
+    </span><span class="s0">if </span><span class="s1">password: 
+        rev_options += [</span><span class="s2">'--password'</span><span class="s0">, </span><span class="s1">password] 
+    </span><span class="s0">return </span><span class="s1">rev_options 
+ 
+ 
+vcs.register(Subversion) 
+</span></pre>
+</body>
+</html>

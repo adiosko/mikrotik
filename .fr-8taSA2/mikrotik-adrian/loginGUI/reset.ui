@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>273</width>
+    <height>185</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Reset configuration</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="keepuserButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>161</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Keep user configuration</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="capsButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>161</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Caps mode reset</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="notbackupButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>140</y>
+      <width>161</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Do not backup</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="nodefaultButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>161</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>No default configuration</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

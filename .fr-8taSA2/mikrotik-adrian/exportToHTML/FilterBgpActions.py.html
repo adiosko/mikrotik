@@ -1,0 +1,90 @@
+<html>
+<head>
+<title>FilterBgpActions.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+FilterBgpActions.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">FilterBgpActions: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpWeight(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">weight=</span><span class="s3">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set bgp eight 
+        :param number: 
+        :param weight: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-bgp-weight=' </span><span class="s1">+ weight] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpLocalPref(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">lpref=</span><span class="s3">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set lpref for bgp 
+        :param number: 
+        :param lpref: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-bgp-local-pref=' </span><span class="s1">+ lpref] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpPrepend(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prepend=</span><span class="s3">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set prepend for bgp 
+        :param number: 
+        :param prepend: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-bgp-prepend=' </span><span class="s1">+ prepend] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpMed(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">med=</span><span class="s3">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set med value 
+        :param number: 
+        :param med: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-bgp-med=' </span><span class="s1">+ med] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpCommunities(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">community=</span><span class="s3">&quot;0:0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set bgp community 
+        :param number: 
+        :param community:no-export,no-advertise,local-as 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-bgp-communities=' </span><span class="s1">+ community] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setAppenfBgpCommunities(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">community=</span><span class="s3">&quot;0:0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset bgp sommunity and will apend it 
+        :param number: 
+        :param community: no-export, no-advertise,local-as 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=append-bgp-communities=' </span><span class="s1">+ community] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+</span></pre>
+</body>
+</html>

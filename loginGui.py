@@ -23,10 +23,21 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
         self.server = self.addressField.text()
         self.loginmanager = LoginManager( self.user, self.pwd )
         self.loginIpManager = centralControl( self.user )
+        self.ipList.setSelectionMode(QAbstractItemView.SingleSelection)
         self.login_windows = []
+        self.ipList.itemClicked.connect(self.paste)
+        self.macList.itemClicked.connect(self.pastemac)
         #self.recordIPAddress()
         #self.recordMacAddress()
         #self.ui.calc_tax_button.clicked.connect(self.calculateTax())
+
+    def paste(self):
+        selected = self.ipList.selectedItems()
+        self.addressField.setText(selected[0].text())
+
+    def pastemac(self):
+        selected = self.macList.selectedItems()
+        self.addressField.setText( selected[0].text() )
 
     def helloWorld(self,strword):
         print("Hello "+strword)
@@ -44,25 +55,35 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
 
     def recordMacAddress(self):
         self.macList.clear()
+        self.ipList.clear()
         devices = self.loginmanager.listMikrotikDevices()
-        print(devices)
         for device in devices:
             self.macList.addItem(str(device))
-
 
     def recordIPAddress(self):
         self.ipList.clear()
         devices = self.loginIpManager.listMikrotikDevices()
+        print( devices )
+        for device in devices:
+            self.ipList.addItem( str(device) )
+
+    def refresh(self):
+        self.ipList.clear()
+        self.macList.clear()
+        devices = self.loginmanager.listMikrotikDevices()
+        devicesip = self.loginIpManager.listMikrotikDevices()
+        #devicesIp = self.loginmanager.listMikrotikDevicesIp()
         print(devices)
         for device in devices:
-            self.ipList.addItem(str(device))
+            self.macList.addItem(str(device))
+        for device in devicesip:
+           self.ipList.addItem( str( device ) )
 
 
     def init_buttons(self):
         self.cancelButton.clicked.connect(self.cancelLogin)
         self.loginButton.clicked.connect(self.loginLogin)
-        self.findipButton.clicked.connect(self.recordIPAddress)
-        self.findmacButton.clicked.connect(self.recordMacAddress)
+        self.refreshButton.clicked.connect(self.refresh)
 
     """
     def loginMac(self):
@@ -100,10 +121,6 @@ class loginGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.setInformativeText(str(e))
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
-
-
-
-
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)

@@ -1,0 +1,333 @@
+<html>
+<head>
+<title>idna.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(165,194,97); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+idna.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># This module implements the RFCs 3490 (IDNA) and 3491 (Nameprep)</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">stringprep</span><span class="s2">, </span><span class="s1">re</span><span class="s2">, </span><span class="s1">codecs 
+</span><span class="s2">from </span><span class="s1">unicodedata </span><span class="s2">import </span><span class="s1">ucd_3_2_0 </span><span class="s2">as </span><span class="s1">unicodedata 
+ 
+</span><span class="s0"># IDNA section 3.1</span><span class="s1"> 
+dots = re.compile(</span><span class="s3">&quot;[</span><span class="s2">\u002E\u3002\uFF0E\uFF61</span><span class="s3">]&quot;</span><span class="s1">) 
+ 
+</span><span class="s0"># IDNA section 5</span><span class="s1"> 
+ace_prefix = </span><span class="s4">b&quot;xn--&quot;</span><span class="s1"> 
+sace_prefix = </span><span class="s3">&quot;xn--&quot;</span><span class="s1"> 
+ 
+</span><span class="s0"># This assumes query strings, so AllowUnassigned is true</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">nameprep(label): 
+    </span><span class="s0"># Map</span><span class="s1"> 
+    newlabel = [] 
+    </span><span class="s2">for </span><span class="s1">c </span><span class="s2">in </span><span class="s1">label: 
+        </span><span class="s2">if </span><span class="s1">stringprep.in_table_b1(c): 
+            </span><span class="s0"># Map to nothing</span><span class="s1"> 
+            </span><span class="s2">continue</span><span class="s1"> 
+        newlabel.append(stringprep.map_table_b2(c)) 
+    label = </span><span class="s3">&quot;&quot;</span><span class="s1">.join(newlabel) 
+ 
+    </span><span class="s0"># Normalize</span><span class="s1"> 
+    label = unicodedata.normalize(</span><span class="s3">&quot;NFKC&quot;</span><span class="s2">, </span><span class="s1">label) 
+ 
+    </span><span class="s0"># Prohibit</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">c </span><span class="s2">in </span><span class="s1">label: 
+        </span><span class="s2">if </span><span class="s1">stringprep.in_table_c12(c) </span><span class="s2">or </span><span class="s1">\ 
+           stringprep.in_table_c22(c) </span><span class="s2">or </span><span class="s1">\ 
+           stringprep.in_table_c3(c) </span><span class="s2">or </span><span class="s1">\ 
+           stringprep.in_table_c4(c) </span><span class="s2">or </span><span class="s1">\ 
+           stringprep.in_table_c5(c) </span><span class="s2">or </span><span class="s1">\ 
+           stringprep.in_table_c6(c) </span><span class="s2">or </span><span class="s1">\ 
+           stringprep.in_table_c7(c) </span><span class="s2">or </span><span class="s1">\ 
+           stringprep.in_table_c8(c) </span><span class="s2">or </span><span class="s1">\ 
+           stringprep.in_table_c9(c): 
+            </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;Invalid character %r&quot; </span><span class="s1">% c) 
+ 
+    </span><span class="s0"># Check bidi</span><span class="s1"> 
+    RandAL = [stringprep.in_table_d1(x) </span><span class="s2">for </span><span class="s1">x </span><span class="s2">in </span><span class="s1">label] 
+    </span><span class="s2">for </span><span class="s1">c </span><span class="s2">in </span><span class="s1">RandAL: 
+        </span><span class="s2">if </span><span class="s1">c: 
+            </span><span class="s0"># There is a RandAL char in the string. Must perform further</span><span class="s1"> 
+            </span><span class="s0"># tests:</span><span class="s1"> 
+            </span><span class="s0"># 1) The characters in section 5.8 MUST be prohibited.</span><span class="s1"> 
+            </span><span class="s0"># This is table C.8, which was already checked</span><span class="s1"> 
+            </span><span class="s0"># 2) If a string contains any RandALCat character, the string</span><span class="s1"> 
+            </span><span class="s0"># MUST NOT contain any LCat character.</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">any(stringprep.in_table_d2(x) </span><span class="s2">for </span><span class="s1">x </span><span class="s2">in </span><span class="s1">label): 
+                </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;Violation of BIDI requirement 2&quot;</span><span class="s1">) 
+ 
+            </span><span class="s0"># 3) If a string contains any RandALCat character, a</span><span class="s1"> 
+            </span><span class="s0"># RandALCat character MUST be the first character of the</span><span class="s1"> 
+            </span><span class="s0"># string, and a RandALCat character MUST be the last</span><span class="s1"> 
+            </span><span class="s0"># character of the string.</span><span class="s1"> 
+            </span><span class="s2">if not </span><span class="s1">RandAL[</span><span class="s5">0</span><span class="s1">] </span><span class="s2">or not </span><span class="s1">RandAL[-</span><span class="s5">1</span><span class="s1">]: 
+                </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;Violation of BIDI requirement 3&quot;</span><span class="s1">) 
+ 
+    </span><span class="s2">return </span><span class="s1">label 
+ 
+</span><span class="s2">def </span><span class="s1">ToASCII(label): 
+    </span><span class="s2">try</span><span class="s1">: 
+        </span><span class="s0"># Step 1: try ASCII</span><span class="s1"> 
+        label = label.encode(</span><span class="s3">&quot;ascii&quot;</span><span class="s1">) 
+    </span><span class="s2">except </span><span class="s1">UnicodeError: 
+        </span><span class="s2">pass</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s0"># Skip to step 3: UseSTD3ASCIIRules is false, so</span><span class="s1"> 
+        </span><span class="s0"># Skip to step 8.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s5">0 </span><span class="s1">&lt; len(label) &lt; </span><span class="s5">64</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">label 
+        </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;label empty or too long&quot;</span><span class="s1">) 
+ 
+    </span><span class="s0"># Step 2: nameprep</span><span class="s1"> 
+    label = nameprep(label) 
+ 
+    </span><span class="s0"># Step 3: UseSTD3ASCIIRules is false</span><span class="s1"> 
+    </span><span class="s0"># Step 4: try ASCII</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        label = label.encode(</span><span class="s3">&quot;ascii&quot;</span><span class="s1">) 
+    </span><span class="s2">except </span><span class="s1">UnicodeError: 
+        </span><span class="s2">pass</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s0"># Skip to step 8.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s5">0 </span><span class="s1">&lt; len(label) &lt; </span><span class="s5">64</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">label 
+        </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;label empty or too long&quot;</span><span class="s1">) 
+ 
+    </span><span class="s0"># Step 5: Check ACE prefix</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">label.startswith(sace_prefix): 
+        </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;Label starts with ACE prefix&quot;</span><span class="s1">) 
+ 
+    </span><span class="s0"># Step 6: Encode with PUNYCODE</span><span class="s1"> 
+    label = label.encode(</span><span class="s3">&quot;punycode&quot;</span><span class="s1">) 
+ 
+    </span><span class="s0"># Step 7: Prepend ACE prefix</span><span class="s1"> 
+    label = ace_prefix + label 
+ 
+    </span><span class="s0"># Step 8: Check size</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s5">0 </span><span class="s1">&lt; len(label) &lt; </span><span class="s5">64</span><span class="s1">: 
+        </span><span class="s2">return </span><span class="s1">label 
+    </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;label empty or too long&quot;</span><span class="s1">) 
+ 
+</span><span class="s2">def </span><span class="s1">ToUnicode(label): 
+    </span><span class="s0"># Step 1: Check for ASCII</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">isinstance(label</span><span class="s2">, </span><span class="s1">bytes): 
+        pure_ascii = </span><span class="s2">True</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s2">try</span><span class="s1">: 
+            label = label.encode(</span><span class="s3">&quot;ascii&quot;</span><span class="s1">) 
+            pure_ascii = </span><span class="s2">True</span><span class="s1"> 
+        </span><span class="s2">except </span><span class="s1">UnicodeError: 
+            pure_ascii = </span><span class="s2">False</span><span class="s1"> 
+    </span><span class="s2">if not </span><span class="s1">pure_ascii: 
+        </span><span class="s0"># Step 2: Perform nameprep</span><span class="s1"> 
+        label = nameprep(label) 
+        </span><span class="s0"># It doesn't say this, but apparently, it should be ASCII now</span><span class="s1"> 
+        </span><span class="s2">try</span><span class="s1">: 
+            label = label.encode(</span><span class="s3">&quot;ascii&quot;</span><span class="s1">) 
+        </span><span class="s2">except </span><span class="s1">UnicodeError: 
+            </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;Invalid character in IDN label&quot;</span><span class="s1">) 
+    </span><span class="s0"># Step 3: Check for ACE prefix</span><span class="s1"> 
+    </span><span class="s2">if not </span><span class="s1">label.startswith(ace_prefix): 
+        </span><span class="s2">return </span><span class="s1">str(label</span><span class="s2">, </span><span class="s3">&quot;ascii&quot;</span><span class="s1">) 
+ 
+    </span><span class="s0"># Step 4: Remove ACE prefix</span><span class="s1"> 
+    label1 = label[len(ace_prefix):] 
+ 
+    </span><span class="s0"># Step 5: Decode using PUNYCODE</span><span class="s1"> 
+    result = label1.decode(</span><span class="s3">&quot;punycode&quot;</span><span class="s1">) 
+ 
+    </span><span class="s0"># Step 6: Apply ToASCII</span><span class="s1"> 
+    label2 = ToASCII(result) 
+ 
+    </span><span class="s0"># Step 7: Compare the result of step 6 with the one of step 3</span><span class="s1"> 
+    </span><span class="s0"># label2 will already be in lower case.</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">str(label</span><span class="s2">, </span><span class="s3">&quot;ascii&quot;</span><span class="s1">).lower() != str(label2</span><span class="s2">, </span><span class="s3">&quot;ascii&quot;</span><span class="s1">): 
+        </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;IDNA does not round-trip&quot;</span><span class="s2">, </span><span class="s1">label</span><span class="s2">, </span><span class="s1">label2) 
+ 
+    </span><span class="s0"># Step 8: return the result of step 5</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">result 
+ 
+</span><span class="s0">### Codec APIs</span><span class="s1"> 
+ 
+</span><span class="s2">class </span><span class="s1">Codec(codecs.Codec): 
+    </span><span class="s2">def </span><span class="s1">encode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">errors=</span><span class="s3">'strict'</span><span class="s1">): 
+ 
+        </span><span class="s2">if </span><span class="s1">errors != </span><span class="s3">'strict'</span><span class="s1">: 
+            </span><span class="s0"># IDNA is quite clear that implementations must be strict</span><span class="s1"> 
+            </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;unsupported error handling &quot;</span><span class="s1">+errors) 
+ 
+        </span><span class="s2">if not </span><span class="s1">input: 
+            </span><span class="s2">return </span><span class="s4">b''</span><span class="s2">, </span><span class="s5">0</span><span class="s1"> 
+ 
+        </span><span class="s2">try</span><span class="s1">: 
+            result = input.encode(</span><span class="s3">'ascii'</span><span class="s1">) 
+        </span><span class="s2">except </span><span class="s1">UnicodeEncodeError: 
+            </span><span class="s2">pass</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s0"># ASCII name: fast path</span><span class="s1"> 
+            labels = result.split(</span><span class="s4">b'.'</span><span class="s1">) 
+            </span><span class="s2">for </span><span class="s1">label </span><span class="s2">in </span><span class="s1">labels[:-</span><span class="s5">1</span><span class="s1">]: 
+                </span><span class="s2">if not </span><span class="s1">(</span><span class="s5">0 </span><span class="s1">&lt; len(label) &lt; </span><span class="s5">64</span><span class="s1">): 
+                    </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;label empty or too long&quot;</span><span class="s1">) 
+            </span><span class="s2">if </span><span class="s1">len(labels[-</span><span class="s5">1</span><span class="s1">]) &gt;= </span><span class="s5">64</span><span class="s1">: 
+                </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;label too long&quot;</span><span class="s1">) 
+            </span><span class="s2">return </span><span class="s1">result</span><span class="s2">, </span><span class="s1">len(input) 
+ 
+        result = bytearray() 
+        labels = dots.split(input) 
+        </span><span class="s2">if </span><span class="s1">labels </span><span class="s2">and not </span><span class="s1">labels[-</span><span class="s5">1</span><span class="s1">]: 
+            trailing_dot = </span><span class="s4">b'.'</span><span class="s1"> 
+            </span><span class="s2">del </span><span class="s1">labels[-</span><span class="s5">1</span><span class="s1">] 
+        </span><span class="s2">else</span><span class="s1">: 
+            trailing_dot = </span><span class="s4">b''</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">label </span><span class="s2">in </span><span class="s1">labels: 
+            </span><span class="s2">if </span><span class="s1">result: 
+                </span><span class="s0"># Join with U+002E</span><span class="s1"> 
+                result.extend(</span><span class="s4">b'.'</span><span class="s1">) 
+            result.extend(ToASCII(label)) 
+        </span><span class="s2">return </span><span class="s1">bytes(result+trailing_dot)</span><span class="s2">, </span><span class="s1">len(input) 
+ 
+    </span><span class="s2">def </span><span class="s1">decode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">errors=</span><span class="s3">'strict'</span><span class="s1">): 
+ 
+        </span><span class="s2">if </span><span class="s1">errors != </span><span class="s3">'strict'</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;Unsupported error handling &quot;</span><span class="s1">+errors) 
+ 
+        </span><span class="s2">if not </span><span class="s1">input: 
+            </span><span class="s2">return </span><span class="s3">&quot;&quot;</span><span class="s2">, </span><span class="s5">0</span><span class="s1"> 
+ 
+        </span><span class="s0"># IDNA allows decoding to operate on Unicode strings, too.</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">isinstance(input</span><span class="s2">, </span><span class="s1">bytes): 
+            </span><span class="s0"># XXX obviously wrong, see #3232</span><span class="s1"> 
+            input = bytes(input) 
+ 
+        </span><span class="s2">if </span><span class="s1">ace_prefix </span><span class="s2">not in </span><span class="s1">input: 
+            </span><span class="s0"># Fast path</span><span class="s1"> 
+            </span><span class="s2">try</span><span class="s1">: 
+                </span><span class="s2">return </span><span class="s1">input.decode(</span><span class="s3">'ascii'</span><span class="s1">)</span><span class="s2">, </span><span class="s1">len(input) 
+            </span><span class="s2">except </span><span class="s1">UnicodeDecodeError: 
+                </span><span class="s2">pass</span><span class="s1"> 
+ 
+        labels = input.split(</span><span class="s4">b&quot;.&quot;</span><span class="s1">) 
+ 
+        </span><span class="s2">if </span><span class="s1">labels </span><span class="s2">and </span><span class="s1">len(labels[-</span><span class="s5">1</span><span class="s1">]) == </span><span class="s5">0</span><span class="s1">: 
+            trailing_dot = </span><span class="s3">'.'</span><span class="s1"> 
+            </span><span class="s2">del </span><span class="s1">labels[-</span><span class="s5">1</span><span class="s1">] 
+        </span><span class="s2">else</span><span class="s1">: 
+            trailing_dot = </span><span class="s3">''</span><span class="s1"> 
+ 
+        result = [] 
+        </span><span class="s2">for </span><span class="s1">label </span><span class="s2">in </span><span class="s1">labels: 
+            result.append(ToUnicode(label)) 
+ 
+        </span><span class="s2">return </span><span class="s3">&quot;.&quot;</span><span class="s1">.join(result)+trailing_dot</span><span class="s2">, </span><span class="s1">len(input) 
+ 
+</span><span class="s2">class </span><span class="s1">IncrementalEncoder(codecs.BufferedIncrementalEncoder): 
+    </span><span class="s2">def </span><span class="s1">_buffer_encode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">errors</span><span class="s2">, </span><span class="s1">final): 
+        </span><span class="s2">if </span><span class="s1">errors != </span><span class="s3">'strict'</span><span class="s1">: 
+            </span><span class="s0"># IDNA is quite clear that implementations must be strict</span><span class="s1"> 
+            </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;unsupported error handling &quot;</span><span class="s1">+errors) 
+ 
+        </span><span class="s2">if not </span><span class="s1">input: 
+            </span><span class="s2">return </span><span class="s1">(</span><span class="s4">b''</span><span class="s2">, </span><span class="s5">0</span><span class="s1">) 
+ 
+        labels = dots.split(input) 
+        trailing_dot = </span><span class="s4">b''</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">labels: 
+            </span><span class="s2">if not </span><span class="s1">labels[-</span><span class="s5">1</span><span class="s1">]: 
+                trailing_dot = </span><span class="s4">b'.'</span><span class="s1"> 
+                </span><span class="s2">del </span><span class="s1">labels[-</span><span class="s5">1</span><span class="s1">] 
+            </span><span class="s2">elif not </span><span class="s1">final: 
+                </span><span class="s0"># Keep potentially unfinished label until the next call</span><span class="s1"> 
+                </span><span class="s2">del </span><span class="s1">labels[-</span><span class="s5">1</span><span class="s1">] 
+                </span><span class="s2">if </span><span class="s1">labels: 
+                    trailing_dot = </span><span class="s4">b'.'</span><span class="s1"> 
+ 
+        result = bytearray() 
+        size = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">label </span><span class="s2">in </span><span class="s1">labels: 
+            </span><span class="s2">if </span><span class="s1">size: 
+                </span><span class="s0"># Join with U+002E</span><span class="s1"> 
+                result.extend(</span><span class="s4">b'.'</span><span class="s1">) 
+                size += </span><span class="s5">1</span><span class="s1"> 
+            result.extend(ToASCII(label)) 
+            size += len(label) 
+ 
+        result += trailing_dot 
+        size += len(trailing_dot) 
+        </span><span class="s2">return </span><span class="s1">(bytes(result)</span><span class="s2">, </span><span class="s1">size) 
+ 
+</span><span class="s2">class </span><span class="s1">IncrementalDecoder(codecs.BufferedIncrementalDecoder): 
+    </span><span class="s2">def </span><span class="s1">_buffer_decode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">errors</span><span class="s2">, </span><span class="s1">final): 
+        </span><span class="s2">if </span><span class="s1">errors != </span><span class="s3">'strict'</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">UnicodeError(</span><span class="s3">&quot;Unsupported error handling &quot;</span><span class="s1">+errors) 
+ 
+        </span><span class="s2">if not </span><span class="s1">input: 
+            </span><span class="s2">return </span><span class="s1">(</span><span class="s3">&quot;&quot;</span><span class="s2">, </span><span class="s5">0</span><span class="s1">) 
+ 
+        </span><span class="s0"># IDNA allows decoding to operate on Unicode strings, too.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">isinstance(input</span><span class="s2">, </span><span class="s1">str): 
+            labels = dots.split(input) 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s0"># Must be ASCII string</span><span class="s1"> 
+            input = str(input</span><span class="s2">, </span><span class="s3">&quot;ascii&quot;</span><span class="s1">) 
+            labels = input.split(</span><span class="s3">&quot;.&quot;</span><span class="s1">) 
+ 
+        trailing_dot = </span><span class="s3">''</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">labels: 
+            </span><span class="s2">if not </span><span class="s1">labels[-</span><span class="s5">1</span><span class="s1">]: 
+                trailing_dot = </span><span class="s3">'.'</span><span class="s1"> 
+                </span><span class="s2">del </span><span class="s1">labels[-</span><span class="s5">1</span><span class="s1">] 
+            </span><span class="s2">elif not </span><span class="s1">final: 
+                </span><span class="s0"># Keep potentially unfinished label until the next call</span><span class="s1"> 
+                </span><span class="s2">del </span><span class="s1">labels[-</span><span class="s5">1</span><span class="s1">] 
+                </span><span class="s2">if </span><span class="s1">labels: 
+                    trailing_dot = </span><span class="s3">'.'</span><span class="s1"> 
+ 
+        result = [] 
+        size = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">label </span><span class="s2">in </span><span class="s1">labels: 
+            result.append(ToUnicode(label)) 
+            </span><span class="s2">if </span><span class="s1">size: 
+                size += </span><span class="s5">1</span><span class="s1"> 
+            size += len(label) 
+ 
+        result = </span><span class="s3">&quot;.&quot;</span><span class="s1">.join(result) + trailing_dot 
+        size += len(trailing_dot) 
+        </span><span class="s2">return </span><span class="s1">(result</span><span class="s2">, </span><span class="s1">size) 
+ 
+</span><span class="s2">class </span><span class="s1">StreamWriter(Codec</span><span class="s2">,</span><span class="s1">codecs.StreamWriter): 
+    </span><span class="s2">pass</span><span class="s1"> 
+ 
+</span><span class="s2">class </span><span class="s1">StreamReader(Codec</span><span class="s2">,</span><span class="s1">codecs.StreamReader): 
+    </span><span class="s2">pass</span><span class="s1"> 
+ 
+</span><span class="s0">### encodings module API</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">getregentry(): 
+    </span><span class="s2">return </span><span class="s1">codecs.CodecInfo( 
+        name=</span><span class="s3">'idna'</span><span class="s2">,</span><span class="s1"> 
+        encode=Codec().encode</span><span class="s2">,</span><span class="s1"> 
+        decode=Codec().decode</span><span class="s2">,</span><span class="s1"> 
+        incrementalencoder=IncrementalEncoder</span><span class="s2">,</span><span class="s1"> 
+        incrementaldecoder=IncrementalDecoder</span><span class="s2">,</span><span class="s1"> 
+        streamwriter=StreamWriter</span><span class="s2">,</span><span class="s1"> 
+        streamreader=StreamReader</span><span class="s2">,</span><span class="s1"> 
+    ) 
+</span></pre>
+</body>
+</html>

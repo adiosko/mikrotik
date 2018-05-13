@@ -1,0 +1,330 @@
+<html>
+<head>
+<title>cp1140.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(106,135,89); }
+.s1 { color: rgb(128,128,128); }
+.s2 { color: rgb(169,183,198); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+cp1140.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; Python Character Mapping Codec cp1140 generated from 'python-mappings/CP1140.TXT' with gencodec.py. 
+ 
+&quot;&quot;&quot;</span><span class="s1">#&quot;</span><span class="s2"> 
+ 
+</span><span class="s3">import </span><span class="s2">codecs 
+ 
+</span><span class="s1">### Codec APIs</span><span class="s2"> 
+ 
+</span><span class="s3">class </span><span class="s2">Codec(codecs.Codec): 
+ 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_encode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">encoding_table) 
+ 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_decode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">decoding_table) 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalEncoder(codecs.IncrementalEncoder): 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_encode(input</span><span class="s3">,</span><span class="s2">self.errors</span><span class="s3">,</span><span class="s2">encoding_table)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalDecoder(codecs.IncrementalDecoder): 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_decode(input</span><span class="s3">,</span><span class="s2">self.errors</span><span class="s3">,</span><span class="s2">decoding_table)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">StreamWriter(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamWriter): 
+    </span><span class="s3">pass</span><span class="s2"> 
+ 
+</span><span class="s3">class </span><span class="s2">StreamReader(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamReader): 
+    </span><span class="s3">pass</span><span class="s2"> 
+ 
+</span><span class="s1">### encodings module API</span><span class="s2"> 
+ 
+</span><span class="s3">def </span><span class="s2">getregentry(): 
+    </span><span class="s3">return </span><span class="s2">codecs.CodecInfo( 
+        name=</span><span class="s0">'cp1140'</span><span class="s3">,</span><span class="s2"> 
+        encode=Codec().encode</span><span class="s3">,</span><span class="s2"> 
+        decode=Codec().decode</span><span class="s3">,</span><span class="s2"> 
+        incrementalencoder=IncrementalEncoder</span><span class="s3">,</span><span class="s2"> 
+        incrementaldecoder=IncrementalDecoder</span><span class="s3">,</span><span class="s2"> 
+        streamreader=StreamReader</span><span class="s3">,</span><span class="s2"> 
+        streamwriter=StreamWriter</span><span class="s3">,</span><span class="s2"> 
+    ) 
+ 
+ 
+</span><span class="s1">### Decoding Table</span><span class="s2"> 
+ 
+decoding_table = ( 
+    </span><span class="s0">'</span><span class="s3">\x00</span><span class="s0">'     </span><span class="s1">#  0x00 -&gt; NULL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x01</span><span class="s0">'     </span><span class="s1">#  0x01 -&gt; START OF HEADING</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x02</span><span class="s0">'     </span><span class="s1">#  0x02 -&gt; START OF TEXT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x03</span><span class="s0">'     </span><span class="s1">#  0x03 -&gt; END OF TEXT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9c</span><span class="s0">'     </span><span class="s1">#  0x04 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\t</span><span class="s0">'       </span><span class="s1">#  0x05 -&gt; HORIZONTAL TABULATION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x86</span><span class="s0">'     </span><span class="s1">#  0x06 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x7f</span><span class="s0">'     </span><span class="s1">#  0x07 -&gt; DELETE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x97</span><span class="s0">'     </span><span class="s1">#  0x08 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8d</span><span class="s0">'     </span><span class="s1">#  0x09 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8e</span><span class="s0">'     </span><span class="s1">#  0x0A -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0b</span><span class="s0">'     </span><span class="s1">#  0x0B -&gt; VERTICAL TABULATION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0c</span><span class="s0">'     </span><span class="s1">#  0x0C -&gt; FORM FEED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\r</span><span class="s0">'       </span><span class="s1">#  0x0D -&gt; CARRIAGE RETURN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0e</span><span class="s0">'     </span><span class="s1">#  0x0E -&gt; SHIFT OUT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x0f</span><span class="s0">'     </span><span class="s1">#  0x0F -&gt; SHIFT IN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x10</span><span class="s0">'     </span><span class="s1">#  0x10 -&gt; DATA LINK ESCAPE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x11</span><span class="s0">'     </span><span class="s1">#  0x11 -&gt; DEVICE CONTROL ONE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x12</span><span class="s0">'     </span><span class="s1">#  0x12 -&gt; DEVICE CONTROL TWO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x13</span><span class="s0">'     </span><span class="s1">#  0x13 -&gt; DEVICE CONTROL THREE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9d</span><span class="s0">'     </span><span class="s1">#  0x14 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x85</span><span class="s0">'     </span><span class="s1">#  0x15 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x08</span><span class="s0">'     </span><span class="s1">#  0x16 -&gt; BACKSPACE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x87</span><span class="s0">'     </span><span class="s1">#  0x17 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x18</span><span class="s0">'     </span><span class="s1">#  0x18 -&gt; CANCEL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x19</span><span class="s0">'     </span><span class="s1">#  0x19 -&gt; END OF MEDIUM</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x92</span><span class="s0">'     </span><span class="s1">#  0x1A -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8f</span><span class="s0">'     </span><span class="s1">#  0x1B -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1c</span><span class="s0">'     </span><span class="s1">#  0x1C -&gt; FILE SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1d</span><span class="s0">'     </span><span class="s1">#  0x1D -&gt; GROUP SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1e</span><span class="s0">'     </span><span class="s1">#  0x1E -&gt; RECORD SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1f</span><span class="s0">'     </span><span class="s1">#  0x1F -&gt; UNIT SEPARATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x80</span><span class="s0">'     </span><span class="s1">#  0x20 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x81</span><span class="s0">'     </span><span class="s1">#  0x21 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x82</span><span class="s0">'     </span><span class="s1">#  0x22 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x83</span><span class="s0">'     </span><span class="s1">#  0x23 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x84</span><span class="s0">'     </span><span class="s1">#  0x24 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\n</span><span class="s0">'       </span><span class="s1">#  0x25 -&gt; LINE FEED</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x17</span><span class="s0">'     </span><span class="s1">#  0x26 -&gt; END OF TRANSMISSION BLOCK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1b</span><span class="s0">'     </span><span class="s1">#  0x27 -&gt; ESCAPE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x88</span><span class="s0">'     </span><span class="s1">#  0x28 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x89</span><span class="s0">'     </span><span class="s1">#  0x29 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8a</span><span class="s0">'     </span><span class="s1">#  0x2A -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8b</span><span class="s0">'     </span><span class="s1">#  0x2B -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x8c</span><span class="s0">'     </span><span class="s1">#  0x2C -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x05</span><span class="s0">'     </span><span class="s1">#  0x2D -&gt; ENQUIRY</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x06</span><span class="s0">'     </span><span class="s1">#  0x2E -&gt; ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x07</span><span class="s0">'     </span><span class="s1">#  0x2F -&gt; BELL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x90</span><span class="s0">'     </span><span class="s1">#  0x30 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x91</span><span class="s0">'     </span><span class="s1">#  0x31 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x16</span><span class="s0">'     </span><span class="s1">#  0x32 -&gt; SYNCHRONOUS IDLE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x93</span><span class="s0">'     </span><span class="s1">#  0x33 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x94</span><span class="s0">'     </span><span class="s1">#  0x34 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x95</span><span class="s0">'     </span><span class="s1">#  0x35 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x96</span><span class="s0">'     </span><span class="s1">#  0x36 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x04</span><span class="s0">'     </span><span class="s1">#  0x37 -&gt; END OF TRANSMISSION</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x98</span><span class="s0">'     </span><span class="s1">#  0x38 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x99</span><span class="s0">'     </span><span class="s1">#  0x39 -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9a</span><span class="s0">'     </span><span class="s1">#  0x3A -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9b</span><span class="s0">'     </span><span class="s1">#  0x3B -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x14</span><span class="s0">'     </span><span class="s1">#  0x3C -&gt; DEVICE CONTROL FOUR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x15</span><span class="s0">'     </span><span class="s1">#  0x3D -&gt; NEGATIVE ACKNOWLEDGE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9e</span><span class="s0">'     </span><span class="s1">#  0x3E -&gt; CONTROL</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x1a</span><span class="s0">'     </span><span class="s1">#  0x3F -&gt; SUBSTITUTE</span><span class="s2"> 
+    </span><span class="s0">' '        </span><span class="s1">#  0x40 -&gt; SPACE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa0</span><span class="s0">'     </span><span class="s1">#  0x41 -&gt; NO-BREAK SPACE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe2</span><span class="s0">'     </span><span class="s1">#  0x42 -&gt; LATIN SMALL LETTER A WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe4</span><span class="s0">'     </span><span class="s1">#  0x43 -&gt; LATIN SMALL LETTER A WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe0</span><span class="s0">'     </span><span class="s1">#  0x44 -&gt; LATIN SMALL LETTER A WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe1</span><span class="s0">'     </span><span class="s1">#  0x45 -&gt; LATIN SMALL LETTER A WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe3</span><span class="s0">'     </span><span class="s1">#  0x46 -&gt; LATIN SMALL LETTER A WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe5</span><span class="s0">'     </span><span class="s1">#  0x47 -&gt; LATIN SMALL LETTER A WITH RING ABOVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe7</span><span class="s0">'     </span><span class="s1">#  0x48 -&gt; LATIN SMALL LETTER C WITH CEDILLA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf1</span><span class="s0">'     </span><span class="s1">#  0x49 -&gt; LATIN SMALL LETTER N WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa2</span><span class="s0">'     </span><span class="s1">#  0x4A -&gt; CENT SIGN</span><span class="s2"> 
+    </span><span class="s0">'.'        </span><span class="s1">#  0x4B -&gt; FULL STOP</span><span class="s2"> 
+    </span><span class="s0">'&lt;'        </span><span class="s1">#  0x4C -&gt; LESS-THAN SIGN</span><span class="s2"> 
+    </span><span class="s0">'('        </span><span class="s1">#  0x4D -&gt; LEFT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s0">'+'        </span><span class="s1">#  0x4E -&gt; PLUS SIGN</span><span class="s2"> 
+    </span><span class="s0">'|'        </span><span class="s1">#  0x4F -&gt; VERTICAL LINE</span><span class="s2"> 
+    </span><span class="s0">'&amp;'        </span><span class="s1">#  0x50 -&gt; AMPERSAND</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe9</span><span class="s0">'     </span><span class="s1">#  0x51 -&gt; LATIN SMALL LETTER E WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xea</span><span class="s0">'     </span><span class="s1">#  0x52 -&gt; LATIN SMALL LETTER E WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xeb</span><span class="s0">'     </span><span class="s1">#  0x53 -&gt; LATIN SMALL LETTER E WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe8</span><span class="s0">'     </span><span class="s1">#  0x54 -&gt; LATIN SMALL LETTER E WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xed</span><span class="s0">'     </span><span class="s1">#  0x55 -&gt; LATIN SMALL LETTER I WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xee</span><span class="s0">'     </span><span class="s1">#  0x56 -&gt; LATIN SMALL LETTER I WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xef</span><span class="s0">'     </span><span class="s1">#  0x57 -&gt; LATIN SMALL LETTER I WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xec</span><span class="s0">'     </span><span class="s1">#  0x58 -&gt; LATIN SMALL LETTER I WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xdf</span><span class="s0">'     </span><span class="s1">#  0x59 -&gt; LATIN SMALL LETTER SHARP S (GERMAN)</span><span class="s2"> 
+    </span><span class="s0">'!'        </span><span class="s1">#  0x5A -&gt; EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s0">'$'        </span><span class="s1">#  0x5B -&gt; DOLLAR SIGN</span><span class="s2"> 
+    </span><span class="s0">'*'        </span><span class="s1">#  0x5C -&gt; ASTERISK</span><span class="s2"> 
+    </span><span class="s0">')'        </span><span class="s1">#  0x5D -&gt; RIGHT PARENTHESIS</span><span class="s2"> 
+    </span><span class="s0">';'        </span><span class="s1">#  0x5E -&gt; SEMICOLON</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xac</span><span class="s0">'     </span><span class="s1">#  0x5F -&gt; NOT SIGN</span><span class="s2"> 
+    </span><span class="s0">'-'        </span><span class="s1">#  0x60 -&gt; HYPHEN-MINUS</span><span class="s2"> 
+    </span><span class="s0">'/'        </span><span class="s1">#  0x61 -&gt; SOLIDUS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc2</span><span class="s0">'     </span><span class="s1">#  0x62 -&gt; LATIN CAPITAL LETTER A WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc4</span><span class="s0">'     </span><span class="s1">#  0x63 -&gt; LATIN CAPITAL LETTER A WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc0</span><span class="s0">'     </span><span class="s1">#  0x64 -&gt; LATIN CAPITAL LETTER A WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc1</span><span class="s0">'     </span><span class="s1">#  0x65 -&gt; LATIN CAPITAL LETTER A WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc3</span><span class="s0">'     </span><span class="s1">#  0x66 -&gt; LATIN CAPITAL LETTER A WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc5</span><span class="s0">'     </span><span class="s1">#  0x67 -&gt; LATIN CAPITAL LETTER A WITH RING ABOVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc7</span><span class="s0">'     </span><span class="s1">#  0x68 -&gt; LATIN CAPITAL LETTER C WITH CEDILLA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd1</span><span class="s0">'     </span><span class="s1">#  0x69 -&gt; LATIN CAPITAL LETTER N WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa6</span><span class="s0">'     </span><span class="s1">#  0x6A -&gt; BROKEN BAR</span><span class="s2"> 
+    </span><span class="s0">','        </span><span class="s1">#  0x6B -&gt; COMMA</span><span class="s2"> 
+    </span><span class="s0">'%'        </span><span class="s1">#  0x6C -&gt; PERCENT SIGN</span><span class="s2"> 
+    </span><span class="s0">'_'        </span><span class="s1">#  0x6D -&gt; LOW LINE</span><span class="s2"> 
+    </span><span class="s0">'&gt;'        </span><span class="s1">#  0x6E -&gt; GREATER-THAN SIGN</span><span class="s2"> 
+    </span><span class="s0">'?'        </span><span class="s1">#  0x6F -&gt; QUESTION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf8</span><span class="s0">'     </span><span class="s1">#  0x70 -&gt; LATIN SMALL LETTER O WITH STROKE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc9</span><span class="s0">'     </span><span class="s1">#  0x71 -&gt; LATIN CAPITAL LETTER E WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xca</span><span class="s0">'     </span><span class="s1">#  0x72 -&gt; LATIN CAPITAL LETTER E WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xcb</span><span class="s0">'     </span><span class="s1">#  0x73 -&gt; LATIN CAPITAL LETTER E WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc8</span><span class="s0">'     </span><span class="s1">#  0x74 -&gt; LATIN CAPITAL LETTER E WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xcd</span><span class="s0">'     </span><span class="s1">#  0x75 -&gt; LATIN CAPITAL LETTER I WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xce</span><span class="s0">'     </span><span class="s1">#  0x76 -&gt; LATIN CAPITAL LETTER I WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xcf</span><span class="s0">'     </span><span class="s1">#  0x77 -&gt; LATIN CAPITAL LETTER I WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xcc</span><span class="s0">'     </span><span class="s1">#  0x78 -&gt; LATIN CAPITAL LETTER I WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'`'        </span><span class="s1">#  0x79 -&gt; GRAVE ACCENT</span><span class="s2"> 
+    </span><span class="s0">':'        </span><span class="s1">#  0x7A -&gt; COLON</span><span class="s2"> 
+    </span><span class="s0">'#'        </span><span class="s1">#  0x7B -&gt; NUMBER SIGN</span><span class="s2"> 
+    </span><span class="s0">'@'        </span><span class="s1">#  0x7C -&gt; COMMERCIAL AT</span><span class="s2"> 
+    </span><span class="s0">&quot;'&quot;        </span><span class="s1">#  0x7D -&gt; APOSTROPHE</span><span class="s2"> 
+    </span><span class="s0">'='        </span><span class="s1">#  0x7E -&gt; EQUALS SIGN</span><span class="s2"> 
+    </span><span class="s0">'&quot;'        </span><span class="s1">#  0x7F -&gt; QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd8</span><span class="s0">'     </span><span class="s1">#  0x80 -&gt; LATIN CAPITAL LETTER O WITH STROKE</span><span class="s2"> 
+    </span><span class="s0">'a'        </span><span class="s1">#  0x81 -&gt; LATIN SMALL LETTER A</span><span class="s2"> 
+    </span><span class="s0">'b'        </span><span class="s1">#  0x82 -&gt; LATIN SMALL LETTER B</span><span class="s2"> 
+    </span><span class="s0">'c'        </span><span class="s1">#  0x83 -&gt; LATIN SMALL LETTER C</span><span class="s2"> 
+    </span><span class="s0">'d'        </span><span class="s1">#  0x84 -&gt; LATIN SMALL LETTER D</span><span class="s2"> 
+    </span><span class="s0">'e'        </span><span class="s1">#  0x85 -&gt; LATIN SMALL LETTER E</span><span class="s2"> 
+    </span><span class="s0">'f'        </span><span class="s1">#  0x86 -&gt; LATIN SMALL LETTER F</span><span class="s2"> 
+    </span><span class="s0">'g'        </span><span class="s1">#  0x87 -&gt; LATIN SMALL LETTER G</span><span class="s2"> 
+    </span><span class="s0">'h'        </span><span class="s1">#  0x88 -&gt; LATIN SMALL LETTER H</span><span class="s2"> 
+    </span><span class="s0">'i'        </span><span class="s1">#  0x89 -&gt; LATIN SMALL LETTER I</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xab</span><span class="s0">'     </span><span class="s1">#  0x8A -&gt; LEFT-POINTING DOUBLE ANGLE QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbb</span><span class="s0">'     </span><span class="s1">#  0x8B -&gt; RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf0</span><span class="s0">'     </span><span class="s1">#  0x8C -&gt; LATIN SMALL LETTER ETH (ICELANDIC)</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xfd</span><span class="s0">'     </span><span class="s1">#  0x8D -&gt; LATIN SMALL LETTER Y WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xfe</span><span class="s0">'     </span><span class="s1">#  0x8E -&gt; LATIN SMALL LETTER THORN (ICELANDIC)</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb1</span><span class="s0">'     </span><span class="s1">#  0x8F -&gt; PLUS-MINUS SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb0</span><span class="s0">'     </span><span class="s1">#  0x90 -&gt; DEGREE SIGN</span><span class="s2"> 
+    </span><span class="s0">'j'        </span><span class="s1">#  0x91 -&gt; LATIN SMALL LETTER J</span><span class="s2"> 
+    </span><span class="s0">'k'        </span><span class="s1">#  0x92 -&gt; LATIN SMALL LETTER K</span><span class="s2"> 
+    </span><span class="s0">'l'        </span><span class="s1">#  0x93 -&gt; LATIN SMALL LETTER L</span><span class="s2"> 
+    </span><span class="s0">'m'        </span><span class="s1">#  0x94 -&gt; LATIN SMALL LETTER M</span><span class="s2"> 
+    </span><span class="s0">'n'        </span><span class="s1">#  0x95 -&gt; LATIN SMALL LETTER N</span><span class="s2"> 
+    </span><span class="s0">'o'        </span><span class="s1">#  0x96 -&gt; LATIN SMALL LETTER O</span><span class="s2"> 
+    </span><span class="s0">'p'        </span><span class="s1">#  0x97 -&gt; LATIN SMALL LETTER P</span><span class="s2"> 
+    </span><span class="s0">'q'        </span><span class="s1">#  0x98 -&gt; LATIN SMALL LETTER Q</span><span class="s2"> 
+    </span><span class="s0">'r'        </span><span class="s1">#  0x99 -&gt; LATIN SMALL LETTER R</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xaa</span><span class="s0">'     </span><span class="s1">#  0x9A -&gt; FEMININE ORDINAL INDICATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xba</span><span class="s0">'     </span><span class="s1">#  0x9B -&gt; MASCULINE ORDINAL INDICATOR</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xe6</span><span class="s0">'     </span><span class="s1">#  0x9C -&gt; LATIN SMALL LIGATURE AE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb8</span><span class="s0">'     </span><span class="s1">#  0x9D -&gt; CEDILLA</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xc6</span><span class="s0">'     </span><span class="s1">#  0x9E -&gt; LATIN CAPITAL LIGATURE AE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\u20ac</span><span class="s0">'   </span><span class="s1">#  0x9F -&gt; EURO SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb5</span><span class="s0">'     </span><span class="s1">#  0xA0 -&gt; MICRO SIGN</span><span class="s2"> 
+    </span><span class="s0">'~'        </span><span class="s1">#  0xA1 -&gt; TILDE</span><span class="s2"> 
+    </span><span class="s0">'s'        </span><span class="s1">#  0xA2 -&gt; LATIN SMALL LETTER S</span><span class="s2"> 
+    </span><span class="s0">'t'        </span><span class="s1">#  0xA3 -&gt; LATIN SMALL LETTER T</span><span class="s2"> 
+    </span><span class="s0">'u'        </span><span class="s1">#  0xA4 -&gt; LATIN SMALL LETTER U</span><span class="s2"> 
+    </span><span class="s0">'v'        </span><span class="s1">#  0xA5 -&gt; LATIN SMALL LETTER V</span><span class="s2"> 
+    </span><span class="s0">'w'        </span><span class="s1">#  0xA6 -&gt; LATIN SMALL LETTER W</span><span class="s2"> 
+    </span><span class="s0">'x'        </span><span class="s1">#  0xA7 -&gt; LATIN SMALL LETTER X</span><span class="s2"> 
+    </span><span class="s0">'y'        </span><span class="s1">#  0xA8 -&gt; LATIN SMALL LETTER Y</span><span class="s2"> 
+    </span><span class="s0">'z'        </span><span class="s1">#  0xA9 -&gt; LATIN SMALL LETTER Z</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa1</span><span class="s0">'     </span><span class="s1">#  0xAA -&gt; INVERTED EXCLAMATION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbf</span><span class="s0">'     </span><span class="s1">#  0xAB -&gt; INVERTED QUESTION MARK</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd0</span><span class="s0">'     </span><span class="s1">#  0xAC -&gt; LATIN CAPITAL LETTER ETH (ICELANDIC)</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xdd</span><span class="s0">'     </span><span class="s1">#  0xAD -&gt; LATIN CAPITAL LETTER Y WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xde</span><span class="s0">'     </span><span class="s1">#  0xAE -&gt; LATIN CAPITAL LETTER THORN (ICELANDIC)</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xae</span><span class="s0">'     </span><span class="s1">#  0xAF -&gt; REGISTERED SIGN</span><span class="s2"> 
+    </span><span class="s0">'^'        </span><span class="s1">#  0xB0 -&gt; CIRCUMFLEX ACCENT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa3</span><span class="s0">'     </span><span class="s1">#  0xB1 -&gt; POUND SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa5</span><span class="s0">'     </span><span class="s1">#  0xB2 -&gt; YEN SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb7</span><span class="s0">'     </span><span class="s1">#  0xB3 -&gt; MIDDLE DOT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa9</span><span class="s0">'     </span><span class="s1">#  0xB4 -&gt; COPYRIGHT SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa7</span><span class="s0">'     </span><span class="s1">#  0xB5 -&gt; SECTION SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb6</span><span class="s0">'     </span><span class="s1">#  0xB6 -&gt; PILCROW SIGN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbc</span><span class="s0">'     </span><span class="s1">#  0xB7 -&gt; VULGAR FRACTION ONE QUARTER</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbd</span><span class="s0">'     </span><span class="s1">#  0xB8 -&gt; VULGAR FRACTION ONE HALF</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xbe</span><span class="s0">'     </span><span class="s1">#  0xB9 -&gt; VULGAR FRACTION THREE QUARTERS</span><span class="s2"> 
+    </span><span class="s0">'['        </span><span class="s1">#  0xBA -&gt; LEFT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s0">']'        </span><span class="s1">#  0xBB -&gt; RIGHT SQUARE BRACKET</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xaf</span><span class="s0">'     </span><span class="s1">#  0xBC -&gt; MACRON</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xa8</span><span class="s0">'     </span><span class="s1">#  0xBD -&gt; DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb4</span><span class="s0">'     </span><span class="s1">#  0xBE -&gt; ACUTE ACCENT</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd7</span><span class="s0">'     </span><span class="s1">#  0xBF -&gt; MULTIPLICATION SIGN</span><span class="s2"> 
+    </span><span class="s0">'{'        </span><span class="s1">#  0xC0 -&gt; LEFT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s0">'A'        </span><span class="s1">#  0xC1 -&gt; LATIN CAPITAL LETTER A</span><span class="s2"> 
+    </span><span class="s0">'B'        </span><span class="s1">#  0xC2 -&gt; LATIN CAPITAL LETTER B</span><span class="s2"> 
+    </span><span class="s0">'C'        </span><span class="s1">#  0xC3 -&gt; LATIN CAPITAL LETTER C</span><span class="s2"> 
+    </span><span class="s0">'D'        </span><span class="s1">#  0xC4 -&gt; LATIN CAPITAL LETTER D</span><span class="s2"> 
+    </span><span class="s0">'E'        </span><span class="s1">#  0xC5 -&gt; LATIN CAPITAL LETTER E</span><span class="s2"> 
+    </span><span class="s0">'F'        </span><span class="s1">#  0xC6 -&gt; LATIN CAPITAL LETTER F</span><span class="s2"> 
+    </span><span class="s0">'G'        </span><span class="s1">#  0xC7 -&gt; LATIN CAPITAL LETTER G</span><span class="s2"> 
+    </span><span class="s0">'H'        </span><span class="s1">#  0xC8 -&gt; LATIN CAPITAL LETTER H</span><span class="s2"> 
+    </span><span class="s0">'I'        </span><span class="s1">#  0xC9 -&gt; LATIN CAPITAL LETTER I</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xad</span><span class="s0">'     </span><span class="s1">#  0xCA -&gt; SOFT HYPHEN</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf4</span><span class="s0">'     </span><span class="s1">#  0xCB -&gt; LATIN SMALL LETTER O WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf6</span><span class="s0">'     </span><span class="s1">#  0xCC -&gt; LATIN SMALL LETTER O WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf2</span><span class="s0">'     </span><span class="s1">#  0xCD -&gt; LATIN SMALL LETTER O WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf3</span><span class="s0">'     </span><span class="s1">#  0xCE -&gt; LATIN SMALL LETTER O WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf5</span><span class="s0">'     </span><span class="s1">#  0xCF -&gt; LATIN SMALL LETTER O WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'}'        </span><span class="s1">#  0xD0 -&gt; RIGHT CURLY BRACKET</span><span class="s2"> 
+    </span><span class="s0">'J'        </span><span class="s1">#  0xD1 -&gt; LATIN CAPITAL LETTER J</span><span class="s2"> 
+    </span><span class="s0">'K'        </span><span class="s1">#  0xD2 -&gt; LATIN CAPITAL LETTER K</span><span class="s2"> 
+    </span><span class="s0">'L'        </span><span class="s1">#  0xD3 -&gt; LATIN CAPITAL LETTER L</span><span class="s2"> 
+    </span><span class="s0">'M'        </span><span class="s1">#  0xD4 -&gt; LATIN CAPITAL LETTER M</span><span class="s2"> 
+    </span><span class="s0">'N'        </span><span class="s1">#  0xD5 -&gt; LATIN CAPITAL LETTER N</span><span class="s2"> 
+    </span><span class="s0">'O'        </span><span class="s1">#  0xD6 -&gt; LATIN CAPITAL LETTER O</span><span class="s2"> 
+    </span><span class="s0">'P'        </span><span class="s1">#  0xD7 -&gt; LATIN CAPITAL LETTER P</span><span class="s2"> 
+    </span><span class="s0">'Q'        </span><span class="s1">#  0xD8 -&gt; LATIN CAPITAL LETTER Q</span><span class="s2"> 
+    </span><span class="s0">'R'        </span><span class="s1">#  0xD9 -&gt; LATIN CAPITAL LETTER R</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb9</span><span class="s0">'     </span><span class="s1">#  0xDA -&gt; SUPERSCRIPT ONE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xfb</span><span class="s0">'     </span><span class="s1">#  0xDB -&gt; LATIN SMALL LETTER U WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xfc</span><span class="s0">'     </span><span class="s1">#  0xDC -&gt; LATIN SMALL LETTER U WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf9</span><span class="s0">'     </span><span class="s1">#  0xDD -&gt; LATIN SMALL LETTER U WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xfa</span><span class="s0">'     </span><span class="s1">#  0xDE -&gt; LATIN SMALL LETTER U WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xff</span><span class="s0">'     </span><span class="s1">#  0xDF -&gt; LATIN SMALL LETTER Y WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\\</span><span class="s0">'       </span><span class="s1">#  0xE0 -&gt; REVERSE SOLIDUS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xf7</span><span class="s0">'     </span><span class="s1">#  0xE1 -&gt; DIVISION SIGN</span><span class="s2"> 
+    </span><span class="s0">'S'        </span><span class="s1">#  0xE2 -&gt; LATIN CAPITAL LETTER S</span><span class="s2"> 
+    </span><span class="s0">'T'        </span><span class="s1">#  0xE3 -&gt; LATIN CAPITAL LETTER T</span><span class="s2"> 
+    </span><span class="s0">'U'        </span><span class="s1">#  0xE4 -&gt; LATIN CAPITAL LETTER U</span><span class="s2"> 
+    </span><span class="s0">'V'        </span><span class="s1">#  0xE5 -&gt; LATIN CAPITAL LETTER V</span><span class="s2"> 
+    </span><span class="s0">'W'        </span><span class="s1">#  0xE6 -&gt; LATIN CAPITAL LETTER W</span><span class="s2"> 
+    </span><span class="s0">'X'        </span><span class="s1">#  0xE7 -&gt; LATIN CAPITAL LETTER X</span><span class="s2"> 
+    </span><span class="s0">'Y'        </span><span class="s1">#  0xE8 -&gt; LATIN CAPITAL LETTER Y</span><span class="s2"> 
+    </span><span class="s0">'Z'        </span><span class="s1">#  0xE9 -&gt; LATIN CAPITAL LETTER Z</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb2</span><span class="s0">'     </span><span class="s1">#  0xEA -&gt; SUPERSCRIPT TWO</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd4</span><span class="s0">'     </span><span class="s1">#  0xEB -&gt; LATIN CAPITAL LETTER O WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd6</span><span class="s0">'     </span><span class="s1">#  0xEC -&gt; LATIN CAPITAL LETTER O WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd2</span><span class="s0">'     </span><span class="s1">#  0xED -&gt; LATIN CAPITAL LETTER O WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd3</span><span class="s0">'     </span><span class="s1">#  0xEE -&gt; LATIN CAPITAL LETTER O WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd5</span><span class="s0">'     </span><span class="s1">#  0xEF -&gt; LATIN CAPITAL LETTER O WITH TILDE</span><span class="s2"> 
+    </span><span class="s0">'0'        </span><span class="s1">#  0xF0 -&gt; DIGIT ZERO</span><span class="s2"> 
+    </span><span class="s0">'1'        </span><span class="s1">#  0xF1 -&gt; DIGIT ONE</span><span class="s2"> 
+    </span><span class="s0">'2'        </span><span class="s1">#  0xF2 -&gt; DIGIT TWO</span><span class="s2"> 
+    </span><span class="s0">'3'        </span><span class="s1">#  0xF3 -&gt; DIGIT THREE</span><span class="s2"> 
+    </span><span class="s0">'4'        </span><span class="s1">#  0xF4 -&gt; DIGIT FOUR</span><span class="s2"> 
+    </span><span class="s0">'5'        </span><span class="s1">#  0xF5 -&gt; DIGIT FIVE</span><span class="s2"> 
+    </span><span class="s0">'6'        </span><span class="s1">#  0xF6 -&gt; DIGIT SIX</span><span class="s2"> 
+    </span><span class="s0">'7'        </span><span class="s1">#  0xF7 -&gt; DIGIT SEVEN</span><span class="s2"> 
+    </span><span class="s0">'8'        </span><span class="s1">#  0xF8 -&gt; DIGIT EIGHT</span><span class="s2"> 
+    </span><span class="s0">'9'        </span><span class="s1">#  0xF9 -&gt; DIGIT NINE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xb3</span><span class="s0">'     </span><span class="s1">#  0xFA -&gt; SUPERSCRIPT THREE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xdb</span><span class="s0">'     </span><span class="s1">#  0xFB -&gt; LATIN CAPITAL LETTER U WITH CIRCUMFLEX</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xdc</span><span class="s0">'     </span><span class="s1">#  0xFC -&gt; LATIN CAPITAL LETTER U WITH DIAERESIS</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xd9</span><span class="s0">'     </span><span class="s1">#  0xFD -&gt; LATIN CAPITAL LETTER U WITH GRAVE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\xda</span><span class="s0">'     </span><span class="s1">#  0xFE -&gt; LATIN CAPITAL LETTER U WITH ACUTE</span><span class="s2"> 
+    </span><span class="s0">'</span><span class="s3">\x9f</span><span class="s0">'     </span><span class="s1">#  0xFF -&gt; CONTROL</span><span class="s2"> 
+) 
+ 
+</span><span class="s1">### Encoding table</span><span class="s2"> 
+encoding_table=codecs.charmap_build(decoding_table) 
+</span></pre>
+</body>
+</html>

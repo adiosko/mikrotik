@@ -1,0 +1,157 @@
+<html>
+<head>
+<title>PrefixList.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+PrefixList.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">PrefixList: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listPrefixLists(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all prefix lists 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk([</span><span class="s4">'/routing/prefix-lists/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">prefix == {}: 
+            print(</span><span class="s4">&quot;No prefix list set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Chain</span><span class="s0">\t</span><span class="s4">Prefix</span><span class="s0">\t</span><span class="s4">Action&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">prefix: 
+                print(prefix[i][</span><span class="s4">'chain'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+prefix[i][</span><span class="s4">'prefix'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+prefix[i][</span><span class="s4">'action'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">addPrefixLIst(self</span><span class="s0">, </span><span class="s1">chain): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add pim based on address/prefix 
+        :param chain: custom rule chain name 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/add'</span><span class="s0">, </span><span class="s4">'=chain=' </span><span class="s1">+ chain] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">removePrefixLIst(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove rp 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">enablePrefixList(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable rp 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">disablePrefixLIst(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable rp 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix= self.client.talk( [</span><span class="s4">'/routing/prefix-lists/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">commentPrefixList(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment rp 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=comment=' </span><span class="s1">+ comment] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">setChain(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">chain): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set chain 
+        :param number: 
+        :param chain: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=chain=' </span><span class="s1">+ chain] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefix(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefix=</span><span class="s4">&quot;0.0.0.0/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prefix subnet 
+        :param number: 
+        :param prefix: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=prefix=' </span><span class="s1">+ prefix] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefixLength(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefix=</span><span class="s4">&quot;0-32&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prefix length 
+        :param number: 
+        :param prefix: max 32b 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=prefix-length=' </span><span class="s1">+ prefix] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">setInvertMatch(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will inver match 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=invert-match=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">setNonInvertMatch(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will uninvert match 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=invert-match=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">setAction(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">action=</span><span class="s4">&quot;accept&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set action of rule 
+        :param number: 
+        :param action: accept,discard 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=' </span><span class="s1">+ action] ) 
+        </span><span class="s0">return </span><span class="s1">prefix 
+ 
+    </span><span class="s0">def </span><span class="s1">setMetric(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">metric=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set metric 
+        :param number: 
+        :param metric: base on protocol  or distance 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        prefix = self.client.talk( [</span><span class="s4">'/routing/prefix-lists/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=set-metric=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">prefix</span></pre>
+</body>
+</html>

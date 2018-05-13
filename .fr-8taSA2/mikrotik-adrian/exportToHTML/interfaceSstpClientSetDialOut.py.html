@@ -1,0 +1,235 @@
+<html>
+<head>
+<title>interfaceSstpClientSetDialOut.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+interfaceSstpClientSetDialOut.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">interfaceSstpClientSetDialOut: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">address</span><span class="s0">, </span><span class="s1">username</span><span class="s0">, </span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">, </span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">setConnectTo(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">conect): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param conect: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk([</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=connect-to'</span><span class="s1">+conect]) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">setPort(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param conect: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk([</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=port='</span><span class="s1">+port]) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">setProxy(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">proxy</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param proxy: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk([</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=http-proxy='</span><span class="s1">+proxy+</span><span class="s4">&quot;:&quot;</span><span class="s1">+port]) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">setCertificate(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">cert): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param cert: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk([</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=certificate=' </span><span class="s1">+ cert] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">setTls(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">tls=</span><span class="s4">&quot;any&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param tls:any,only-1.2 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=tls-version=' </span><span class="s1">+ tls] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+    </span><span class="s0">def </span><span class="s1">enableVerifyclientCertificate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will e\verify cert 
+        :param name:  
+        :return:  
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=verify-client-certificate=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+    </span><span class="s0">def </span><span class="s1">disableVerifyclientCertificate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will e\verify cert 
+        :param name:  
+        :return:  
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=verify-client-certificate=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+    </span><span class="s0">def </span><span class="s1">enableVerifyclientAddressFromCertificate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will e\verify cert 
+        :param name:  
+        :return:  
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s1"> 
+                                  </span><span class="s4">'=verify-client-address-from-certificate=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+    </span><span class="s0">def </span><span class="s1">disableVerifyclientAddressFromCertificate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will e\verify cert 
+        :param name:  
+        :return:  
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s1"> 
+                                  </span><span class="s4">'=verify-client-address-from-certificate=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+    </span><span class="s0">def </span><span class="s1">enablePfs(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will e\verify cert 
+        :param name:  
+        :return:  
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=pfs=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+     
+    </span><span class="s0">def </span><span class="s1">disablePfs(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will e\verify cert 
+        :param name:  
+        :return:  
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=pfs=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+    </span><span class="s0">def </span><span class="s1">setUser(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">user): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set user 
+        :param name: 
+        :param user: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk([</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=user='</span><span class="s1">+user]) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+    </span><span class="s0">def </span><span class="s1">setPassword(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set password 
+        :param name: 
+        :param password: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=password=' </span><span class="s1">+ password] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">setProfile(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">profile=</span><span class="s4">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set profile 
+        :param name: 
+        :param profile: default,default-encryption 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=profile=' </span><span class="s1">+ profile] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+    </span><span class="s0">def </span><span class="s1">setKeepAliveTimeout(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">timeout=</span><span class="s4">&quot;30&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set keepalive timeout 
+        :param name: 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=keepalive-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">enableDialOnDemand(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable dial on demand 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=dial-on-demand=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">disableDialOnDemand(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable dial on demand 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=dial-on-demand=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">enableAddDefaultRoute(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable dial on demand 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=add-default-route=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">disableAddDefaultRoute(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable dial on demand 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=add-default-route=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+ 
+    </span><span class="s0">def </span><span class="s1">setDefRouteDistance(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">distance=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set def route distance 
+        :param name: 
+        :param distance: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.enableAddDefaultRoute(name) 
+        sstp = self.client.talk( [</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=default-route-distance=' </span><span class="s1">+ distance] ) 
+        </span><span class="s0">return </span><span class="s1">sstp 
+     
+    </span><span class="s0">def </span><span class="s1">setAllow(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">auth=</span><span class="s4">&quot;mschap2,mschap1,chap,pap&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename iface 
+        :param name: 
+        :param auth: mschap2,mschap1,pap,chap 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sstp = self.client.talk([</span><span class="s4">'/interface/sstp-client/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=allow='</span><span class="s1">+auth]) 
+        </span><span class="s0">return </span><span class="s1">sstp</span></pre>
+</body>
+</html>

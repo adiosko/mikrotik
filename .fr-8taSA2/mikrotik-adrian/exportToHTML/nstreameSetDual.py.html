@@ -1,0 +1,159 @@
+<html>
+<head>
+<title>nstreameSetDual.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+nstreameSetDual.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">NstreamSetDual: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setTxRadio(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">txradio): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set name 
+        :param name: 
+        :param txradio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=tx-radio='</span><span class="s1">+txradio]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setRxRadio(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">radio): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param radio: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=rx-radio=' </span><span class="s1">+ radio] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setRemoteMac(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mac=</span><span class="s4">&quot;00:00:00:00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=remote-mac=' </span><span class="s1">+ mac] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setTxBand(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">band): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param band: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=tx-band=' </span><span class="s1">+ band] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setTxChannelWidth(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">width): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param width:  5mhz,10mhz,20mhz,40mhz 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=tx-channel-width=' </span><span class="s1">+ width] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setTxFrequency(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">frequency=</span><span class="s4">&quot;5180&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param frequency: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=tx-frequency=' </span><span class="s1">+ frequency] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setRxBand(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">band): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param band: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=rx-band=' </span><span class="s1">+ band] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setRxChannelWidth(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">width): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param width:  5mhz,10mhz,20mhz,40mhz 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( 
+            [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=rx-channel-width=' </span><span class="s1">+ width] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setRxFrequency(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">frequency=</span><span class="s4">&quot;5320&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param frequency: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( 
+            [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=rx-frequency=' </span><span class="s1">+ frequency] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">enableCsma(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=disable-csma=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">disableCsma(self</span><span class="s0">, </span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=disable-csma=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setFramerPolicy(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">size=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param size: none,best-fit,exact-size 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=framer-policy='</span><span class="s1">+size] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setFrameLimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;2560&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param limit: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/interface/wireless/nstreme-dual/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=framer-limit='</span><span class="s1">+limit] ) 
+        </span><span class="s0">return </span><span class="s1">wifi</span></pre>
+</body>
+</html>

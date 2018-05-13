@@ -1,0 +1,258 @@
+<html>
+<head>
+<title>FilterActions.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+FilterActions.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">FilterActions: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setAction(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">action=</span><span class="s3">&quot;passthrough&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set passthrough action 
+        :param number: 
+        :param action: accept,discard,jump,log,passthrough,reject,return 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=action=' </span><span class="s1">+ action] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setJumpTarget(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">target=</span><span class="s3">&quot;connected-in&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set tar\ger for action jumpt 
+        :param target: connected-in, dynamic-in 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=action=jump'</span><span class="s0">,</span><span class="s3">'=jump-target=' </span><span class="s1">+ target] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setDistance(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">distance=</span><span class="s3">&quot;255&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set distance 
+        :param number: 
+        :param distance: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=distance=' </span><span class="s1">+ distance] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setScope(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">scope=</span><span class="s3">&quot;255&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set distance 
+        :param number: 
+        :param distance: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=scope=' </span><span class="s1">+ scope] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setTargetScope(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">scope=</span><span class="s3">&quot;200&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set target scope 
+        :param number: 
+        :param scope: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=target-scope=' </span><span class="s1">+ scope] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefSource(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">source=</span><span class="s3">&quot;0.0.0.0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method wil lset prefer source address 
+        :param number: 
+        :param source: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-pref-src=' </span><span class="s1">+ source] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setInNexthop(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">nhop): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set next hop IP 
+        :param number: 
+        :param nhop: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-in-nexthop=' </span><span class="s1">+ nhop] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setInNexthopDirection(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">nhop=</span><span class="s3">&quot;ether1&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set next hop IP 
+        :param number: 
+        :param nhop: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-in-nexthop-direct=' </span><span class="s1">+ nhop] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutNexthop(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">nhop=</span><span class="s3">&quot;0.0.0.0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set out nhop address 
+        :param number: 
+        :param nhop: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-out-nexthop=' </span><span class="s1">+ nhop] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setRoutingMark(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mark=</span><span class="s3">&quot;main&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set routinh table 
+        :param number: 
+        :param mark: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-routing-mark=' </span><span class="s1">+ mark] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setROuteComment(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set route comment 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-route-comment=' </span><span class="s1">+ comment] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setCheckGateway(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">gw=</span><span class="s3">&quot;ping&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set gw 
+        :param number: 
+        :param gw: ping, arp,none 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-check-gateway=' </span><span class="s1">+ gw] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setDisabled(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">disable=</span><span class="s3">&quot;no&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set filter disabled 
+        :param number: 
+        :param disable: no/yes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-disabled=' </span><span class="s1">+ disable] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setType(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">type=</span><span class="s3">&quot;unicast&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set type 
+        :param number: 
+        :param type: unicast, blackhole,prohibit,unreachable 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-type=' </span><span class="s1">+ type] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setRouteTag(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">tag=</span><span class="s3">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set route tag 
+        :param number: 
+        :param tag: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-route-tag=' </span><span class="s1">+ tag] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+    </span><span class="s0">def </span><span class="s1">setUseTeNexthop(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">use=</span><span class="s3">&quot;no&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set to use TE 
+        :param number: 
+        :param use: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-use-te-nexthop=' </span><span class="s1">+ use] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setRouteTargets(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">target=</span><span class="s3">&quot;0:0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set target 
+        :param number: 
+        :param target: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-route-targets=' </span><span class="s1">+ target] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setAppendRouteTargets(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">target=</span><span class="s3">&quot;0:0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set target 
+        :param number: 
+        :param target: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=append-route-targets=' </span><span class="s1">+ target] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setSiteOrigin(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">origin=</span><span class="s3">&quot;0:0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set origin 
+        :param number: 
+        :param origin: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-site-of-origin=' </span><span class="s1">+ origin] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setInIpv6Nexthop(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">IPv6): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set in Ipv6 nexthop 
+        :param number: 
+        :param IPv6: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-in-nexthop-ipv6=' </span><span class="s1">+ IPv6] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setInIpv6NexthopLinklocal(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">interface=</span><span class="s3">&quot;ether1&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set interface and link local ipv6 address 
+        :param number: 
+        :param address: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-in-nexthop-linklocal=' </span><span class="s1">+ address+</span><span class="s3">&quot;%&quot;</span><span class="s1"> 
+                                 +interface] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutIpv6Nexthop(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">IPv6): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set Ipv6 out iface 
+        :param number: 
+        :param IPv6: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-out-nexthop-ipv6=' </span><span class="s1">+ IPv6] ) 
+        </span><span class="s0">return </span><span class="s1">bgp 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutNexthopIpv6LinkLocal(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">addres=</span><span class="s3">&quot;::&quot;</span><span class="s0">,</span><span class="s1">interface=</span><span class="s3">&quot;ether1&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set out ipv6 link local address 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bgp = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=set-out-nexthop-linklocal=' </span><span class="s1">+ addres+</span><span class="s3">&quot;%&quot;</span><span class="s1"> 
+                                 +interface] ) 
+        </span><span class="s0">return </span><span class="s1">bgp</span></pre>
+</body>
+</html>

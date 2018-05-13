@@ -17,6 +17,7 @@ class history(QtGui.QMainWindow,Ui_MainWindow):
         #self.setupUi(self)
         QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
+        #super().__init__( self, None, QtCore.Qt.WindowStaysOnTopHint )
         self.user = user
         self.pwd = pwd
         self.server = server

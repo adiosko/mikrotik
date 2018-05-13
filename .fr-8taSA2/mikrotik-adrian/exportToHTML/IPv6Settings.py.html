@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>IPv6Settings.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+IPv6Settings.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Settings: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpv6Forward(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ipv6 forward 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/settings/set'</span><span class="s0">,</span><span class="s4">'=forward=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def  </span><span class="s1">setAcceptRedirects(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept redirection 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/settings/set'</span><span class="s0">,</span><span class="s4">'=accept-redirects=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setAcceotRouterAdvertisements(self</span><span class="s0">,</span><span class="s1">adv=</span><span class="s4">&quot;yes-if-forwarding-disabled&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set router advertisements 
+        :param adv: yes, no, yes-if-forwarding-disabled 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/settings/set'</span><span class="s0">, </span><span class="s4">'=accept-router-advertisements='</span><span class="s1">+adv] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxNeighborEntries(self</span><span class="s0">,</span><span class="s1">entries=</span><span class="s4">&quot;8192&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set neighbor max entries 
+        :param entries: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/settings/set'</span><span class="s0">, </span><span class="s4">'=entries=' </span><span class="s1">+ entries] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6</span></pre>
+</body>
+</html>

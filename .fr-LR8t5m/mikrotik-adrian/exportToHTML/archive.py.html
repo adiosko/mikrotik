@@ -1,0 +1,104 @@
+<html>
+<head>
+<title>archive.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+archive.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; 
+Archive tools for wheel. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">os 
+</span><span class="s2">import </span><span class="s1">os.path 
+</span><span class="s2">import </span><span class="s1">time 
+</span><span class="s2">import </span><span class="s1">zipfile 
+</span><span class="s2">from </span><span class="s1">distutils </span><span class="s2">import </span><span class="s1">log 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">archive_wheelfile(base_name</span><span class="s2">, </span><span class="s1">base_dir): 
+    </span><span class="s0">&quot;&quot;&quot;Archive all files under `base_dir` in a whl file and name it like 
+    `base_name`. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    olddir = os.path.abspath(os.curdir) 
+    base_name = os.path.abspath(base_name) 
+    </span><span class="s2">try</span><span class="s1">: 
+        os.chdir(base_dir) 
+        </span><span class="s2">return </span><span class="s1">make_wheelfile_inner(base_name) 
+    </span><span class="s2">finally</span><span class="s1">: 
+        os.chdir(olddir) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">make_wheelfile_inner(base_name</span><span class="s2">, </span><span class="s1">base_dir=</span><span class="s3">'.'</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Create a whl file from all the files under 'base_dir'. 
+ 
+    Places .dist-info at the end of the archive.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    zip_filename = base_name + </span><span class="s3">&quot;.whl&quot;</span><span class="s1"> 
+ 
+    log.info(</span><span class="s3">&quot;creating '%s' and adding '%s' to it&quot;</span><span class="s2">, </span><span class="s1">zip_filename</span><span class="s2">, </span><span class="s1">base_dir) 
+ 
+    </span><span class="s4"># Some applications need reproducible .whl files, but they can't do this</span><span class="s1"> 
+    </span><span class="s4"># without forcing the timestamp of the individual ZipInfo objects.  See</span><span class="s1"> 
+    </span><span class="s4"># issue #143.</span><span class="s1"> 
+    timestamp = os.environ.get(</span><span class="s3">'SOURCE_DATE_EPOCH'</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">timestamp </span><span class="s2">is None</span><span class="s1">: 
+        date_time = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        date_time = time.gmtime(int(timestamp))[</span><span class="s5">0</span><span class="s1">:</span><span class="s5">6</span><span class="s1">] 
+ 
+    </span><span class="s4"># XXX support bz2, xz when available</span><span class="s1"> 
+    zip = zipfile.ZipFile(zip_filename</span><span class="s2">, </span><span class="s3">&quot;w&quot;</span><span class="s2">, </span><span class="s1">compression=zipfile.ZIP_DEFLATED) 
+ 
+    score = {</span><span class="s3">'WHEEL'</span><span class="s1">: </span><span class="s5">1</span><span class="s2">, </span><span class="s3">'METADATA'</span><span class="s1">: </span><span class="s5">2</span><span class="s2">, </span><span class="s3">'RECORD'</span><span class="s1">: </span><span class="s5">3</span><span class="s1">} 
+    deferred = [] 
+ 
+    </span><span class="s2">def </span><span class="s1">writefile(path</span><span class="s2">, </span><span class="s1">date_time): 
+        st = os.stat(path) 
+        </span><span class="s2">if </span><span class="s1">date_time </span><span class="s2">is None</span><span class="s1">: 
+            mtime = time.gmtime(st.st_mtime) 
+            date_time = mtime[</span><span class="s5">0</span><span class="s1">:</span><span class="s5">6</span><span class="s1">] 
+        zinfo = zipfile.ZipInfo(path</span><span class="s2">, </span><span class="s1">date_time) 
+        zinfo.external_attr = st.st_mode &lt;&lt; </span><span class="s5">16</span><span class="s1"> 
+        zinfo.compress_type = zipfile.ZIP_DEFLATED 
+        </span><span class="s2">with </span><span class="s1">open(path</span><span class="s2">, </span><span class="s3">'rb'</span><span class="s1">) </span><span class="s2">as </span><span class="s1">fp: 
+            zip.writestr(zinfo</span><span class="s2">, </span><span class="s1">fp.read()) 
+        log.info(</span><span class="s3">&quot;adding '%s'&quot; </span><span class="s1">% path) 
+ 
+    </span><span class="s2">for </span><span class="s1">dirpath</span><span class="s2">, </span><span class="s1">dirnames</span><span class="s2">, </span><span class="s1">filenames </span><span class="s2">in </span><span class="s1">os.walk(base_dir): 
+        </span><span class="s4"># Sort the directory names so that `os.walk` will walk them in a</span><span class="s1"> 
+        </span><span class="s4"># defined order on the next iteration.</span><span class="s1"> 
+        dirnames.sort() 
+        </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">sorted(filenames): 
+            path = os.path.normpath(os.path.join(dirpath</span><span class="s2">, </span><span class="s1">name)) 
+ 
+            </span><span class="s2">if </span><span class="s1">os.path.isfile(path): 
+                </span><span class="s2">if </span><span class="s1">dirpath.endswith(</span><span class="s3">'.dist-info'</span><span class="s1">): 
+                    deferred.append((score.get(name</span><span class="s2">, </span><span class="s5">0</span><span class="s1">)</span><span class="s2">, </span><span class="s1">path)) 
+                </span><span class="s2">else</span><span class="s1">: 
+                    writefile(path</span><span class="s2">, </span><span class="s1">date_time) 
+ 
+    deferred.sort() 
+    </span><span class="s2">for </span><span class="s1">score</span><span class="s2">, </span><span class="s1">path </span><span class="s2">in </span><span class="s1">deferred: 
+        writefile(path</span><span class="s2">, </span><span class="s1">date_time) 
+ 
+    zip.close() 
+ 
+    </span><span class="s2">return </span><span class="s1">zip_filename 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<html>
+<head>
+<title>MeshPorts.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+MeshPorts.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">MeshPorts: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listPorts(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list mesh ports 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk([</span><span class="s4">'/interface/mesh/port/print'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">Mesh&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">mesh: 
+            print(mesh[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mesh[i][</span><span class="s4">'mesh'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">addPort(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">mesh): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add port 
+        :param interface: 
+        :param mesh: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk([</span><span class="s4">'/interface/mesh/port/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface</span><span class="s0">,</span><span class="s4">'=mesh='</span><span class="s1">+mesh]) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">removePort(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove port 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk([</span><span class="s4">'/interface/mesh/port/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">enablePort(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable port 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/port/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">disablePort(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable port 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/port/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">commentPort(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment port 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/port/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface 
+        :param number: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/port/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setMesh(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mesh): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mesh 
+        :param number: 
+        :param mesh: mesh created in mesh class 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/port/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=mesh=' </span><span class="s1">+ mesh] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setPathCost(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">cost=</span><span class="s4">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set parh cost of port 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/port/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=path-cost=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setHelloInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set hello interval in secs 
+        :param number: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/port/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=hello-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setPortType(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;auto&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set port type 
+        :param number: 
+        :param port: auto,ethernet,wireless,WDS 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/port/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=port-type=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+</span></pre>
+</body>
+</html>

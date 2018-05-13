@@ -1,0 +1,262 @@
+<html>
+<head>
+<title>RouteGeneral.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+RouteGeneral.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">RouteGeneral: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">listRoutes(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list routes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk([</span><span class="s4">'/ip/route/print'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Dst address</span><span class="s0">\t</span><span class="s4">Gateway</span><span class="s0">\t</span><span class="s4">Distance</span><span class="s0">\t</span><span class="s4">Pref source&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">route: 
+            print(route[i][</span><span class="s4">'dst-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+route[i][</span><span class="s4">'gateway'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+route[i][</span><span class="s4">'distance'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+route[i][</span><span class="s4">'pref-src'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">addRoute(self</span><span class="s0">,</span><span class="s1">dst</span><span class="s0">,</span><span class="s1">gw): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add route 
+        :param dst: 
+        :param gw: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk([</span><span class="s4">'/ip/route/add'</span><span class="s0">,</span><span class="s4">'=dst-address='</span><span class="s1">+dst</span><span class="s0">,</span><span class="s4">'=gateway='</span><span class="s1">+gw]) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">removeRoute(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove route 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk([</span><span class="s4">'/ip/route/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">enableRoute(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable route 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">disableRoute(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable route 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">commentRoute(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment route 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s5">#General</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setDstAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">dst): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dst address 
+        :param number: 
+        :param dst: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dst-address=' </span><span class="s1">+ dst] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">setGateway(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">gw): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set gateway of the route 
+        :param number: 
+        :param gw: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=gateway=' </span><span class="s1">+ gw] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">checkGateway(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">check=</span><span class="s4">&quot;ping&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set method to check gateway 
+        :param number: 
+        :param check: ping, arp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=check-gateway=' </span><span class="s1">+ check] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">setType(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">route=</span><span class="s4">&quot;unicast&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set route type 
+        :param number: 
+        :param route: unicast, blackhole, prohibit, unreachable 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=type=' </span><span class="s1">+ route] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">setDistance(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">distance=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set distance 
+        :param number: 
+        :param distance: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=distance=' </span><span class="s1">+ distance] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">setScope(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">scope=</span><span class="s4">&quot;30&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set scope 
+        :param number: 
+        :param scope: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=scope=' </span><span class="s1">+ scope] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">setTargetScope(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">scope=</span><span class="s4">&quot;100&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tgt scope 
+        :param number: 
+        :param scope: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=target-scope=' </span><span class="s1">+ scope] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">setRoutingMark(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mark=</span><span class="s4">&quot;main&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set routing mark == table 
+        :param number: 
+        :param mark: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=routing-mark=' </span><span class="s1">+ mark] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefSoure(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">src): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pref source 
+        :param number: 
+        :param src: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=pref-src=' </span><span class="s1">+ src] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s5">#Attributes</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setBgpAsPath(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">AS=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bgp as path 
+        :param number: 
+        :param AS: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        route = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=bgp-as-path=' </span><span class="s1">+ AS] ) 
+        </span><span class="s0">return </span><span class="s1">route 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpLocPref(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">lpref=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bgp local preference 
+        :param number: 
+        :param wight: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=bgp-local-pref=' </span><span class="s1">+ lpref] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpPrepend(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">prepend=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prepend 
+        :param number: 
+        :param prepend: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=bgp-prepend=' </span><span class="s1">+ prepend] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpMed(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">med=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set median 
+        :param number: 
+        :param med: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=bgp-med=' </span><span class="s1">+ med] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAtomicAgregation(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">agreg=</span><span class="s4">&quot;present&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set agregation 
+        :param number: 
+        :param agreg: present,absent 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=bgp-atomic-aggregate=' </span><span class="s1">+ agreg] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpOrigin(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">orig=</span><span class="s4">&quot;igp&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set agregation 
+        :param number: 
+        :param orig: igp, egp, incomplete 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=bgp-origin=' </span><span class="s1">+ orig] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpCOmmunities(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">comm=</span><span class="s4">&quot;0:0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bgp communities 
+        :param number: 
+        :param comm: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=bgp-communities=' </span><span class="s1">+ comm] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setROuteTag(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">tag=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set route tag 
+        :param number: 
+        :param tag: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/route/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=route-tag=' </span><span class="s1">+ tag] ) 
+        </span><span class="s0">return </span><span class="s1">ip</span></pre>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<html>
+<head>
+<title>FIlterChains.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+FIlterChains.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">FilterChains: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setFilterChain(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">chain): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set chain 
+        :param number: 
+        :param chain: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=chain=' </span><span class="s1">+ chain] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefix(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">prefix): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prefix number 
+        :param number: 
+        :param prefix: IPNet/prefix 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=prefix=' </span><span class="s1">+ prefix] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefixLength(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefixLength=</span><span class="s4">&quot;0-32&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prefix length 
+        :param number: 
+        :param prefixLength: 0-32 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=prefix-length=' </span><span class="s1">+ prefixLength] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setMatchChain(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">chain): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will match chain 
+        :param number: 
+        :param chain: connected-in, dynamic-in 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=match-chain=' </span><span class="s1">+ chain] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtocolCOnnect(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set protocol 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=protocol=connect'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtocolStatic(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set protocol 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=protocol=static'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtocolRIP(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set protocol 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=protocol=rip'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtocolOSPF(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set protocol 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=protocol=ospf'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setProtocolBGP(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set protocol 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=protocol=bgp'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setDistance(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">distance=</span><span class="s4">&quot;0-255&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set distance for filter 
+        :param number: 
+        :param distance: 0-255 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=distance=' </span><span class="s1">+ distance] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setScope(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">scope=</span><span class="s4">&quot;0-255&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set distance for filter 
+        :param number: 
+        :param scope: 0-255 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=scope=' </span><span class="s1">+ scope] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setTargetScope(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">target=</span><span class="s4">&quot;0-255&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set distance for filter 
+        :param number: 
+        :param distance: 0-255 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=target-scope=' </span><span class="s1">+ target] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefSource(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">src=</span><span class="s4">&quot;0.0.0.0/0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src 
+        :param number: 
+        :param src: 0.0.0.0/0 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=pref-src=' </span><span class="s1">+ src] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setRoutingMark(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mark=</span><span class="s4">&quot;main&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mark 
+        :param number: 
+        :param mark: main routing table 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=routing-mark=' </span><span class="s1">+ mark] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setRouteCOmment(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set route comment 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=route-comment=' </span><span class="s1">+ comment] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setRouteTag(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">tag=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set route tag 
+        :param number: 
+        :param tag: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=route-tag=' </span><span class="s1">+ tag] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setRouteTArgets(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">target=</span><span class="s4">&quot;0:0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add route targets 
+        :param number: 
+        :param target: 0:0 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=route-targets=' </span><span class="s1">+ target] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setSiteOfOrigin(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">origin=</span><span class="s4">&quot;0:0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set origin 
+        :param number: 
+        :param origin: 0:0 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=site-of-origin=' </span><span class="s1">+ origin] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpAddressFamily(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address family 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=site-of-origin=ip'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpv6AddressFamily(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address family 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=site-of-origin=ipv6'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setL2VpnAddressFamily(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address family 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=site-of-origin=l2vpn'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setVpnv4AddressFamily(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address family 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=site-of-origin=vpnv4'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setCiscoVpnAddressFamily(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address family 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=site-of-origin=l2vpn-cisco'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setOspfType(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">type=</span><span class="s4">&quot;intra-area&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ospf type 
+        :param number: 
+        :param type: intra-area,external-type-1,external-type-2,inter-area,nssa-external-type-1,nssa-external-type-2 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s4">'/routing/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=ospf-type='</span><span class="s1">+type] ) 
+        </span><span class="s0">return </span><span class="s1">filt</span></pre>
+</body>
+</html>

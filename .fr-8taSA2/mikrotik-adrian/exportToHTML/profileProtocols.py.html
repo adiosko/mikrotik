@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>profileProtocols.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+profileProtocols.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">profileProtocols: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">address</span><span class="s0">, </span><span class="s1">username</span><span class="s0">, </span><span class="s1">password): 
+        self.client = TikapyClient(address</span><span class="s0">, </span><span class="s2">8728</span><span class="s1">) 
+        self.client.login(username</span><span class="s0">, </span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">useMpls(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mpls=</span><span class="s3">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set usage of mpls 
+        :param name: 
+        :param mpls: no,yes,requiered,default 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s3">'/ppp/profile/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s3">'=use-mpls='</span><span class="s1">+mpls]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">useCOmpression(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">compress=</span><span class="s3">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set compression usage 
+        :param name: 
+        :param compress: no,yes,default 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s3">'/ppp/profile/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s3">'=use-compression=' </span><span class="s1">+ compress]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">useEncryption(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">encrypt=</span><span class="s3">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set usage of encryption 
+        :param name: 
+        :param encrypt: no,yes,requiered,default 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s3">'/ppp/profile/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s3">'=use-encryption=' </span><span class="s1">+ encrypt]) 
+        </span><span class="s0">return </span><span class="s1">ppp</span></pre>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<html>
+<head>
+<title>uu_codec.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+uu_codec.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Python 'uu_codec' Codec - UU content transfer encoding. 
+ 
+This codec de/encodes from bytes to bytes. 
+ 
+Written by Marc-Andre Lemburg (mal@lemburg.com). Some details were 
+adapted from uu.py which was written by Lance Ellinghouse and 
+modified by Jack Jansen and Fredrik Lundh. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">codecs 
+</span><span class="s2">import </span><span class="s1">binascii 
+</span><span class="s2">from </span><span class="s1">io </span><span class="s2">import </span><span class="s1">BytesIO 
+ 
+</span><span class="s3">### Codec APIs</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">uu_encode(input</span><span class="s2">, </span><span class="s1">errors=</span><span class="s4">'strict'</span><span class="s2">, </span><span class="s1">filename=</span><span class="s4">'&lt;data&gt;'</span><span class="s2">, </span><span class="s1">mode=</span><span class="s5">0o666</span><span class="s1">): 
+    </span><span class="s2">assert </span><span class="s1">errors == </span><span class="s4">'strict'</span><span class="s1"> 
+    infile = BytesIO(input) 
+    outfile = BytesIO() 
+    read = infile.read 
+    write = outfile.write 
+ 
+    </span><span class="s3"># Encode</span><span class="s1"> 
+    write((</span><span class="s4">'begin %o %s</span><span class="s2">\n</span><span class="s4">' </span><span class="s1">% (mode &amp; </span><span class="s5">0o777</span><span class="s2">, </span><span class="s1">filename)).encode(</span><span class="s4">'ascii'</span><span class="s1">)) 
+    chunk = read(</span><span class="s5">45</span><span class="s1">) 
+    </span><span class="s2">while </span><span class="s1">chunk: 
+        write(binascii.b2a_uu(chunk)) 
+        chunk = read(</span><span class="s5">45</span><span class="s1">) 
+    write(</span><span class="s6">b' </span><span class="s2">\n</span><span class="s6">end</span><span class="s2">\n</span><span class="s6">'</span><span class="s1">) 
+ 
+    </span><span class="s2">return </span><span class="s1">(outfile.getvalue()</span><span class="s2">, </span><span class="s1">len(input)) 
+ 
+</span><span class="s2">def </span><span class="s1">uu_decode(input</span><span class="s2">, </span><span class="s1">errors=</span><span class="s4">'strict'</span><span class="s1">): 
+    </span><span class="s2">assert </span><span class="s1">errors == </span><span class="s4">'strict'</span><span class="s1"> 
+    infile = BytesIO(input) 
+    outfile = BytesIO() 
+    readline = infile.readline 
+    write = outfile.write 
+ 
+    </span><span class="s3"># Find start of encoded data</span><span class="s1"> 
+    </span><span class="s2">while </span><span class="s5">1</span><span class="s1">: 
+        s = readline() 
+        </span><span class="s2">if not </span><span class="s1">s: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s4">'Missing &quot;begin&quot; line in input data'</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">s[:</span><span class="s5">5</span><span class="s1">] == </span><span class="s6">b'begin'</span><span class="s1">: 
+            </span><span class="s2">break</span><span class="s1"> 
+ 
+    </span><span class="s3"># Decode</span><span class="s1"> 
+    </span><span class="s2">while True</span><span class="s1">: 
+        s = readline() 
+        </span><span class="s2">if not </span><span class="s1">s </span><span class="s2">or </span><span class="s1">s == </span><span class="s6">b'end</span><span class="s2">\n</span><span class="s6">'</span><span class="s1">: 
+            </span><span class="s2">break</span><span class="s1"> 
+        </span><span class="s2">try</span><span class="s1">: 
+            data = binascii.a2b_uu(s) 
+        </span><span class="s2">except </span><span class="s1">binascii.Error </span><span class="s2">as </span><span class="s1">v: 
+            </span><span class="s3"># Workaround for broken uuencoders by /Fredrik Lundh</span><span class="s1"> 
+            nbytes = (((s[</span><span class="s5">0</span><span class="s1">]-</span><span class="s5">32</span><span class="s1">) &amp; </span><span class="s5">63</span><span class="s1">) * </span><span class="s5">4 </span><span class="s1">+ </span><span class="s5">5</span><span class="s1">) // </span><span class="s5">3</span><span class="s1"> 
+            data = binascii.a2b_uu(s[:nbytes]) 
+            </span><span class="s3">#sys.stderr.write(&quot;Warning: %s\n&quot; % str(v))</span><span class="s1"> 
+        write(data) 
+    </span><span class="s2">if not </span><span class="s1">s: 
+        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s4">'Truncated input data'</span><span class="s1">) 
+ 
+    </span><span class="s2">return </span><span class="s1">(outfile.getvalue()</span><span class="s2">, </span><span class="s1">len(input)) 
+ 
+</span><span class="s2">class </span><span class="s1">Codec(codecs.Codec): 
+    </span><span class="s2">def </span><span class="s1">encode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">errors=</span><span class="s4">'strict'</span><span class="s1">): 
+        </span><span class="s2">return </span><span class="s1">uu_encode(input</span><span class="s2">, </span><span class="s1">errors) 
+ 
+    </span><span class="s2">def </span><span class="s1">decode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">errors=</span><span class="s4">'strict'</span><span class="s1">): 
+        </span><span class="s2">return </span><span class="s1">uu_decode(input</span><span class="s2">, </span><span class="s1">errors) 
+ 
+</span><span class="s2">class </span><span class="s1">IncrementalEncoder(codecs.IncrementalEncoder): 
+    </span><span class="s2">def </span><span class="s1">encode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">final=</span><span class="s2">False</span><span class="s1">): 
+        </span><span class="s2">return </span><span class="s1">uu_encode(input</span><span class="s2">, </span><span class="s1">self.errors)[</span><span class="s5">0</span><span class="s1">] 
+ 
+</span><span class="s2">class </span><span class="s1">IncrementalDecoder(codecs.IncrementalDecoder): 
+    </span><span class="s2">def </span><span class="s1">decode(self</span><span class="s2">, </span><span class="s1">input</span><span class="s2">, </span><span class="s1">final=</span><span class="s2">False</span><span class="s1">): 
+        </span><span class="s2">return </span><span class="s1">uu_decode(input</span><span class="s2">, </span><span class="s1">self.errors)[</span><span class="s5">0</span><span class="s1">] 
+ 
+</span><span class="s2">class </span><span class="s1">StreamWriter(Codec</span><span class="s2">, </span><span class="s1">codecs.StreamWriter): 
+    charbuffertype = bytes 
+ 
+</span><span class="s2">class </span><span class="s1">StreamReader(Codec</span><span class="s2">, </span><span class="s1">codecs.StreamReader): 
+    charbuffertype = bytes 
+ 
+</span><span class="s3">### encodings module API</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">getregentry(): 
+    </span><span class="s2">return </span><span class="s1">codecs.CodecInfo( 
+        name=</span><span class="s4">'uu'</span><span class="s2">,</span><span class="s1"> 
+        encode=uu_encode</span><span class="s2">,</span><span class="s1"> 
+        decode=uu_decode</span><span class="s2">,</span><span class="s1"> 
+        incrementalencoder=IncrementalEncoder</span><span class="s2">,</span><span class="s1"> 
+        incrementaldecoder=IncrementalDecoder</span><span class="s2">,</span><span class="s1"> 
+        streamreader=StreamReader</span><span class="s2">,</span><span class="s1"> 
+        streamwriter=StreamWriter</span><span class="s2">,</span><span class="s1"> 
+        _is_text_encoding=</span><span class="s2">False,</span><span class="s1"> 
+    ) 
+</span></pre>
+</body>
+</html>

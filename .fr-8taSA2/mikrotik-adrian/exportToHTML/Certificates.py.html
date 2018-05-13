@@ -1,0 +1,228 @@
+<html>
+<head>
+<title>Certificates.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Certificates.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Certificates: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listCertificates(self): 
+        certs = {} 
+        </span><span class="s0">if </span><span class="s1">self.client.talk([</span><span class="s3">'/certificate/print'</span><span class="s1">]) == {}: 
+            print(</span><span class="s3">&quot;There are no certificates imported or created on mikrotik&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            certs = self.client.talk([</span><span class="s3">'/certificate/print'</span><span class="s1">]) 
+            print(</span><span class="s3">&quot;Name</span><span class="s0">\t</span><span class="s3">Common-name</span><span class="s0">\t</span><span class="s3">key-usage</span><span class="s0">\t</span><span class="s3">key-size</span><span class="s0">\t</span><span class="s3">crlusage&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">certs: 
+                print(certs[i][</span><span class="s3">'name'</span><span class="s1">]+</span><span class="s3">&quot; &quot;</span><span class="s1">+certs[i][</span><span class="s3">'common-name'</span><span class="s1">]+</span><span class="s3">&quot; &quot;</span><span class="s1">+certs[i][</span><span class="s3">'key-usage'</span><span class="s1">]+</span><span class="s3">&quot; &quot;</span><span class="s1">+certs[i][</span><span class="s3">'key-size'</span><span class="s1">] 
+                +</span><span class="s3">&quot; &quot;</span><span class="s1">+certs[i][</span><span class="s3">'crl'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">useCRL(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will allow certificate crl file to download 
+        :return:  dictionary of certs 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/settings/set'</span><span class="s0">,</span><span class="s3">'=crl-download=yes'</span><span class="s0">,</span><span class="s3">'=crl-use=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">notUseCRL(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will deny crl download 
+        :return: dictionary of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/settings/set'</span><span class="s0">,</span><span class="s3">'=crl-download=no'</span><span class="s0">,</span><span class="s3">'=crl-use=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">addCertificate(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">commonName</span><span class="s0">,</span><span class="s1">trusted</span><span class="s0">,</span><span class="s1">country): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Generate standard certificate crt on mikrotik 
+        :param name: name of your certificate 
+        :param commonName:  common name of certificate 
+        :param trusted: trusted status yes or no 
+        :param country: 2 letter country code 
+        :return: dictionary of certs 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        cert = self.client.talk([</span><span class="s3">'/certificate/add'</span><span class="s0">,</span><span class="s3">'=name='</span><span class="s1">+name</span><span class="s0">,</span><span class="s3">'=common-name='</span><span class="s1">+commonName</span><span class="s0">,</span><span class="s3">'=trusted='</span><span class="s1">+trusted</span><span class="s0">,</span><span class="s3">'=country='</span><span class="s1">+country]) 
+        </span><span class="s0">return </span><span class="s1">cert 
+ 
+    </span><span class="s0">def </span><span class="s1">setCertificateLocality(self</span><span class="s0">,</span><span class="s1">certName</span><span class="s0">,</span><span class="s1">locality): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will setup certification locality (city) 
+        :param certName: name of certificate 
+        :param locality: city 
+        :return: list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+certName</span><span class="s0">,</span><span class="s3">'=locality='</span><span class="s1">+locality]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">setCertificateState(self</span><span class="s0">,</span><span class="s1">certName</span><span class="s0">,</span><span class="s1">state): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will setup certificate State 
+        :param certName: name of certificate 
+        :param state: state of certificate 
+        :return: list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+certName</span><span class="s0">,</span><span class="s3">'=state='</span><span class="s1">+state]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">setCertificateOrg(self</span><span class="s0">,</span><span class="s1">certName</span><span class="s0">,</span><span class="s1">organisation): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will setup certificate organization group 
+        :param certName: certname 
+        :param organisation:  organization name 
+        :return: list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        cert = self.client.talk([</span><span class="s3">'/certificate/set'</span><span class="s0">,</span><span class="s3">'=organization='</span><span class="s1">+organisation]) 
+        </span><span class="s0">return </span><span class="s1">cert 
+ 
+    </span><span class="s0">def </span><span class="s1">setAlternateNameMethod(self</span><span class="s0">,</span><span class="s1">certName</span><span class="s0">,</span><span class="s1">subject): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will setup ertificate for IP/DNS/email in format f.e: mail:test@test 
+        :param certName: name of certificate 
+        :param subject: IP/DNS/mail: 
+        :return: list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        cert = self.client.talk([</span><span class="s3">'/certificate/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+certName</span><span class="s0">,</span><span class="s3">'=subject-alt-name='</span><span class="s1">+subject]) 
+        </span><span class="s0">return </span><span class="s1">cert 
+ 
+    </span><span class="s0">def </span><span class="s1">setCertificateKeySize(self</span><span class="s0">,</span><span class="s1">certName</span><span class="s0">,</span><span class="s1">keySize): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will setup key size of cert 
+        :param certName: name of cert 
+        :param keySize: in string 1024,1536,2048,4096,8192 
+        :return:list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+certName</span><span class="s0">,</span><span class="s3">'=key-size='</span><span class="s1">+keySize]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">setCertificateValidation(self</span><span class="s0">,</span><span class="s1">certName</span><span class="s0">,</span><span class="s1">ValidateFor): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will setup validation time of certificate on mt 
+        :param certName: cert name 
+        :param ValidateFor:  time in days in string 
+        :return: list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+certName</span><span class="s0">,</span><span class="s3">'=days-valid='</span><span class="s1">+ValidateFor]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">setKeyUsage(self</span><span class="s0">,</span><span class="s1">certName</span><span class="s0">,</span><span class="s1">Keys): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will setup keys for certificate usage 
+        Words are: 
+        digital-signature, content-commitment, key-encipherment, code-sign, crl-sign, data-encipherment, decipher-only, 
+        dvcs,email-protect,encipher-only,ipsec-end-system,ipsec-tunnel,ipsec-user,key-agreement,key-cert-sign, 
+        oscp-sign,server-gated-crypto,timestamp,tls-client,tls-server 
+        :param certName: name of cert 
+        :param Keys: keys included in emthod description 
+        :return: list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+certName</span><span class="s0">,</span><span class="s3">'=key-usage='</span><span class="s1">+Keys]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">removeCertificate(self</span><span class="s0">,</span><span class="s1">certName): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will remove certificate by its name 
+        :param certName: cert name yu want to delete 
+        :return: list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/remove'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+certName]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">importCertificate(self</span><span class="s0">,</span><span class="s1">certName</span><span class="s0">,</span><span class="s1">Password): 
+        certs = self.client.talk([</span><span class="s3">'/certificate/import'</span><span class="s0">,</span><span class="s3">'=file-name='</span><span class="s1">+certName</span><span class="s0">,</span><span class="s3">'=passphrase='</span><span class="s1">+Password]) 
+        </span><span class="s0">return  </span><span class="s1">certs 
+    </span><span class="s5">#opravit</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">reinstallSMartCard(self</span><span class="s0">,</span><span class="s1">PIN): 
+        certs = self.client.talk([</span><span class="s3">'/certificate/card-reinstall'</span><span class="s0">, </span><span class="s3">'=pin='</span><span class="s1">+PIN]) 
+        print(certs) 
+        </span><span class="s0">return </span><span class="s1">certs 
+    </span><span class="s5">#opravit</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">verifyCard(self</span><span class="s0">,</span><span class="s1">PIN=</span><span class="s2">1234</span><span class="s1">): 
+        certs = self.client.talk( [</span><span class="s3">'/certificate/card-verify'</span><span class="s0">, </span><span class="s3">'=pin=' </span><span class="s1">+ PIN]) 
+        print(certs) 
+        </span><span class="s0">return </span><span class="s1">certs 
+    </span><span class="s5">#opravit</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">revokeCertificate(self</span><span class="s0">,</span><span class="s1">certName): 
+        certs = self.client.talk([</span><span class="s3">'/certificate/issued-revoke'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+certName]) 
+        print(certs) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">createCertificateRequest(self</span><span class="s0">,</span><span class="s1">certName</span><span class="s0">,</span><span class="s1">passphrase): 
+        certs = self.client.talk([</span><span class="s3">'/certificate/create-certificate-request'</span><span class="s0">,</span><span class="s3">'=template='</span><span class="s1">+certName</span><span class="s0">,</span><span class="s3">'= key-passphrase='</span><span class="s1">+passphrase]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">listSCEPServers(self): 
+        certs = self.client.talk([</span><span class="s3">'/certificate/scep-server/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">certs == {}: 
+            print(</span><span class="s3">&quot;No SCEP servers found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(certs) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s5">#otazka ci implementovat</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">addSCEPServer(self</span><span class="s0">,</span><span class="s1">ca</span><span class="s0">,</span><span class="s1">pathToCA</span><span class="s0">,</span><span class="s1">valid</span><span class="s0">,</span><span class="s1">lifetime): 
+        certs = self.client.talk([</span><span class="s3">'/certificate/scep-server/add'</span><span class="s0">,</span><span class="s3">'=ca-cert='</span><span class="s1">+ca 
+                                  </span><span class="s0">,</span><span class="s3">'=path='</span><span class="s1">+pathToCA</span><span class="s0">,</span><span class="s3">'=days-valid='</span><span class="s1">+valid 
+                                  </span><span class="s0">,</span><span class="s3">'=request-lifetime='</span><span class="s1">+lifetime]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">listRaProxy(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will list all proxy connected to scep server 
+        :return:  list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/scep-server/ra/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">certs == {}: 
+            print(</span><span class="s3">&quot;There are no proxy setup&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(certs) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def  </span><span class="s1">generateOTPPassword(self</span><span class="s0">,</span><span class="s1">minutes): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will generate passwords for certificates 
+        :param minutes: count of minutes to use 
+        :return: list of certs 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/scep-server/otp/generate'</span><span class="s0">,</span><span class="s3">'=minutes-valid='</span><span class="s1">+minutes]) 
+        </span><span class="s0">return </span><span class="s1">certs 
+ 
+    </span><span class="s0">def </span><span class="s1">listOTPPasswords(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will list generated passwords for certs 
+        :return: list of passwords (hash) 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        certs = self.client.talk([</span><span class="s3">'/certificate/scep-server/otp/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">certs == {}: 
+            print(</span><span class="s3">&quot;No passwords generated&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s3">&quot;Password</span><span class="s0">\t</span><span class="s3">expiresIn</span><span class="s0">\t</span><span class="s3">Used&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">certs: 
+                print(certs[i][</span><span class="s3">'password'</span><span class="s1">]+</span><span class="s3">&quot; &quot;</span><span class="s1">+certs[i][</span><span class="s3">'expires'</span><span class="s1">]+</span><span class="s3">&quot; &quot;</span><span class="s1">+certs[i][</span><span class="s3">'used'</span><span class="s1">]) 
+        </span><span class="s0">return  </span><span class="s1">certs</span></pre>
+</body>
+</html>

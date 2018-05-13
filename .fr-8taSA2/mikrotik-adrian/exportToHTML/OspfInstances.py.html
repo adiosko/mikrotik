@@ -1,0 +1,278 @@
+<html>
+<head>
+<title>OspfInstances.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+OspfInstances.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">OspfInstances: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listInstances(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list ospf instances 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk([</span><span class="s4">'/routing/ospf/instance/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">ospf == {}: 
+            print(</span><span class="s4">&quot;No ospf instance set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">Router ID</span><span class="s0">\t</span><span class="s4">State&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ospf: 
+                print(ospf[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'router-id'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ospf[i][</span><span class="s4">'state'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">addInstance(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add instance 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/add'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInstance(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method willremove ospf instance 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInstance(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable instance 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInstance(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable instance 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">commentInstance(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment instance 
+        :param name: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setInstanceName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename instance 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newName] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRId(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">RID=</span><span class="s4">&quot;0.0.0.0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set router id 
+        :param name: 
+        :param RID: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=router-id=' </span><span class="s1">+ RID] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeDefaultRoute(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">redist=</span><span class="s4">&quot;never&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set rid 
+        :param name: 
+        :param redist: never,always-as-type-1,always-as-type-2,if-installed-as-type-1,if-installed-as-type-2,never 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=distribute-default=' </span><span class="s1">+ redist] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeCOnnectedNetworks(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">redist=</span><span class="s4">&quot;no&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will redistribute connected networks 
+        :param name: 
+        :param redist: no,as-type-1,as-type-2 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=redistribute-connected=' </span><span class="s1">+ redist]) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeStatic(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">redist=</span><span class="s4">&quot;no&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will redistribute static route 
+        :param name: 
+        :param redist: no, as-type-1,as-type-2 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk([</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=redistribute-static=' </span><span class="s1">+ redist] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeRip(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">redist=</span><span class="s4">&quot;no&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will redistribute rip 
+        :param name: 
+        :param redist: no,as-type-1,as-type-2 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=redistribute-rip=' </span><span class="s1">+ redist] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeBgp(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">redist=</span><span class="s4">&quot;no&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will redistribure bgp 
+        :param name: 
+        :param redist: no,as-type-1,as-type-2 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=redistribute-bgp=' </span><span class="s1">+ redist] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeOspf(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">redist=</span><span class="s4">&quot;no&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will redistribute other ospf 
+        :param name: 
+        :param redist: no, as-type-1,as-type-2 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=redistribute-other-ospf=' </span><span class="s1">+ redist] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setInFilter(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">filt=</span><span class="s4">&quot;ospf-in&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ospf input filter 
+        :param name: 
+        :param filt: ospf-in,connected-in,dynamic-in,mme-in,ospf-out 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk([</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=in-filter=' </span><span class="s1">+ filt] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutFilter(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">filt=</span><span class="s4">&quot;ospf-out&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ouput flter 
+        :param name: 
+        :param filt: ospf-in,connected-in,dynamic-in,mme-in,ospf-out 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=out-filter=' </span><span class="s1">+ filt] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setDefaultMettric(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">metric=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set def metric 
+        :param name: 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=metric-default=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setConnectedMetric(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">metric=</span><span class="s4">&quot;20&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methgod will ste connecte dmetric 
+        :param name: 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=metric-connected=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setStaticMetric(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">metric=</span><span class="s4">&quot;20&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set static metric 
+        :param name: 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=metric-static=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRipMetric(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">metric=</span><span class="s4">&quot;20&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set default metric 
+        :param name: 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=metric-rip=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpMetric(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">metric=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set bgp metric 
+        :param name: 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=metric-bgp=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setOspfMetric(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">metric=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ospf metric 
+        :param name: 
+        :param metric: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=metric-other-ospf=' </span><span class="s1">+ metric] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setMplsTeArea(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">area=</span><span class="s4">&quot;backbone&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mpls area 
+        :param name: 
+        :param area: backbone 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=mpls-te-area=' </span><span class="s1">+ area] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setMplsTeRputerId(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;ether1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mpls interface for rid 
+        :param name: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=mpls-re-router-id=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">ospf 
+ 
+    </span><span class="s0">def </span><span class="s1">setMplsRoutingTable(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">rtable=</span><span class="s4">&quot;main&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set routing table 
+        :param name: 
+        :param rtable: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ospf = self.client.talk( [</span><span class="s4">'/routing/ospf/instance/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=routing-table=' </span><span class="s1">+ rtable] ) 
+        </span><span class="s0">return </span><span class="s1">ospf</span></pre>
+</body>
+</html>

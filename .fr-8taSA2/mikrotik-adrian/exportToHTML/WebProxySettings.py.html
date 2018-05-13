@@ -1,0 +1,233 @@
+<html>
+<head>
+<title>WebProxySettings.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+WebProxySettings.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">WebProxySettings: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">enable(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable proxy 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk([</span><span class="s4">'/ip/proxy/set'</span><span class="s0">,</span><span class="s4">'=enabled=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">disable(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable proxy 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=enabled=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcAddress(self</span><span class="s0">,</span><span class="s1">address=</span><span class="s4">&quot;::&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set src proxy address 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk([</span><span class="s4">'/ip/proxy/set'</span><span class="s0">,</span><span class="s4">'=src-address='</span><span class="s1">+address]) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setProxyPort(self</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;8080&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set proxy port 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setAnonymous(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method set proxy anonymous 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=anonymous=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetAnonymous(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method set proxy anonymous 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=anonymous=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setParentProxy(self</span><span class="s0">,</span><span class="s1">proxy): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will setparent proxy of proxy 
+        :param proxy: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=parent-proxy='</span><span class="s1">+proxy] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setParentProxyPort(self</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set parent proxy port 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=parent-proxy-port='</span><span class="s1">+port] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setCacheAdministrator(self</span><span class="s0">,</span><span class="s1">cache=</span><span class="s4">&quot;webmaster&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set cache user for admin 
+        :param cache: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=cache-administrator='</span><span class="s1">+cache] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxCacheSize(self</span><span class="s0">,</span><span class="s1">cache=</span><span class="s4">&quot;unlimited&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set cache size 
+        :param cache:  none, unlimited 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=max-cache-size='</span><span class="s1">+cache] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxCacheObjectSize(self</span><span class="s0">,</span><span class="s1">cache=</span><span class="s4">&quot;2048&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will se cacheobject size on kiB 
+        :param cache: in KiB 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=max-cache-object-size='</span><span class="s1">+cache] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">cacheToDisk(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will cache data to disk 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=cache-on-disk=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">notCacheToDisk(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will cache data to disk 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=cache-on-disk=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setMAxClientCOnnections(self</span><span class="s0">,</span><span class="s1">maxim=</span><span class="s4">&quot;600&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max client connections 
+        :param maxim: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=max-client-connections=' </span><span class="s1">+ maxim] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxServerCOnnections(self</span><span class="s0">,</span><span class="s1">maxim=</span><span class="s4">&quot;600&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max server connections 
+        :param maxim: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=max-server-connections=' </span><span class="s1">+ maxim] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxFreshTime(self</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;3d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max fresh time 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=max-fresh-time=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">serializeConnections(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will senialize connections 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=serialize-connections=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">unserializeConnections(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will senialize connections 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=serialize-connections=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">alwaysFromCache(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will buffer fromc ache every time 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=always-from-cache=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">notAlwaysFromCache(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will buffer fromc ache every time 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=always-from-cache=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">cacheDscp(self</span><span class="s0">,</span><span class="s1">dcp=</span><span class="s4">&quot;4&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will cache dscp hits 
+        :param dcp: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=cache-hit-dscp='</span><span class="s1">+dcp] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">setCachePAth(self</span><span class="s0">,</span><span class="s1">path=</span><span class="s4">&quot;web-proxy&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will se tcache path 
+        :param path: web-proxy, file path 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/set'</span><span class="s0">, </span><span class="s4">'=cache-path=' </span><span class="s1">+ path] ) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">clearCache(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will clear cache 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk([</span><span class="s4">'/ip/proxy/clear-cache'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">proxy 
+ 
+    </span><span class="s0">def </span><span class="s1">resetHtml(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reset html 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        proxy = self.client.talk( [</span><span class="s4">'/ip/proxy/reset-html'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">proxy</span></pre>
+</body>
+</html>

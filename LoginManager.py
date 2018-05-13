@@ -104,7 +104,27 @@ class LoginManager:
                     if len( header ) > 1:
                         if "IP" in header[0] and "MAC-Address" in header[1]:
                             loadMacAddress = True
-        return deviceList
+        return list(set(deviceList))
+
+    def listMikrotikDevicesIp(self):
+        """
+        method to list all mikrotik devices (near) using the os.system
+        :return: list of mikrotik devices (mac addresses)
+        """
+        deviceList = []
+        loadIpAddress = False
+        os.system("mactelnet -l -t 20 2>&1 > mt.output")
+        with open( "mt.output", "r" ) as file:
+            for line in file:
+                if loadIpAddress:
+                   macAddress = line.split( )[0]
+                   deviceList.append( macAddress )
+                else:
+                    header = line.split( )
+                    if len( header ) > 1:
+                        if "IP" in header[0] and "MAC-Address" in header[1]:
+                            loadMacAddress = True
+        return list(set(deviceList))
 
 
     def mactelnetLoginToSingleDevice(self, username, password, address=None):

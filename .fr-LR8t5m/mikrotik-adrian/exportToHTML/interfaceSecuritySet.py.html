@@ -1,0 +1,148 @@
+<html>
+<head>
+<title>interfaceSecuritySet.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+interfaceSecuritySet.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">interfaceSecuritySet: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">address</span><span class="s0">, </span><span class="s1">username</span><span class="s0">, </span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">, </span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">setSecurutyProfile(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">profile): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param profile: profile created in security 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=security='</span><span class="s1">+profile]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">useSecurity(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">secName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset security profile earlier created in security 
+        :param name: 
+        :param secName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=security='</span><span class="s1">+secName]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthenticationType(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">auth): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param auth:  wpa-eap,wpa-psk,wpa2-eap,wpa2-psk 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.authentication-types=' </span><span class="s1">+ auth] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setEncryption(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">encrypt=</span><span class="s4">&quot;aes-com&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param encrypt: aes-com,tkip 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.encryption=' </span><span class="s1">+ encrypt] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setGroupEncryption(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">ebcrypt=</span><span class="s4">&quot;aes-com&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param ebcrypt:  aes-com,tkip 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.group-encryption=' </span><span class="s1">+ ebcrypt] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setGroupKeyUpdate(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">update=</span><span class="s4">&quot;00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param update: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.group-key-update=' </span><span class="s1">+ update] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassphrase(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">passphrase): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param passphrase: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.passphrase=' </span><span class="s1">+ passphrase] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setEapMethods(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">methods=</span><span class="s4">&quot;eap-tls&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param methods: eap-tls,passthrough 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.eap-methods=' </span><span class="s1">+ methods] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setEaoRadiusAccounting(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.eap-radius-accounting=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetEapRadiusAccounting(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.eap-radius-accounting=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setTlsMode(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mode=</span><span class="s4">&quot;verify-certificate&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param mode: verify-certificate,dont-verify-certificate,no-certificates 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.tls-mode='</span><span class="s1">+mode] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setTlsCertificate(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">cert): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param cert: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=security.tls-certificate='</span><span class="s1">+cert] ) 
+        </span><span class="s0">return </span><span class="s1">wifi</span></pre>
+</body>
+</html>

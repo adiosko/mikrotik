@@ -1,0 +1,182 @@
+<html>
+<head>
+<title>interfaceL2tpServer.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+interfaceL2tpServer.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">interfaceL2tpServer: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">address</span><span class="s0">, </span><span class="s1">username</span><span class="s0">, </span><span class="s1">password): 
+        self.client = TikapyClient(address</span><span class="s0">, </span><span class="s2">8728</span><span class="s1">) 
+        self.client.login(username</span><span class="s0">, </span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">enableServer(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable l2tp server 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">,</span><span class="s4">'=enabled=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">disableServer(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable server 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=enabled=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxsession(self</span><span class="s0">,</span><span class="s1">session): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set port 
+        :param session: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=max-sessions='</span><span class="s1">+session]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxMtu(self</span><span class="s0">,</span><span class="s1">mtu=</span><span class="s4">&quot;1450&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max mtu 
+        :param mtu: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=max-mtu='</span><span class="s1">+mtu]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxMru(self</span><span class="s0">,</span><span class="s1">mru=</span><span class="s4">&quot;1450&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max mru 
+        :param mru: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=max-mru=' </span><span class="s1">+ mru]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">setMrru(self</span><span class="s0">,</span><span class="s1">mrru=</span><span class="s4">&quot;1500&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mrru 
+        :param mrru: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=mrru=' </span><span class="s1">+ mrru]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">setKeepaliveTimeout(self</span><span class="s0">,</span><span class="s1">timeout=</span><span class="s4">&quot;60&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set keeplaive timeout 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=keepalive-timeout=' </span><span class="s1">+ timeout]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">setDefaultProfile(self</span><span class="s0">,</span><span class="s1">profile=</span><span class="s4">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set profile 
+        :param profile: default,default-encryption or custom 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=default-profile=' </span><span class="s1">+ profile]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthentication(self</span><span class="s0">,</span><span class="s1">auth=</span><span class="s4">&quot;mschap2&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set authentication 
+        :param auth: mschap1,mschap2,chap,pap 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=authentication=' </span><span class="s1">+ auth]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">notUseIpsec(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable ipsec for l2tp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=use-ipsec=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">useIpsec(self</span><span class="s0">,</span><span class="s1">usage=</span><span class="s4">&quot;yes&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ipsec usagfe 
+        :param usage: yes,required 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=use-ipsec=' </span><span class="s1">+ usage]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpsecSecret(self</span><span class="s0">,</span><span class="s1">secret): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ipsec secret 
+        :param secret: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.useIpsec() 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=ipsec-secret=' </span><span class="s1">+ secret]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">setCallerIdType(self</span><span class="s0">,</span><span class="s1">caller=</span><span class="s4">&quot;ip-address&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset caller id 
+        :param caller: ip-address,number 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=caller-id-type=' </span><span class="s1">+ caller]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">enableOneSessionPerHost(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable one session per host 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=one-session-per-host=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">disableOneSessionPerHost(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable one session per host 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=one-session-per-host=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">allowFastPath(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will allow fast  path 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">enableFastPAth(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable one session per host 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=allow-fast-path=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ppp 
+ 
+    </span><span class="s0">def </span><span class="s1">disableFastPAth(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable one session per host 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ppp = self.client.talk([</span><span class="s4">'/interface/l2tp-server/server/set'</span><span class="s0">, </span><span class="s4">'=allow-fast-path=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ppp</span></pre>
+</body>
+</html>

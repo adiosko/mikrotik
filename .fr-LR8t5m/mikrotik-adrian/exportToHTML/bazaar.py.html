@@ -1,0 +1,140 @@
+<html>
+<head>
+<title>bazaar.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+bazaar.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">import </span><span class="s1">logging 
+</span><span class="s0">import </span><span class="s1">os 
+</span><span class="s0">import </span><span class="s1">tempfile 
+ 
+</span><span class="s2"># TODO: Get this into six.moves.urllib.parse</span><span class="s1"> 
+</span><span class="s0">try</span><span class="s1">: 
+    </span><span class="s0">from </span><span class="s1">urllib </span><span class="s0">import </span><span class="s1">parse </span><span class="s0">as </span><span class="s1">urllib_parse 
+</span><span class="s0">except </span><span class="s1">ImportError: 
+    </span><span class="s0">import </span><span class="s1">urlparse </span><span class="s0">as </span><span class="s1">urllib_parse 
+ 
+</span><span class="s0">from </span><span class="s1">pip.utils </span><span class="s0">import </span><span class="s1">rmtree</span><span class="s0">, </span><span class="s1">display_path 
+</span><span class="s0">from </span><span class="s1">pip.vcs </span><span class="s0">import </span><span class="s1">vcs</span><span class="s0">, </span><span class="s1">VersionControl 
+</span><span class="s0">from </span><span class="s1">pip.download </span><span class="s0">import </span><span class="s1">path_to_url 
+ 
+ 
+logger = logging.getLogger(__name__) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">Bazaar(VersionControl): 
+    name = </span><span class="s3">'bzr'</span><span class="s1"> 
+    dirname = </span><span class="s3">'.bzr'</span><span class="s1"> 
+    repo_name = </span><span class="s3">'branch'</span><span class="s1"> 
+    schemes = ( 
+        </span><span class="s3">'bzr'</span><span class="s0">, </span><span class="s3">'bzr+http'</span><span class="s0">, </span><span class="s3">'bzr+https'</span><span class="s0">, </span><span class="s3">'bzr+ssh'</span><span class="s0">, </span><span class="s3">'bzr+sftp'</span><span class="s0">, </span><span class="s3">'bzr+ftp'</span><span class="s0">,</span><span class="s1"> 
+        </span><span class="s3">'bzr+lp'</span><span class="s0">,</span><span class="s1"> 
+    ) 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">url=</span><span class="s0">None, </span><span class="s1">*args</span><span class="s0">, </span><span class="s1">**kwargs): 
+        super(Bazaar</span><span class="s0">, </span><span class="s1">self).__init__(url</span><span class="s0">, </span><span class="s1">*args</span><span class="s0">, </span><span class="s1">**kwargs) 
+        </span><span class="s2"># Python &gt;= 2.7.4, 3.3 doesn't have uses_fragment or non_hierarchical</span><span class="s1"> 
+        </span><span class="s2"># Register lp but do not expose as a scheme to support bzr+lp.</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">getattr(urllib_parse</span><span class="s0">, </span><span class="s3">'uses_fragment'</span><span class="s0">, None</span><span class="s1">): 
+            urllib_parse.uses_fragment.extend([</span><span class="s3">'lp'</span><span class="s1">]) 
+            urllib_parse.non_hierarchical.extend([</span><span class="s3">'lp'</span><span class="s1">]) 
+ 
+    </span><span class="s0">def </span><span class="s1">export(self</span><span class="s0">, </span><span class="s1">location): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Export the Bazaar repository at the url to the destination location 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        temp_dir = tempfile.mkdtemp(</span><span class="s3">'-export'</span><span class="s0">, </span><span class="s3">'pip-'</span><span class="s1">) 
+        self.unpack(temp_dir) 
+        </span><span class="s0">if </span><span class="s1">os.path.exists(location): 
+            </span><span class="s2"># Remove the location to make sure Bazaar can export it correctly</span><span class="s1"> 
+            rmtree(location) 
+        </span><span class="s0">try</span><span class="s1">: 
+            self.run_command([</span><span class="s3">'export'</span><span class="s0">, </span><span class="s1">location]</span><span class="s0">, </span><span class="s1">cwd=temp_dir</span><span class="s0">,</span><span class="s1"> 
+                             show_stdout=</span><span class="s0">False</span><span class="s1">) 
+        </span><span class="s0">finally</span><span class="s1">: 
+            rmtree(temp_dir) 
+ 
+    </span><span class="s0">def </span><span class="s1">switch(self</span><span class="s0">, </span><span class="s1">dest</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">rev_options): 
+        self.run_command([</span><span class="s3">'switch'</span><span class="s0">, </span><span class="s1">url]</span><span class="s0">, </span><span class="s1">cwd=dest) 
+ 
+    </span><span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">dest</span><span class="s0">, </span><span class="s1">rev_options): 
+        self.run_command([</span><span class="s3">'pull'</span><span class="s0">, </span><span class="s3">'-q'</span><span class="s1">] + rev_options</span><span class="s0">, </span><span class="s1">cwd=dest) 
+ 
+    </span><span class="s0">def </span><span class="s1">obtain(self</span><span class="s0">, </span><span class="s1">dest): 
+        url</span><span class="s0">, </span><span class="s1">rev = self.get_url_rev() 
+        </span><span class="s0">if </span><span class="s1">rev: 
+            rev_options = [</span><span class="s3">'-r'</span><span class="s0">, </span><span class="s1">rev] 
+            rev_display = </span><span class="s3">' (to revision %s)' </span><span class="s1">% rev 
+        </span><span class="s0">else</span><span class="s1">: 
+            rev_options = [] 
+            rev_display = </span><span class="s3">''</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self.check_destination(dest</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">rev_options</span><span class="s0">, </span><span class="s1">rev_display): 
+            logger.info( 
+                </span><span class="s3">'Checking out %s%s to %s'</span><span class="s0">,</span><span class="s1"> 
+                url</span><span class="s0">,</span><span class="s1"> 
+                rev_display</span><span class="s0">,</span><span class="s1"> 
+                display_path(dest)</span><span class="s0">,</span><span class="s1"> 
+            ) 
+            self.run_command([</span><span class="s3">'branch'</span><span class="s0">, </span><span class="s3">'-q'</span><span class="s1">] + rev_options + [url</span><span class="s0">, </span><span class="s1">dest]) 
+ 
+    </span><span class="s0">def </span><span class="s1">get_url_rev(self): 
+        </span><span class="s2"># hotfix the URL scheme after removing bzr+ from bzr+ssh:// readd it</span><span class="s1"> 
+        url</span><span class="s0">, </span><span class="s1">rev = super(Bazaar</span><span class="s0">, </span><span class="s1">self).get_url_rev() 
+        </span><span class="s0">if </span><span class="s1">url.startswith(</span><span class="s3">'ssh://'</span><span class="s1">): 
+            url = </span><span class="s3">'bzr+' </span><span class="s1">+ url 
+        </span><span class="s0">return </span><span class="s1">url</span><span class="s0">, </span><span class="s1">rev 
+ 
+    </span><span class="s0">def </span><span class="s1">get_url(self</span><span class="s0">, </span><span class="s1">location): 
+        urls = self.run_command([</span><span class="s3">'info'</span><span class="s1">]</span><span class="s0">, </span><span class="s1">show_stdout=</span><span class="s0">False, </span><span class="s1">cwd=location) 
+        </span><span class="s0">for </span><span class="s1">line </span><span class="s0">in </span><span class="s1">urls.splitlines(): 
+            line = line.strip() 
+            </span><span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">(</span><span class="s3">'checkout of branch: '</span><span class="s0">,</span><span class="s1"> 
+                      </span><span class="s3">'parent branch: '</span><span class="s1">): 
+                </span><span class="s0">if </span><span class="s1">line.startswith(x): 
+                    repo = line.split(x)[</span><span class="s5">1</span><span class="s1">] 
+                    </span><span class="s0">if </span><span class="s1">self._is_local_repository(repo): 
+                        </span><span class="s0">return </span><span class="s1">path_to_url(repo) 
+                    </span><span class="s0">return </span><span class="s1">repo 
+        </span><span class="s0">return None</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">get_revision(self</span><span class="s0">, </span><span class="s1">location): 
+        revision = self.run_command( 
+            [</span><span class="s3">'revno'</span><span class="s1">]</span><span class="s0">, </span><span class="s1">show_stdout=</span><span class="s0">False, </span><span class="s1">cwd=location) 
+        </span><span class="s0">return </span><span class="s1">revision.splitlines()[-</span><span class="s5">1</span><span class="s1">] 
+ 
+    </span><span class="s0">def </span><span class="s1">get_src_requirement(self</span><span class="s0">, </span><span class="s1">dist</span><span class="s0">, </span><span class="s1">location): 
+        repo = self.get_url(location) 
+        </span><span class="s0">if not </span><span class="s1">repo: 
+            </span><span class="s0">return None</span><span class="s1"> 
+        </span><span class="s0">if not </span><span class="s1">repo.lower().startswith(</span><span class="s3">'bzr:'</span><span class="s1">): 
+            repo = </span><span class="s3">'bzr+' </span><span class="s1">+ repo 
+        egg_project_name = dist.egg_name().split(</span><span class="s3">'-'</span><span class="s0">, </span><span class="s5">1</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">] 
+        current_rev = self.get_revision(location) 
+        </span><span class="s0">return </span><span class="s3">'%s@%s#egg=%s' </span><span class="s1">% (repo</span><span class="s0">, </span><span class="s1">current_rev</span><span class="s0">, </span><span class="s1">egg_project_name) 
+ 
+    </span><span class="s0">def </span><span class="s1">check_version(self</span><span class="s0">, </span><span class="s1">dest</span><span class="s0">, </span><span class="s1">rev_options): 
+        </span><span class="s4">&quot;&quot;&quot;Always assume the versions don't match&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">return False</span><span class="s1"> 
+ 
+ 
+vcs.register(Bazaar) 
+</span></pre>
+</body>
+</html>

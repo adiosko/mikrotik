@@ -1,0 +1,157 @@
+<html>
+<head>
+<title>Files.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Files.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+</span><span class="s0">from </span><span class="s1">pprint </span><span class="s0">import </span><span class="s1">pprint 
+</span><span class="s0">import </span><span class="s1">pexpect 
+</span><span class="s0">import </span><span class="s1">LoginManager 
+</span><span class="s0">from </span><span class="s1">paramiko </span><span class="s0">import </span><span class="s1">SSHClient 
+</span><span class="s0">from </span><span class="s1">scp </span><span class="s0">import </span><span class="s1">SCPClient 
+</span><span class="s0">import </span><span class="s1">os 
+ 
+</span><span class="s0">class </span><span class="s1">Files: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( </span><span class="s3">'admin'</span><span class="s0">, </span><span class="s3">'admin' </span><span class="s1">) 
+ 
+    </span><span class="s0">def </span><span class="s1">listFiles(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will list all files on mikrotik 
+        :return: list of files on mikrotik 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        files = self.client.talk([</span><span class="s3">'/file/print'</span><span class="s1">]) 
+        print(</span><span class="s3">&quot;File type</span><span class="s0">\t</span><span class="s3">Creation time</span><span class="s0">\t</span><span class="s3">Name of file&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">files: 
+            print(files[i][</span><span class="s3">'type'</span><span class="s1">]+</span><span class="s3">&quot;</span><span class="s0">\t</span><span class="s3">&quot;</span><span class="s1">+files[i][</span><span class="s3">'creation-time'</span><span class="s1">]+</span><span class="s3">&quot;</span><span class="s0">\t</span><span class="s3">&quot;</span><span class="s1">+files[i][</span><span class="s3">'name'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">files 
+ 
+    </span><span class="s0">def </span><span class="s1">backupRouter(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        mathod will backup router without naming using system name identity-date.backup 
+        :return: return files 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        backup = self.client.talk([</span><span class="s3">'/system/backup/save'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">backup 
+ 
+    </span><span class="s0">def </span><span class="s1">backupRouterwithSpecificFilename(self</span><span class="s0">,</span><span class="s1">filename): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will create backup file of curent config with specific name 
+        :param filename: name of the backup file you want to create 
+        :return: backup dictionary 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        backup = self.client.talk([</span><span class="s3">'/system/backup/save'</span><span class="s0">,</span><span class="s3">'=name='</span><span class="s1">+filename]) 
+        </span><span class="s0">return </span><span class="s1">backup 
+ 
+        </span><span class="s5"># dokoncit</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">loadBackup(self</span><span class="s0">, </span><span class="s1">filename</span><span class="s0">, </span><span class="s1">password): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will restore mikrotik config via backup file (backup.backup for exmaple) 
+        :param filename: filename.backup created by backuRouter method 
+        :param password: password of backup file, if none use &quot;&quot; 
+        :return: backup files 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        backup = self.client.talk( [</span><span class="s3">'/system/backup/load'</span><span class="s0">, </span><span class="s3">'=name=' </span><span class="s1">+ filename</span><span class="s0">, </span><span class="s3">'=password=' </span><span class="s1">+ password] ) 
+        </span><span class="s0">return </span><span class="s1">backup 
+ 
+    </span><span class="s0">def </span><span class="s1">setBackupPassword(self</span><span class="s0">,</span><span class="s1">filename</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will set password of current/new backup file of config 
+        :param filename: filename newbackup/existing backup file 
+        :param password: password of the file 
+        :return: backup files dictionary 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        backup = self.client.talk([</span><span class="s3">'/system/backup/save'</span><span class="s0">,</span><span class="s3">'=name='</span><span class="s1">+filename</span><span class="s0">,</span><span class="s3">'=password='</span><span class="s1">+password]) 
+        </span><span class="s0">return </span><span class="s1">backup 
+ 
+    </span><span class="s0">def </span><span class="s1">encryptBackup(self</span><span class="s0">,</span><span class="s1">filename): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will encrypt config file 
+        :param filename: backup file name (new/existing) 
+        :return: backup dictionary 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        backup = self.client.talk([</span><span class="s3">'/system/backup/save'</span><span class="s0">,</span><span class="s3">'=name='</span><span class="s1">+filename</span><span class="s0">,</span><span class="s3">'=dont-encrypt=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">backup 
+ 
+    </span><span class="s0">def </span><span class="s1">decryptBackup(self</span><span class="s0">,</span><span class="s1">filename): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will decrypt backup file (new/existing) 
+        :param filename: backup file name 
+        :return: backup dictionary 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        backup = self.client.talk([</span><span class="s3">'/system/backup/save'</span><span class="s0">,</span><span class="s3">'=name='</span><span class="s1">+filename</span><span class="s0">,</span><span class="s3">'=dont-encrypt=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">backup 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">uploadFile(self</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password</span><span class="s0">,</span><span class="s1">filepath</span><span class="s0">,</span><span class="s1">destinationfilename</span><span class="s0">,</span><span class="s1">host): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will upload file from local machine to mikrotik 
+        :param username: username on the router 
+        :param password: password of the pushed username 
+        :param filepath: path to file on local machine 
+        :param destinationfilename: filename which you want to use on mikrotik file tree 
+        :param host: IP address of the device 
+        :return: return operation status 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        upload = os.system(</span><span class="s3">&quot;sshpass -p &quot;</span><span class="s1">+password+</span><span class="s3">&quot; scp &quot;</span><span class="s1">+filepath+</span><span class="s3">&quot; &quot;</span><span class="s1">+username+</span><span class="s3">&quot;@&quot;</span><span class="s1">+host+</span><span class="s3">&quot;:&quot;</span><span class="s1">+destinationfilename) 
+        </span><span class="s0">return </span><span class="s1">upload 
+ 
+    </span><span class="s0">def </span><span class="s1">downloadFile(self</span><span class="s0">, </span><span class="s1">username</span><span class="s0">,</span><span class="s1">password</span><span class="s0">,</span><span class="s1">filename</span><span class="s0">,</span><span class="s1">destinationfilepath</span><span class="s0">,</span><span class="s1">host): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will download file frok mikrotik to local machine 
+        :param username: username on mikrotik 
+        :param password: password on mikrotik 
+        :param filename: file name, which you want to download 
+        :param destinationfilepath: path, where to download the file to your machine 
+        :param host: IP address of mikrotik 
+        :return: return operation status 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        download = os.system(</span><span class="s3">&quot;sshpass -p &quot;</span><span class="s1">+password+</span><span class="s3">&quot; scp &quot;</span><span class="s1">+username+</span><span class="s3">&quot;@&quot;</span><span class="s1">+host+</span><span class="s3">&quot;:&quot;</span><span class="s1">+filename+</span><span class="s3">&quot; &quot;</span><span class="s1">+destinationfilepath) 
+        </span><span class="s0">return </span><span class="s1">download 
+    </span><span class="s5">#falling method</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">exportConfig(self</span><span class="s0">,</span><span class="s1">filename): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will export whole configuration file.rsc of mikrotik 
+        :param filename: rsc filename which will 
+        :return: return files 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        files = self.client.talk([</span><span class="s3">'/export'</span><span class="s0">,</span><span class="s3">'=file='</span><span class="s1">+filename]) 
+        </span><span class="s0">return </span><span class="s1">files 
+ 
+    </span><span class="s5">#opravit</span><span class="s1"> 
+    </span><span class="s3">&quot;&quot;&quot; 
+    def importConfig(self,filename): 
+        method will import file.rsc to current config 
+        :param filename: 
+        :return: 
+        if filename: 
+            files = self.client.talk(['/import','=file-name='+filename,'=verbose=yes']) 
+        else: 
+            print(&quot;File does not exists&quot;) 
+        return files 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+ 
+ 
+ 
+</span></pre>
+</body>
+</html>

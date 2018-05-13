@@ -528,9 +528,6 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window = ethernetGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
-    def vlan(self):
-        pass
-
     def interfaceList(self):
         self.opened_window = interfaceListGui(self.user,self.pwd,self.server)
         self.opened_window.show()
@@ -551,12 +548,8 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window = loggingGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
-
-    def my_func1(self):
-        print("test1")
-
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    window= loginMikrotik()
+    app = QtGui.QApplication( sys.argv )
+    window = loginMikrotik()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit( app.exec_() )

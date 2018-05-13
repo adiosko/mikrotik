@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>configChannels.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+configChannels.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">configChannels: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">address</span><span class="s0">, </span><span class="s1">username</span><span class="s0">, </span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">, </span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">setChannels(self</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">channelsName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name:  
+        :param channelsName:  
+        :return:  
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel=' </span><span class="s1">+ channelsName] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+     
+    </span><span class="s0">def </span><span class="s1">setFrequency(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">freq): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param freq: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel.frequency=' </span><span class="s1">+ freq] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setControlCHannel(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">channel=</span><span class="s4">&quot;5mhz&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param channel: 5mhz,10mhz,20mhz,40mhz-turbo 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel.control-channel-width=' </span><span class="s1">+ channel] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setExtensionCHannel(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">channel=</span><span class="s4">&quot;disabled&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param channel:  Ce,Ceeeeeee,XXXX,disabled,eCee,eeCe,eeeC,eeeeCeee,eeeeeeCe,Ceee,XX,XXXXXXXX,eC,eCeeeeee,eeeCeeee 
+        eeeeeCee,eeeeeeeC 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel.extension-channel=' </span><span class="s1">+ channel] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setTxPower(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">power=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param power: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel.tx-power=' </span><span class="s1">+ power] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">saveSelection(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel.save-selected=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">notSaveSelected(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel.save-selected=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setReselectInterval(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel.reselect-interval='</span><span class="s1">+interval] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">skipDfs(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel.skip-dfs-channels=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">notSkipDfsChannels(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s4">'/caps-man/configuration/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=channel.skip-dfs-channels=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi</span></pre>
+</body>
+</html>

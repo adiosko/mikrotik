@@ -1,0 +1,185 @@
+<html>
+<head>
+<title>bgpAfregates.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+bgpAfregates.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">bgpAgregates: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listAgregation(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list agregation 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk([</span><span class="s4">'/routing/bgp/aggregate/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">agr == {}: 
+            print(</span><span class="s4">&quot;nothing set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Prefix</span><span class="s0">\t</span><span class="s4">Summary only</span><span class="s0">\t</span><span class="s4">inherit attributes</span><span class="s0">\t</span><span class="s4">include igp&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">agr: 
+                print(agr[i][</span><span class="s4">'prefix'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+agr[i][</span><span class="s4">'summary-only'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+agr[i][</span><span class="s4">'inherit-attributes'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+agr[i] 
+                [</span><span class="s4">'include-igp'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">addAggregation(self</span><span class="s0">,</span><span class="s1">prefix</span><span class="s0">,</span><span class="s1">instance): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add Aggregation 
+        :param prefix: IP 
+        :param instance: profile 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk([</span><span class="s4">'/routing/bgp/aggregate/add'</span><span class="s0">,</span><span class="s4">'=prefix='</span><span class="s1">+prefix</span><span class="s0">,</span><span class="s4">'=instance='</span><span class="s1">+instance]) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">removeAggregation(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill remove aggregation 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk([</span><span class="s4">'/routing/bgp/aggregate/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">disableAggregation(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable aggregation 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">enableAggregation(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable aggregation 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">setInstance(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">instance): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set aggregaton 
+        :param number: 
+        :param instance: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=instance='</span><span class="s1">+instance] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefix(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefix): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new prefix 
+        :param number: 
+        :param prefix: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=prefix=' </span><span class="s1">+ prefix] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">setSummaryOnly(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set sumamry only 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=summary-only=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetSummaryOnly(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set sumamry only 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=summary-only=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">setInheritAttributes(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable inherit attributes 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=inherit-attributes=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetInheritAttributes(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable inherit attributes 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=inherit-attributes=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">setIncludeIGP(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will include IGP 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=include-igp=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetIncludeIGP(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will include IGP 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=include-igp=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">setAttributeFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">atribute): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set attribute filter 
+        :param number: 
+        :param atribute: dyamic-in, conencted-in, rip-in, rip-out 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=attribute-filter='</span><span class="s1">+atribute] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">setSupressFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">filter): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set supress filter 
+        :param number: 
+        :param filter: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=suppress-filter=' </span><span class="s1">+ filter] ) 
+        </span><span class="s0">return </span><span class="s1">agr 
+ 
+    </span><span class="s0">def </span><span class="s1">setAdvertiseFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">filter): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set advertisment filter 
+        :param number: 
+        :param filter: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        agr = self.client.talk( [</span><span class="s4">'/routing/bgp/aggregate/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=advertise-filter=' </span><span class="s1">+ filter] ) 
+        </span><span class="s0">return </span><span class="s1">agr</span></pre>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<html>
+<head>
+<title>DhcpServer.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+DhcpServer.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">DhcpServer: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listServers(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list servers 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">ipv6 == {}: 
+            print(</span><span class="s4">&quot;No server found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">Interface</span><span class="s0">\t</span><span class="s4">LeaseTime&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipv6: 
+                print(ipv6[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv6[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv6[i][</span><span class="s4">'lease-time'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">addServer(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">pool): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add dhcp server bases on pool 
+        :param interface: 
+        :param name: 
+        :param pool: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=address-pool='</span><span class="s1">+pool]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">removeServer(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove server 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">enableServer(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable dhcp server 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">disableServer(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable server 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">&quot;/ipv6/dhcp-server/disable&quot;</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">commentServer(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment rule 
+        :param name: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/comment'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+    </span><span class="s5">#Global</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename server 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newName]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">iface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dhcp server interface 
+        :param name: 
+        :param iface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+iface]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPool(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">pool): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pool 
+        :param name: 
+        :param pool: created pool 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=address-pool='</span><span class="s1">+pool]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setLeaseTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">lease): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set lease time 
+        :param name: 
+        :param lease: 00:00:00 or 1d 00:00:00 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=lease-time='</span><span class="s1">+lease]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s5">#Binding</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">listDuid(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list duid needed for binding 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/print'</span><span class="s0">,</span><span class="s4">'detail'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">Duid&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipv6: 
+            print(ipv6[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv6[i][</span><span class="s4">'duid'</span><span class="s1">]) 
+        </span><span class="s5">#print(ipv6)</span><span class="s1"> 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+ 
+    </span><span class="s0">def </span><span class="s1">listBindings(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list bindings 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/binding/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">ipv6 == {}: 
+            print(</span><span class="s4">&quot;No binding found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipv6: 
+                print(ipv6[i]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">addInterface(self</span><span class="s0">,</span><span class="s1">duid</span><span class="s0">,</span><span class="s1">iaid</span><span class="s0">,</span><span class="s1">server): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add binding 
+        :param duid: from detail print of server 
+        :param iaid: identifier of client station 0..4294967295 
+        :param server: ipv6 addr 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/binding/add'</span><span class="s0">,</span><span class="s4">'=server='</span><span class="s1">+server</span><span class="s0">,</span><span class="s4">'=duid='</span><span class="s1">+duid</span><span class="s0">,</span><span class="s4">'=iaid='</span><span class="s1">+iaid]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/binding/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable iface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/dhcp-server/binding/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/dhcp-server/binding/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">commentInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment iface 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk( [</span><span class="s4">'/ipv6/dhcp-server/binding/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set binding address 
+        :param number: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/binding/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+address]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setDuid(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">duid): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set duid on mikrotik (from dhcp server value) 
+        :param number: 
+        :param duid: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/binding/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=duid='</span><span class="s1">+duid]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setIaid(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">ids): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set id of client 
+        :param number: 
+        :param ids:integer [0..4294967295]; Default: ) 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/binding/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'iaid='</span><span class="s1">+ids]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setServer(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">server=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set server 
+        :param number: 
+        :param server: interface all or specific one 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/binding/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=server='</span><span class="s1">+server]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setLifeTime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">life=</span><span class="s4">&quot;3d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set life time 
+        :param number: 
+        :param life: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/binding/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=life-time='</span><span class="s1">+life]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrefixPool(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">pool=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prefix pool 
+        :param number: 
+        :param pool: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv6 = self.client.talk([</span><span class="s4">'/ipv6/dhcp-server/binding/set'</span><span class="s0">,</span><span class="s4">'=prefix-pool='</span><span class="s1">+pool]) 
+        </span><span class="s0">return </span><span class="s1">ipv6 
+</span></pre>
+</body>
+</html>

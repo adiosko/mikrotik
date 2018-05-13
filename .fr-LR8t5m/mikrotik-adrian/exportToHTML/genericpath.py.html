@@ -1,0 +1,169 @@
+<html>
+<head>
+<title>genericpath.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+genericpath.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; 
+Path operations common to more than one OS 
+Do not use directly.  The OS specific modules import the appropriate 
+functions from this module themselves. 
+&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2">import </span><span class="s1">os 
+</span><span class="s2">import </span><span class="s1">stat 
+ 
+__all__ = [</span><span class="s3">'commonprefix'</span><span class="s2">, </span><span class="s3">'exists'</span><span class="s2">, </span><span class="s3">'getatime'</span><span class="s2">, </span><span class="s3">'getctime'</span><span class="s2">, </span><span class="s3">'getmtime'</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">'getsize'</span><span class="s2">, </span><span class="s3">'isdir'</span><span class="s2">, </span><span class="s3">'isfile'</span><span class="s2">, </span><span class="s3">'samefile'</span><span class="s2">, </span><span class="s3">'sameopenfile'</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">'samestat'</span><span class="s1">] 
+ 
+ 
+</span><span class="s4"># Does a path exist?</span><span class="s1"> 
+</span><span class="s4"># This is false for dangling symbolic links on systems that support them.</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">exists(path): 
+    </span><span class="s0">&quot;&quot;&quot;Test whether a path exists.  Returns False for broken symbolic links&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        os.stat(path) 
+    </span><span class="s2">except </span><span class="s1">OSError: 
+        </span><span class="s2">return False</span><span class="s1"> 
+    </span><span class="s2">return True</span><span class="s1"> 
+ 
+ 
+</span><span class="s4"># This follows symbolic links, so both islink() and isdir() can be true</span><span class="s1"> 
+</span><span class="s4"># for the same path on systems that support symlinks</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">isfile(path): 
+    </span><span class="s0">&quot;&quot;&quot;Test whether a path is a regular file&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        st = os.stat(path) 
+    </span><span class="s2">except </span><span class="s1">OSError: 
+        </span><span class="s2">return False</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">stat.S_ISREG(st.st_mode) 
+ 
+ 
+</span><span class="s4"># Is a path a directory?</span><span class="s1"> 
+</span><span class="s4"># This follows symbolic links, so both islink() and isdir()</span><span class="s1"> 
+</span><span class="s4"># can be true for the same path on systems that support symlinks</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">isdir(s): 
+    </span><span class="s0">&quot;&quot;&quot;Return true if the pathname refers to an existing directory.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        st = os.stat(s) 
+    </span><span class="s2">except </span><span class="s1">OSError: 
+        </span><span class="s2">return False</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">stat.S_ISDIR(st.st_mode) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">getsize(filename): 
+    </span><span class="s0">&quot;&quot;&quot;Return the size of a file, reported by os.stat().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">os.stat(filename).st_size 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">getmtime(filename): 
+    </span><span class="s0">&quot;&quot;&quot;Return the last modification time of a file, reported by os.stat().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">os.stat(filename).st_mtime 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">getatime(filename): 
+    </span><span class="s0">&quot;&quot;&quot;Return the last access time of a file, reported by os.stat().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">os.stat(filename).st_atime 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">getctime(filename): 
+    </span><span class="s0">&quot;&quot;&quot;Return the metadata change time of a file, reported by os.stat().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">os.stat(filename).st_ctime 
+ 
+ 
+</span><span class="s4"># Return the longest prefix of all list elements.</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">commonprefix(m): 
+    </span><span class="s0">&quot;Given a list of pathnames, returns the longest common leading component&quot;</span><span class="s1"> 
+    </span><span class="s2">if not </span><span class="s1">m: </span><span class="s2">return </span><span class="s3">''</span><span class="s1"> 
+    s1 = min(m) 
+    s2 = max(m) 
+    </span><span class="s2">for </span><span class="s1">i</span><span class="s2">, </span><span class="s1">c </span><span class="s2">in </span><span class="s1">enumerate(s1): 
+        </span><span class="s2">if </span><span class="s1">c != s2[i]: 
+            </span><span class="s2">return </span><span class="s1">s1[:i] 
+    </span><span class="s2">return </span><span class="s1">s1 
+ 
+</span><span class="s4"># Are two stat buffers (obtained from stat, fstat or lstat)</span><span class="s1"> 
+</span><span class="s4"># describing the same file?</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">samestat(s1</span><span class="s2">, </span><span class="s1">s2): 
+    </span><span class="s0">&quot;&quot;&quot;Test whether two stat buffers reference the same file&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">(s1.st_ino == s2.st_ino </span><span class="s2">and</span><span class="s1"> 
+            s1.st_dev == s2.st_dev) 
+ 
+ 
+</span><span class="s4"># Are two filenames really pointing to the same file?</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">samefile(f1</span><span class="s2">, </span><span class="s1">f2): 
+    </span><span class="s0">&quot;&quot;&quot;Test whether two pathnames reference the same actual file&quot;&quot;&quot;</span><span class="s1"> 
+    s1 = os.stat(f1) 
+    s2 = os.stat(f2) 
+    </span><span class="s2">return </span><span class="s1">samestat(s1</span><span class="s2">, </span><span class="s1">s2) 
+ 
+ 
+</span><span class="s4"># Are two open files really referencing the same file?</span><span class="s1"> 
+</span><span class="s4"># (Not necessarily the same file descriptor!)</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">sameopenfile(fp1</span><span class="s2">, </span><span class="s1">fp2): 
+    </span><span class="s0">&quot;&quot;&quot;Test whether two open file objects reference the same file&quot;&quot;&quot;</span><span class="s1"> 
+    s1 = os.fstat(fp1) 
+    s2 = os.fstat(fp2) 
+    </span><span class="s2">return </span><span class="s1">samestat(s1</span><span class="s2">, </span><span class="s1">s2) 
+ 
+ 
+</span><span class="s4"># Split a path in root and extension.</span><span class="s1"> 
+</span><span class="s4"># The extension is everything starting at the last dot in the last</span><span class="s1"> 
+</span><span class="s4"># pathname component; the root is everything before that.</span><span class="s1"> 
+</span><span class="s4"># It is always true that root + ext == p.</span><span class="s1"> 
+ 
+</span><span class="s4"># Generic implementation of splitext, to be parametrized with</span><span class="s1"> 
+</span><span class="s4"># the separators</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">_splitext(p</span><span class="s2">, </span><span class="s1">sep</span><span class="s2">, </span><span class="s1">altsep</span><span class="s2">, </span><span class="s1">extsep): 
+    </span><span class="s0">&quot;&quot;&quot;Split the extension from a pathname. 
+ 
+    Extension is everything from the last dot to the end, ignoring 
+    leading dots.  Returns &quot;(root, ext)&quot;; ext may be empty.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4"># NOTE: This code must work for text and bytes strings.</span><span class="s1"> 
+ 
+    sepIndex = p.rfind(sep) 
+    </span><span class="s2">if </span><span class="s1">altsep: 
+        altsepIndex = p.rfind(altsep) 
+        sepIndex = max(sepIndex</span><span class="s2">, </span><span class="s1">altsepIndex) 
+ 
+    dotIndex = p.rfind(extsep) 
+    </span><span class="s2">if </span><span class="s1">dotIndex &gt; sepIndex: 
+        </span><span class="s4"># skip all leading dots</span><span class="s1"> 
+        filenameIndex = sepIndex + </span><span class="s5">1</span><span class="s1"> 
+        </span><span class="s2">while </span><span class="s1">filenameIndex &lt; dotIndex: 
+            </span><span class="s2">if </span><span class="s1">p[filenameIndex:filenameIndex+</span><span class="s5">1</span><span class="s1">] != extsep: 
+                </span><span class="s2">return </span><span class="s1">p[:dotIndex]</span><span class="s2">, </span><span class="s1">p[dotIndex:] 
+            filenameIndex += </span><span class="s5">1</span><span class="s1"> 
+ 
+    </span><span class="s2">return </span><span class="s1">p</span><span class="s2">, </span><span class="s1">p[:</span><span class="s5">0</span><span class="s1">] 
+ 
+</span><span class="s2">def </span><span class="s1">_check_arg_types(funcname</span><span class="s2">, </span><span class="s1">*args): 
+    hasstr = hasbytes = </span><span class="s2">False</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">s </span><span class="s2">in </span><span class="s1">args: 
+        </span><span class="s2">if </span><span class="s1">isinstance(s</span><span class="s2">, </span><span class="s1">str): 
+            hasstr = </span><span class="s2">True</span><span class="s1"> 
+        </span><span class="s2">elif </span><span class="s1">isinstance(s</span><span class="s2">, </span><span class="s1">bytes): 
+            hasbytes = </span><span class="s2">True</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s3">'%s() argument must be str or bytes, not %r' </span><span class="s1">% 
+                            (funcname</span><span class="s2">, </span><span class="s1">s.__class__.__name__)) </span><span class="s2">from None</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">hasstr </span><span class="s2">and </span><span class="s1">hasbytes: 
+        </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s3">&quot;Can't mix strings and bytes in path components&quot;</span><span class="s1">) </span><span class="s2">from None</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

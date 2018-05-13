@@ -1,0 +1,60 @@
+<html>
+<head>
+<title>eoipSetLoopProtection.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+eoipSetLoopProtection.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">eoIpLoopProtectSet: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">address</span><span class="s0">, </span><span class="s1">username</span><span class="s0">, </span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">, </span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">setMode(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mode=</span><span class="s3">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param mode: default,on,off 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vlan = self.client.talk([</span><span class="s3">'/interface/eoip/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s3">'=loop-protect='</span><span class="s1">+mode]) 
+        </span><span class="s0">return </span><span class="s1">vlan 
+ 
+    </span><span class="s0">def </span><span class="s1">setSendInterval(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interval=</span><span class="s3">&quot;00:00:05&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vlan = self.client.talk([</span><span class="s3">'/interface/eoip/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s3">'=loop-protect-send-interval='</span><span class="s1">+interval]) 
+        </span><span class="s0">return </span><span class="s1">vlan 
+ 
+    </span><span class="s0">def </span><span class="s1">setDisableTimeout(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">timeout=</span><span class="s3">&quot;00:05:00&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vlan = self.client.talk([</span><span class="s3">'/interface/eoip/set'</span><span class="s0">,</span><span class="s3">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s3">'=loop-protect-disable-time='</span><span class="s1">+timeout]) 
+        </span><span class="s0">return </span><span class="s1">vlan</span></pre>
+</body>
+</html>

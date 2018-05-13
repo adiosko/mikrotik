@@ -1,0 +1,74 @@
+<html>
+<head>
+<title>ed25519py.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(104,151,187); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ed25519py.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">import </span><span class="s1">os 
+</span><span class="s0">import </span><span class="s1">warnings 
+</span><span class="s0">from </span><span class="s1">collections </span><span class="s0">import </span><span class="s1">namedtuple 
+ 
+</span><span class="s0">from </span><span class="s1">. </span><span class="s0">import </span><span class="s1">djbec 
+ 
+__all__ = [</span><span class="s2">'crypto_sign'</span><span class="s0">, </span><span class="s2">'crypto_sign_open'</span><span class="s0">, </span><span class="s2">'crypto_sign_keypair'</span><span class="s0">, </span><span class="s2">'Keypair'</span><span class="s0">,</span><span class="s1"> 
+           </span><span class="s2">'PUBLICKEYBYTES'</span><span class="s0">, </span><span class="s2">'SECRETKEYBYTES'</span><span class="s0">, </span><span class="s2">'SIGNATUREBYTES'</span><span class="s1">] 
+ 
+PUBLICKEYBYTES = </span><span class="s3">32</span><span class="s1"> 
+SECRETKEYBYTES = </span><span class="s3">64</span><span class="s1"> 
+SIGNATUREBYTES = </span><span class="s3">64</span><span class="s1"> 
+ 
+Keypair = namedtuple(</span><span class="s2">'Keypair'</span><span class="s0">, </span><span class="s1">(</span><span class="s2">'vk'</span><span class="s0">, </span><span class="s2">'sk'</span><span class="s1">))  </span><span class="s4"># verifying key, secret key</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">crypto_sign_keypair(seed=</span><span class="s0">None</span><span class="s1">): 
+    </span><span class="s5">&quot;&quot;&quot;Return (verifying, secret) key from a given seed, or os.urandom(32)&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">if </span><span class="s1">seed </span><span class="s0">is None</span><span class="s1">: 
+        seed = os.urandom(PUBLICKEYBYTES) 
+    </span><span class="s0">else</span><span class="s1">: 
+        warnings.warn(</span><span class="s2">&quot;ed25519ll should choose random seed.&quot;</span><span class="s0">,</span><span class="s1"> 
+                      RuntimeWarning) 
+    </span><span class="s0">if </span><span class="s1">len(seed) != </span><span class="s3">32</span><span class="s1">: 
+        </span><span class="s0">raise </span><span class="s1">ValueError(</span><span class="s2">&quot;seed must be 32 random bytes or None.&quot;</span><span class="s1">) 
+    skbytes = seed 
+    vkbytes = djbec.publickey(skbytes) 
+    </span><span class="s0">return </span><span class="s1">Keypair(vkbytes</span><span class="s0">, </span><span class="s1">skbytes+vkbytes) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">crypto_sign(msg</span><span class="s0">, </span><span class="s1">sk): 
+    </span><span class="s5">&quot;&quot;&quot;Return signature+message given message and secret key. 
+    The signature is the first SIGNATUREBYTES bytes of the return value. 
+    A copy of msg is in the remainder.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">if </span><span class="s1">len(sk) != SECRETKEYBYTES: 
+        </span><span class="s0">raise </span><span class="s1">ValueError(</span><span class="s2">&quot;Bad signing key length %d&quot; </span><span class="s1">% len(sk)) 
+    vkbytes = sk[PUBLICKEYBYTES:] 
+    skbytes = sk[:PUBLICKEYBYTES] 
+    sig = djbec.signature(msg</span><span class="s0">, </span><span class="s1">skbytes</span><span class="s0">, </span><span class="s1">vkbytes) 
+    </span><span class="s0">return </span><span class="s1">sig + msg 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">crypto_sign_open(signed</span><span class="s0">, </span><span class="s1">vk): 
+    </span><span class="s5">&quot;&quot;&quot;Return message given signature+message and the verifying key.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">if </span><span class="s1">len(vk) != PUBLICKEYBYTES: 
+        </span><span class="s0">raise </span><span class="s1">ValueError(</span><span class="s2">&quot;Bad verifying key length %d&quot; </span><span class="s1">% len(vk)) 
+    rc = djbec.checkvalid(signed[:SIGNATUREBYTES]</span><span class="s0">, </span><span class="s1">signed[SIGNATUREBYTES:]</span><span class="s0">, </span><span class="s1">vk) 
+    </span><span class="s0">if not </span><span class="s1">rc: 
+        </span><span class="s0">raise </span><span class="s1">ValueError(</span><span class="s2">&quot;rc != True&quot;</span><span class="s0">, </span><span class="s1">rc) 
+    </span><span class="s0">return </span><span class="s1">signed[SIGNATUREBYTES:] 
+</span></pre>
+</body>
+</html>

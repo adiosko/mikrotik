@@ -1,0 +1,104 @@
+<html>
+<head>
+<title>completion.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+completion.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">import </span><span class="s1">sys 
+</span><span class="s0">from </span><span class="s1">pip.basecommand </span><span class="s0">import </span><span class="s1">Command 
+ 
+BASE_COMPLETION = </span><span class="s2">&quot;&quot;&quot; 
+# pip %(shell)s completion start%(script)s# pip %(shell)s completion end 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+COMPLETION_SCRIPTS = { 
+    </span><span class="s2">'bash'</span><span class="s1">: </span><span class="s2">&quot;&quot;&quot; 
+_pip_completion() 
+{ 
+    COMPREPLY=( $( COMP_WORDS=&quot;${COMP_WORDS[*]}&quot; </span><span class="s0">\\</span><span class="s2"> 
+                   COMP_CWORD=$COMP_CWORD </span><span class="s0">\\</span><span class="s2"> 
+                   PIP_AUTO_COMPLETE=1 $1 ) ) 
+} 
+complete -o default -F _pip_completion pip 
+&quot;&quot;&quot;</span><span class="s0">, </span><span class="s2">'zsh'</span><span class="s1">: </span><span class="s2">&quot;&quot;&quot; 
+function _pip_completion { 
+  local words cword 
+  read -Ac words 
+  read -cn cword 
+  reply=( $( COMP_WORDS=&quot;$words[*]&quot; </span><span class="s0">\\</span><span class="s2"> 
+             COMP_CWORD=$(( cword-1 )) </span><span class="s0">\\</span><span class="s2"> 
+             PIP_AUTO_COMPLETE=1 $words[1] ) ) 
+} 
+compctl -K _pip_completion pip 
+&quot;&quot;&quot;</span><span class="s0">, </span><span class="s2">'fish'</span><span class="s1">: </span><span class="s2">&quot;&quot;&quot; 
+function __fish_complete_pip 
+    set -lx COMP_WORDS (commandline -o) &quot;&quot; 
+    set -lx COMP_CWORD (math (contains -i -- (commandline -t) $COMP_WORDS)-1) 
+    set -lx PIP_AUTO_COMPLETE 1 
+    string split \  -- (eval $COMP_WORDS[1]) 
+end 
+complete -fa &quot;(__fish_complete_pip)&quot; -c pip 
+&quot;&quot;&quot;</span><span class="s1">} 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">CompletionCommand(Command): 
+    </span><span class="s3">&quot;&quot;&quot;A helper command to be used for command completion.&quot;&quot;&quot;</span><span class="s1"> 
+    name = </span><span class="s2">'completion'</span><span class="s1"> 
+    summary = </span><span class="s2">'A helper command used for command completion.'</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">*args</span><span class="s0">, </span><span class="s1">**kw): 
+        super(CompletionCommand</span><span class="s0">, </span><span class="s1">self).__init__(*args</span><span class="s0">, </span><span class="s1">**kw) 
+ 
+        cmd_opts = self.cmd_opts 
+ 
+        cmd_opts.add_option( 
+            </span><span class="s2">'--bash'</span><span class="s0">, </span><span class="s2">'-b'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s2">'store_const'</span><span class="s0">,</span><span class="s1"> 
+            const=</span><span class="s2">'bash'</span><span class="s0">,</span><span class="s1"> 
+            dest=</span><span class="s2">'shell'</span><span class="s0">,</span><span class="s1"> 
+            help=</span><span class="s2">'Emit completion code for bash'</span><span class="s1">) 
+        cmd_opts.add_option( 
+            </span><span class="s2">'--zsh'</span><span class="s0">, </span><span class="s2">'-z'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s2">'store_const'</span><span class="s0">,</span><span class="s1"> 
+            const=</span><span class="s2">'zsh'</span><span class="s0">,</span><span class="s1"> 
+            dest=</span><span class="s2">'shell'</span><span class="s0">,</span><span class="s1"> 
+            help=</span><span class="s2">'Emit completion code for zsh'</span><span class="s1">) 
+        cmd_opts.add_option( 
+            </span><span class="s2">'--fish'</span><span class="s0">, </span><span class="s2">'-f'</span><span class="s0">,</span><span class="s1"> 
+            action=</span><span class="s2">'store_const'</span><span class="s0">,</span><span class="s1"> 
+            const=</span><span class="s2">'fish'</span><span class="s0">,</span><span class="s1"> 
+            dest=</span><span class="s2">'shell'</span><span class="s0">,</span><span class="s1"> 
+            help=</span><span class="s2">'Emit completion code for fish'</span><span class="s1">) 
+ 
+        self.parser.insert_option_group(</span><span class="s4">0</span><span class="s0">, </span><span class="s1">cmd_opts) 
+ 
+    </span><span class="s0">def </span><span class="s1">run(self</span><span class="s0">, </span><span class="s1">options</span><span class="s0">, </span><span class="s1">args): 
+        </span><span class="s3">&quot;&quot;&quot;Prints the completion code of the given shell&quot;&quot;&quot;</span><span class="s1"> 
+        shells = COMPLETION_SCRIPTS.keys() 
+        shell_options = [</span><span class="s2">'--' </span><span class="s1">+ shell </span><span class="s0">for </span><span class="s1">shell </span><span class="s0">in </span><span class="s1">sorted(shells)] 
+        </span><span class="s0">if </span><span class="s1">options.shell </span><span class="s0">in </span><span class="s1">shells: 
+            script = COMPLETION_SCRIPTS.get(options.shell</span><span class="s0">, </span><span class="s2">''</span><span class="s1">) 
+            print(BASE_COMPLETION % {</span><span class="s2">'script'</span><span class="s1">: script</span><span class="s0">, </span><span class="s2">'shell'</span><span class="s1">: options.shell}) 
+        </span><span class="s0">else</span><span class="s1">: 
+            sys.stderr.write( 
+                </span><span class="s2">'ERROR: You must pass %s</span><span class="s0">\n</span><span class="s2">' </span><span class="s1">% </span><span class="s2">' or '</span><span class="s1">.join(shell_options) 
+            ) 
+</span></pre>
+</body>
+</html>

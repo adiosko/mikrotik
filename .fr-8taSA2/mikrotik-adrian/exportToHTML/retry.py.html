@@ -1,0 +1,324 @@
+<html>
+<head>
+<title>retry.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+retry.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+</span><span class="s0">import </span><span class="s1">time 
+</span><span class="s0">import </span><span class="s1">logging 
+ 
+</span><span class="s0">from </span><span class="s1">..exceptions </span><span class="s0">import </span><span class="s1">( 
+    ConnectTimeoutError</span><span class="s0">,</span><span class="s1"> 
+    MaxRetryError</span><span class="s0">,</span><span class="s1"> 
+    ProtocolError</span><span class="s0">,</span><span class="s1"> 
+    ReadTimeoutError</span><span class="s0">,</span><span class="s1"> 
+    ResponseError</span><span class="s0">,</span><span class="s1"> 
+) 
+</span><span class="s0">from </span><span class="s1">..packages </span><span class="s0">import </span><span class="s1">six 
+ 
+ 
+log = logging.getLogger(__name__) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">Retry(object): 
+    </span><span class="s2">&quot;&quot;&quot; Retry configuration. 
+ 
+    Each retry attempt will create a new Retry object with updated values, so 
+    they can be safely reused. 
+ 
+    Retries can be defined as a default for a pool:: 
+ 
+        retries = Retry(connect=5, read=2, redirect=5) 
+        http = PoolManager(retries=retries) 
+        response = http.request('GET', 'http://example.com/') 
+ 
+    Or per-request (which overrides the default for the pool):: 
+ 
+        response = http.request('GET', 'http://example.com/', retries=Retry(10)) 
+ 
+    Retries can be disabled by passing ``False``:: 
+ 
+        response = http.request('GET', 'http://example.com/', retries=False) 
+ 
+    Errors will be wrapped in :class:`~urllib3.exceptions.MaxRetryError` unless 
+    retries are disabled, in which case the causing exception will be raised. 
+ 
+    :param int total: 
+        Total number of retries to allow. Takes precedence over other counts. 
+ 
+        Set to ``None`` to remove this constraint and fall back on other 
+        counts. It's a good idea to set this to some sensibly-high value to 
+        account for unexpected edge cases and avoid infinite retry loops. 
+ 
+        Set to ``0`` to fail on the first retry. 
+ 
+        Set to ``False`` to disable and imply ``raise_on_redirect=False``. 
+ 
+    :param int connect: 
+        How many connection-related errors to retry on. 
+ 
+        These are errors raised before the request is sent to the remote server, 
+        which we assume has not triggered the server to process the request. 
+ 
+        Set to ``0`` to fail on the first retry of this type. 
+ 
+    :param int read: 
+        How many times to retry on read errors. 
+ 
+        These errors are raised after the request was sent to the server, so the 
+        request may have side-effects. 
+ 
+        Set to ``0`` to fail on the first retry of this type. 
+ 
+    :param int redirect: 
+        How many redirects to perform. Limit this to avoid infinite redirect 
+        loops. 
+ 
+        A redirect is a HTTP response with a status code 301, 302, 303, 307 or 
+        308. 
+ 
+        Set to ``0`` to fail on the first retry of this type. 
+ 
+        Set to ``False`` to disable and imply ``raise_on_redirect=False``. 
+ 
+    :param iterable method_whitelist: 
+        Set of uppercased HTTP method verbs that we should retry on. 
+ 
+        By default, we only retry on methods which are considered to be 
+        idempotent (multiple requests with the same parameters end with the 
+        same state). See :attr:`Retry.DEFAULT_METHOD_WHITELIST`. 
+ 
+        Set to a ``False`` value to retry on any verb. 
+ 
+    :param iterable status_forcelist: 
+        A set of integer HTTP status codes that we should force a retry on. 
+        A retry is initiated if the request method is in ``method_whitelist`` 
+        and the response status code is in ``status_forcelist``. 
+ 
+        By default, this is disabled with ``None``. 
+ 
+    :param float backoff_factor: 
+        A backoff factor to apply between attempts after the second try 
+        (most errors are resolved immediately by a second try without a 
+        delay). urllib3 will sleep for:: 
+ 
+            {backoff factor} * (2 ^ ({number of total retries} - 1)) 
+ 
+        seconds. If the backoff_factor is 0.1, then :func:`.sleep` will sleep 
+        for [0.0s, 0.2s, 0.4s, ...] between retries. It will never be longer 
+        than :attr:`Retry.BACKOFF_MAX`. 
+ 
+        By default, backoff is disabled (set to 0). 
+ 
+    :param bool raise_on_redirect: Whether, if the number of redirects is 
+        exhausted, to raise a MaxRetryError, or to return a response with a 
+        response code in the 3xx range. 
+ 
+    :param bool raise_on_status: Similar meaning to ``raise_on_redirect``: 
+        whether we should raise an exception, or return a response, 
+        if status falls in ``status_forcelist`` range and retries have 
+        been exhausted. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    DEFAULT_METHOD_WHITELIST = frozenset([ 
+        </span><span class="s3">'HEAD'</span><span class="s0">, </span><span class="s3">'GET'</span><span class="s0">, </span><span class="s3">'PUT'</span><span class="s0">, </span><span class="s3">'DELETE'</span><span class="s0">, </span><span class="s3">'OPTIONS'</span><span class="s0">, </span><span class="s3">'TRACE'</span><span class="s1">]) 
+ 
+    </span><span class="s4">#: Maximum backoff time.</span><span class="s1"> 
+    BACKOFF_MAX = </span><span class="s5">120</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">total=</span><span class="s5">10</span><span class="s0">, </span><span class="s1">connect=</span><span class="s0">None, </span><span class="s1">read=</span><span class="s0">None, </span><span class="s1">redirect=</span><span class="s0">None,</span><span class="s1"> 
+                 method_whitelist=DEFAULT_METHOD_WHITELIST</span><span class="s0">, </span><span class="s1">status_forcelist=</span><span class="s0">None,</span><span class="s1"> 
+                 backoff_factor=</span><span class="s5">0</span><span class="s0">, </span><span class="s1">raise_on_redirect=</span><span class="s0">True, </span><span class="s1">raise_on_status=</span><span class="s0">True,</span><span class="s1"> 
+                 _observed_errors=</span><span class="s5">0</span><span class="s1">): 
+ 
+        self.total = total 
+        self.connect = connect 
+        self.read = read 
+ 
+        </span><span class="s0">if </span><span class="s1">redirect </span><span class="s0">is False or </span><span class="s1">total </span><span class="s0">is False</span><span class="s1">: 
+            redirect = </span><span class="s5">0</span><span class="s1"> 
+            raise_on_redirect = </span><span class="s0">False</span><span class="s1"> 
+ 
+        self.redirect = redirect 
+        self.status_forcelist = status_forcelist </span><span class="s0">or </span><span class="s1">set() 
+        self.method_whitelist = method_whitelist 
+        self.backoff_factor = backoff_factor 
+        self.raise_on_redirect = raise_on_redirect 
+        self.raise_on_status = raise_on_status 
+        self._observed_errors = _observed_errors  </span><span class="s4"># TODO: use .history instead?</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">new(self</span><span class="s0">, </span><span class="s1">**kw): 
+        params = dict( 
+            total=self.total</span><span class="s0">,</span><span class="s1"> 
+            connect=self.connect</span><span class="s0">, </span><span class="s1">read=self.read</span><span class="s0">, </span><span class="s1">redirect=self.redirect</span><span class="s0">,</span><span class="s1"> 
+            method_whitelist=self.method_whitelist</span><span class="s0">,</span><span class="s1"> 
+            status_forcelist=self.status_forcelist</span><span class="s0">,</span><span class="s1"> 
+            backoff_factor=self.backoff_factor</span><span class="s0">,</span><span class="s1"> 
+            raise_on_redirect=self.raise_on_redirect</span><span class="s0">,</span><span class="s1"> 
+            raise_on_status=self.raise_on_status</span><span class="s0">,</span><span class="s1"> 
+            _observed_errors=self._observed_errors</span><span class="s0">,</span><span class="s1"> 
+        ) 
+        params.update(kw) 
+        </span><span class="s0">return </span><span class="s1">type(self)(**params) 
+ 
+    @classmethod 
+    </span><span class="s0">def </span><span class="s1">from_int(cls</span><span class="s0">, </span><span class="s1">retries</span><span class="s0">, </span><span class="s1">redirect=</span><span class="s0">True, </span><span class="s1">default=</span><span class="s0">None</span><span class="s1">): 
+        </span><span class="s2">&quot;&quot;&quot; Backwards-compatibility for the old retries format.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">retries </span><span class="s0">is None</span><span class="s1">: 
+            retries = default </span><span class="s0">if </span><span class="s1">default </span><span class="s0">is not None else </span><span class="s1">cls.DEFAULT 
+ 
+        </span><span class="s0">if </span><span class="s1">isinstance(retries</span><span class="s0">, </span><span class="s1">Retry): 
+            </span><span class="s0">return </span><span class="s1">retries 
+ 
+        redirect = bool(redirect) </span><span class="s0">and None</span><span class="s1"> 
+        new_retries = cls(retries</span><span class="s0">, </span><span class="s1">redirect=redirect) 
+        log.debug(</span><span class="s3">&quot;Converted retries value: %r -&gt; %r&quot;</span><span class="s0">, </span><span class="s1">retries</span><span class="s0">, </span><span class="s1">new_retries) 
+        </span><span class="s0">return </span><span class="s1">new_retries 
+ 
+    </span><span class="s0">def </span><span class="s1">get_backoff_time(self): 
+        </span><span class="s2">&quot;&quot;&quot; Formula for computing the current backoff 
+ 
+        :rtype: float 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self._observed_errors &lt;= </span><span class="s5">1</span><span class="s1">: 
+            </span><span class="s0">return </span><span class="s5">0</span><span class="s1"> 
+ 
+        backoff_value = self.backoff_factor * (</span><span class="s5">2 </span><span class="s1">** (self._observed_errors - </span><span class="s5">1</span><span class="s1">)) 
+        </span><span class="s0">return </span><span class="s1">min(self.BACKOFF_MAX</span><span class="s0">, </span><span class="s1">backoff_value) 
+ 
+    </span><span class="s0">def </span><span class="s1">sleep(self): 
+        </span><span class="s2">&quot;&quot;&quot; Sleep between retry attempts using an exponential backoff. 
+ 
+        By default, the backoff factor is 0 and this method will return 
+        immediately. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        backoff = self.get_backoff_time() 
+        </span><span class="s0">if </span><span class="s1">backoff &lt;= </span><span class="s5">0</span><span class="s1">: 
+            </span><span class="s0">return</span><span class="s1"> 
+        time.sleep(backoff) 
+ 
+    </span><span class="s0">def </span><span class="s1">_is_connection_error(self</span><span class="s0">, </span><span class="s1">err): 
+        </span><span class="s2">&quot;&quot;&quot; Errors when we're fairly sure that the server did not receive the 
+        request, so it should be safe to retry. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">return </span><span class="s1">isinstance(err</span><span class="s0">, </span><span class="s1">ConnectTimeoutError) 
+ 
+    </span><span class="s0">def </span><span class="s1">_is_read_error(self</span><span class="s0">, </span><span class="s1">err): 
+        </span><span class="s2">&quot;&quot;&quot; Errors that occur after the request has been started, so we should 
+        assume that the server began processing it. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">return </span><span class="s1">isinstance(err</span><span class="s0">, </span><span class="s1">(ReadTimeoutError</span><span class="s0">, </span><span class="s1">ProtocolError)) 
+ 
+    </span><span class="s0">def </span><span class="s1">is_forced_retry(self</span><span class="s0">, </span><span class="s1">method</span><span class="s0">, </span><span class="s1">status_code): 
+        </span><span class="s2">&quot;&quot;&quot; Is this method/status code retryable? (Based on method/codes whitelists) 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self.method_whitelist </span><span class="s0">and </span><span class="s1">method.upper() </span><span class="s0">not in </span><span class="s1">self.method_whitelist: 
+            </span><span class="s0">return False</span><span class="s1"> 
+ 
+        </span><span class="s0">return </span><span class="s1">self.status_forcelist </span><span class="s0">and </span><span class="s1">status_code </span><span class="s0">in </span><span class="s1">self.status_forcelist 
+ 
+    </span><span class="s0">def </span><span class="s1">is_exhausted(self): 
+        </span><span class="s2">&quot;&quot;&quot; Are we out of retries? &quot;&quot;&quot;</span><span class="s1"> 
+        retry_counts = (self.total</span><span class="s0">, </span><span class="s1">self.connect</span><span class="s0">, </span><span class="s1">self.read</span><span class="s0">, </span><span class="s1">self.redirect) 
+        retry_counts = list(filter(</span><span class="s0">None, </span><span class="s1">retry_counts)) 
+        </span><span class="s0">if not </span><span class="s1">retry_counts: 
+            </span><span class="s0">return False</span><span class="s1"> 
+ 
+        </span><span class="s0">return </span><span class="s1">min(retry_counts) &lt; </span><span class="s5">0</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">increment(self</span><span class="s0">, </span><span class="s1">method=</span><span class="s0">None, </span><span class="s1">url=</span><span class="s0">None, </span><span class="s1">response=</span><span class="s0">None, </span><span class="s1">error=</span><span class="s0">None,</span><span class="s1"> 
+                  _pool=</span><span class="s0">None, </span><span class="s1">_stacktrace=</span><span class="s0">None</span><span class="s1">): 
+        </span><span class="s2">&quot;&quot;&quot; Return a new Retry object with incremented retry counters. 
+ 
+        :param response: A response object, or None, if the server did not 
+            return a response. 
+        :type response: :class:`~urllib3.response.HTTPResponse` 
+        :param Exception error: An error encountered during the request, or 
+            None if the response was received successfully. 
+ 
+        :return: A new ``Retry`` object. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self.total </span><span class="s0">is False and </span><span class="s1">error: 
+            </span><span class="s4"># Disabled, indicate to re-raise the error.</span><span class="s1"> 
+            </span><span class="s0">raise </span><span class="s1">six.reraise(type(error)</span><span class="s0">, </span><span class="s1">error</span><span class="s0">, </span><span class="s1">_stacktrace) 
+ 
+        total = self.total 
+        </span><span class="s0">if </span><span class="s1">total </span><span class="s0">is not None</span><span class="s1">: 
+            total -= </span><span class="s5">1</span><span class="s1"> 
+ 
+        _observed_errors = self._observed_errors 
+        connect = self.connect 
+        read = self.read 
+        redirect = self.redirect 
+        cause = </span><span class="s3">'unknown'</span><span class="s1"> 
+ 
+        </span><span class="s0">if </span><span class="s1">error </span><span class="s0">and </span><span class="s1">self._is_connection_error(error): 
+            </span><span class="s4"># Connect retry?</span><span class="s1"> 
+            </span><span class="s0">if </span><span class="s1">connect </span><span class="s0">is False</span><span class="s1">: 
+                </span><span class="s0">raise </span><span class="s1">six.reraise(type(error)</span><span class="s0">, </span><span class="s1">error</span><span class="s0">, </span><span class="s1">_stacktrace) 
+            </span><span class="s0">elif </span><span class="s1">connect </span><span class="s0">is not None</span><span class="s1">: 
+                connect -= </span><span class="s5">1</span><span class="s1"> 
+            _observed_errors += </span><span class="s5">1</span><span class="s1"> 
+ 
+        </span><span class="s0">elif </span><span class="s1">error </span><span class="s0">and </span><span class="s1">self._is_read_error(error): 
+            </span><span class="s4"># Read retry?</span><span class="s1"> 
+            </span><span class="s0">if </span><span class="s1">read </span><span class="s0">is False</span><span class="s1">: 
+                </span><span class="s0">raise </span><span class="s1">six.reraise(type(error)</span><span class="s0">, </span><span class="s1">error</span><span class="s0">, </span><span class="s1">_stacktrace) 
+            </span><span class="s0">elif </span><span class="s1">read </span><span class="s0">is not None</span><span class="s1">: 
+                read -= </span><span class="s5">1</span><span class="s1"> 
+            _observed_errors += </span><span class="s5">1</span><span class="s1"> 
+ 
+        </span><span class="s0">elif </span><span class="s1">response </span><span class="s0">and </span><span class="s1">response.get_redirect_location(): 
+            </span><span class="s4"># Redirect retry?</span><span class="s1"> 
+            </span><span class="s0">if </span><span class="s1">redirect </span><span class="s0">is not None</span><span class="s1">: 
+                redirect -= </span><span class="s5">1</span><span class="s1"> 
+            cause = </span><span class="s3">'too many redirects'</span><span class="s1"> 
+ 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s4"># Incrementing because of a server error like a 500 in</span><span class="s1"> 
+            </span><span class="s4"># status_forcelist and a the given method is in the whitelist</span><span class="s1"> 
+            _observed_errors += </span><span class="s5">1</span><span class="s1"> 
+            cause = ResponseError.GENERIC_ERROR 
+            </span><span class="s0">if </span><span class="s1">response </span><span class="s0">and </span><span class="s1">response.status: 
+                cause = ResponseError.SPECIFIC_ERROR.format( 
+                    status_code=response.status) 
+ 
+        new_retry = self.new( 
+            total=total</span><span class="s0">,</span><span class="s1"> 
+            connect=connect</span><span class="s0">, </span><span class="s1">read=read</span><span class="s0">, </span><span class="s1">redirect=redirect</span><span class="s0">,</span><span class="s1"> 
+            _observed_errors=_observed_errors) 
+ 
+        </span><span class="s0">if </span><span class="s1">new_retry.is_exhausted(): 
+            </span><span class="s0">raise </span><span class="s1">MaxRetryError(_pool</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">error </span><span class="s0">or </span><span class="s1">ResponseError(cause)) 
+ 
+        log.debug(</span><span class="s3">&quot;Incremented Retry for (url='%s'): %r&quot;</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">new_retry) 
+ 
+        </span><span class="s0">return </span><span class="s1">new_retry 
+ 
+    </span><span class="s0">def </span><span class="s1">__repr__(self): 
+        </span><span class="s0">return </span><span class="s1">(</span><span class="s3">'{cls.__name__}(total={self.total}, connect={self.connect}, '</span><span class="s1"> 
+                </span><span class="s3">'read={self.read}, redirect={self.redirect})'</span><span class="s1">).format( 
+                    cls=type(self)</span><span class="s0">, </span><span class="s1">self=self) 
+ 
+ 
+</span><span class="s4"># For backwards compatibility (equivalent to pre-v1.9):</span><span class="s1"> 
+Retry.DEFAULT = Retry(</span><span class="s5">3</span><span class="s1">) 
+</span></pre>
+</body>
+</html>

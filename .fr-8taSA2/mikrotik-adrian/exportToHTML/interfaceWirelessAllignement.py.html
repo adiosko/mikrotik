@@ -1,0 +1,132 @@
+<html>
+<head>
+<title>interfaceWirelessAllignement.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+interfaceWirelessAllignement.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">interfaceWirelessAlignement: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setFrameSize(self</span><span class="s0">,</span><span class="s1">frame=</span><span class="s3">&quot;300&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param frame: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk([</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">,</span><span class="s3">'=frame-size='</span><span class="s1">+frame]) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setActiveMode(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=active-mode=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetActiveMode(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=active-mode=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">receiveAll(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=receive-all=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">notreceiveAll(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=receive-all=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">filterMacAddress(self</span><span class="s0">,</span><span class="s1">mac=</span><span class="s3">&quot;00:00:00:00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=filter-mac='</span><span class="s1">+mac] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">ssidAll(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=ssid-all=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">unssidAll(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=ssid-all=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setFps(self</span><span class="s0">,</span><span class="s1">fps=</span><span class="s3">&quot;25&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param fps: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=frame-per-second='</span><span class="s1">+fps] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setAudioMonitor(self</span><span class="s0">,</span><span class="s1">mac=</span><span class="s3">&quot;00:00:00:00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=audio-monitor='</span><span class="s1">+mac] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setAudioMin(self</span><span class="s0">,</span><span class="s1">minimum=</span><span class="s3">&quot;-100&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param minimum: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=audio-min=' </span><span class="s1">+ minimum] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+ 
+    </span><span class="s0">def </span><span class="s1">setAudioMax(self</span><span class="s0">,</span><span class="s1">maximum=</span><span class="s3">&quot;-20&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param maximum: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        wifi = self.client.talk( [</span><span class="s3">'/interface/wireless/align/set'</span><span class="s0">, </span><span class="s3">'=audio-max=' </span><span class="s1">+ maximum] ) 
+        </span><span class="s0">return </span><span class="s1">wifi 
+</span></pre>
+</body>
+</html>

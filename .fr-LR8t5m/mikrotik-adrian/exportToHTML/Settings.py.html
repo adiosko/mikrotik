@@ -1,0 +1,129 @@
+<html>
+<head>
+<title>Settings.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Settings.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">Settings: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpForward(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ip forward 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk([</span><span class="s4">'/ip/settings/set'</span><span class="s0">,</span><span class="s4">'=ip-forward=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setSendRedirects(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ip forward 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=send-redirects=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setAcceptRedirects(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ip forward 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=accept-redirects=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setSecureRedirects(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ip forward 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=secure-redirects=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setAcceptSourceRoute(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ip forward 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=accept-source-route=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setAllowFastPath(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ip forward 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=allow-fast-path=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setRouteCache(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ip forward 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=route-cache=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setRpFilter(self</span><span class="s0">,</span><span class="s1">rp=</span><span class="s4">&quot;no&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set rd filter 
+        :param rp: loose, no, strict 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=rp-filter='</span><span class="s1">+rp] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setTcpSynCookies(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ip forward 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=tcp-syncookies=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxNeighborEntries(self</span><span class="s0">,</span><span class="s1">entries=</span><span class="s4">&quot;8192&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max neighbor entries 
+        :param entries: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=max-neighbor-entries='</span><span class="s1">+entries] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setArpTimeout(self</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:00:30&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set arp timeout 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=arp-timeout=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">settings 
+ 
+    </span><span class="s0">def </span><span class="s1">setIcmprateLimit(self</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set icmp rate limit 
+        :param limit: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        settings = self.client.talk( [</span><span class="s4">'/ip/settings/set'</span><span class="s0">, </span><span class="s4">'=icmp-rate-limit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">settings</span></pre>
+</body>
+</html>

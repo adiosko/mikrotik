@@ -1,0 +1,361 @@
+<html>
+<head>
+<title>basecommand.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+basecommand.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Base Command class, and related routines&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2">from </span><span class="s1">__future__ </span><span class="s2">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s2">import </span><span class="s1">logging 
+</span><span class="s2">import </span><span class="s1">os 
+</span><span class="s2">import </span><span class="s1">sys 
+</span><span class="s2">import </span><span class="s1">optparse 
+</span><span class="s2">import </span><span class="s1">warnings 
+ 
+</span><span class="s2">from </span><span class="s1">pip </span><span class="s2">import </span><span class="s1">cmdoptions 
+</span><span class="s2">from </span><span class="s1">pip.index </span><span class="s2">import </span><span class="s1">PackageFinder 
+</span><span class="s2">from </span><span class="s1">pip.locations </span><span class="s2">import </span><span class="s1">running_under_virtualenv 
+</span><span class="s2">from </span><span class="s1">pip.download </span><span class="s2">import </span><span class="s1">PipSession 
+</span><span class="s2">from </span><span class="s1">pip.exceptions </span><span class="s2">import </span><span class="s1">(BadCommand</span><span class="s2">, </span><span class="s1">InstallationError</span><span class="s2">, </span><span class="s1">UninstallationError</span><span class="s2">,</span><span class="s1"> 
+                            CommandError</span><span class="s2">, </span><span class="s1">PreviousBuildDirError) 
+ 
+</span><span class="s2">from </span><span class="s1">pip.compat </span><span class="s2">import </span><span class="s1">logging_dictConfig 
+</span><span class="s2">from </span><span class="s1">pip.baseparser </span><span class="s2">import </span><span class="s1">ConfigOptionParser</span><span class="s2">, </span><span class="s1">UpdatingDefaultsHelpFormatter 
+</span><span class="s2">from </span><span class="s1">pip.req </span><span class="s2">import </span><span class="s1">InstallRequirement</span><span class="s2">, </span><span class="s1">parse_requirements 
+</span><span class="s2">from </span><span class="s1">pip.status_codes </span><span class="s2">import </span><span class="s1">( 
+    SUCCESS</span><span class="s2">, </span><span class="s1">ERROR</span><span class="s2">, </span><span class="s1">UNKNOWN_ERROR</span><span class="s2">, </span><span class="s1">VIRTUALENV_NOT_FOUND</span><span class="s2">,</span><span class="s1"> 
+    PREVIOUS_BUILD_DIR_ERROR</span><span class="s2">,</span><span class="s1"> 
+) 
+</span><span class="s2">from </span><span class="s1">pip.utils </span><span class="s2">import </span><span class="s1">deprecation</span><span class="s2">, </span><span class="s1">get_prog</span><span class="s2">, </span><span class="s1">normalize_path 
+</span><span class="s2">from </span><span class="s1">pip.utils.logging </span><span class="s2">import </span><span class="s1">IndentingFormatter 
+</span><span class="s2">from </span><span class="s1">pip.utils.outdated </span><span class="s2">import </span><span class="s1">pip_version_check 
+ 
+ 
+__all__ = [</span><span class="s3">'Command'</span><span class="s1">] 
+ 
+ 
+logger = logging.getLogger(__name__) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">Command(object): 
+    name = </span><span class="s2">None</span><span class="s1"> 
+    usage = </span><span class="s2">None</span><span class="s1"> 
+    hidden = </span><span class="s2">False</span><span class="s1"> 
+    log_streams = (</span><span class="s3">&quot;ext://sys.stdout&quot;</span><span class="s2">, </span><span class="s3">&quot;ext://sys.stderr&quot;</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">isolated=</span><span class="s2">False</span><span class="s1">): 
+        parser_kw = { 
+            </span><span class="s3">'usage'</span><span class="s1">: self.usage</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s3">'prog'</span><span class="s1">: </span><span class="s3">'%s %s' </span><span class="s1">% (get_prog()</span><span class="s2">, </span><span class="s1">self.name)</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s3">'formatter'</span><span class="s1">: UpdatingDefaultsHelpFormatter()</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s3">'add_help_option'</span><span class="s1">: </span><span class="s2">False,</span><span class="s1"> 
+            </span><span class="s3">'name'</span><span class="s1">: self.name</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s3">'description'</span><span class="s1">: self.__doc__</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s3">'isolated'</span><span class="s1">: isolated</span><span class="s2">,</span><span class="s1"> 
+        } 
+ 
+        self.parser = ConfigOptionParser(**parser_kw) 
+ 
+        </span><span class="s4"># Commands should add options to this option group</span><span class="s1"> 
+        optgroup_name = </span><span class="s3">'%s Options' </span><span class="s1">% self.name.capitalize() 
+        self.cmd_opts = optparse.OptionGroup(self.parser</span><span class="s2">, </span><span class="s1">optgroup_name) 
+ 
+        </span><span class="s4"># Add the general options</span><span class="s1"> 
+        gen_opts = cmdoptions.make_option_group( 
+            cmdoptions.general_group</span><span class="s2">,</span><span class="s1"> 
+            self.parser</span><span class="s2">,</span><span class="s1"> 
+        ) 
+        self.parser.add_option_group(gen_opts) 
+ 
+    </span><span class="s2">def </span><span class="s1">_build_session(self</span><span class="s2">, </span><span class="s1">options</span><span class="s2">, </span><span class="s1">retries=</span><span class="s2">None, </span><span class="s1">timeout=</span><span class="s2">None</span><span class="s1">): 
+        session = PipSession( 
+            cache=( 
+                normalize_path(os.path.join(options.cache_dir</span><span class="s2">, </span><span class="s3">&quot;http&quot;</span><span class="s1">)) 
+                </span><span class="s2">if </span><span class="s1">options.cache_dir </span><span class="s2">else None</span><span class="s1"> 
+            )</span><span class="s2">,</span><span class="s1"> 
+            retries=retries </span><span class="s2">if </span><span class="s1">retries </span><span class="s2">is not None else </span><span class="s1">options.retries</span><span class="s2">,</span><span class="s1"> 
+            insecure_hosts=options.trusted_hosts</span><span class="s2">,</span><span class="s1"> 
+        ) 
+ 
+        </span><span class="s4"># Handle custom ca-bundles from the user</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">options.cert: 
+            session.verify = options.cert 
+ 
+        </span><span class="s4"># Handle SSL client certificate</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">options.client_cert: 
+            session.cert = options.client_cert 
+ 
+        </span><span class="s4"># Handle timeouts</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">options.timeout </span><span class="s2">or </span><span class="s1">timeout: 
+            session.timeout = ( 
+                timeout </span><span class="s2">if </span><span class="s1">timeout </span><span class="s2">is not None else </span><span class="s1">options.timeout 
+            ) 
+ 
+        </span><span class="s4"># Handle configured proxies</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">options.proxy: 
+            session.proxies = { 
+                </span><span class="s3">&quot;http&quot;</span><span class="s1">: options.proxy</span><span class="s2">,</span><span class="s1"> 
+                </span><span class="s3">&quot;https&quot;</span><span class="s1">: options.proxy</span><span class="s2">,</span><span class="s1"> 
+            } 
+ 
+        </span><span class="s4"># Determine if we can prompt the user for authentication or not</span><span class="s1"> 
+        session.auth.prompting = </span><span class="s2">not </span><span class="s1">options.no_input 
+ 
+        </span><span class="s2">return </span><span class="s1">session 
+ 
+    </span><span class="s2">def </span><span class="s1">parse_args(self</span><span class="s2">, </span><span class="s1">args): 
+        </span><span class="s4"># factored out for testability</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">self.parser.parse_args(args) 
+ 
+    </span><span class="s2">def </span><span class="s1">main(self</span><span class="s2">, </span><span class="s1">args): 
+        options</span><span class="s2">, </span><span class="s1">args = self.parse_args(args) 
+ 
+        </span><span class="s2">if </span><span class="s1">options.quiet: 
+            </span><span class="s2">if </span><span class="s1">options.quiet == </span><span class="s5">1</span><span class="s1">: 
+                level = </span><span class="s3">&quot;WARNING&quot;</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">options.quiet == </span><span class="s5">2</span><span class="s1">: 
+                level = </span><span class="s3">&quot;ERROR&quot;</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                level = </span><span class="s3">&quot;CRITICAL&quot;</span><span class="s1"> 
+        </span><span class="s2">elif </span><span class="s1">options.verbose: 
+            level = </span><span class="s3">&quot;DEBUG&quot;</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            level = </span><span class="s3">&quot;INFO&quot;</span><span class="s1"> 
+ 
+        </span><span class="s4"># The root logger should match the &quot;console&quot; level *unless* we</span><span class="s1"> 
+        </span><span class="s4"># specified &quot;--log&quot; to send debug logs to a file.</span><span class="s1"> 
+        root_level = level 
+        </span><span class="s2">if </span><span class="s1">options.log: 
+            root_level = </span><span class="s3">&quot;DEBUG&quot;</span><span class="s1"> 
+ 
+        logging_dictConfig({ 
+            </span><span class="s3">&quot;version&quot;</span><span class="s1">: </span><span class="s5">1</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s3">&quot;disable_existing_loggers&quot;</span><span class="s1">: </span><span class="s2">False,</span><span class="s1"> 
+            </span><span class="s3">&quot;filters&quot;</span><span class="s1">: { 
+                </span><span class="s3">&quot;exclude_warnings&quot;</span><span class="s1">: { 
+                    </span><span class="s3">&quot;()&quot;</span><span class="s1">: </span><span class="s3">&quot;pip.utils.logging.MaxLevelFilter&quot;</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;level&quot;</span><span class="s1">: logging.WARNING</span><span class="s2">,</span><span class="s1"> 
+                }</span><span class="s2">,</span><span class="s1"> 
+            }</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s3">&quot;formatters&quot;</span><span class="s1">: { 
+                </span><span class="s3">&quot;indent&quot;</span><span class="s1">: { 
+                    </span><span class="s3">&quot;()&quot;</span><span class="s1">: IndentingFormatter</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;format&quot;</span><span class="s1">: </span><span class="s3">&quot;%(message)s&quot;</span><span class="s2">,</span><span class="s1"> 
+                }</span><span class="s2">,</span><span class="s1"> 
+            }</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s3">&quot;handlers&quot;</span><span class="s1">: { 
+                </span><span class="s3">&quot;console&quot;</span><span class="s1">: { 
+                    </span><span class="s3">&quot;level&quot;</span><span class="s1">: level</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;class&quot;</span><span class="s1">: </span><span class="s3">&quot;pip.utils.logging.ColorizedStreamHandler&quot;</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;stream&quot;</span><span class="s1">: self.log_streams[</span><span class="s5">0</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;filters&quot;</span><span class="s1">: [</span><span class="s3">&quot;exclude_warnings&quot;</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;formatter&quot;</span><span class="s1">: </span><span class="s3">&quot;indent&quot;</span><span class="s2">,</span><span class="s1"> 
+                }</span><span class="s2">,</span><span class="s1"> 
+                </span><span class="s3">&quot;console_errors&quot;</span><span class="s1">: { 
+                    </span><span class="s3">&quot;level&quot;</span><span class="s1">: </span><span class="s3">&quot;WARNING&quot;</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;class&quot;</span><span class="s1">: </span><span class="s3">&quot;pip.utils.logging.ColorizedStreamHandler&quot;</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;stream&quot;</span><span class="s1">: self.log_streams[</span><span class="s5">1</span><span class="s1">]</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;formatter&quot;</span><span class="s1">: </span><span class="s3">&quot;indent&quot;</span><span class="s2">,</span><span class="s1"> 
+                }</span><span class="s2">,</span><span class="s1"> 
+                </span><span class="s3">&quot;user_log&quot;</span><span class="s1">: { 
+                    </span><span class="s3">&quot;level&quot;</span><span class="s1">: </span><span class="s3">&quot;DEBUG&quot;</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;class&quot;</span><span class="s1">: </span><span class="s3">&quot;pip.utils.logging.BetterRotatingFileHandler&quot;</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;filename&quot;</span><span class="s1">: options.log </span><span class="s2">or </span><span class="s3">&quot;/dev/null&quot;</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;delay&quot;</span><span class="s1">: </span><span class="s2">True,</span><span class="s1"> 
+                    </span><span class="s3">&quot;formatter&quot;</span><span class="s1">: </span><span class="s3">&quot;indent&quot;</span><span class="s2">,</span><span class="s1"> 
+                }</span><span class="s2">,</span><span class="s1"> 
+            }</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s3">&quot;root&quot;</span><span class="s1">: { 
+                </span><span class="s3">&quot;level&quot;</span><span class="s1">: root_level</span><span class="s2">,</span><span class="s1"> 
+                </span><span class="s3">&quot;handlers&quot;</span><span class="s1">: list(filter(</span><span class="s2">None, </span><span class="s1">[ 
+                    </span><span class="s3">&quot;console&quot;</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;console_errors&quot;</span><span class="s2">,</span><span class="s1"> 
+                    </span><span class="s3">&quot;user_log&quot; </span><span class="s2">if </span><span class="s1">options.log </span><span class="s2">else None,</span><span class="s1"> 
+                ]))</span><span class="s2">,</span><span class="s1"> 
+            }</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s4"># Disable any logging besides WARNING unless we have DEBUG level</span><span class="s1"> 
+            </span><span class="s4"># logging enabled. These use both pip._vendor and the bare names</span><span class="s1"> 
+            </span><span class="s4"># for the case where someone unbundles our libraries.</span><span class="s1"> 
+            </span><span class="s3">&quot;loggers&quot;</span><span class="s1">: dict( 
+                ( 
+                    name</span><span class="s2">,</span><span class="s1"> 
+                    { 
+                        </span><span class="s3">&quot;level&quot;</span><span class="s1">: ( 
+                            </span><span class="s3">&quot;WARNING&quot;</span><span class="s1"> 
+                            </span><span class="s2">if </span><span class="s1">level </span><span class="s2">in </span><span class="s1">[</span><span class="s3">&quot;INFO&quot;</span><span class="s2">, </span><span class="s3">&quot;ERROR&quot;</span><span class="s1">] 
+                            </span><span class="s2">else </span><span class="s3">&quot;DEBUG&quot;</span><span class="s1"> 
+                        )</span><span class="s2">,</span><span class="s1"> 
+                    }</span><span class="s2">,</span><span class="s1"> 
+                ) 
+                </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">[</span><span class="s3">&quot;pip._vendor&quot;</span><span class="s2">, </span><span class="s3">&quot;distlib&quot;</span><span class="s2">, </span><span class="s3">&quot;requests&quot;</span><span class="s2">, </span><span class="s3">&quot;urllib3&quot;</span><span class="s1">] 
+            )</span><span class="s2">,</span><span class="s1"> 
+        }) 
+ 
+        </span><span class="s2">if </span><span class="s1">sys.version_info[:</span><span class="s5">2</span><span class="s1">] == (</span><span class="s5">2</span><span class="s2">, </span><span class="s5">6</span><span class="s1">): 
+            warnings.warn( 
+                </span><span class="s3">&quot;Python 2.6 is no longer supported by the Python core team, &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;please upgrade your Python. A future version of pip will &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;drop support for Python 2.6&quot;</span><span class="s2">,</span><span class="s1"> 
+                deprecation.Python26DeprecationWarning 
+            ) 
+ 
+        </span><span class="s4"># TODO: try to get these passing down from the command?</span><span class="s1"> 
+        </span><span class="s4">#      without resorting to os.environ to hold these.</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">options.no_input: 
+            os.environ[</span><span class="s3">'PIP_NO_INPUT'</span><span class="s1">] = </span><span class="s3">'1'</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">options.exists_action: 
+            os.environ[</span><span class="s3">'PIP_EXISTS_ACTION'</span><span class="s1">] = </span><span class="s3">' '</span><span class="s1">.join(options.exists_action) 
+ 
+        </span><span class="s2">if </span><span class="s1">options.require_venv: 
+            </span><span class="s4"># If a venv is required check if it can really be found</span><span class="s1"> 
+            </span><span class="s2">if not </span><span class="s1">running_under_virtualenv(): 
+                logger.critical( 
+                    </span><span class="s3">'Could not find an activated virtualenv (required).'</span><span class="s1"> 
+                ) 
+                sys.exit(VIRTUALENV_NOT_FOUND) 
+ 
+        </span><span class="s2">try</span><span class="s1">: 
+            status = self.run(options</span><span class="s2">, </span><span class="s1">args) 
+            </span><span class="s4"># FIXME: all commands should return an exit status</span><span class="s1"> 
+            </span><span class="s4"># and when it is done, isinstance is not needed anymore</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">isinstance(status</span><span class="s2">, </span><span class="s1">int): 
+                </span><span class="s2">return </span><span class="s1">status 
+        </span><span class="s2">except </span><span class="s1">PreviousBuildDirError </span><span class="s2">as </span><span class="s1">exc: 
+            logger.critical(str(exc)) 
+            logger.debug(</span><span class="s3">'Exception information:'</span><span class="s2">, </span><span class="s1">exc_info=</span><span class="s2">True</span><span class="s1">) 
+ 
+            </span><span class="s2">return </span><span class="s1">PREVIOUS_BUILD_DIR_ERROR 
+        </span><span class="s2">except </span><span class="s1">(InstallationError</span><span class="s2">, </span><span class="s1">UninstallationError</span><span class="s2">, </span><span class="s1">BadCommand) </span><span class="s2">as </span><span class="s1">exc: 
+            logger.critical(str(exc)) 
+            logger.debug(</span><span class="s3">'Exception information:'</span><span class="s2">, </span><span class="s1">exc_info=</span><span class="s2">True</span><span class="s1">) 
+ 
+            </span><span class="s2">return </span><span class="s1">ERROR 
+        </span><span class="s2">except </span><span class="s1">CommandError </span><span class="s2">as </span><span class="s1">exc: 
+            logger.critical(</span><span class="s3">'ERROR: %s'</span><span class="s2">, </span><span class="s1">exc) 
+            logger.debug(</span><span class="s3">'Exception information:'</span><span class="s2">, </span><span class="s1">exc_info=</span><span class="s2">True</span><span class="s1">) 
+ 
+            </span><span class="s2">return </span><span class="s1">ERROR 
+        </span><span class="s2">except </span><span class="s1">KeyboardInterrupt: 
+            logger.critical(</span><span class="s3">'Operation cancelled by user'</span><span class="s1">) 
+            logger.debug(</span><span class="s3">'Exception information:'</span><span class="s2">, </span><span class="s1">exc_info=</span><span class="s2">True</span><span class="s1">) 
+ 
+            </span><span class="s2">return </span><span class="s1">ERROR 
+        </span><span class="s2">except</span><span class="s1">: 
+            logger.critical(</span><span class="s3">'Exception:'</span><span class="s2">, </span><span class="s1">exc_info=</span><span class="s2">True</span><span class="s1">) 
+ 
+            </span><span class="s2">return </span><span class="s1">UNKNOWN_ERROR 
+        </span><span class="s2">finally</span><span class="s1">: 
+            </span><span class="s4"># Check if we're using the latest version of pip available</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">(</span><span class="s2">not </span><span class="s1">options.disable_pip_version_check </span><span class="s2">and not</span><span class="s1"> 
+                    getattr(options</span><span class="s2">, </span><span class="s3">&quot;no_index&quot;</span><span class="s2">, False</span><span class="s1">)): 
+                </span><span class="s2">with </span><span class="s1">self._build_session( 
+                        options</span><span class="s2">,</span><span class="s1"> 
+                        retries=</span><span class="s5">0</span><span class="s2">,</span><span class="s1"> 
+                        timeout=min(</span><span class="s5">5</span><span class="s2">, </span><span class="s1">options.timeout)) </span><span class="s2">as </span><span class="s1">session: 
+                    pip_version_check(session) 
+ 
+        </span><span class="s2">return </span><span class="s1">SUCCESS 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">RequirementCommand(Command): 
+ 
+    @staticmethod 
+    </span><span class="s2">def </span><span class="s1">populate_requirement_set(requirement_set</span><span class="s2">, </span><span class="s1">args</span><span class="s2">, </span><span class="s1">options</span><span class="s2">, </span><span class="s1">finder</span><span class="s2">,</span><span class="s1"> 
+                                 session</span><span class="s2">, </span><span class="s1">name</span><span class="s2">, </span><span class="s1">wheel_cache): 
+        </span><span class="s0">&quot;&quot;&quot; 
+        Marshal cmd line args into a requirement set. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">filename </span><span class="s2">in </span><span class="s1">options.constraints: 
+            </span><span class="s2">for </span><span class="s1">req </span><span class="s2">in </span><span class="s1">parse_requirements( 
+                    filename</span><span class="s2">,</span><span class="s1"> 
+                    constraint=</span><span class="s2">True, </span><span class="s1">finder=finder</span><span class="s2">, </span><span class="s1">options=options</span><span class="s2">,</span><span class="s1"> 
+                    session=session</span><span class="s2">, </span><span class="s1">wheel_cache=wheel_cache): 
+                requirement_set.add_requirement(req) 
+ 
+        </span><span class="s2">for </span><span class="s1">req </span><span class="s2">in </span><span class="s1">args: 
+            requirement_set.add_requirement( 
+                InstallRequirement.from_line( 
+                    req</span><span class="s2">, None, </span><span class="s1">isolated=options.isolated_mode</span><span class="s2">,</span><span class="s1"> 
+                    wheel_cache=wheel_cache 
+                ) 
+            ) 
+ 
+        </span><span class="s2">for </span><span class="s1">req </span><span class="s2">in </span><span class="s1">options.editables: 
+            requirement_set.add_requirement( 
+                InstallRequirement.from_editable( 
+                    req</span><span class="s2">,</span><span class="s1"> 
+                    default_vcs=options.default_vcs</span><span class="s2">,</span><span class="s1"> 
+                    isolated=options.isolated_mode</span><span class="s2">,</span><span class="s1"> 
+                    wheel_cache=wheel_cache 
+                ) 
+            ) 
+ 
+        found_req_in_file = </span><span class="s2">False</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">filename </span><span class="s2">in </span><span class="s1">options.requirements: 
+            </span><span class="s2">for </span><span class="s1">req </span><span class="s2">in </span><span class="s1">parse_requirements( 
+                    filename</span><span class="s2">,</span><span class="s1"> 
+                    finder=finder</span><span class="s2">, </span><span class="s1">options=options</span><span class="s2">, </span><span class="s1">session=session</span><span class="s2">,</span><span class="s1"> 
+                    wheel_cache=wheel_cache): 
+                found_req_in_file = </span><span class="s2">True</span><span class="s1"> 
+                requirement_set.add_requirement(req) 
+        </span><span class="s4"># If --require-hashes was a line in a requirements file, tell</span><span class="s1"> 
+        </span><span class="s4"># RequirementSet about it:</span><span class="s1"> 
+        requirement_set.require_hashes = options.require_hashes 
+ 
+        </span><span class="s2">if not </span><span class="s1">(args </span><span class="s2">or </span><span class="s1">options.editables </span><span class="s2">or </span><span class="s1">found_req_in_file): 
+            opts = {</span><span class="s3">'name'</span><span class="s1">: name} 
+            </span><span class="s2">if </span><span class="s1">options.find_links: 
+                msg = (</span><span class="s3">'You must give at least one requirement to '</span><span class="s1"> 
+                       </span><span class="s3">'%(name)s (maybe you meant &quot;pip %(name)s '</span><span class="s1"> 
+                       </span><span class="s3">'%(links)s&quot;?)' </span><span class="s1">% 
+                       dict(opts</span><span class="s2">, </span><span class="s1">links=</span><span class="s3">' '</span><span class="s1">.join(options.find_links))) 
+            </span><span class="s2">else</span><span class="s1">: 
+                msg = (</span><span class="s3">'You must give at least one requirement '</span><span class="s1"> 
+                       </span><span class="s3">'to %(name)s (see &quot;pip help %(name)s&quot;)' </span><span class="s1">% opts) 
+            logger.warning(msg) 
+ 
+    </span><span class="s2">def </span><span class="s1">_build_package_finder(self</span><span class="s2">, </span><span class="s1">options</span><span class="s2">, </span><span class="s1">session</span><span class="s2">,</span><span class="s1"> 
+                              platform=</span><span class="s2">None, </span><span class="s1">python_versions=</span><span class="s2">None,</span><span class="s1"> 
+                              abi=</span><span class="s2">None, </span><span class="s1">implementation=</span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot; 
+        Create a package finder appropriate to this requirement command. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        index_urls = [options.index_url] + options.extra_index_urls 
+        </span><span class="s2">if </span><span class="s1">options.no_index: 
+            logger.debug(</span><span class="s3">'Ignoring indexes: %s'</span><span class="s2">, </span><span class="s3">','</span><span class="s1">.join(index_urls)) 
+            index_urls = [] 
+ 
+        </span><span class="s2">return </span><span class="s1">PackageFinder( 
+            find_links=options.find_links</span><span class="s2">,</span><span class="s1"> 
+            format_control=options.format_control</span><span class="s2">,</span><span class="s1"> 
+            index_urls=index_urls</span><span class="s2">,</span><span class="s1"> 
+            trusted_hosts=options.trusted_hosts</span><span class="s2">,</span><span class="s1"> 
+            allow_all_prereleases=options.pre</span><span class="s2">,</span><span class="s1"> 
+            process_dependency_links=options.process_dependency_links</span><span class="s2">,</span><span class="s1"> 
+            session=session</span><span class="s2">,</span><span class="s1"> 
+            platform=platform</span><span class="s2">,</span><span class="s1"> 
+            versions=python_versions</span><span class="s2">,</span><span class="s1"> 
+            abi=abi</span><span class="s2">,</span><span class="s1"> 
+            implementation=implementation</span><span class="s2">,</span><span class="s1"> 
+        ) 
+</span></pre>
+</body>
+</html>

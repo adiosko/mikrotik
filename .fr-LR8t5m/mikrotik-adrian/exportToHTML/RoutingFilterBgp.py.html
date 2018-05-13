@@ -1,0 +1,189 @@
+<html>
+<head>
+<title>RoutingFilterBgp.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+RoutingFilterBgp.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">RoutingFilterBgp: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpAsPath(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">AS=</span><span class="s3">&quot;20&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set as path ibgp 
+        :param number: 
+        :param AS: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-as-path=' </span><span class="s1">+ AS] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">negateBgpAsPath(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">AS): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will negate as path 
+        :param number: 
+        :param AS: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-as-path=!' </span><span class="s1">+ AS] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpAsPathLength(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">leng=</span><span class="s3">&quot;500&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set bgp as path 
+        :param number: 
+        :param leng: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-as-path-length=' </span><span class="s1">+ leng] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">negateBgpAsPathLength(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">leng=</span><span class="s3">&quot;500&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param leng: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-as-path-length=!' </span><span class="s1">+ leng] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpWeight(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">weight=</span><span class="s3">&quot;2000000&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set bgp weight 
+        :param number: 
+        :param weight: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-weight=' </span><span class="s1">+ weight] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">negateBgpWeight(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">weight=</span><span class="s3">&quot;!2000000&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param weight: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-weight=!' </span><span class="s1">+ weight] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpLocalPref(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">lpref=</span><span class="s3">&quot;2000000&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set local pref 
+        :param number: 
+        :param lpref: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-local-pref=' </span><span class="s1">+ lpref] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">negateLocalPref(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">lpref=</span><span class="s3">&quot;!2000000&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will negate lpref 
+        :param number: 
+        :param lpref: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-local-pref=!' </span><span class="s1">+ lpref] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpMed(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">med=</span><span class="s3">&quot;3000000&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set med parameter 
+        :param number: 
+        :param med: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-med=' </span><span class="s1">+ med] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">negateBgpMed(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">med): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will negate med 
+        :param number: 
+        :param med: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-med=!' </span><span class="s1">+ med] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpAtomicAgregate(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">agreg=</span><span class="s3">&quot;absent&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set agregate status 
+        :param number: 
+        :param agreg: absent, present 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-atomic-aggregate=' </span><span class="s1">+ agreg] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpOrigin(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">origin=</span><span class="s3">&quot;igp&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set bgp origin 
+        :param number: 
+        :param origin: igp,egp,incomplete 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-origin=' </span><span class="s1">+ origin] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setLocalyOriginatedBgp(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set distribution of origin 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=locally-originated-bgp=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">unsetLOcalyOriginBgp(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will unset origin bgp 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=locally-originated-bgp=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">setBgpCommunities(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">community=</span><span class="s3">&quot;0:0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set bgp community 
+        :param number: 
+        :param community: i.e 1:1 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=bgp-communities='</span><span class="s1">+community] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+    </span><span class="s0">def </span><span class="s1">uninvertMatch(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will reinvert match 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        filt = self.client.talk( [</span><span class="s3">'/routing/filter/set'</span><span class="s0">, </span><span class="s3">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s3">'=invert-match=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">filt 
+ 
+ 
+</span></pre>
+</body>
+</html>

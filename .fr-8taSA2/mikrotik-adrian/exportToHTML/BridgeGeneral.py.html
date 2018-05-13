@@ -1,0 +1,268 @@
+<html>
+<head>
+<title>BridgeGeneral.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+BridgeGeneral.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">BridgeGeneral: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listBridge(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list bridge 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk([</span><span class="s4">'/interface/bridge/print'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">L2 MTU</span><span class="s0">\t</span><span class="s4">MAC</span><span class="s0">\t</span><span class="s4">Protocol&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">bridge: 
+            print(bridge[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+bridge[i][</span><span class="s4">'l2mtu'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+bridge[i][</span><span class="s4">'mac-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+bridge[i][</span><span class="s4">'protcol-mode'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">addBridge(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil ladd bridge 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk([</span><span class="s4">'/interface/bridge/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">removeBridge(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove bridge 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">enableBridge(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable bridge 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">disableBridge(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable bridge 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">commentBridge(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment bridge 
+        :param name: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s5">#General</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new name 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=name=' </span><span class="s1">+ newName] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setMtu(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mtu=</span><span class="s4">&quot;64&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mtu 
+        :param name: 
+        :param mtu: 64k 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=mtu=' </span><span class="s1">+ mtu] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setArp(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">arp=</span><span class="s4">&quot;enabled&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable arp 
+        :param name: 
+        :param arp: enabled,disabled,local-proxy-arp,proxy-arp,local-only 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=arp=' </span><span class="s1">+ arp] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setArpTimeout(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set arp timeout 
+        :param name: 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=arp-timeout=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setAdminMacAddress(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mac): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set admin mac 
+        :param name: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=admin-mac=' </span><span class="s1">+ mac] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setIgmpSnooping(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable igmp snooping 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=igmp-snooping=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">fastForward(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable fast forward 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=fast-forward=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s5">#STP</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setProtocolMode(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">protocol=</span><span class="s4">&quot;rstp&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set rstp 
+        :param name: 
+        :param protocol: none,stp,rstp,mstp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=protocol-mode=' </span><span class="s1">+ protocol] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriority(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">priority=</span><span class="s4">&quot;8000&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set priority 
+        :param name: 
+        :param priority: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=priority=' </span><span class="s1">+ priority] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setRegionName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">region): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set region anme,mstp must be enabled 
+        :param name: 
+        :param region: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=protocol-type=mstp'</span><span class="s0">,</span><span class="s4">'=region-name=' </span><span class="s1">+ region] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setRegionRevisionNumber(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">number=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mstp region revision number 
+        :param name: 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=protocol-type=mstp'</span><span class="s0">, </span><span class="s4">'=region-revision=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxMessageAge(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">message=</span><span class="s4">&quot;00:00:20&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset max message exchange 
+        :param name: 
+        :param message: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=max-message-age=' </span><span class="s1">+ message] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">forwardDelay(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">fw=</span><span class="s4">&quot;00:00:15&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set forward delay 
+        :param name: 
+        :param fw: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=forward-delay=' </span><span class="s1">+ fw] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setTransmitHoldCount(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">count=</span><span class="s4">&quot;6&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set tr hold count 
+        :param name: 
+        :param count: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=transmit-hold-count=' </span><span class="s1">+ count] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setAgeingTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">age=</span><span class="s4">&quot;00:05:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param age: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=ageing-time=' </span><span class="s1">+ age] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setMaxHops(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">hops=</span><span class="s4">&quot;20&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set Max hops 
+        :param name: 
+        :param hops: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=max-hops=' </span><span class="s1">+ hops] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s5">#VLAN</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setVlanFiltering(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enbale vlan filteirng 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=vlan-filtering=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setPVid(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">vlan=</span><span class="s4">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set vlan id 
+        :param name: 
+        :param vlan: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s4">'/interface/bridge/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=pvid=' </span><span class="s1">+ vlan] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+</span></pre>
+</body>
+</html>

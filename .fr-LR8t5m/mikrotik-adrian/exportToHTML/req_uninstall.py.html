@@ -1,0 +1,220 @@
+<html>
+<head>
+<title>req_uninstall.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(104,151,187); }
+.s5 { color: rgb(106,135,89); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+req_uninstall.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">import </span><span class="s1">logging 
+</span><span class="s0">import </span><span class="s1">os 
+</span><span class="s0">import </span><span class="s1">tempfile 
+ 
+</span><span class="s0">from </span><span class="s1">pip.compat </span><span class="s0">import </span><span class="s1">uses_pycache</span><span class="s0">, </span><span class="s1">WINDOWS</span><span class="s0">, </span><span class="s1">cache_from_source 
+</span><span class="s0">from </span><span class="s1">pip.exceptions </span><span class="s0">import </span><span class="s1">UninstallationError 
+</span><span class="s0">from </span><span class="s1">pip.utils </span><span class="s0">import </span><span class="s1">rmtree</span><span class="s0">, </span><span class="s1">ask</span><span class="s0">, </span><span class="s1">is_local</span><span class="s0">, </span><span class="s1">renames</span><span class="s0">, </span><span class="s1">normalize_path 
+</span><span class="s0">from </span><span class="s1">pip.utils.logging </span><span class="s0">import </span><span class="s1">indent_log 
+ 
+ 
+logger = logging.getLogger(__name__) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">UninstallPathSet(object): 
+    </span><span class="s2">&quot;&quot;&quot;A set of file paths to be removed in the uninstallation of a 
+    requirement.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">dist): 
+        self.paths = set() 
+        self._refuse = set() 
+        self.pth = {} 
+        self.dist = dist 
+        self.save_dir = </span><span class="s0">None</span><span class="s1"> 
+        self._moved_paths = [] 
+ 
+    </span><span class="s0">def </span><span class="s1">_permitted(self</span><span class="s0">, </span><span class="s1">path): 
+        </span><span class="s2">&quot;&quot;&quot; 
+        Return True if the given path is one we are permitted to 
+        remove/modify, False otherwise. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">return </span><span class="s1">is_local(path) 
+ 
+    </span><span class="s0">def </span><span class="s1">add(self</span><span class="s0">, </span><span class="s1">path): 
+        head</span><span class="s0">, </span><span class="s1">tail = os.path.split(path) 
+ 
+        </span><span class="s3"># we normalize the head to resolve parent directory symlinks, but not</span><span class="s1"> 
+        </span><span class="s3"># the tail, since we only want to uninstall symlinks, not their targets</span><span class="s1"> 
+        path = os.path.join(normalize_path(head)</span><span class="s0">, </span><span class="s1">os.path.normcase(tail)) 
+ 
+        </span><span class="s0">if not </span><span class="s1">os.path.exists(path): 
+            </span><span class="s0">return</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self._permitted(path): 
+            self.paths.add(path) 
+        </span><span class="s0">else</span><span class="s1">: 
+            self._refuse.add(path) 
+ 
+        </span><span class="s3"># __pycache__ files can show up after 'installed-files.txt' is created,</span><span class="s1"> 
+        </span><span class="s3"># due to imports</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">os.path.splitext(path)[</span><span class="s4">1</span><span class="s1">] == </span><span class="s5">'.py' </span><span class="s0">and </span><span class="s1">uses_pycache: 
+            self.add(cache_from_source(path)) 
+ 
+    </span><span class="s0">def </span><span class="s1">add_pth(self</span><span class="s0">, </span><span class="s1">pth_file</span><span class="s0">, </span><span class="s1">entry): 
+        pth_file = normalize_path(pth_file) 
+        </span><span class="s0">if </span><span class="s1">self._permitted(pth_file): 
+            </span><span class="s0">if </span><span class="s1">pth_file </span><span class="s0">not in </span><span class="s1">self.pth: 
+                self.pth[pth_file] = UninstallPthEntries(pth_file) 
+            self.pth[pth_file].add(entry) 
+        </span><span class="s0">else</span><span class="s1">: 
+            self._refuse.add(pth_file) 
+ 
+    </span><span class="s0">def </span><span class="s1">compact(self</span><span class="s0">, </span><span class="s1">paths): 
+        </span><span class="s2">&quot;&quot;&quot;Compact a path set to contain the minimal number of paths 
+        necessary to contain all paths in the set. If /a/path/ and 
+        /a/path/to/a/file.txt are both in the set, leave only the 
+        shorter path.&quot;&quot;&quot;</span><span class="s1"> 
+        short_paths = set() 
+        </span><span class="s0">for </span><span class="s1">path </span><span class="s0">in </span><span class="s1">sorted(paths</span><span class="s0">, </span><span class="s1">key=len): 
+            </span><span class="s0">if not </span><span class="s1">any([ 
+                    (path.startswith(shortpath) </span><span class="s0">and</span><span class="s1"> 
+                     path[len(shortpath.rstrip(os.path.sep))] == os.path.sep) 
+                    </span><span class="s0">for </span><span class="s1">shortpath </span><span class="s0">in </span><span class="s1">short_paths]): 
+                short_paths.add(path) 
+        </span><span class="s0">return </span><span class="s1">short_paths 
+ 
+    </span><span class="s0">def </span><span class="s1">_stash(self</span><span class="s0">, </span><span class="s1">path): 
+        </span><span class="s0">return </span><span class="s1">os.path.join( 
+            self.save_dir</span><span class="s0">, </span><span class="s1">os.path.splitdrive(path)[</span><span class="s4">1</span><span class="s1">].lstrip(os.path.sep)) 
+ 
+    </span><span class="s0">def </span><span class="s1">remove(self</span><span class="s0">, </span><span class="s1">auto_confirm=</span><span class="s0">False</span><span class="s1">): 
+        </span><span class="s2">&quot;&quot;&quot;Remove paths in ``self.paths`` with confirmation (unless 
+        ``auto_confirm`` is True).&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if not </span><span class="s1">self.paths: 
+            logger.info( 
+                </span><span class="s5">&quot;Can't uninstall '%s'. No files were found to uninstall.&quot;</span><span class="s0">,</span><span class="s1"> 
+                self.dist.project_name</span><span class="s0">,</span><span class="s1"> 
+            ) 
+            </span><span class="s0">return</span><span class="s1"> 
+        logger.info( 
+            </span><span class="s5">'Uninstalling %s-%s:'</span><span class="s0">,</span><span class="s1"> 
+            self.dist.project_name</span><span class="s0">, </span><span class="s1">self.dist.version 
+        ) 
+ 
+        </span><span class="s0">with </span><span class="s1">indent_log(): 
+            paths = sorted(self.compact(self.paths)) 
+ 
+            </span><span class="s0">if </span><span class="s1">auto_confirm: 
+                response = </span><span class="s5">'y'</span><span class="s1"> 
+            </span><span class="s0">else</span><span class="s1">: 
+                </span><span class="s0">for </span><span class="s1">path </span><span class="s0">in </span><span class="s1">paths: 
+                    logger.info(path) 
+                response = ask(</span><span class="s5">'Proceed (y/n)? '</span><span class="s0">, </span><span class="s1">(</span><span class="s5">'y'</span><span class="s0">, </span><span class="s5">'n'</span><span class="s1">)) 
+            </span><span class="s0">if </span><span class="s1">self._refuse: 
+                logger.info(</span><span class="s5">'Not removing or modifying (outside of prefix):'</span><span class="s1">) 
+                </span><span class="s0">for </span><span class="s1">path </span><span class="s0">in </span><span class="s1">self.compact(self._refuse): 
+                    logger.info(path) 
+            </span><span class="s0">if </span><span class="s1">response == </span><span class="s5">'y'</span><span class="s1">: 
+                self.save_dir = tempfile.mkdtemp(suffix=</span><span class="s5">'-uninstall'</span><span class="s0">,</span><span class="s1"> 
+                                                 prefix=</span><span class="s5">'pip-'</span><span class="s1">) 
+                </span><span class="s0">for </span><span class="s1">path </span><span class="s0">in </span><span class="s1">paths: 
+                    new_path = self._stash(path) 
+                    logger.debug(</span><span class="s5">'Removing file or directory %s'</span><span class="s0">, </span><span class="s1">path) 
+                    self._moved_paths.append(path) 
+                    renames(path</span><span class="s0">, </span><span class="s1">new_path) 
+                </span><span class="s0">for </span><span class="s1">pth </span><span class="s0">in </span><span class="s1">self.pth.values(): 
+                    pth.remove() 
+                logger.info( 
+                    </span><span class="s5">'Successfully uninstalled %s-%s'</span><span class="s0">,</span><span class="s1"> 
+                    self.dist.project_name</span><span class="s0">, </span><span class="s1">self.dist.version 
+                ) 
+ 
+    </span><span class="s0">def </span><span class="s1">rollback(self): 
+        </span><span class="s2">&quot;&quot;&quot;Rollback the changes previously made by remove().&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self.save_dir </span><span class="s0">is None</span><span class="s1">: 
+            logger.error( 
+                </span><span class="s5">&quot;Can't roll back %s; was not uninstalled&quot;</span><span class="s0">,</span><span class="s1"> 
+                self.dist.project_name</span><span class="s0">,</span><span class="s1"> 
+            ) 
+            </span><span class="s0">return False</span><span class="s1"> 
+        logger.info(</span><span class="s5">'Rolling back uninstall of %s'</span><span class="s0">, </span><span class="s1">self.dist.project_name) 
+        </span><span class="s0">for </span><span class="s1">path </span><span class="s0">in </span><span class="s1">self._moved_paths: 
+            tmp_path = self._stash(path) 
+            logger.debug(</span><span class="s5">'Replacing %s'</span><span class="s0">, </span><span class="s1">path) 
+            renames(tmp_path</span><span class="s0">, </span><span class="s1">path) 
+        </span><span class="s0">for </span><span class="s1">pth </span><span class="s0">in </span><span class="s1">self.pth.values(): 
+            pth.rollback() 
+ 
+    </span><span class="s0">def </span><span class="s1">commit(self): 
+        </span><span class="s2">&quot;&quot;&quot;Remove temporary save dir: rollback will no longer be possible.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self.save_dir </span><span class="s0">is not None</span><span class="s1">: 
+            rmtree(self.save_dir) 
+            self.save_dir = </span><span class="s0">None</span><span class="s1"> 
+            self._moved_paths = [] 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">UninstallPthEntries(object): 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">pth_file): 
+        </span><span class="s0">if not </span><span class="s1">os.path.isfile(pth_file): 
+            </span><span class="s0">raise </span><span class="s1">UninstallationError( 
+                </span><span class="s5">&quot;Cannot remove entries from nonexistent file %s&quot; </span><span class="s1">% pth_file 
+            ) 
+        self.file = pth_file 
+        self.entries = set() 
+        self._saved_lines = </span><span class="s0">None</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">add(self</span><span class="s0">, </span><span class="s1">entry): 
+        entry = os.path.normcase(entry) 
+        </span><span class="s3"># On Windows, os.path.normcase converts the entry to use</span><span class="s1"> 
+        </span><span class="s3"># backslashes.  This is correct for entries that describe absolute</span><span class="s1"> 
+        </span><span class="s3"># paths outside of site-packages, but all the others use forward</span><span class="s1"> 
+        </span><span class="s3"># slashes.</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">WINDOWS </span><span class="s0">and not </span><span class="s1">os.path.splitdrive(entry)[</span><span class="s4">0</span><span class="s1">]: 
+            entry = entry.replace(</span><span class="s5">'</span><span class="s0">\\</span><span class="s5">'</span><span class="s0">, </span><span class="s5">'/'</span><span class="s1">) 
+        self.entries.add(entry) 
+ 
+    </span><span class="s0">def </span><span class="s1">remove(self): 
+        logger.debug(</span><span class="s5">'Removing pth entries from %s:'</span><span class="s0">, </span><span class="s1">self.file) 
+        </span><span class="s0">with </span><span class="s1">open(self.file</span><span class="s0">, </span><span class="s5">'rb'</span><span class="s1">) </span><span class="s0">as </span><span class="s1">fh: 
+            </span><span class="s3"># windows uses '\r\n' with py3k, but uses '\n' with py2.x</span><span class="s1"> 
+            lines = fh.readlines() 
+            self._saved_lines = lines 
+        </span><span class="s0">if </span><span class="s1">any(</span><span class="s6">b'</span><span class="s0">\r\n</span><span class="s6">' </span><span class="s0">in </span><span class="s1">line </span><span class="s0">for </span><span class="s1">line </span><span class="s0">in </span><span class="s1">lines): 
+            endline = </span><span class="s5">'</span><span class="s0">\r\n</span><span class="s5">'</span><span class="s1"> 
+        </span><span class="s0">else</span><span class="s1">: 
+            endline = </span><span class="s5">'</span><span class="s0">\n</span><span class="s5">'</span><span class="s1"> 
+        </span><span class="s0">for </span><span class="s1">entry </span><span class="s0">in </span><span class="s1">self.entries: 
+            </span><span class="s0">try</span><span class="s1">: 
+                logger.debug(</span><span class="s5">'Removing entry: %s'</span><span class="s0">, </span><span class="s1">entry) 
+                lines.remove((entry + endline).encode(</span><span class="s5">&quot;utf-8&quot;</span><span class="s1">)) 
+            </span><span class="s0">except </span><span class="s1">ValueError: 
+                </span><span class="s0">pass</span><span class="s1"> 
+        </span><span class="s0">with </span><span class="s1">open(self.file</span><span class="s0">, </span><span class="s5">'wb'</span><span class="s1">) </span><span class="s0">as </span><span class="s1">fh: 
+            fh.writelines(lines) 
+ 
+    </span><span class="s0">def </span><span class="s1">rollback(self): 
+        </span><span class="s0">if </span><span class="s1">self._saved_lines </span><span class="s0">is None</span><span class="s1">: 
+            logger.error( 
+                </span><span class="s5">'Cannot roll back changes to %s, none were made'</span><span class="s0">, </span><span class="s1">self.file 
+            ) 
+            </span><span class="s0">return False</span><span class="s1"> 
+        logger.debug(</span><span class="s5">'Rolling %s back to previous state'</span><span class="s0">, </span><span class="s1">self.file) 
+        </span><span class="s0">with </span><span class="s1">open(self.file</span><span class="s0">, </span><span class="s5">'wb'</span><span class="s1">) </span><span class="s0">as </span><span class="s1">fh: 
+            fh.writelines(self._saved_lines) 
+        </span><span class="s0">return True</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<html>
+<head>
+<title>centralControl.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+centralControl.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">import </span><span class="s1">sys</span><span class="s0">, </span><span class="s1">posix</span><span class="s0">, </span><span class="s1">time</span><span class="s0">, </span><span class="s1">binascii</span><span class="s0">, </span><span class="s1">socket</span><span class="s0">, </span><span class="s1">select 
+</span><span class="s0">import </span><span class="s1">pexpect 
+</span><span class="s0">import </span><span class="s1">os 
+</span><span class="s0">import </span><span class="s1">scp 
+</span><span class="s0">import </span><span class="s1">Constructors 
+</span><span class="s0">import </span><span class="s1">LoginManager 
+ 
+ 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">centralControl: 
+    </span><span class="s2">&quot;&quot;&quot; Class representing Microtic &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">login): 
+        </span><span class="s3"># self.host = hostIP</span><span class="s1"> 
+        self.username = login 
+        self.credentials = { 
+            </span><span class="s4">&quot;192.168.1.1&quot;</span><span class="s1">: </span><span class="s4">&quot;admin&quot;</span><span class="s0">,</span><span class="s1"> 
+            </span><span class="s4">&quot;192.168.2.1&quot;</span><span class="s1">: </span><span class="s4">&quot;&quot;</span><span class="s1"> 
+        } 
+ 
+    </span><span class="s0">def </span><span class="s1">listMikrotikDevices(self): 
+        </span><span class="s2">&quot;&quot;&quot; 
+        method to list all mikrotik devices (near) using the os.system 
+        :return: list of mikrotik devices (mac addresses) 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        deviceList = [] 
+        loadAddress = </span><span class="s0">False</span><span class="s1"> 
+        os.system(</span><span class="s4">&quot;mactelnet -l -t 20 2&gt;&amp;1 &gt; mt.output&quot;</span><span class="s1">) 
+        </span><span class="s0">with </span><span class="s1">open( </span><span class="s4">&quot;mt.output&quot;</span><span class="s0">, </span><span class="s4">&quot;r&quot; </span><span class="s1">) </span><span class="s0">as </span><span class="s1">file: 
+            </span><span class="s0">for </span><span class="s1">line </span><span class="s0">in </span><span class="s1">file: 
+                </span><span class="s0">if </span><span class="s1">loadAddress: 
+                   address = line.split( )[</span><span class="s5">0</span><span class="s1">] 
+                   deviceList.append( address ) 
+                </span><span class="s0">else</span><span class="s1">: 
+                    header = line.split( ) 
+                    </span><span class="s0">if </span><span class="s1">len( header ) &gt; </span><span class="s5">1</span><span class="s1">: 
+                        </span><span class="s0">if </span><span class="s4">&quot;IP&quot; </span><span class="s0">in </span><span class="s1">header[</span><span class="s5">0</span><span class="s1">]: 
+                            loadAddress = </span><span class="s0">True</span><span class="s1"> 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">deviceList: 
+                print(i) 
+        </span><span class="s0">return </span><span class="s1">deviceList 
+ 
+    </span><span class="s0">def </span><span class="s1">addCredentials(self</span><span class="s0">, </span><span class="s1">login=</span><span class="s4">&quot;admin&quot;</span><span class="s1">): 
+        </span><span class="s2">&quot;&quot;&quot; 
+        :param login: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        server_list = self.listMikrotikDevices() 
+        print( server_list ) 
+        </span><span class="s0">for </span><span class="s1">server </span><span class="s0">in </span><span class="s1">server_list: 
+            </span><span class="s0">try</span><span class="s1">: 
+                password = self.credentials[server] 
+            </span><span class="s0">except </span><span class="s1">KeyError: 
+                password = input( </span><span class="s4">&quot;Please eneter the password for &quot; </span><span class="s1">+ server + </span><span class="s4">&quot;:&quot; </span><span class="s1">) 
+                self.credentials[server] = password 
+        </span><span class="s0">return </span><span class="s1">server_list 
+ 
+    </span><span class="s0">def </span><span class="s1">loginSSH(self</span><span class="s0">, </span><span class="s1">server</span><span class="s0">,</span><span class="s1">login</span><span class="s0">, </span><span class="s1">password): 
+        </span><span class="s2">&quot;&quot;&quot; 
+        method to login to mikrotik device via SSH with username and password using the library pxssh 
+        :param server: server to conenct 
+        :param login: username on mikrotik 
+        :param password: password of user 
+        :return: connection to mikrotik or exception 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">from </span><span class="s1">pexpect </span><span class="s0">import </span><span class="s1">pxssh</span><span class="s0">, </span><span class="s1">spawn</span><span class="s0">, </span><span class="s1">expect 
+        </span><span class="s0">import </span><span class="s1">getpass 
+        </span><span class="s0">for </span><span class="s1">server </span><span class="s0">in </span><span class="s1">self.credentials: 
+            </span><span class="s0">try</span><span class="s1">: 
+                </span><span class="s3"># self.login = login</span><span class="s1"> 
+                </span><span class="s3"># self.password = password</span><span class="s1"> 
+                connect = pxssh.pxssh( ) 
+                server = self.credentials 
+                login = </span><span class="s4">'admin'</span><span class="s1"> 
+                password = self.credentials[server] 
+                port = </span><span class="s5">22</span><span class="s1"> 
+                connect.login( server</span><span class="s0">, </span><span class="s1">login</span><span class="s0">, </span><span class="s1">password ) 
+                commands = pxssh.spawn( ) 
+                time.sleep( </span><span class="s5">10 </span><span class="s1">) 
+            </span><span class="s0">except </span><span class="s1">pxssh.ExceptionPxssh </span><span class="s0">as </span><span class="s1">e: 
+                print( </span><span class="s4">&quot;Error&quot; </span><span class="s1">) 
+                print( str( e ) ) 
+</span></pre>
+</body>
+</html>

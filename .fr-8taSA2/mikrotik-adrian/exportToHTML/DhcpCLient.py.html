@@ -1,0 +1,225 @@
+<html>
+<head>
+<title>DhcpCLient.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+DhcpCLient.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">DhcpClient: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listCLients(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list dhcp clients 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk([</span><span class="s4">'/ip/dhcp-client/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">ipv4 == {}: 
+            print(</span><span class="s4">&quot;No client found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">Use peer dns</span><span class="s0">\t</span><span class="s4">Add default route</span><span class="s0">\t</span><span class="s4">IP address</span><span class="s0">\t</span><span class="s4">Expires</span><span class="s0">\t</span><span class="s4">Status&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipv4: 
+                print(ipv4[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv4[i][</span><span class="s4">'use-peer-dns'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv4[i][</span><span class="s4">'add-default-route'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv4[i][</span><span class="s4">'address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv4[i][</span><span class="s4">'expires-after'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv4[i][</span><span class="s4">'status'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">releaseAddress(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will release dh client 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk([</span><span class="s4">'/ip/dhcp-client/release'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">renewAddress(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method w 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/renew'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">removeAddress(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove client 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">enableAddress(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill enable address 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">disableAddress(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable dhcp client 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">commentAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment address 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s4">&quot;&quot;&quot; 
+        Pridat sety a advanced sety 
+     &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">iface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface 
+        :param number: 
+        :param iface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ iface] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">usePeerDns(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill set use peer dns 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=use-peer-dns=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">usePeerNtp(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will use peer ntp 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=use-peer-ntp=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">setDhcpOptions(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">option): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dhcp options 
+        :param number: 
+        :param option: clientid,hostname 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dhcp-options='</span><span class="s1">+option] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">addDefaultRoute(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add defalt route 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=add-default-route=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">setDefaultROuteDistance(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">distance=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will st distance 
+        :param number: 
+        :param distance: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=default-route-distance=' </span><span class="s1">+ distance] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+ 
+    </span><span class="s5">#options</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">listDhcpOptions(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all dhcp options 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk([</span><span class="s4">'/ip/dhcp-client/option/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">ipv4 == {}: 
+            print(</span><span class="s4">&quot;No option found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">Code</span><span class="s0">\t</span><span class="s4">Value&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipv4: 
+                print(ipv4[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv4[i][</span><span class="s4">'code'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipv4[i][</span><span class="s4">'value'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">addOption(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">code): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add options 
+        :param name: 
+        :param code: code of f.e 121 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk([</span><span class="s4">'/ip/dhcp-client/option/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=code='</span><span class="s1">+code]) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">removeOption(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove option 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk([</span><span class="s4">'/ip/dhcp-client/option/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename option 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk([</span><span class="s4">'/ip/dhcp-client/option/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newName]) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">setCode(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">code): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set dhcp code 
+        :param name: 
+        :param code: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/option/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=code=' </span><span class="s1">+ code] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4 
+ 
+    </span><span class="s0">def </span><span class="s1">setValue(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">value): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set value 
+        :param name: 
+        :param value: hexa value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipv4 = self.client.talk( [</span><span class="s4">'/ip/dhcp-client/option/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=value=' </span><span class="s1">+ value] ) 
+        </span><span class="s0">return </span><span class="s1">ipv4</span></pre>
+</body>
+</html>

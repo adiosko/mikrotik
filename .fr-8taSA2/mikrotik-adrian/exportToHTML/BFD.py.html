@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>BFD.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+BFD.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">BFD: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listBfdInterfaces(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all bfd interfaces 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bfd = self.client.talk([</span><span class="s4">'/routing/bfd/interface/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">bfd == {}: 
+            print(</span><span class="s4">&quot;No bfd interface set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print( </span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">Interval</span><span class="s0">\t</span><span class="s4">Min rx</span><span class="s0">\t</span><span class="s4">Multiplier&quot; </span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">bfd: 
+                print(bfd[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+bfd[i][</span><span class="s4">'interval'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+bfd[i][</span><span class="s4">'min-rx'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1"> 
+                      +bfd[i][</span><span class="s4">'multiplier'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">bfd 
+ 
+    </span><span class="s0">def </span><span class="s1">addBfdInterface(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add bfd interface 
+        :param interface: interface physica or logical 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bfd = self.client.talk([</span><span class="s4">'/routing/bfd/interface/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">bfd 
+ 
+    </span><span class="s0">def </span><span class="s1">removeBfdInterface(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove bfd interface by its order no 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bfd = self.client.talk([</span><span class="s4">'/routing/bfd/interface/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">bfd 
+ 
+    </span><span class="s0">def </span><span class="s1">enableBfdInterface(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will 
+        :param interface: interface or number 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bfd = self.client.talk( [</span><span class="s4">'/routing/bfd/interface/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">bfd 
+ 
+    </span><span class="s0">def </span><span class="s1">disableBfdInterface(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable interface 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bfd = self.client.talk( [</span><span class="s4">'/routing/bfd/interface/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">bfd 
+ 
+    </span><span class="s0">def </span><span class="s1">setnterfaceMultiplier(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">multiplier=</span><span class="s4">&quot;5&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface multiplier 
+        :param interface: interface or number 
+        :param multiplier: number def 5 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bfd = self.client.talk( [</span><span class="s4">'/routing/bfd/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers='</span><span class="s1">+interface</span><span class="s0">,</span><span class="s4">'=multiplier='</span><span class="s1">+multiplier] ) 
+        </span><span class="s0">return </span><span class="s1">bfd 
+ 
+    </span><span class="s0">def </span><span class="s1">setMinimalBfdRx(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">rx=</span><span class="s4">&quot;0.200&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set minimal bfd rx 
+        :param interface: 
+        :param rx: 0.200 s 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bfd = self.client.talk( [</span><span class="s4">'/routing/bfd/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=min-rx=' </span><span class="s1">+ rx] ) 
+        </span><span class="s0">return </span><span class="s1">bfd 
+ 
+    </span><span class="s0">def </span><span class="s1">setBfdInterval(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;0.200&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set BFD interval 
+        :param interface: 
+        :param interval: 0.200 s 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bfd = self.client.talk( [</span><span class="s4">'/routing/bfd/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ interface</span><span class="s0">, </span><span class="s4">'=interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">bfd 
+ 
+    </span><span class="s0">def </span><span class="s1">listBfdNeighbors(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all bfd neighbors 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bfd = self.client.talk( [</span><span class="s4">'/routing/bfd/neighbor/print'</span><span class="s1">] ) 
+        </span><span class="s0">if </span><span class="s1">bfd == {}: 
+            print(</span><span class="s4">&quot;No neighbor found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(bfd) 
+        </span><span class="s0">return </span><span class="s1">bfd</span></pre>
+</body>
+</html>

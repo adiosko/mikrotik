@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>help.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+help.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s0">from </span><span class="s1">pip.basecommand </span><span class="s0">import </span><span class="s1">Command</span><span class="s0">, </span><span class="s1">SUCCESS 
+</span><span class="s0">from </span><span class="s1">pip.exceptions </span><span class="s0">import </span><span class="s1">CommandError 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">HelpCommand(Command): 
+    </span><span class="s2">&quot;&quot;&quot;Show help for commands&quot;&quot;&quot;</span><span class="s1"> 
+    name = </span><span class="s3">'help'</span><span class="s1"> 
+    usage = </span><span class="s3">&quot;&quot;&quot; 
+      %prog &lt;command&gt;&quot;&quot;&quot;</span><span class="s1"> 
+    summary = </span><span class="s3">'Show help for commands.'</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">run(self</span><span class="s0">, </span><span class="s1">options</span><span class="s0">, </span><span class="s1">args): 
+        </span><span class="s0">from </span><span class="s1">pip.commands </span><span class="s0">import </span><span class="s1">commands_dict</span><span class="s0">, </span><span class="s1">get_similar_commands 
+ 
+        </span><span class="s0">try</span><span class="s1">: 
+            </span><span class="s4"># 'pip help' with no args is handled by pip.__init__.parseopt()</span><span class="s1"> 
+            cmd_name = args[</span><span class="s5">0</span><span class="s1">]  </span><span class="s4"># the command we need help for</span><span class="s1"> 
+        </span><span class="s0">except </span><span class="s1">IndexError: 
+            </span><span class="s0">return </span><span class="s1">SUCCESS 
+ 
+        </span><span class="s0">if </span><span class="s1">cmd_name </span><span class="s0">not in </span><span class="s1">commands_dict: 
+            guess = get_similar_commands(cmd_name) 
+ 
+            msg = [</span><span class="s3">'unknown command &quot;%s&quot;' </span><span class="s1">% cmd_name] 
+            </span><span class="s0">if </span><span class="s1">guess: 
+                msg.append(</span><span class="s3">'maybe you meant &quot;%s&quot;' </span><span class="s1">% guess) 
+ 
+            </span><span class="s0">raise </span><span class="s1">CommandError(</span><span class="s3">' - '</span><span class="s1">.join(msg)) 
+ 
+        command = commands_dict[cmd_name]() 
+        command.parser.print_help() 
+ 
+        </span><span class="s0">return </span><span class="s1">SUCCESS 
+</span></pre>
+</body>
+</html>

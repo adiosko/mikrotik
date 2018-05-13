@@ -1,0 +1,227 @@
+<html>
+<head>
+<title>PacketSniffer.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+PacketSniffer.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">PacketSniffer: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listSniffer(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list sniffer stats 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">sniff == {}: 
+            print(</span><span class="s4">&quot;No sniffer is running&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">sniff: 
+                print(sniff) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">startSniffer(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will start sniffer 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/start'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">stopSniffer(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will stop sniffer 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk( [</span><span class="s4">'/tool/sniffer/stop'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">setSniffer(self</span><span class="s0">,</span><span class="s1">memoryLimit</span><span class="s0">,</span><span class="s1">onlyHeaders</span><span class="s0">,</span><span class="s1">memoryScroll</span><span class="s0">,</span><span class="s1">fileLimit</span><span class="s0">,</span><span class="s1">file=</span><span class="s0">None</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        opravit 
+        Method will set sniffer 
+        :param memoryLimit: 100 kb  default 
+        :param onlyHeaders: yes/no def no 
+        :param memoryScroll: def yes yes/no 
+        :param fileLimit: 1000 kb default 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">file == </span><span class="s0">None</span><span class="s1">: 
+            sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=memory-limit='</span><span class="s1">+memoryLimit</span><span class="s0">,</span><span class="s4">'=only-headers='</span><span class="s1">+onlyHeaders</span><span class="s0">,</span><span class="s1"> 
+                                      </span><span class="s4">'=memory-scroll='</span><span class="s1">+memoryScroll</span><span class="s0">,</span><span class="s4">'=file-limit'</span><span class="s1">+fileLimit]) 
+        </span><span class="s0">else</span><span class="s1">: 
+            sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">, </span><span class="s4">'=memory-limit=' </span><span class="s1">+ memoryLimit</span><span class="s0">,</span><span class="s1"> 
+                                      </span><span class="s4">'=only-headers='</span><span class="s1">+onlyHeaders</span><span class="s0">,</span><span class="s4">'=memory-scroll='</span><span class="s1">+memoryScroll</span><span class="s0">,</span><span class="s1"> 
+                                      </span><span class="s4">'=file-limit' </span><span class="s1">+ fileLimit</span><span class="s0">,</span><span class="s4">'=file-name='</span><span class="s1">+file] ) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">showPackets(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all packets in interval 
+        :param interval: interval of packet usage 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/packet/print'</span><span class="s1">]) 
+        print(sniff) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">showConnections(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will show all connection on sniffer 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/connection/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">sniff == {}: 
+            print(</span><span class="s4">&quot;No connection established or server is not running&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;src address </span><span class="s0">\t</span><span class="s4"> dst address </span><span class="s0">\t</span><span class="s4"> bytes </span><span class="s0">\t</span><span class="s4"> resends </span><span class="s0">\t</span><span class="s4"> mss&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">sniff: 
+                print(sniff[i][</span><span class="s4">'src-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+sniff[i][</span><span class="s4">'dst-address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+sniff[i][</span><span class="s4">'bytes'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1"> 
+                      +sniff[i][</span><span class="s4">'resends'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+sniff[i][</span><span class="s4">'mss'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">showHosts(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all connected hosts 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/host/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">sniff == {}: 
+            print(</span><span class="s4">&quot;No hosts found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;address</span><span class="s0">\t</span><span class="s4">rate</span><span class="s0">\t</span><span class="s4">peekrate</span><span class="s0">\t</span><span class="s4">total&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">sniff: 
+                print(sniff[i][</span><span class="s4">'address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+sniff[i][</span><span class="s4">'rate'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+sniff[i][</span><span class="s4">'peek-rate'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+sniff[i][</span><span class="s4">'total'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">showProtocols(self</span><span class="s0">,</span><span class="s1">interval): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all protocols in session 
+        :param interval: interval on run 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/protocol/print'</span><span class="s0">,</span><span class="s4">'=interval='</span><span class="s1">+interval]) 
+        print(sniff) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">enableStream(self</span><span class="s0">,</span><span class="s1">server</span><span class="s0">,</span><span class="s1">filter): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable stream 
+        :param server: server IP 
+        :param filter: yes/no def no 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=streaming-enabled=yes'</span><span class="s0">,</span><span class="s4">'=streaming-server='</span><span class="s1">+server]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterInterface(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will filtersniffer interface 
+        :param interface: interface to filter 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=filter-interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterMacAddress(self</span><span class="s0">,</span><span class="s1">MAC): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will filter trafiic on mac address 
+        :param MAC: mac address to filter 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=filter-mac-address='</span><span class="s1">+MAC]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterMacProtocol(self</span><span class="s0">, </span><span class="s1">MAC): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will filter trafiic on mac protocol 
+        :param MAC: mac protocol: 802.2,ip,lldp,mpls-unicast,pppoe,service-vlan,arp,ipv6,loop-protect,packing-compr, 
+        pppoe-discovery,vlan,homeplug-av,ipx,mpls-multicast,packing-simple,rarp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk( [</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">, </span><span class="s4">'=filter-mac-protocol=' </span><span class="s1">+ MAC] ) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterIpaddress(self</span><span class="s0">,</span><span class="s1">IP): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methd will filter traffic on IP address 
+        :param IP: IP to filter 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=filter-ip-address='</span><span class="s1">+IP]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterIpv6Address(self</span><span class="s0">,</span><span class="s1">IPv6): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will filter Ipv6 address 
+        :param IPv6: Ipv6 address to filter 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=filter-ipv6-address='</span><span class="s1">+IPv6]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterIpProtocol(self</span><span class="s0">,</span><span class="s1">protocol): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method to set filer on IP protocol 
+        :param protocol: icmp, igmp, ggp, ip-encap, tcp,egp, pup, udp, ipsec, ospf 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=filter-ip-protocol='</span><span class="s1">+protocol]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterPort(self</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will filter protocol all protocol f.e ssh, 
+        :param port: netstat, ssh, telnet, ftp, smtp, etc. 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=filter-port='</span><span class="s1">+port]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterCPU(self</span><span class="s0">,</span><span class="s1">CPU): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will filter CPU 
+        :param CPU: standardly cpu0 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=filter-cpu='</span><span class="s1">+CPU]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterDirection(self</span><span class="s0">,</span><span class="s1">direction): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will filter direction 
+        :param direction: any, rx,tx 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=filter-direction='</span><span class="s1">+direction]) 
+        </span><span class="s0">return </span><span class="s1">sniff 
+ 
+    </span><span class="s0">def </span><span class="s1">filterOperation(self</span><span class="s0">,</span><span class="s1">operation): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will filter opeartion of filter 
+        :param operation:  and or or 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sniff = self.client.talk([</span><span class="s4">'/tool/sniffer/set'</span><span class="s0">,</span><span class="s4">'=filter-operator-between-entries='</span><span class="s1">+operation]) 
+        </span><span class="s0">return </span><span class="s1">sniff</span></pre>
+</body>
+</html>

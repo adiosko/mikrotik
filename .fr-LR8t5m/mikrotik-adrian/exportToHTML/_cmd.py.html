@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>_cmd.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+_cmd.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">import </span><span class="s1">logging 
+ 
+</span><span class="s0">from </span><span class="s1">pip._vendor </span><span class="s0">import </span><span class="s1">requests 
+ 
+</span><span class="s0">from </span><span class="s1">pip._vendor.cachecontrol.adapter </span><span class="s0">import </span><span class="s1">CacheControlAdapter 
+</span><span class="s0">from </span><span class="s1">pip._vendor.cachecontrol.cache </span><span class="s0">import </span><span class="s1">DictCache 
+</span><span class="s0">from </span><span class="s1">pip._vendor.cachecontrol.controller </span><span class="s0">import </span><span class="s1">logger 
+ 
+</span><span class="s0">from </span><span class="s1">argparse </span><span class="s0">import </span><span class="s1">ArgumentParser 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">setup_logging(): 
+    logger.setLevel(logging.DEBUG) 
+    handler = logging.StreamHandler() 
+    logger.addHandler(handler) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">get_session(): 
+    adapter = CacheControlAdapter( 
+        DictCache()</span><span class="s0">,</span><span class="s1"> 
+        cache_etags=</span><span class="s0">True,</span><span class="s1"> 
+        serializer=</span><span class="s0">None,</span><span class="s1"> 
+        heuristic=</span><span class="s0">None,</span><span class="s1"> 
+    ) 
+    sess = requests.Session() 
+    sess.mount(</span><span class="s2">'http://'</span><span class="s0">, </span><span class="s1">adapter) 
+    sess.mount(</span><span class="s2">'https://'</span><span class="s0">, </span><span class="s1">adapter) 
+ 
+    sess.cache_controller = adapter.controller 
+    </span><span class="s0">return </span><span class="s1">sess 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">get_args(): 
+    parser = ArgumentParser() 
+    parser.add_argument(</span><span class="s2">'url'</span><span class="s0">, </span><span class="s1">help=</span><span class="s2">'The URL to try and cache'</span><span class="s1">) 
+    </span><span class="s0">return </span><span class="s1">parser.parse_args() 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">main(args=</span><span class="s0">None</span><span class="s1">): 
+    args = get_args() 
+    sess = get_session() 
+ 
+    </span><span class="s3"># Make a request to get a response</span><span class="s1"> 
+    resp = sess.get(args.url) 
+ 
+    </span><span class="s3"># Turn on logging</span><span class="s1"> 
+    setup_logging() 
+ 
+    </span><span class="s3"># try setting the cache</span><span class="s1"> 
+    sess.cache_controller.cache_response(resp.request</span><span class="s0">, </span><span class="s1">resp.raw) 
+ 
+    </span><span class="s3"># Now try to get it</span><span class="s1"> 
+    </span><span class="s0">if </span><span class="s1">sess.cache_controller.cached_request(resp.request): 
+        print(</span><span class="s2">'Cached!'</span><span class="s1">) 
+    </span><span class="s0">else</span><span class="s1">: 
+        print(</span><span class="s2">'Not cached :('</span><span class="s1">) 
+ 
+ 
+</span><span class="s0">if </span><span class="s1">__name__ == </span><span class="s2">'__main__'</span><span class="s1">: 
+    main() 
+</span></pre>
+</body>
+</html>

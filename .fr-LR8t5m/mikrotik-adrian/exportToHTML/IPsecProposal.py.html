@@ -1,0 +1,132 @@
+<html>
+<head>
+<title>IPsecProposal.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+IPsecProposal.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">IPsecProposal: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listProposal(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list proposal 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk([</span><span class="s4">'/ip/ipsec/proposal/print'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">auth alg</span><span class="s0">\t</span><span class="s4">enc alg</span><span class="s0">\t</span><span class="s4">lifetime</span><span class="s0">\t</span><span class="s4">pfs group&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipsec: 
+            print(ipsec[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'auth-algorithms'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'enc-algorithms'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'lifetime'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'pfs-group'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">addProposal(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">auth=</span><span class="s4">&quot;sha1&quot;</span><span class="s0">,</span><span class="s1">enc=</span><span class="s4">&quot;3des&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add proposal 
+        :param name: 
+        :param auth:md5,sha1,null,sha256,sha512 
+        :param enc: null, des,aes-192-cbc,aes-128-cbc,aes-256-cbc,blowfish,twofish,camelia-128,camelia-192,camelia-256,aes-128-ctr, 
+        aes-192-ctr,aes-256-ctr,aes-128-gcm,aes-192-gcm,aes-256-gcm 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk([</span><span class="s4">'/ip/ipsec/proposal/add'</span><span class="s0">,</span><span class="s4">'=name'</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=auth-algorithms'</span><span class="s0">,</span><span class="s4">'=enc-algorithms'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">removeProposal(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk([</span><span class="s4">'/ip/ipsec/proposal/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">enableProposal(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/proposal/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">disableProposal(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable proposal 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/proposal/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename proposal 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/proposal/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newName] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthAlgo(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">auth=</span><span class="s4">&quot;sha1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill set authatication algorithm 
+        :param name: 
+        :param auth: md5,sha1,null,sha256,sha512 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/proposal/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=auth-algorithms=' </span><span class="s1">+ auth] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setEncAlg(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">enc=</span><span class="s4">&quot;3des&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set encrypton algorithms 
+        :param name: 
+        :param enc: null, des,aes-192-cbc,aes-128-cbc,aes-256-cbc,blowfish,twofish,camelia-128,camelia-192,camelia-256,aes-128-ctr, 
+        aes-192-ctr,aes-256-ctr,aes-128-gcm,aes-192-gcm,aes-256-gcm 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/proposal/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=enc-algorithms=' </span><span class="s1">+ enc] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setLifeTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">life=</span><span class="s4">&quot;00:30:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set proposal lifetime 
+        :param name: 
+        :param life: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/proposal/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=lifetime=' </span><span class="s1">+ life] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setPfsGroup(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">group=</span><span class="s4">&quot;modp2048&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pfs group 
+        :param name: 
+        :param group: modp768,modp1024,ec2n155,ec2n185,modp1536,modp2048,modp3072,modp4096,modp6144,modp8192, none 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/proposal/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=pfs-group=' </span><span class="s1">+ group] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<html>
+<head>
+<title>hashlib.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(165,194,97); }
+.s5 { color: rgb(98,151,85); font-style: italic; }
+.s6 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+hashlib.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">#.  Copyright (C) 2005-2010   Gregory P. Smith (greg@krypto.org)</span><span class="s1"> 
+</span><span class="s0">#  Licensed to PSF under a Contributor Agreement.</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+ 
+__doc__ = </span><span class="s2">&quot;&quot;&quot;hashlib module - A common interface to many hash functions. 
+ 
+new(name, data=b'') - returns a new hash object implementing the 
+                      given hash function; initializing the hash 
+                      using the given binary data. 
+ 
+Named constructor functions are also available, these are faster 
+than using new(name): 
+ 
+md5(), sha1(), sha224(), sha256(), sha384(), and sha512() 
+ 
+More algorithms may be available on your platform but the above are guaranteed 
+to exist.  See the algorithms_guaranteed and algorithms_available attributes 
+to find out what algorithm names can be passed to new(). 
+ 
+NOTE: If you want the adler32 or crc32 hash functions they are available in 
+the zlib module. 
+ 
+Choose your hash function wisely.  Some have known collision weaknesses. 
+sha384 and sha512 will be slow on 32 bit platforms. 
+ 
+Hash objects have these methods: 
+ - update(arg): Update the hash object with the bytes in arg. Repeated calls 
+                are equivalent to a single call with the concatenation of all 
+                the arguments. 
+ - digest():    Return the digest of the bytes passed to the update() method 
+                so far. 
+ - hexdigest(): Like digest() except the digest is returned as a unicode 
+                object of double length, containing only hexadecimal digits. 
+ - copy():      Return a copy (clone) of the hash object. This can be used to 
+                efficiently compute the digests of strings that share a common 
+                initial substring. 
+ 
+For example, to obtain the digest of the string 'Nobody inspects the 
+spammish repetition': 
+ 
+    &gt;&gt;&gt; import hashlib 
+    &gt;&gt;&gt; m = hashlib.md5() 
+    &gt;&gt;&gt; m.update(b&quot;Nobody inspects&quot;) 
+    &gt;&gt;&gt; m.update(b&quot; the spammish repetition&quot;) 
+    &gt;&gt;&gt; m.digest() 
+    b'</span><span class="s3">\\</span><span class="s2">xbbd</span><span class="s3">\\</span><span class="s2">x9c</span><span class="s3">\\</span><span class="s2">x83</span><span class="s3">\\</span><span class="s2">xdd</span><span class="s3">\\</span><span class="s2">x1e</span><span class="s3">\\</span><span class="s2">xa5</span><span class="s3">\\</span><span class="s2">xc9</span><span class="s3">\\</span><span class="s2">xd9</span><span class="s3">\\</span><span class="s2">xde</span><span class="s3">\\</span><span class="s2">xc9</span><span class="s3">\\</span><span class="s2">xa1</span><span class="s3">\\</span><span class="s2">x8d</span><span class="s3">\\</span><span class="s2">xf0</span><span class="s3">\\</span><span class="s2">xff</span><span class="s3">\\</span><span class="s2">xe9' 
+ 
+More condensed: 
+ 
+    &gt;&gt;&gt; hashlib.sha224(b&quot;Nobody inspects the spammish repetition&quot;).hexdigest() 
+    'a4337bc45a8fc544c03f52dc550cd6e1e87021bc896588bd79e901e2' 
+ 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s0"># This tuple and __get_builtin_constructor() must be modified if a new</span><span class="s1"> 
+</span><span class="s0"># always available algorithm is added.</span><span class="s1"> 
+__always_supported = (</span><span class="s2">'md5'</span><span class="s3">, </span><span class="s2">'sha1'</span><span class="s3">, </span><span class="s2">'sha224'</span><span class="s3">, </span><span class="s2">'sha256'</span><span class="s3">, </span><span class="s2">'sha384'</span><span class="s3">, </span><span class="s2">'sha512'</span><span class="s1">) 
+ 
+algorithms_guaranteed = set(__always_supported) 
+algorithms_available = set(__always_supported) 
+ 
+__all__ = __always_supported + (</span><span class="s2">'new'</span><span class="s3">, </span><span class="s2">'algorithms_guaranteed'</span><span class="s3">,</span><span class="s1"> 
+                                </span><span class="s2">'algorithms_available'</span><span class="s3">, </span><span class="s2">'pbkdf2_hmac'</span><span class="s1">) 
+ 
+ 
+__builtin_constructor_cache = {} 
+ 
+</span><span class="s3">def </span><span class="s1">__get_builtin_constructor(name): 
+    cache = __builtin_constructor_cache 
+    constructor = cache.get(name) 
+    </span><span class="s3">if </span><span class="s1">constructor </span><span class="s3">is not None</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">constructor 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">name </span><span class="s3">in </span><span class="s1">(</span><span class="s2">'SHA1'</span><span class="s3">, </span><span class="s2">'sha1'</span><span class="s1">): 
+            </span><span class="s3">import </span><span class="s1">_sha1 
+            cache[</span><span class="s2">'SHA1'</span><span class="s1">] = cache[</span><span class="s2">'sha1'</span><span class="s1">] = _sha1.sha1 
+        </span><span class="s3">elif </span><span class="s1">name </span><span class="s3">in </span><span class="s1">(</span><span class="s2">'MD5'</span><span class="s3">, </span><span class="s2">'md5'</span><span class="s1">): 
+            </span><span class="s3">import </span><span class="s1">_md5 
+            cache[</span><span class="s2">'MD5'</span><span class="s1">] = cache[</span><span class="s2">'md5'</span><span class="s1">] = _md5.md5 
+        </span><span class="s3">elif </span><span class="s1">name </span><span class="s3">in </span><span class="s1">(</span><span class="s2">'SHA256'</span><span class="s3">, </span><span class="s2">'sha256'</span><span class="s3">, </span><span class="s2">'SHA224'</span><span class="s3">, </span><span class="s2">'sha224'</span><span class="s1">): 
+            </span><span class="s3">import </span><span class="s1">_sha256 
+            cache[</span><span class="s2">'SHA224'</span><span class="s1">] = cache[</span><span class="s2">'sha224'</span><span class="s1">] = _sha256.sha224 
+            cache[</span><span class="s2">'SHA256'</span><span class="s1">] = cache[</span><span class="s2">'sha256'</span><span class="s1">] = _sha256.sha256 
+        </span><span class="s3">elif </span><span class="s1">name </span><span class="s3">in </span><span class="s1">(</span><span class="s2">'SHA512'</span><span class="s3">, </span><span class="s2">'sha512'</span><span class="s3">, </span><span class="s2">'SHA384'</span><span class="s3">, </span><span class="s2">'sha384'</span><span class="s1">): 
+            </span><span class="s3">import </span><span class="s1">_sha512 
+            cache[</span><span class="s2">'SHA384'</span><span class="s1">] = cache[</span><span class="s2">'sha384'</span><span class="s1">] = _sha512.sha384 
+            cache[</span><span class="s2">'SHA512'</span><span class="s1">] = cache[</span><span class="s2">'sha512'</span><span class="s1">] = _sha512.sha512 
+    </span><span class="s3">except </span><span class="s1">ImportError: 
+        </span><span class="s3">pass  </span><span class="s0"># no extension module, this hash is unsupported.</span><span class="s1"> 
+ 
+    constructor = cache.get(name) 
+    </span><span class="s3">if </span><span class="s1">constructor </span><span class="s3">is not None</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">constructor 
+ 
+    </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s2">'unsupported hash type ' </span><span class="s1">+ name) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">__get_openssl_constructor(name): 
+    </span><span class="s3">try</span><span class="s1">: 
+        f = getattr(_hashlib</span><span class="s3">, </span><span class="s2">'openssl_' </span><span class="s1">+ name) 
+        </span><span class="s0"># Allow the C module to raise ValueError.  The function will be</span><span class="s1"> 
+        </span><span class="s0"># defined but the hash not actually available thanks to OpenSSL.</span><span class="s1"> 
+        f() 
+        </span><span class="s0"># Use the C function directly (very fast)</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">f 
+    </span><span class="s3">except </span><span class="s1">(AttributeError</span><span class="s3">, </span><span class="s1">ValueError): 
+        </span><span class="s3">return </span><span class="s1">__get_builtin_constructor(name) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">__py_new(name</span><span class="s3">, </span><span class="s1">data=</span><span class="s4">b''</span><span class="s1">): 
+    </span><span class="s5">&quot;&quot;&quot;new(name, data=b'') - Return a new hashing object using the named algorithm; 
+    optionally initialized with data (which must be bytes). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">__get_builtin_constructor(name)(data) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">__hash_new(name</span><span class="s3">, </span><span class="s1">data=</span><span class="s4">b''</span><span class="s1">): 
+    </span><span class="s5">&quot;&quot;&quot;new(name, data=b'') - Return a new hashing object using the named algorithm; 
+    optionally initialized with data (which must be bytes). 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">_hashlib.new(name</span><span class="s3">, </span><span class="s1">data) 
+    </span><span class="s3">except </span><span class="s1">ValueError: 
+        </span><span class="s0"># If the _hashlib module (OpenSSL) doesn't support the named</span><span class="s1"> 
+        </span><span class="s0"># hash, try using our builtin implementations.</span><span class="s1"> 
+        </span><span class="s0"># This allows for SHA224/256 and SHA384/512 support even though</span><span class="s1"> 
+        </span><span class="s0"># the OpenSSL library prior to 0.9.8 doesn't provide them.</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">__get_builtin_constructor(name)(data) 
+ 
+ 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s3">import </span><span class="s1">_hashlib 
+    new = __hash_new 
+    __get_hash = __get_openssl_constructor 
+    algorithms_available = algorithms_available.union( 
+            _hashlib.openssl_md_meth_names) 
+</span><span class="s3">except </span><span class="s1">ImportError: 
+    new = __py_new 
+    __get_hash = __get_builtin_constructor 
+ 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s0"># OpenSSL's PKCS5_PBKDF2_HMAC requires OpenSSL 1.0+ with HMAC and SHA</span><span class="s1"> 
+    </span><span class="s3">from </span><span class="s1">_hashlib </span><span class="s3">import </span><span class="s1">pbkdf2_hmac 
+</span><span class="s3">except </span><span class="s1">ImportError: 
+    _trans_5C = bytes((x ^ </span><span class="s6">0x5C</span><span class="s1">) </span><span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">range(</span><span class="s6">256</span><span class="s1">)) 
+    _trans_36 = bytes((x ^ </span><span class="s6">0x36</span><span class="s1">) </span><span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">range(</span><span class="s6">256</span><span class="s1">)) 
+ 
+    </span><span class="s3">def </span><span class="s1">pbkdf2_hmac(hash_name</span><span class="s3">, </span><span class="s1">password</span><span class="s3">, </span><span class="s1">salt</span><span class="s3">, </span><span class="s1">iterations</span><span class="s3">, </span><span class="s1">dklen=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s5">&quot;&quot;&quot;Password based key derivation function 2 (PKCS #5 v2.0) 
+ 
+        This Python implementations based on the hmac module about as fast 
+        as OpenSSL's PKCS5_PBKDF2_HMAC for short passwords and much faster 
+        for long passwords. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">if not </span><span class="s1">isinstance(hash_name</span><span class="s3">, </span><span class="s1">str): 
+            </span><span class="s3">raise </span><span class="s1">TypeError(hash_name) 
+ 
+        </span><span class="s3">if not </span><span class="s1">isinstance(password</span><span class="s3">, </span><span class="s1">(bytes</span><span class="s3">, </span><span class="s1">bytearray)): 
+            password = bytes(memoryview(password)) 
+        </span><span class="s3">if not </span><span class="s1">isinstance(salt</span><span class="s3">, </span><span class="s1">(bytes</span><span class="s3">, </span><span class="s1">bytearray)): 
+            salt = bytes(memoryview(salt)) 
+ 
+        </span><span class="s0"># Fast inline HMAC implementation</span><span class="s1"> 
+        inner = new(hash_name) 
+        outer = new(hash_name) 
+        blocksize = getattr(inner</span><span class="s3">, </span><span class="s2">'block_size'</span><span class="s3">, </span><span class="s6">64</span><span class="s1">) 
+        </span><span class="s3">if </span><span class="s1">len(password) &gt; blocksize: 
+            password = new(hash_name</span><span class="s3">, </span><span class="s1">password).digest() 
+        password = password + </span><span class="s4">b'</span><span class="s3">\x00</span><span class="s4">' </span><span class="s1">* (blocksize - len(password)) 
+        inner.update(password.translate(_trans_36)) 
+        outer.update(password.translate(_trans_5C)) 
+ 
+        </span><span class="s3">def </span><span class="s1">prf(msg</span><span class="s3">, </span><span class="s1">inner=inner</span><span class="s3">, </span><span class="s1">outer=outer): 
+            </span><span class="s0"># PBKDF2_HMAC uses the password as key. We can re-use the same</span><span class="s1"> 
+            </span><span class="s0"># digest objects and just update copies to skip initialization.</span><span class="s1"> 
+            icpy = inner.copy() 
+            ocpy = outer.copy() 
+            icpy.update(msg) 
+            ocpy.update(icpy.digest()) 
+            </span><span class="s3">return </span><span class="s1">ocpy.digest() 
+ 
+        </span><span class="s3">if </span><span class="s1">iterations &lt; </span><span class="s6">1</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(iterations) 
+        </span><span class="s3">if </span><span class="s1">dklen </span><span class="s3">is None</span><span class="s1">: 
+            dklen = outer.digest_size 
+        </span><span class="s3">if </span><span class="s1">dklen &lt; </span><span class="s6">1</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(dklen) 
+ 
+        dkey = </span><span class="s4">b''</span><span class="s1"> 
+        loop = </span><span class="s6">1</span><span class="s1"> 
+        from_bytes = int.from_bytes 
+        </span><span class="s3">while </span><span class="s1">len(dkey) &lt; dklen: 
+            prev = prf(salt + loop.to_bytes(</span><span class="s6">4</span><span class="s3">, </span><span class="s2">'big'</span><span class="s1">)) 
+            </span><span class="s0"># endianess doesn't matter here as long to / from use the same</span><span class="s1"> 
+            rkey = int.from_bytes(prev</span><span class="s3">, </span><span class="s2">'big'</span><span class="s1">) 
+            </span><span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(iterations - </span><span class="s6">1</span><span class="s1">): 
+                prev = prf(prev) 
+                </span><span class="s0"># rkey = rkey ^ prev</span><span class="s1"> 
+                rkey ^= from_bytes(prev</span><span class="s3">, </span><span class="s2">'big'</span><span class="s1">) 
+            loop += </span><span class="s6">1</span><span class="s1"> 
+            dkey += rkey.to_bytes(inner.digest_size</span><span class="s3">, </span><span class="s2">'big'</span><span class="s1">) 
+ 
+        </span><span class="s3">return </span><span class="s1">dkey[:dklen] 
+ 
+ 
+</span><span class="s3">for </span><span class="s1">__func_name </span><span class="s3">in </span><span class="s1">__always_supported: 
+    </span><span class="s0"># try them all, some may not work due to the OpenSSL</span><span class="s1"> 
+    </span><span class="s0"># version not supporting that algorithm.</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        globals()[__func_name] = __get_hash(__func_name) 
+    </span><span class="s3">except </span><span class="s1">ValueError: 
+        </span><span class="s3">import </span><span class="s1">logging 
+        logging.exception(</span><span class="s2">'code for hash %s was not found.'</span><span class="s3">, </span><span class="s1">__func_name) 
+ 
+</span><span class="s0"># Cleanup locals()</span><span class="s1"> 
+</span><span class="s3">del </span><span class="s1">__always_supported</span><span class="s3">, </span><span class="s1">__func_name</span><span class="s3">, </span><span class="s1">__get_hash 
+</span><span class="s3">del </span><span class="s1">__py_new</span><span class="s3">, </span><span class="s1">__hash_new</span><span class="s3">, </span><span class="s1">__get_openssl_constructor 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<html>
+<head>
+<title>RouterBoard.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+RouterBoard.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">RouterBoard: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">, </span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">listRouterboard(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list routerboard info 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rtr = self.client.talk([</span><span class="s4">'/system/routerboard/print'</span><span class="s1">]) 
+        print(rtr) 
+        </span><span class="s0">return </span><span class="s1">rtr 
+ 
+    </span><span class="s0">def </span><span class="s1">upgradeRouterBoard(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will upgrade router board 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rtr = self.client.talk([</span><span class="s4">'/system/routerboard/upgrade'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">rtr 
+ 
+    </span><span class="s0">def </span><span class="s1">listFanControll(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list fan status 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        fan = self.client.talk([</span><span class="s4">'/system/routerboard/fan-control'</span><span class="s0">,</span><span class="s4">'=state=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">fan 
+ 
+    </span><span class="s0">def </span><span class="s1">listBIOS(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list BIOS 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bios = self.client.talk([</span><span class="s4">'/system/routerboard/bios/print'</span><span class="s1">]) 
+        print(bios) 
+        </span><span class="s0">return </span><span class="s1">bios 
+ 
+    </span><span class="s0">def </span><span class="s1">setBios(self</span><span class="s0">,</span><span class="s1">baud</span><span class="s0">,</span><span class="s1">bootDelay</span><span class="s0">,</span><span class="s1">bootDev</span><span class="s0">,</span><span class="s1">cpu</span><span class="s0">,</span><span class="s1">debug</span><span class="s0">,</span><span class="s1">enter</span><span class="s0">,</span><span class="s1">bootTO</span><span class="s0">, </span><span class="s1">memSet = </span><span class="s0">None, </span><span class="s1">pci = </span><span class="s0">None, </span><span class="s1">vga = </span><span class="s0">None, </span><span class="s1">beep = </span><span class="s0">None</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will setup mikrotik boot process 
+        :param baud: baud rate  - 115200,1200,19200,2400,38400,4800,57600,9600 
+        :param beep: beep on boot: yes/no (optional) 
+        :param bootDelay: boot delay [s] 
+        :param bootDev: etherboot-only, etherboot-ide, ide-only, try=etherboot-once 
+        :param cpu: cpuMode power-save/regular 
+        :param debug: debug level none/high/low 
+        :param enter: Enter setup on: any-key/delete-key 
+        :param bootTO: boot Time out: 00:00:00 
+        :param memSet: memory settings: optimal/fail-safe (optional) 
+        :param pci: pci backoff (optional) 
+        :param vga: vga to serial (optional) 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">memSet == </span><span class="s0">None or </span><span class="s1">pci == </span><span class="s0">None or </span><span class="s1">vga == </span><span class="s0">None or </span><span class="s1">beep == </span><span class="s0">None</span><span class="s1">: 
+            bios =self.client.talk([</span><span class="s4">'/system/routerboard/bios/set'</span><span class="s0">,</span><span class="s4">'=baud-rate='</span><span class="s1">+baud</span><span class="s0">,</span><span class="s4">'=boot-delay='</span><span class="s1">+bootDelay 
+                                 </span><span class="s0">,</span><span class="s4">'=boot-device='</span><span class="s1">+bootDev</span><span class="s0">,</span><span class="s4">'=cpu-mode='</span><span class="s1">+cpu</span><span class="s0">,</span><span class="s4">'=debug-level='</span><span class="s1">+debug</span><span class="s0">,</span><span class="s1"> 
+                                 </span><span class="s4">'=enter-setup-on='</span><span class="s1">+enter</span><span class="s0">,</span><span class="s4">'=enterboot-timeout='</span><span class="s1">+bootTO]) 
+        </span><span class="s0">else</span><span class="s1">: 
+            bios = self.client.talk([</span><span class="s4">'/system/routerboard/bios/set'</span><span class="s0">,</span><span class="s4">'=baud-rate='</span><span class="s1">+baud</span><span class="s0">,</span><span class="s4">'=boot-delay='</span><span class="s1">+bootDelay 
+                                 </span><span class="s0">,</span><span class="s4">'=boot-device='</span><span class="s1">+bootDev</span><span class="s0">,</span><span class="s4">'=cpu-mode='</span><span class="s1">+cpu</span><span class="s0">,</span><span class="s4">'=debug-level='</span><span class="s1">+debug</span><span class="s0">,</span><span class="s1"> 
+                                 </span><span class="s4">'=enter-setup-on='</span><span class="s1">+enter</span><span class="s0">,</span><span class="s4">'=enterboot-timeout='</span><span class="s1">+bootTO</span><span class="s0">,</span><span class="s1"> 
+                                 </span><span class="s4">'=memory-settings='</span><span class="s1">+memSet</span><span class="s0">,</span><span class="s4">'=pci-backoff='</span><span class="s1">+pci</span><span class="s0">,</span><span class="s4">'=vga-to-serial='</span><span class="s1">+vga 
+                                 </span><span class="s0">,</span><span class="s4">'=beep-on-boot='</span><span class="s1">+beep]) 
+        </span><span class="s0">return </span><span class="s1">bios 
+ 
+    </span><span class="s0">def </span><span class="s1">resetBios(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reset BIOS settings 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bios = self.client.talk([</span><span class="s4">'/system/routerboard/bios/reset'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Reseting bios&quot;</span><span class="s1">) 
+        </span><span class="s0">return </span><span class="s1">bios</span></pre>
+</body>
+</html>

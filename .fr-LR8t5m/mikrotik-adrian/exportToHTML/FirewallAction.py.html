@@ -1,0 +1,700 @@
+<html>
+<head>
+<title>FirewallAction.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+FirewallAction.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">FirewallActions: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setAcceptFilter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept rule 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=accept'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setFilterLog(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept rule 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=log=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setFilterLogPrefix(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefix): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept rule 
+        :param number: 
+        :param prefix: log prefix 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=log-prefix='</span><span class="s1">+prefix] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAcceptMangle(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept rule 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=accept'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMangleFilterLog(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept rule 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=log=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMangleFilterLogPrefix(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">prefix): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept rule 
+        :param number: 
+        :param prefix: log prefix 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=log-prefix=' </span><span class="s1">+ prefix] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAcceptnat(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept rule 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=accept'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setnatLog(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept rule 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=log=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setnatLogPrefix(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">prefix): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will accept rule 
+        :param number: 
+        :param prefix: log prefix 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=log-prefix=' </span><span class="s1">+ prefix] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">addToDstAddressListFilter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=add-dst-to-address-list'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddressListFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">addr): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address list 
+        :param number: 
+        :param addr: address lst t oadd 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=address-list='</span><span class="s1">+addr] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddressListTimeoutFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">timeout): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address list timeout 
+        :param number: 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=address-list-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">addToDstAddressListMangle(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=add-dst-to-address-list'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddressListMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">addr): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address list 
+        :param number: 
+        :param addr: address lst t oadd 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=address-list=' </span><span class="s1">+ addr] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddressListTimeoutMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">timeout): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address list timeout 
+        :param number: 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=address-list-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">addToDstAddressListnat(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=add-dst-to-address-list'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddressListnat(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">addr): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address list 
+        :param number: 
+        :param addr: address lst t oadd 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=address-list=' </span><span class="s1">+ addr] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddressListTimeoutnat(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">timeout): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address list timeout 
+        :param number: 
+        :param timeout: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=address-list-timeout=' </span><span class="s1">+ timeout] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">addToSrcAddressListFilter(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=add-src-to-address-list'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">addToSrcAddressListMangle(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=add-src-to-address-list'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">addToSrcAddressListnat(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=add-src-to-address-list'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setDscpActionMangle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset  mangle action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=change-dscp'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setDscpAValue(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">,</span><span class="s1">balue=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset  mangle action 
+        :param number: 
+        :param balue: value of param 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=new-dscp='</span><span class="s1">+balue] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setPasthroughMangle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passthrough 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=passthrough=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMssActionMangle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will allow mss action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=change-mss'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMssValueMangle(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">value=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mss value 
+        :param number: 
+        :param value: for tcp syn set value or clamp-to-pmtu 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=new-mss=' </span><span class="s1">+ value] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTtlValueMangle(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">action=</span><span class="s4">&quot;change-ttl&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set action for ttl 
+        :param number: 
+        :param action: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'action='</span><span class="s1">+action]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setNewTtlMangle(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">ttl=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ttl 
+        :param number: 
+        :param ttl: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=new-ttl='</span><span class="s1">+ttl]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setClearDf(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will clear df 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=clear-df'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setFasttrackConnectionMangle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set fast track connection 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=fastrack-connection'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setFasttrackConnectionFilter(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set fast track connection 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=fastrack-connection'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstNatNat(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset ds tnat 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=dst-nat'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstNatAddressNat(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset ds tnat 
+        :param number: 
+        :param address: address to translate 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=to-addresses='</span><span class="s1">+address] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstNatPortNat(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method wil lset ds tnat 
+        :param number: 
+        :param port: port to translate 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=to-ports=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setJumpActionFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">target): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set  jump action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=jump'</span><span class="s0">,</span><span class="s4">'=jump-target='</span><span class="s1">+target] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setJumpActionMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">target): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set  jump action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=jump'</span><span class="s0">, </span><span class="s4">'=jump-target=' </span><span class="s1">+ target] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setJumpActionnat(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">target): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set  jump action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=jump'</span><span class="s0">, </span><span class="s4">'=jump-target=' </span><span class="s1">+ target] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setActionLogFilter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set action log 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=log'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setActionLogMangle(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set action log 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=log'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setActionLognat(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set action log 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=log'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMasquaradeNat(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set masquarade action for src nat 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">,</span><span class="s4">'=action=masquerade'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setNetmapNat(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set action netmap 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=netmap'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMarkCOnenctionMangle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will mark connection 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=mark-connection'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMarkConnectionValueMangle(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">val=</span><span class="s4">&quot;no-mark&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set value 
+        :param number: 
+        :param val: no-mark or specific value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=new-connection-mark=' </span><span class="s1">+ val] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMarkPacketMangle(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will mark connection 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=mark-packet'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMarkPacketValueMangle(self</span><span class="s0">, </span><span class="s1">number</span><span class="s0">, </span><span class="s1">val=</span><span class="s4">&quot;no-mark&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set value 
+        :param number: 
+        :param val: no-mark or specific value 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=new-packet-mark=' </span><span class="s1">+ val] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setMarkRouting(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will routing mark 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=mark-routing'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setNewRoutingmark(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mark=</span><span class="s4">&quot;main&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set new routing mark 
+        :param number: 
+        :param mark: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip =self.client.talk([</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=new-routing-mark='</span><span class="s1">+mark]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassthroughActionFilter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passthrough action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=passthrough'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassthroughActionMangle(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passthrough action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=passthrough'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassthroughActionnat(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passthrough action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( 
+            [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=passthrough'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setRejectActionFIlter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=reject'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setRejectMessageFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">message=</span><span class="s4">&quot;icmp-no-route&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set reject message 
+        :param number: 
+        :param message: icmp-address-unreachable,icmp-admin-prohibited,icmp-no-route,icmp-no-neighbor,icmp-port-unreachable,icmp-reset 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=reject-with='</span><span class="s1">+message]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedirectNat(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will redirect rule to port 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=redirect'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setActionReturnFilter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set return action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=return'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setActionReturnMangle(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set return action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=return'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setActionReturnnat(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set return action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=action=return'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setTarpitFilter(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tarpit action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/filter/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'action=tarpit'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setSameNat(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set same action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=same'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setSrcNatNat(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methodwill set src nat 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/nat/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=src-nat'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setRouteActionMangle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will se tmangle action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=route'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setDstAddressMangle(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set route address 
+        :param number: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=route-dst='</span><span class="s1">+address]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriorityActionMangle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set action priority 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=set-priority'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setPriorityMangle(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">priority): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set priority 
+        :param number: 
+        :param priority: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=new-priority='</span><span class="s1">+priority]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setSniffPcActionMAngle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will sniff pc 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=sniff-pc'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setSniffTargetMangle(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">tgt): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set sniffing target 
+        :param number: 
+        :param tgt: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=sniff-target='</span><span class="s1">+tgt]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setSniffTargetPortMangle(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set sniff target port 
+        :param number: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=sniff-target-port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setSniffIdMangle(self</span><span class="s0">,</span><span class="s1">numbre</span><span class="s0">,</span><span class="s1">ID): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set sniff id 
+        :param numbre: 
+        :param ID: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk( [</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ numbre</span><span class="s0">, </span><span class="s4">'=sniff-id=' </span><span class="s1">+ ID] ) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setSniffTZSPActionMangle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set TZSP action 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=sniff-tzsp'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip 
+ 
+    </span><span class="s0">def </span><span class="s1">setStripIpOptionMangle(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will strip ipv4 options 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ip = self.client.talk([</span><span class="s4">'/ip/firewall/mangle/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=action=strip-ipv4-options'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ip</span></pre>
+</body>
+</html>

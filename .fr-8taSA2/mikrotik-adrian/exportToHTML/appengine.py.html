@@ -1,0 +1,255 @@
+<html>
+<head>
+<title>appengine.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+appengine.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+</span><span class="s0">import </span><span class="s1">logging 
+</span><span class="s0">import </span><span class="s1">os 
+</span><span class="s0">import </span><span class="s1">warnings 
+ 
+</span><span class="s0">from </span><span class="s1">..exceptions </span><span class="s0">import </span><span class="s1">( 
+    HTTPError</span><span class="s0">,</span><span class="s1"> 
+    HTTPWarning</span><span class="s0">,</span><span class="s1"> 
+    MaxRetryError</span><span class="s0">,</span><span class="s1"> 
+    ProtocolError</span><span class="s0">,</span><span class="s1"> 
+    TimeoutError</span><span class="s0">,</span><span class="s1"> 
+    SSLError 
+) 
+ 
+</span><span class="s0">from </span><span class="s1">..packages.six </span><span class="s0">import </span><span class="s1">BytesIO 
+</span><span class="s0">from </span><span class="s1">..request </span><span class="s0">import </span><span class="s1">RequestMethods 
+</span><span class="s0">from </span><span class="s1">..response </span><span class="s0">import </span><span class="s1">HTTPResponse 
+</span><span class="s0">from </span><span class="s1">..util.timeout </span><span class="s0">import </span><span class="s1">Timeout 
+</span><span class="s0">from </span><span class="s1">..util.retry </span><span class="s0">import </span><span class="s1">Retry 
+ 
+</span><span class="s0">try</span><span class="s1">: 
+    </span><span class="s0">from </span><span class="s1">google.appengine.api </span><span class="s0">import </span><span class="s1">urlfetch 
+</span><span class="s0">except </span><span class="s1">ImportError: 
+    urlfetch = </span><span class="s0">None</span><span class="s1"> 
+ 
+ 
+log = logging.getLogger(__name__) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">AppEnginePlatformWarning(HTTPWarning): 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">AppEnginePlatformError(HTTPError): 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">AppEngineManager(RequestMethods): 
+    </span><span class="s2">&quot;&quot;&quot; 
+    Connection manager for Google App Engine sandbox applications. 
+ 
+    This manager uses the URLFetch service directly instead of using the 
+    emulated httplib, and is subject to URLFetch limitations as described in 
+    the App Engine documentation here: 
+ 
+        https://cloud.google.com/appengine/docs/python/urlfetch 
+ 
+    Notably it will raise an AppEnginePlatformError if: 
+        * URLFetch is not available. 
+        * If you attempt to use this on GAEv2 (Managed VMs), as full socket 
+          support is available. 
+        * If a request size is more than 10 megabytes. 
+        * If a response size is more than 32 megabtyes. 
+        * If you use an unsupported request method such as OPTIONS. 
+ 
+    Beyond those cases, it will raise normal urllib3 errors. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">headers=</span><span class="s0">None, </span><span class="s1">retries=</span><span class="s0">None, </span><span class="s1">validate_certificate=</span><span class="s0">True</span><span class="s1">): 
+        </span><span class="s0">if not </span><span class="s1">urlfetch: 
+            </span><span class="s0">raise </span><span class="s1">AppEnginePlatformError( 
+                </span><span class="s3">&quot;URLFetch is not available in this environment.&quot;</span><span class="s1">) 
+ 
+        </span><span class="s0">if </span><span class="s1">is_prod_appengine_mvms(): 
+            </span><span class="s0">raise </span><span class="s1">AppEnginePlatformError( 
+                </span><span class="s3">&quot;Use normal urllib3.PoolManager instead of AppEngineManager&quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;on Managed VMs, as using URLFetch is not necessary in &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;this environment.&quot;</span><span class="s1">) 
+ 
+        warnings.warn( 
+            </span><span class="s3">&quot;urllib3 is using URLFetch on Google App Engine sandbox instead &quot;</span><span class="s1"> 
+            </span><span class="s3">&quot;of sockets. To use sockets directly instead of URLFetch see &quot;</span><span class="s1"> 
+            </span><span class="s3">&quot;https://urllib3.readthedocs.io/en/latest/contrib.html.&quot;</span><span class="s0">,</span><span class="s1"> 
+            AppEnginePlatformWarning) 
+ 
+        RequestMethods.__init__(self</span><span class="s0">, </span><span class="s1">headers) 
+        self.validate_certificate = validate_certificate 
+ 
+        self.retries = retries </span><span class="s0">or </span><span class="s1">Retry.DEFAULT 
+ 
+    </span><span class="s0">def </span><span class="s1">__enter__(self): 
+        </span><span class="s0">return </span><span class="s1">self 
+ 
+    </span><span class="s0">def </span><span class="s1">__exit__(self</span><span class="s0">, </span><span class="s1">exc_type</span><span class="s0">, </span><span class="s1">exc_val</span><span class="s0">, </span><span class="s1">exc_tb): 
+        </span><span class="s4"># Return False to re-raise any potential exceptions</span><span class="s1"> 
+        </span><span class="s0">return False</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">urlopen(self</span><span class="s0">, </span><span class="s1">method</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">body=</span><span class="s0">None, </span><span class="s1">headers=</span><span class="s0">None,</span><span class="s1"> 
+                retries=</span><span class="s0">None, </span><span class="s1">redirect=</span><span class="s0">True, </span><span class="s1">timeout=Timeout.DEFAULT_TIMEOUT</span><span class="s0">,</span><span class="s1"> 
+                **response_kw): 
+ 
+        retries = self._get_retries(retries</span><span class="s0">, </span><span class="s1">redirect) 
+ 
+        </span><span class="s0">try</span><span class="s1">: 
+            response = urlfetch.fetch( 
+                url</span><span class="s0">,</span><span class="s1"> 
+                payload=body</span><span class="s0">,</span><span class="s1"> 
+                method=method</span><span class="s0">,</span><span class="s1"> 
+                headers=headers </span><span class="s0">or </span><span class="s1">{}</span><span class="s0">,</span><span class="s1"> 
+                allow_truncated=</span><span class="s0">False,</span><span class="s1"> 
+                follow_redirects=( 
+                    redirect </span><span class="s0">and</span><span class="s1"> 
+                    retries.redirect != </span><span class="s5">0 </span><span class="s0">and</span><span class="s1"> 
+                    retries.total)</span><span class="s0">,</span><span class="s1"> 
+                deadline=self._get_absolute_timeout(timeout)</span><span class="s0">,</span><span class="s1"> 
+                validate_certificate=self.validate_certificate</span><span class="s0">,</span><span class="s1"> 
+            ) 
+        </span><span class="s0">except </span><span class="s1">urlfetch.DeadlineExceededError </span><span class="s0">as </span><span class="s1">e: 
+            </span><span class="s0">raise </span><span class="s1">TimeoutError(self</span><span class="s0">, </span><span class="s1">e) 
+ 
+        </span><span class="s0">except </span><span class="s1">urlfetch.InvalidURLError </span><span class="s0">as </span><span class="s1">e: 
+            </span><span class="s0">if </span><span class="s3">'too large' </span><span class="s0">in </span><span class="s1">str(e): 
+                </span><span class="s0">raise </span><span class="s1">AppEnginePlatformError( 
+                    </span><span class="s3">&quot;URLFetch request too large, URLFetch only &quot;</span><span class="s1"> 
+                    </span><span class="s3">&quot;supports requests up to 10mb in size.&quot;</span><span class="s0">, </span><span class="s1">e) 
+            </span><span class="s0">raise </span><span class="s1">ProtocolError(e) 
+ 
+        </span><span class="s0">except </span><span class="s1">urlfetch.DownloadError </span><span class="s0">as </span><span class="s1">e: 
+            </span><span class="s0">if </span><span class="s3">'Too many redirects' </span><span class="s0">in </span><span class="s1">str(e): 
+                </span><span class="s0">raise </span><span class="s1">MaxRetryError(self</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">reason=e) 
+            </span><span class="s0">raise </span><span class="s1">ProtocolError(e) 
+ 
+        </span><span class="s0">except </span><span class="s1">urlfetch.ResponseTooLargeError </span><span class="s0">as </span><span class="s1">e: 
+            </span><span class="s0">raise </span><span class="s1">AppEnginePlatformError( 
+                </span><span class="s3">&quot;URLFetch response too large, URLFetch only supports&quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;responses up to 32mb in size.&quot;</span><span class="s0">, </span><span class="s1">e) 
+ 
+        </span><span class="s0">except </span><span class="s1">urlfetch.SSLCertificateError </span><span class="s0">as </span><span class="s1">e: 
+            </span><span class="s0">raise </span><span class="s1">SSLError(e) 
+ 
+        </span><span class="s0">except </span><span class="s1">urlfetch.InvalidMethodError </span><span class="s0">as </span><span class="s1">e: 
+            </span><span class="s0">raise </span><span class="s1">AppEnginePlatformError( 
+                </span><span class="s3">&quot;URLFetch does not support method: %s&quot; </span><span class="s1">% method</span><span class="s0">, </span><span class="s1">e) 
+ 
+        http_response = self._urlfetch_response_to_http_response( 
+            response</span><span class="s0">, </span><span class="s1">**response_kw) 
+ 
+        </span><span class="s4"># Check for redirect response</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">(http_response.get_redirect_location() </span><span class="s0">and</span><span class="s1"> 
+                retries.raise_on_redirect </span><span class="s0">and </span><span class="s1">redirect): 
+            </span><span class="s0">raise </span><span class="s1">MaxRetryError(self</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s3">&quot;too many redirects&quot;</span><span class="s1">) 
+ 
+        </span><span class="s4"># Check if we should retry the HTTP response.</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">retries.is_forced_retry(method</span><span class="s0">, </span><span class="s1">status_code=http_response.status): 
+            retries = retries.increment( 
+                method</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">response=http_response</span><span class="s0">, </span><span class="s1">_pool=self) 
+            log.info(</span><span class="s3">&quot;Forced retry: %s&quot;</span><span class="s0">, </span><span class="s1">url) 
+            retries.sleep() 
+            </span><span class="s0">return </span><span class="s1">self.urlopen( 
+                method</span><span class="s0">, </span><span class="s1">url</span><span class="s0">,</span><span class="s1"> 
+                body=body</span><span class="s0">, </span><span class="s1">headers=headers</span><span class="s0">,</span><span class="s1"> 
+                retries=retries</span><span class="s0">, </span><span class="s1">redirect=redirect</span><span class="s0">,</span><span class="s1"> 
+                timeout=timeout</span><span class="s0">, </span><span class="s1">**response_kw) 
+ 
+        </span><span class="s0">return </span><span class="s1">http_response 
+ 
+    </span><span class="s0">def </span><span class="s1">_urlfetch_response_to_http_response(self</span><span class="s0">, </span><span class="s1">urlfetch_resp</span><span class="s0">, </span><span class="s1">**response_kw): 
+ 
+        </span><span class="s0">if </span><span class="s1">is_prod_appengine(): 
+            </span><span class="s4"># Production GAE handles deflate encoding automatically, but does</span><span class="s1"> 
+            </span><span class="s4"># not remove the encoding header.</span><span class="s1"> 
+            content_encoding = urlfetch_resp.headers.get(</span><span class="s3">'content-encoding'</span><span class="s1">) 
+ 
+            </span><span class="s0">if </span><span class="s1">content_encoding == </span><span class="s3">'deflate'</span><span class="s1">: 
+                </span><span class="s0">del </span><span class="s1">urlfetch_resp.headers[</span><span class="s3">'content-encoding'</span><span class="s1">] 
+ 
+        transfer_encoding = urlfetch_resp.headers.get(</span><span class="s3">'transfer-encoding'</span><span class="s1">) 
+        </span><span class="s4"># We have a full response's content,</span><span class="s1"> 
+        </span><span class="s4"># so let's make sure we don't report ourselves as chunked data.</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">transfer_encoding == </span><span class="s3">'chunked'</span><span class="s1">: 
+            encodings = transfer_encoding.split(</span><span class="s3">&quot;,&quot;</span><span class="s1">) 
+            encodings.remove(</span><span class="s3">'chunked'</span><span class="s1">) 
+            urlfetch_resp.headers[</span><span class="s3">'transfer-encoding'</span><span class="s1">] = </span><span class="s3">','</span><span class="s1">.join(encodings) 
+ 
+        </span><span class="s0">return </span><span class="s1">HTTPResponse( 
+            </span><span class="s4"># In order for decoding to work, we must present the content as</span><span class="s1"> 
+            </span><span class="s4"># a file-like object.</span><span class="s1"> 
+            body=BytesIO(urlfetch_resp.content)</span><span class="s0">,</span><span class="s1"> 
+            headers=urlfetch_resp.headers</span><span class="s0">,</span><span class="s1"> 
+            status=urlfetch_resp.status_code</span><span class="s0">,</span><span class="s1"> 
+            **response_kw 
+        ) 
+ 
+    </span><span class="s0">def </span><span class="s1">_get_absolute_timeout(self</span><span class="s0">, </span><span class="s1">timeout): 
+        </span><span class="s0">if </span><span class="s1">timeout </span><span class="s0">is </span><span class="s1">Timeout.DEFAULT_TIMEOUT: 
+            </span><span class="s0">return </span><span class="s5">5  </span><span class="s4"># 5s is the default timeout for URLFetch.</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">isinstance(timeout</span><span class="s0">, </span><span class="s1">Timeout): 
+            </span><span class="s0">if </span><span class="s1">timeout._read </span><span class="s0">is not </span><span class="s1">timeout._connect: 
+                warnings.warn( 
+                    </span><span class="s3">&quot;URLFetch does not support granular timeout settings, &quot;</span><span class="s1"> 
+                    </span><span class="s3">&quot;reverting to total timeout.&quot;</span><span class="s0">, </span><span class="s1">AppEnginePlatformWarning) 
+            </span><span class="s0">return </span><span class="s1">timeout.total 
+        </span><span class="s0">return </span><span class="s1">timeout 
+ 
+    </span><span class="s0">def </span><span class="s1">_get_retries(self</span><span class="s0">, </span><span class="s1">retries</span><span class="s0">, </span><span class="s1">redirect): 
+        </span><span class="s0">if not </span><span class="s1">isinstance(retries</span><span class="s0">, </span><span class="s1">Retry): 
+            retries = Retry.from_int( 
+                retries</span><span class="s0">, </span><span class="s1">redirect=redirect</span><span class="s0">, </span><span class="s1">default=self.retries) 
+ 
+        </span><span class="s0">if </span><span class="s1">retries.connect </span><span class="s0">or </span><span class="s1">retries.read </span><span class="s0">or </span><span class="s1">retries.redirect: 
+            warnings.warn( 
+                </span><span class="s3">&quot;URLFetch only supports total retries and does not &quot;</span><span class="s1"> 
+                </span><span class="s3">&quot;recognize connect, read, or redirect retry parameters.&quot;</span><span class="s0">,</span><span class="s1"> 
+                AppEnginePlatformWarning) 
+ 
+        </span><span class="s0">return </span><span class="s1">retries 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">is_appengine(): 
+    </span><span class="s0">return </span><span class="s1">(is_local_appengine() </span><span class="s0">or</span><span class="s1"> 
+            is_prod_appengine() </span><span class="s0">or</span><span class="s1"> 
+            is_prod_appengine_mvms()) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">is_appengine_sandbox(): 
+    </span><span class="s0">return </span><span class="s1">is_appengine() </span><span class="s0">and not </span><span class="s1">is_prod_appengine_mvms() 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">is_local_appengine(): 
+    </span><span class="s0">return </span><span class="s1">(</span><span class="s3">'APPENGINE_RUNTIME' </span><span class="s0">in </span><span class="s1">os.environ </span><span class="s0">and</span><span class="s1"> 
+            </span><span class="s3">'Development/' </span><span class="s0">in </span><span class="s1">os.environ[</span><span class="s3">'SERVER_SOFTWARE'</span><span class="s1">]) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">is_prod_appengine(): 
+    </span><span class="s0">return </span><span class="s1">(</span><span class="s3">'APPENGINE_RUNTIME' </span><span class="s0">in </span><span class="s1">os.environ </span><span class="s0">and</span><span class="s1"> 
+            </span><span class="s3">'Google App Engine/' </span><span class="s0">in </span><span class="s1">os.environ[</span><span class="s3">'SERVER_SOFTWARE'</span><span class="s1">] </span><span class="s0">and</span><span class="s1"> 
+            </span><span class="s0">not </span><span class="s1">is_prod_appengine_mvms()) 
+ 
+ 
+</span><span class="s0">def </span><span class="s1">is_prod_appengine_mvms(): 
+    </span><span class="s0">return </span><span class="s1">os.environ.get(</span><span class="s3">'GAE_VM'</span><span class="s0">, False</span><span class="s1">) == </span><span class="s3">'true'</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<html>
+<head>
+<title>aliases.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(204,120,50); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+aliases.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; Encoding Aliases Support 
+ 
+    This module is used by the encodings package search function to 
+    map encodings names to module names. 
+ 
+    Note that the search function normalizes the encoding names before 
+    doing the lookup, so the mapping will have to map normalized 
+    encoding names to module names. 
+ 
+    Contents: 
+ 
+        The following aliases dictionary contains mappings of all IANA 
+        character set names for which the Python core library provides 
+        codecs. In addition to these, a few Python specific codec 
+        aliases have also been added. 
+ 
+&quot;&quot;&quot;</span><span class="s1"> 
+aliases = { 
+ 
+    </span><span class="s2"># Please keep this list sorted alphabetically by value !</span><span class="s1"> 
+ 
+    </span><span class="s2"># ascii codec</span><span class="s1"> 
+    </span><span class="s3">'646'                </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ansi_x3.4_1968'     </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ansi_x3_4_1968'     </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">, </span><span class="s2"># some email headers use this non-standard name</span><span class="s1"> 
+    </span><span class="s3">'ansi_x3.4_1986'     </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cp367'              </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csascii'            </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm367'             </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso646_us'          </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_646.irv_1991'   </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_6'           </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'us'                 </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'us_ascii'           </span><span class="s1">: </span><span class="s3">'ascii'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># base64_codec codec</span><span class="s1"> 
+    </span><span class="s3">'base64'             </span><span class="s1">: </span><span class="s3">'base64_codec'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'base_64'            </span><span class="s1">: </span><span class="s3">'base64_codec'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># big5 codec</span><span class="s1"> 
+    </span><span class="s3">'big5_tw'            </span><span class="s1">: </span><span class="s3">'big5'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csbig5'             </span><span class="s1">: </span><span class="s3">'big5'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># big5hkscs codec</span><span class="s1"> 
+    </span><span class="s3">'big5_hkscs'         </span><span class="s1">: </span><span class="s3">'big5hkscs'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'hkscs'              </span><span class="s1">: </span><span class="s3">'big5hkscs'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># bz2_codec codec</span><span class="s1"> 
+    </span><span class="s3">'bz2'                </span><span class="s1">: </span><span class="s3">'bz2_codec'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp037 codec</span><span class="s1"> 
+    </span><span class="s3">'037'                </span><span class="s1">: </span><span class="s3">'cp037'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm037'           </span><span class="s1">: </span><span class="s3">'cp037'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ebcdic_cp_ca'       </span><span class="s1">: </span><span class="s3">'cp037'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ebcdic_cp_nl'       </span><span class="s1">: </span><span class="s3">'cp037'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ebcdic_cp_us'       </span><span class="s1">: </span><span class="s3">'cp037'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ebcdic_cp_wt'       </span><span class="s1">: </span><span class="s3">'cp037'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm037'             </span><span class="s1">: </span><span class="s3">'cp037'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm039'             </span><span class="s1">: </span><span class="s3">'cp037'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1026 codec</span><span class="s1"> 
+    </span><span class="s3">'1026'               </span><span class="s1">: </span><span class="s3">'cp1026'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm1026'          </span><span class="s1">: </span><span class="s3">'cp1026'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm1026'            </span><span class="s1">: </span><span class="s3">'cp1026'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1125 codec</span><span class="s1"> 
+    </span><span class="s3">'1125'                </span><span class="s1">: </span><span class="s3">'cp1125'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm1125'             </span><span class="s1">: </span><span class="s3">'cp1125'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cp866u'              </span><span class="s1">: </span><span class="s3">'cp1125'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ruscii'              </span><span class="s1">: </span><span class="s3">'cp1125'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1140 codec</span><span class="s1"> 
+    </span><span class="s3">'1140'               </span><span class="s1">: </span><span class="s3">'cp1140'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm1140'            </span><span class="s1">: </span><span class="s3">'cp1140'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1250 codec</span><span class="s1"> 
+    </span><span class="s3">'1250'               </span><span class="s1">: </span><span class="s3">'cp1250'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'windows_1250'       </span><span class="s1">: </span><span class="s3">'cp1250'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1251 codec</span><span class="s1"> 
+    </span><span class="s3">'1251'               </span><span class="s1">: </span><span class="s3">'cp1251'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'windows_1251'       </span><span class="s1">: </span><span class="s3">'cp1251'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1252 codec</span><span class="s1"> 
+    </span><span class="s3">'1252'               </span><span class="s1">: </span><span class="s3">'cp1252'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'windows_1252'       </span><span class="s1">: </span><span class="s3">'cp1252'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1253 codec</span><span class="s1"> 
+    </span><span class="s3">'1253'               </span><span class="s1">: </span><span class="s3">'cp1253'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'windows_1253'       </span><span class="s1">: </span><span class="s3">'cp1253'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1254 codec</span><span class="s1"> 
+    </span><span class="s3">'1254'               </span><span class="s1">: </span><span class="s3">'cp1254'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'windows_1254'       </span><span class="s1">: </span><span class="s3">'cp1254'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1255 codec</span><span class="s1"> 
+    </span><span class="s3">'1255'               </span><span class="s1">: </span><span class="s3">'cp1255'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'windows_1255'       </span><span class="s1">: </span><span class="s3">'cp1255'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1256 codec</span><span class="s1"> 
+    </span><span class="s3">'1256'               </span><span class="s1">: </span><span class="s3">'cp1256'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'windows_1256'       </span><span class="s1">: </span><span class="s3">'cp1256'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1257 codec</span><span class="s1"> 
+    </span><span class="s3">'1257'               </span><span class="s1">: </span><span class="s3">'cp1257'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'windows_1257'       </span><span class="s1">: </span><span class="s3">'cp1257'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp1258 codec</span><span class="s1"> 
+    </span><span class="s3">'1258'               </span><span class="s1">: </span><span class="s3">'cp1258'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'windows_1258'       </span><span class="s1">: </span><span class="s3">'cp1258'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp273 codec</span><span class="s1"> 
+    </span><span class="s3">'273'                </span><span class="s1">: </span><span class="s3">'cp273'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm273'             </span><span class="s1">: </span><span class="s3">'cp273'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm273'           </span><span class="s1">: </span><span class="s3">'cp273'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp424 codec</span><span class="s1"> 
+    </span><span class="s3">'424'                </span><span class="s1">: </span><span class="s3">'cp424'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm424'           </span><span class="s1">: </span><span class="s3">'cp424'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ebcdic_cp_he'       </span><span class="s1">: </span><span class="s3">'cp424'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm424'             </span><span class="s1">: </span><span class="s3">'cp424'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp437 codec</span><span class="s1"> 
+    </span><span class="s3">'437'                </span><span class="s1">: </span><span class="s3">'cp437'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cspc8codepage437'   </span><span class="s1">: </span><span class="s3">'cp437'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm437'             </span><span class="s1">: </span><span class="s3">'cp437'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp500 codec</span><span class="s1"> 
+    </span><span class="s3">'500'                </span><span class="s1">: </span><span class="s3">'cp500'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm500'           </span><span class="s1">: </span><span class="s3">'cp500'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ebcdic_cp_be'       </span><span class="s1">: </span><span class="s3">'cp500'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ebcdic_cp_ch'       </span><span class="s1">: </span><span class="s3">'cp500'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm500'             </span><span class="s1">: </span><span class="s3">'cp500'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp775 codec</span><span class="s1"> 
+    </span><span class="s3">'775'                </span><span class="s1">: </span><span class="s3">'cp775'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cspc775baltic'      </span><span class="s1">: </span><span class="s3">'cp775'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm775'             </span><span class="s1">: </span><span class="s3">'cp775'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp850 codec</span><span class="s1"> 
+    </span><span class="s3">'850'                </span><span class="s1">: </span><span class="s3">'cp850'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cspc850multilingual' </span><span class="s1">: </span><span class="s3">'cp850'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm850'             </span><span class="s1">: </span><span class="s3">'cp850'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp852 codec</span><span class="s1"> 
+    </span><span class="s3">'852'                </span><span class="s1">: </span><span class="s3">'cp852'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cspcp852'           </span><span class="s1">: </span><span class="s3">'cp852'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm852'             </span><span class="s1">: </span><span class="s3">'cp852'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp855 codec</span><span class="s1"> 
+    </span><span class="s3">'855'                </span><span class="s1">: </span><span class="s3">'cp855'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm855'           </span><span class="s1">: </span><span class="s3">'cp855'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm855'             </span><span class="s1">: </span><span class="s3">'cp855'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp857 codec</span><span class="s1"> 
+    </span><span class="s3">'857'                </span><span class="s1">: </span><span class="s3">'cp857'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm857'           </span><span class="s1">: </span><span class="s3">'cp857'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm857'             </span><span class="s1">: </span><span class="s3">'cp857'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp858 codec</span><span class="s1"> 
+    </span><span class="s3">'858'                </span><span class="s1">: </span><span class="s3">'cp858'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm858'           </span><span class="s1">: </span><span class="s3">'cp858'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm858'             </span><span class="s1">: </span><span class="s3">'cp858'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp860 codec</span><span class="s1"> 
+    </span><span class="s3">'860'                </span><span class="s1">: </span><span class="s3">'cp860'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm860'           </span><span class="s1">: </span><span class="s3">'cp860'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm860'             </span><span class="s1">: </span><span class="s3">'cp860'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp861 codec</span><span class="s1"> 
+    </span><span class="s3">'861'                </span><span class="s1">: </span><span class="s3">'cp861'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cp_is'              </span><span class="s1">: </span><span class="s3">'cp861'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm861'           </span><span class="s1">: </span><span class="s3">'cp861'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm861'             </span><span class="s1">: </span><span class="s3">'cp861'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp862 codec</span><span class="s1"> 
+    </span><span class="s3">'862'                </span><span class="s1">: </span><span class="s3">'cp862'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cspc862latinhebrew' </span><span class="s1">: </span><span class="s3">'cp862'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm862'             </span><span class="s1">: </span><span class="s3">'cp862'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp863 codec</span><span class="s1"> 
+    </span><span class="s3">'863'                </span><span class="s1">: </span><span class="s3">'cp863'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm863'           </span><span class="s1">: </span><span class="s3">'cp863'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm863'             </span><span class="s1">: </span><span class="s3">'cp863'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp864 codec</span><span class="s1"> 
+    </span><span class="s3">'864'                </span><span class="s1">: </span><span class="s3">'cp864'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm864'           </span><span class="s1">: </span><span class="s3">'cp864'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm864'             </span><span class="s1">: </span><span class="s3">'cp864'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp865 codec</span><span class="s1"> 
+    </span><span class="s3">'865'                </span><span class="s1">: </span><span class="s3">'cp865'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm865'           </span><span class="s1">: </span><span class="s3">'cp865'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm865'             </span><span class="s1">: </span><span class="s3">'cp865'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp866 codec</span><span class="s1"> 
+    </span><span class="s3">'866'                </span><span class="s1">: </span><span class="s3">'cp866'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm866'           </span><span class="s1">: </span><span class="s3">'cp866'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm866'             </span><span class="s1">: </span><span class="s3">'cp866'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp869 codec</span><span class="s1"> 
+    </span><span class="s3">'869'                </span><span class="s1">: </span><span class="s3">'cp869'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cp_gr'              </span><span class="s1">: </span><span class="s3">'cp869'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csibm869'           </span><span class="s1">: </span><span class="s3">'cp869'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm869'             </span><span class="s1">: </span><span class="s3">'cp869'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp932 codec</span><span class="s1"> 
+    </span><span class="s3">'932'                </span><span class="s1">: </span><span class="s3">'cp932'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ms932'              </span><span class="s1">: </span><span class="s3">'cp932'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'mskanji'            </span><span class="s1">: </span><span class="s3">'cp932'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ms_kanji'           </span><span class="s1">: </span><span class="s3">'cp932'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp949 codec</span><span class="s1"> 
+    </span><span class="s3">'949'                </span><span class="s1">: </span><span class="s3">'cp949'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ms949'              </span><span class="s1">: </span><span class="s3">'cp949'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'uhc'                </span><span class="s1">: </span><span class="s3">'cp949'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># cp950 codec</span><span class="s1"> 
+    </span><span class="s3">'950'                </span><span class="s1">: </span><span class="s3">'cp950'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ms950'              </span><span class="s1">: </span><span class="s3">'cp950'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># euc_jis_2004 codec</span><span class="s1"> 
+    </span><span class="s3">'jisx0213'           </span><span class="s1">: </span><span class="s3">'euc_jis_2004'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'eucjis2004'         </span><span class="s1">: </span><span class="s3">'euc_jis_2004'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'euc_jis2004'        </span><span class="s1">: </span><span class="s3">'euc_jis_2004'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># euc_jisx0213 codec</span><span class="s1"> 
+    </span><span class="s3">'eucjisx0213'        </span><span class="s1">: </span><span class="s3">'euc_jisx0213'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># euc_jp codec</span><span class="s1"> 
+    </span><span class="s3">'eucjp'              </span><span class="s1">: </span><span class="s3">'euc_jp'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ujis'               </span><span class="s1">: </span><span class="s3">'euc_jp'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'u_jis'              </span><span class="s1">: </span><span class="s3">'euc_jp'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># euc_kr codec</span><span class="s1"> 
+    </span><span class="s3">'euckr'              </span><span class="s1">: </span><span class="s3">'euc_kr'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'korean'             </span><span class="s1">: </span><span class="s3">'euc_kr'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ksc5601'            </span><span class="s1">: </span><span class="s3">'euc_kr'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ks_c_5601'          </span><span class="s1">: </span><span class="s3">'euc_kr'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ks_c_5601_1987'     </span><span class="s1">: </span><span class="s3">'euc_kr'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ksx1001'            </span><span class="s1">: </span><span class="s3">'euc_kr'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ks_x_1001'          </span><span class="s1">: </span><span class="s3">'euc_kr'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># gb18030 codec</span><span class="s1"> 
+    </span><span class="s3">'gb18030_2000'       </span><span class="s1">: </span><span class="s3">'gb18030'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># gb2312 codec</span><span class="s1"> 
+    </span><span class="s3">'chinese'            </span><span class="s1">: </span><span class="s3">'gb2312'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csiso58gb231280'    </span><span class="s1">: </span><span class="s3">'gb2312'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'euc_cn'             </span><span class="s1">: </span><span class="s3">'gb2312'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'euccn'              </span><span class="s1">: </span><span class="s3">'gb2312'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'eucgb2312_cn'       </span><span class="s1">: </span><span class="s3">'gb2312'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'gb2312_1980'        </span><span class="s1">: </span><span class="s3">'gb2312'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'gb2312_80'          </span><span class="s1">: </span><span class="s3">'gb2312'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_58'          </span><span class="s1">: </span><span class="s3">'gb2312'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># gbk codec</span><span class="s1"> 
+    </span><span class="s3">'936'                </span><span class="s1">: </span><span class="s3">'gbk'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cp936'              </span><span class="s1">: </span><span class="s3">'gbk'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ms936'              </span><span class="s1">: </span><span class="s3">'gbk'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># hex_codec codec</span><span class="s1"> 
+    </span><span class="s3">'hex'                </span><span class="s1">: </span><span class="s3">'hex_codec'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># hp_roman8 codec</span><span class="s1"> 
+    </span><span class="s3">'roman8'             </span><span class="s1">: </span><span class="s3">'hp_roman8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'r8'                 </span><span class="s1">: </span><span class="s3">'hp_roman8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csHPRoman8'         </span><span class="s1">: </span><span class="s3">'hp_roman8'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># hz codec</span><span class="s1"> 
+    </span><span class="s3">'hzgb'               </span><span class="s1">: </span><span class="s3">'hz'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'hz_gb'              </span><span class="s1">: </span><span class="s3">'hz'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'hz_gb_2312'         </span><span class="s1">: </span><span class="s3">'hz'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso2022_jp codec</span><span class="s1"> 
+    </span><span class="s3">'csiso2022jp'        </span><span class="s1">: </span><span class="s3">'iso2022_jp'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso2022jp'          </span><span class="s1">: </span><span class="s3">'iso2022_jp'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_2022_jp'        </span><span class="s1">: </span><span class="s3">'iso2022_jp'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso2022_jp_1 codec</span><span class="s1"> 
+    </span><span class="s3">'iso2022jp_1'        </span><span class="s1">: </span><span class="s3">'iso2022_jp_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_2022_jp_1'      </span><span class="s1">: </span><span class="s3">'iso2022_jp_1'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso2022_jp_2 codec</span><span class="s1"> 
+    </span><span class="s3">'iso2022jp_2'        </span><span class="s1">: </span><span class="s3">'iso2022_jp_2'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_2022_jp_2'      </span><span class="s1">: </span><span class="s3">'iso2022_jp_2'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso2022_jp_2004 codec</span><span class="s1"> 
+    </span><span class="s3">'iso_2022_jp_2004'   </span><span class="s1">: </span><span class="s3">'iso2022_jp_2004'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso2022jp_2004'     </span><span class="s1">: </span><span class="s3">'iso2022_jp_2004'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso2022_jp_3 codec</span><span class="s1"> 
+    </span><span class="s3">'iso2022jp_3'        </span><span class="s1">: </span><span class="s3">'iso2022_jp_3'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_2022_jp_3'      </span><span class="s1">: </span><span class="s3">'iso2022_jp_3'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso2022_jp_ext codec</span><span class="s1"> 
+    </span><span class="s3">'iso2022jp_ext'      </span><span class="s1">: </span><span class="s3">'iso2022_jp_ext'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_2022_jp_ext'    </span><span class="s1">: </span><span class="s3">'iso2022_jp_ext'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso2022_kr codec</span><span class="s1"> 
+    </span><span class="s3">'csiso2022kr'        </span><span class="s1">: </span><span class="s3">'iso2022_kr'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso2022kr'          </span><span class="s1">: </span><span class="s3">'iso2022_kr'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_2022_kr'        </span><span class="s1">: </span><span class="s3">'iso2022_kr'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_10 codec</span><span class="s1"> 
+    </span><span class="s3">'csisolatin6'        </span><span class="s1">: </span><span class="s3">'iso8859_10'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_10'        </span><span class="s1">: </span><span class="s3">'iso8859_10'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_10_1992'   </span><span class="s1">: </span><span class="s3">'iso8859_10'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_157'         </span><span class="s1">: </span><span class="s3">'iso8859_10'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l6'                 </span><span class="s1">: </span><span class="s3">'iso8859_10'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin6'             </span><span class="s1">: </span><span class="s3">'iso8859_10'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_11 codec</span><span class="s1"> 
+    </span><span class="s3">'thai'               </span><span class="s1">: </span><span class="s3">'iso8859_11'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_11'        </span><span class="s1">: </span><span class="s3">'iso8859_11'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_11_2001'   </span><span class="s1">: </span><span class="s3">'iso8859_11'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_13 codec</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_13'        </span><span class="s1">: </span><span class="s3">'iso8859_13'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l7'                 </span><span class="s1">: </span><span class="s3">'iso8859_13'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin7'             </span><span class="s1">: </span><span class="s3">'iso8859_13'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_14 codec</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_14'        </span><span class="s1">: </span><span class="s3">'iso8859_14'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_14_1998'   </span><span class="s1">: </span><span class="s3">'iso8859_14'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_celtic'         </span><span class="s1">: </span><span class="s3">'iso8859_14'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_199'         </span><span class="s1">: </span><span class="s3">'iso8859_14'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l8'                 </span><span class="s1">: </span><span class="s3">'iso8859_14'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin8'             </span><span class="s1">: </span><span class="s3">'iso8859_14'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_15 codec</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_15'        </span><span class="s1">: </span><span class="s3">'iso8859_15'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l9'                 </span><span class="s1">: </span><span class="s3">'iso8859_15'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin9'             </span><span class="s1">: </span><span class="s3">'iso8859_15'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_16 codec</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_16'        </span><span class="s1">: </span><span class="s3">'iso8859_16'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_16_2001'   </span><span class="s1">: </span><span class="s3">'iso8859_16'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_226'         </span><span class="s1">: </span><span class="s3">'iso8859_16'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l10'                </span><span class="s1">: </span><span class="s3">'iso8859_16'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin10'            </span><span class="s1">: </span><span class="s3">'iso8859_16'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_2 codec</span><span class="s1"> 
+    </span><span class="s3">'csisolatin2'        </span><span class="s1">: </span><span class="s3">'iso8859_2'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_2'         </span><span class="s1">: </span><span class="s3">'iso8859_2'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_2_1987'    </span><span class="s1">: </span><span class="s3">'iso8859_2'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_101'         </span><span class="s1">: </span><span class="s3">'iso8859_2'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l2'                 </span><span class="s1">: </span><span class="s3">'iso8859_2'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin2'             </span><span class="s1">: </span><span class="s3">'iso8859_2'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_3 codec</span><span class="s1"> 
+    </span><span class="s3">'csisolatin3'        </span><span class="s1">: </span><span class="s3">'iso8859_3'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_3'         </span><span class="s1">: </span><span class="s3">'iso8859_3'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_3_1988'    </span><span class="s1">: </span><span class="s3">'iso8859_3'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_109'         </span><span class="s1">: </span><span class="s3">'iso8859_3'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l3'                 </span><span class="s1">: </span><span class="s3">'iso8859_3'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin3'             </span><span class="s1">: </span><span class="s3">'iso8859_3'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_4 codec</span><span class="s1"> 
+    </span><span class="s3">'csisolatin4'        </span><span class="s1">: </span><span class="s3">'iso8859_4'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_4'         </span><span class="s1">: </span><span class="s3">'iso8859_4'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_4_1988'    </span><span class="s1">: </span><span class="s3">'iso8859_4'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_110'         </span><span class="s1">: </span><span class="s3">'iso8859_4'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l4'                 </span><span class="s1">: </span><span class="s3">'iso8859_4'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin4'             </span><span class="s1">: </span><span class="s3">'iso8859_4'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_5 codec</span><span class="s1"> 
+    </span><span class="s3">'csisolatincyrillic' </span><span class="s1">: </span><span class="s3">'iso8859_5'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cyrillic'           </span><span class="s1">: </span><span class="s3">'iso8859_5'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_5'         </span><span class="s1">: </span><span class="s3">'iso8859_5'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_5_1988'    </span><span class="s1">: </span><span class="s3">'iso8859_5'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_144'         </span><span class="s1">: </span><span class="s3">'iso8859_5'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_6 codec</span><span class="s1"> 
+    </span><span class="s3">'arabic'             </span><span class="s1">: </span><span class="s3">'iso8859_6'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'asmo_708'           </span><span class="s1">: </span><span class="s3">'iso8859_6'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csisolatinarabic'   </span><span class="s1">: </span><span class="s3">'iso8859_6'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ecma_114'           </span><span class="s1">: </span><span class="s3">'iso8859_6'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_6'         </span><span class="s1">: </span><span class="s3">'iso8859_6'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_6_1987'    </span><span class="s1">: </span><span class="s3">'iso8859_6'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_127'         </span><span class="s1">: </span><span class="s3">'iso8859_6'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_7 codec</span><span class="s1"> 
+    </span><span class="s3">'csisolatingreek'    </span><span class="s1">: </span><span class="s3">'iso8859_7'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ecma_118'           </span><span class="s1">: </span><span class="s3">'iso8859_7'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'elot_928'           </span><span class="s1">: </span><span class="s3">'iso8859_7'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'greek'              </span><span class="s1">: </span><span class="s3">'iso8859_7'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'greek8'             </span><span class="s1">: </span><span class="s3">'iso8859_7'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_7'         </span><span class="s1">: </span><span class="s3">'iso8859_7'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_7_1987'    </span><span class="s1">: </span><span class="s3">'iso8859_7'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_126'         </span><span class="s1">: </span><span class="s3">'iso8859_7'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_8 codec</span><span class="s1"> 
+    </span><span class="s3">'csisolatinhebrew'   </span><span class="s1">: </span><span class="s3">'iso8859_8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'hebrew'             </span><span class="s1">: </span><span class="s3">'iso8859_8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_8'         </span><span class="s1">: </span><span class="s3">'iso8859_8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_8_1988'    </span><span class="s1">: </span><span class="s3">'iso8859_8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_138'         </span><span class="s1">: </span><span class="s3">'iso8859_8'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># iso8859_9 codec</span><span class="s1"> 
+    </span><span class="s3">'csisolatin5'        </span><span class="s1">: </span><span class="s3">'iso8859_9'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_9'         </span><span class="s1">: </span><span class="s3">'iso8859_9'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_9_1989'    </span><span class="s1">: </span><span class="s3">'iso8859_9'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_148'         </span><span class="s1">: </span><span class="s3">'iso8859_9'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l5'                 </span><span class="s1">: </span><span class="s3">'iso8859_9'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin5'             </span><span class="s1">: </span><span class="s3">'iso8859_9'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># johab codec</span><span class="s1"> 
+    </span><span class="s3">'cp1361'             </span><span class="s1">: </span><span class="s3">'johab'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ms1361'             </span><span class="s1">: </span><span class="s3">'johab'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># koi8_r codec</span><span class="s1"> 
+    </span><span class="s3">'cskoi8r'            </span><span class="s1">: </span><span class="s3">'koi8_r'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># kz1048 codec</span><span class="s1"> 
+    </span><span class="s3">'kz_1048'           </span><span class="s1">: </span><span class="s3">'kz1048'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'rk1048'            </span><span class="s1">: </span><span class="s3">'kz1048'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'strk1048_2002'     </span><span class="s1">: </span><span class="s3">'kz1048'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># latin_1 codec</span><span class="s1"> 
+    </span><span class="s2">#</span><span class="s1"> 
+    </span><span class="s2"># Note that the latin_1 codec is implemented internally in C and a</span><span class="s1"> 
+    </span><span class="s2"># lot faster than the charmap codec iso8859_1 which uses the same</span><span class="s1"> 
+    </span><span class="s2"># encoding. This is why we discourage the use of the iso8859_1</span><span class="s1"> 
+    </span><span class="s2"># codec and alias it to latin_1 instead.</span><span class="s1"> 
+    </span><span class="s2">#</span><span class="s1"> 
+    </span><span class="s3">'8859'               </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cp819'              </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'csisolatin1'        </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'ibm819'             </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso8859'            </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso8859_1'          </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_1'         </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_8859_1_1987'    </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_100'         </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'l1'                 </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin'              </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'latin1'             </span><span class="s1">: </span><span class="s3">'latin_1'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># mac_cyrillic codec</span><span class="s1"> 
+    </span><span class="s3">'maccyrillic'        </span><span class="s1">: </span><span class="s3">'mac_cyrillic'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># mac_greek codec</span><span class="s1"> 
+    </span><span class="s3">'macgreek'           </span><span class="s1">: </span><span class="s3">'mac_greek'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># mac_iceland codec</span><span class="s1"> 
+    </span><span class="s3">'maciceland'         </span><span class="s1">: </span><span class="s3">'mac_iceland'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># mac_latin2 codec</span><span class="s1"> 
+    </span><span class="s3">'maccentraleurope'   </span><span class="s1">: </span><span class="s3">'mac_latin2'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'maclatin2'          </span><span class="s1">: </span><span class="s3">'mac_latin2'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># mac_roman codec</span><span class="s1"> 
+    </span><span class="s3">'macintosh'          </span><span class="s1">: </span><span class="s3">'mac_roman'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'macroman'           </span><span class="s1">: </span><span class="s3">'mac_roman'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># mac_turkish codec</span><span class="s1"> 
+    </span><span class="s3">'macturkish'         </span><span class="s1">: </span><span class="s3">'mac_turkish'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># mbcs codec</span><span class="s1"> 
+    </span><span class="s3">'dbcs'               </span><span class="s1">: </span><span class="s3">'mbcs'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># ptcp154 codec</span><span class="s1"> 
+    </span><span class="s3">'csptcp154'          </span><span class="s1">: </span><span class="s3">'ptcp154'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'pt154'              </span><span class="s1">: </span><span class="s3">'ptcp154'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cp154'              </span><span class="s1">: </span><span class="s3">'ptcp154'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'cyrillic_asian'     </span><span class="s1">: </span><span class="s3">'ptcp154'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># quopri_codec codec</span><span class="s1"> 
+    </span><span class="s3">'quopri'             </span><span class="s1">: </span><span class="s3">'quopri_codec'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'quoted_printable'   </span><span class="s1">: </span><span class="s3">'quopri_codec'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'quotedprintable'    </span><span class="s1">: </span><span class="s3">'quopri_codec'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># rot_13 codec</span><span class="s1"> 
+    </span><span class="s3">'rot13'              </span><span class="s1">: </span><span class="s3">'rot_13'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># shift_jis codec</span><span class="s1"> 
+    </span><span class="s3">'csshiftjis'         </span><span class="s1">: </span><span class="s3">'shift_jis'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'shiftjis'           </span><span class="s1">: </span><span class="s3">'shift_jis'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'sjis'               </span><span class="s1">: </span><span class="s3">'shift_jis'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'s_jis'              </span><span class="s1">: </span><span class="s3">'shift_jis'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># shift_jis_2004 codec</span><span class="s1"> 
+    </span><span class="s3">'shiftjis2004'       </span><span class="s1">: </span><span class="s3">'shift_jis_2004'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'sjis_2004'          </span><span class="s1">: </span><span class="s3">'shift_jis_2004'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'s_jis_2004'         </span><span class="s1">: </span><span class="s3">'shift_jis_2004'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># shift_jisx0213 codec</span><span class="s1"> 
+    </span><span class="s3">'shiftjisx0213'      </span><span class="s1">: </span><span class="s3">'shift_jisx0213'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'sjisx0213'          </span><span class="s1">: </span><span class="s3">'shift_jisx0213'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'s_jisx0213'         </span><span class="s1">: </span><span class="s3">'shift_jisx0213'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># tactis codec</span><span class="s1"> 
+    </span><span class="s3">'tis260'             </span><span class="s1">: </span><span class="s3">'tactis'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># tis_620 codec</span><span class="s1"> 
+    </span><span class="s3">'tis620'             </span><span class="s1">: </span><span class="s3">'tis_620'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'tis_620_0'          </span><span class="s1">: </span><span class="s3">'tis_620'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'tis_620_2529_0'     </span><span class="s1">: </span><span class="s3">'tis_620'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'tis_620_2529_1'     </span><span class="s1">: </span><span class="s3">'tis_620'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'iso_ir_166'         </span><span class="s1">: </span><span class="s3">'tis_620'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># utf_16 codec</span><span class="s1"> 
+    </span><span class="s3">'u16'                </span><span class="s1">: </span><span class="s3">'utf_16'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'utf16'              </span><span class="s1">: </span><span class="s3">'utf_16'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># utf_16_be codec</span><span class="s1"> 
+    </span><span class="s3">'unicodebigunmarked' </span><span class="s1">: </span><span class="s3">'utf_16_be'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'utf_16be'           </span><span class="s1">: </span><span class="s3">'utf_16_be'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># utf_16_le codec</span><span class="s1"> 
+    </span><span class="s3">'unicodelittleunmarked' </span><span class="s1">: </span><span class="s3">'utf_16_le'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'utf_16le'           </span><span class="s1">: </span><span class="s3">'utf_16_le'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># utf_32 codec</span><span class="s1"> 
+    </span><span class="s3">'u32'                </span><span class="s1">: </span><span class="s3">'utf_32'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'utf32'              </span><span class="s1">: </span><span class="s3">'utf_32'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># utf_32_be codec</span><span class="s1"> 
+    </span><span class="s3">'utf_32be'           </span><span class="s1">: </span><span class="s3">'utf_32_be'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># utf_32_le codec</span><span class="s1"> 
+    </span><span class="s3">'utf_32le'           </span><span class="s1">: </span><span class="s3">'utf_32_le'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># utf_7 codec</span><span class="s1"> 
+    </span><span class="s3">'u7'                 </span><span class="s1">: </span><span class="s3">'utf_7'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'utf7'               </span><span class="s1">: </span><span class="s3">'utf_7'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'unicode_1_1_utf_7'  </span><span class="s1">: </span><span class="s3">'utf_7'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># utf_8 codec</span><span class="s1"> 
+    </span><span class="s3">'u8'                 </span><span class="s1">: </span><span class="s3">'utf_8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'utf'                </span><span class="s1">: </span><span class="s3">'utf_8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'utf8'               </span><span class="s1">: </span><span class="s3">'utf_8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'utf8_ucs2'          </span><span class="s1">: </span><span class="s3">'utf_8'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'utf8_ucs4'          </span><span class="s1">: </span><span class="s3">'utf_8'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># uu_codec codec</span><span class="s1"> 
+    </span><span class="s3">'uu'                 </span><span class="s1">: </span><span class="s3">'uu_codec'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># zlib_codec codec</span><span class="s1"> 
+    </span><span class="s3">'zip'                </span><span class="s1">: </span><span class="s3">'zlib_codec'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'zlib'               </span><span class="s1">: </span><span class="s3">'zlib_codec'</span><span class="s4">,</span><span class="s1"> 
+ 
+    </span><span class="s2"># temporary mac CJK aliases, will be replaced by proper codecs in 3.1</span><span class="s1"> 
+    </span><span class="s3">'x_mac_japanese'      </span><span class="s1">: </span><span class="s3">'shift_jis'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'x_mac_korean'        </span><span class="s1">: </span><span class="s3">'euc_kr'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'x_mac_simp_chinese'  </span><span class="s1">: </span><span class="s3">'gb2312'</span><span class="s4">,</span><span class="s1"> 
+    </span><span class="s3">'x_mac_trad_chinese'  </span><span class="s1">: </span><span class="s3">'big5'</span><span class="s4">,</span><span class="s1"> 
+} 
+</span></pre>
+</body>
+</html>

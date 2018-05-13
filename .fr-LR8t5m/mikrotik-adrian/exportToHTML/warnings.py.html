@@ -1,0 +1,469 @@
+<html>
+<head>
+<title>warnings.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+warnings.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Python part of the warnings subsystem.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">sys 
+ 
+__all__ = [</span><span class="s3">&quot;warn&quot;</span><span class="s2">, </span><span class="s3">&quot;warn_explicit&quot;</span><span class="s2">, </span><span class="s3">&quot;showwarning&quot;</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">&quot;formatwarning&quot;</span><span class="s2">, </span><span class="s3">&quot;filterwarnings&quot;</span><span class="s2">, </span><span class="s3">&quot;simplefilter&quot;</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">&quot;resetwarnings&quot;</span><span class="s2">, </span><span class="s3">&quot;catch_warnings&quot;</span><span class="s1">] 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">showwarning(message</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">, </span><span class="s1">lineno</span><span class="s2">, </span><span class="s1">file=</span><span class="s2">None, </span><span class="s1">line=</span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Hook to write a warning to a file; replace if you like.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">file </span><span class="s2">is None</span><span class="s1">: 
+        file = sys.stderr 
+        </span><span class="s2">if </span><span class="s1">file </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s4"># sys.stderr is None when run with pythonw.exe - warnings get lost</span><span class="s1"> 
+            </span><span class="s2">return</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        file.write(formatwarning(message</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">, </span><span class="s1">lineno</span><span class="s2">, </span><span class="s1">line)) 
+    </span><span class="s2">except </span><span class="s1">OSError: 
+        </span><span class="s2">pass </span><span class="s4"># the file (probably stderr) is invalid - this warning gets lost.</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">formatwarning(message</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">, </span><span class="s1">lineno</span><span class="s2">, </span><span class="s1">line=</span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Function to format a warning the standard way.&quot;&quot;&quot;</span><span class="s1"> 
+    s =  </span><span class="s3">&quot;%s:%s: %s: %s</span><span class="s2">\n</span><span class="s3">&quot; </span><span class="s1">% (filename</span><span class="s2">, </span><span class="s1">lineno</span><span class="s2">, </span><span class="s1">category.__name__</span><span class="s2">, </span><span class="s1">message) 
+    </span><span class="s2">if </span><span class="s1">line </span><span class="s2">is None</span><span class="s1">: 
+        </span><span class="s2">try</span><span class="s1">: 
+            </span><span class="s2">import </span><span class="s1">linecache 
+            line = linecache.getline(filename</span><span class="s2">, </span><span class="s1">lineno) 
+        </span><span class="s2">except </span><span class="s1">Exception: 
+            </span><span class="s4"># When a warning is logged during Python shutdown, linecache</span><span class="s1"> 
+            </span><span class="s4"># and the import machinery don't work anymore</span><span class="s1"> 
+            line = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">line: 
+        line = line.strip() 
+        s += </span><span class="s3">&quot;  %s</span><span class="s2">\n</span><span class="s3">&quot; </span><span class="s1">% line 
+    </span><span class="s2">return </span><span class="s1">s 
+ 
+</span><span class="s2">def </span><span class="s1">filterwarnings(action</span><span class="s2">, </span><span class="s1">message=</span><span class="s3">&quot;&quot;</span><span class="s2">, </span><span class="s1">category=Warning</span><span class="s2">, </span><span class="s1">module=</span><span class="s3">&quot;&quot;</span><span class="s2">, </span><span class="s1">lineno=</span><span class="s5">0</span><span class="s2">,</span><span class="s1"> 
+                   append=</span><span class="s2">False</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Insert an entry into the list of warnings filters (at the front). 
+ 
+    'action' -- one of &quot;error&quot;, &quot;ignore&quot;, &quot;always&quot;, &quot;default&quot;, &quot;module&quot;, 
+                or &quot;once&quot; 
+    'message' -- a regex that the warning message must match 
+    'category' -- a class that the warning must be a subclass of 
+    'module' -- a regex that the module name must match 
+    'lineno' -- an integer line number, 0 matches all warnings 
+    'append' -- if true, append to the list of filters 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">import </span><span class="s1">re 
+    </span><span class="s2">assert </span><span class="s1">action </span><span class="s2">in </span><span class="s1">(</span><span class="s3">&quot;error&quot;</span><span class="s2">, </span><span class="s3">&quot;ignore&quot;</span><span class="s2">, </span><span class="s3">&quot;always&quot;</span><span class="s2">, </span><span class="s3">&quot;default&quot;</span><span class="s2">, </span><span class="s3">&quot;module&quot;</span><span class="s2">,</span><span class="s1"> 
+                      </span><span class="s3">&quot;once&quot;</span><span class="s1">)</span><span class="s2">, </span><span class="s3">&quot;invalid action: %r&quot; </span><span class="s1">% (action</span><span class="s2">,</span><span class="s1">) 
+    </span><span class="s2">assert </span><span class="s1">isinstance(message</span><span class="s2">, </span><span class="s1">str)</span><span class="s2">, </span><span class="s3">&quot;message must be a string&quot;</span><span class="s1"> 
+    </span><span class="s2">assert </span><span class="s1">isinstance(category</span><span class="s2">, </span><span class="s1">type)</span><span class="s2">, </span><span class="s3">&quot;category must be a class&quot;</span><span class="s1"> 
+    </span><span class="s2">assert </span><span class="s1">issubclass(category</span><span class="s2">, </span><span class="s1">Warning)</span><span class="s2">, </span><span class="s3">&quot;category must be a Warning subclass&quot;</span><span class="s1"> 
+    </span><span class="s2">assert </span><span class="s1">isinstance(module</span><span class="s2">, </span><span class="s1">str)</span><span class="s2">, </span><span class="s3">&quot;module must be a string&quot;</span><span class="s1"> 
+    </span><span class="s2">assert </span><span class="s1">isinstance(lineno</span><span class="s2">, </span><span class="s1">int) </span><span class="s2">and </span><span class="s1">lineno &gt;= </span><span class="s5">0</span><span class="s2">, </span><span class="s1">\ 
+           </span><span class="s3">&quot;lineno must be an int &gt;= 0&quot;</span><span class="s1"> 
+    _add_filter(action</span><span class="s2">, </span><span class="s1">re.compile(message</span><span class="s2">, </span><span class="s1">re.I)</span><span class="s2">, </span><span class="s1">category</span><span class="s2">,</span><span class="s1"> 
+            re.compile(module)</span><span class="s2">, </span><span class="s1">lineno</span><span class="s2">, </span><span class="s1">append=append) 
+ 
+</span><span class="s2">def </span><span class="s1">simplefilter(action</span><span class="s2">, </span><span class="s1">category=Warning</span><span class="s2">, </span><span class="s1">lineno=</span><span class="s5">0</span><span class="s2">, </span><span class="s1">append=</span><span class="s2">False</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Insert a simple entry into the list of warnings filters (at the front). 
+ 
+    A simple filter matches all modules and messages. 
+    'action' -- one of &quot;error&quot;, &quot;ignore&quot;, &quot;always&quot;, &quot;default&quot;, &quot;module&quot;, 
+                or &quot;once&quot; 
+    'category' -- a class that the warning must be a subclass of 
+    'lineno' -- an integer line number, 0 matches all warnings 
+    'append' -- if true, append to the list of filters 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">assert </span><span class="s1">action </span><span class="s2">in </span><span class="s1">(</span><span class="s3">&quot;error&quot;</span><span class="s2">, </span><span class="s3">&quot;ignore&quot;</span><span class="s2">, </span><span class="s3">&quot;always&quot;</span><span class="s2">, </span><span class="s3">&quot;default&quot;</span><span class="s2">, </span><span class="s3">&quot;module&quot;</span><span class="s2">,</span><span class="s1"> 
+                      </span><span class="s3">&quot;once&quot;</span><span class="s1">)</span><span class="s2">, </span><span class="s3">&quot;invalid action: %r&quot; </span><span class="s1">% (action</span><span class="s2">,</span><span class="s1">) 
+    </span><span class="s2">assert </span><span class="s1">isinstance(lineno</span><span class="s2">, </span><span class="s1">int) </span><span class="s2">and </span><span class="s1">lineno &gt;= </span><span class="s5">0</span><span class="s2">, </span><span class="s1">\ 
+           </span><span class="s3">&quot;lineno must be an int &gt;= 0&quot;</span><span class="s1"> 
+    _add_filter(action</span><span class="s2">, None, </span><span class="s1">category</span><span class="s2">, None, </span><span class="s1">lineno</span><span class="s2">, </span><span class="s1">append=append) 
+ 
+</span><span class="s2">def </span><span class="s1">_add_filter(*item</span><span class="s2">, </span><span class="s1">append): 
+    </span><span class="s4"># Remove possible duplicate filters, so new one will be placed</span><span class="s1"> 
+    </span><span class="s4"># in correct place. If append=True and duplicate exists, do nothing.</span><span class="s1"> 
+    </span><span class="s2">if not </span><span class="s1">append: 
+        </span><span class="s2">try</span><span class="s1">: 
+            filters.remove(item) 
+        </span><span class="s2">except </span><span class="s1">ValueError: 
+            </span><span class="s2">pass</span><span class="s1"> 
+        filters.insert(</span><span class="s5">0</span><span class="s2">, </span><span class="s1">item) 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s2">if </span><span class="s1">item </span><span class="s2">not in </span><span class="s1">filters: 
+            filters.append(item) 
+    _filters_mutated() 
+ 
+</span><span class="s2">def </span><span class="s1">resetwarnings(): 
+    </span><span class="s0">&quot;&quot;&quot;Clear the list of warning filters, so that no filters are active.&quot;&quot;&quot;</span><span class="s1"> 
+    filters[:] = [] 
+    _filters_mutated() 
+ 
+</span><span class="s2">class </span><span class="s1">_OptionError(Exception): 
+    </span><span class="s0">&quot;&quot;&quot;Exception used by option processing helpers.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">pass</span><span class="s1"> 
+ 
+</span><span class="s4"># Helper to process -W options passed via sys.warnoptions</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">_processoptions(args): 
+    </span><span class="s2">for </span><span class="s1">arg </span><span class="s2">in </span><span class="s1">args: 
+        </span><span class="s2">try</span><span class="s1">: 
+            _setoption(arg) 
+        </span><span class="s2">except </span><span class="s1">_OptionError </span><span class="s2">as </span><span class="s1">msg: 
+            print(</span><span class="s3">&quot;Invalid -W option ignored:&quot;</span><span class="s2">, </span><span class="s1">msg</span><span class="s2">, </span><span class="s1">file=sys.stderr) 
+ 
+</span><span class="s4"># Helper for _processoptions()</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">_setoption(arg): 
+    </span><span class="s2">import </span><span class="s1">re 
+    parts = arg.split(</span><span class="s3">':'</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">len(parts) &gt; </span><span class="s5">5</span><span class="s1">: 
+        </span><span class="s2">raise </span><span class="s1">_OptionError(</span><span class="s3">&quot;too many fields (max 5): %r&quot; </span><span class="s1">% (arg</span><span class="s2">,</span><span class="s1">)) 
+    </span><span class="s2">while </span><span class="s1">len(parts) &lt; </span><span class="s5">5</span><span class="s1">: 
+        parts.append(</span><span class="s3">''</span><span class="s1">) 
+    action</span><span class="s2">, </span><span class="s1">message</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">module</span><span class="s2">, </span><span class="s1">lineno = [s.strip() 
+                                                 </span><span class="s2">for </span><span class="s1">s </span><span class="s2">in </span><span class="s1">parts] 
+    action = _getaction(action) 
+    message = re.escape(message) 
+    category = _getcategory(category) 
+    module = re.escape(module) 
+    </span><span class="s2">if </span><span class="s1">module: 
+        module = module + </span><span class="s3">'$'</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">lineno: 
+        </span><span class="s2">try</span><span class="s1">: 
+            lineno = int(lineno) 
+            </span><span class="s2">if </span><span class="s1">lineno &lt; </span><span class="s5">0</span><span class="s1">: 
+                </span><span class="s2">raise </span><span class="s1">ValueError 
+        </span><span class="s2">except </span><span class="s1">(ValueError</span><span class="s2">, </span><span class="s1">OverflowError): 
+            </span><span class="s2">raise </span><span class="s1">_OptionError(</span><span class="s3">&quot;invalid lineno %r&quot; </span><span class="s1">% (lineno</span><span class="s2">,</span><span class="s1">)) 
+    </span><span class="s2">else</span><span class="s1">: 
+        lineno = </span><span class="s5">0</span><span class="s1"> 
+    filterwarnings(action</span><span class="s2">, </span><span class="s1">message</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">module</span><span class="s2">, </span><span class="s1">lineno) 
+ 
+</span><span class="s4"># Helper for _setoption()</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">_getaction(action): 
+    </span><span class="s2">if not </span><span class="s1">action: 
+        </span><span class="s2">return </span><span class="s3">&quot;default&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">action == </span><span class="s3">&quot;all&quot;</span><span class="s1">: </span><span class="s2">return </span><span class="s3">&quot;always&quot; </span><span class="s4"># Alias</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">a </span><span class="s2">in </span><span class="s1">(</span><span class="s3">'default'</span><span class="s2">, </span><span class="s3">'always'</span><span class="s2">, </span><span class="s3">'ignore'</span><span class="s2">, </span><span class="s3">'module'</span><span class="s2">, </span><span class="s3">'once'</span><span class="s2">, </span><span class="s3">'error'</span><span class="s1">): 
+        </span><span class="s2">if </span><span class="s1">a.startswith(action): 
+            </span><span class="s2">return </span><span class="s1">a 
+    </span><span class="s2">raise </span><span class="s1">_OptionError(</span><span class="s3">&quot;invalid action: %r&quot; </span><span class="s1">% (action</span><span class="s2">,</span><span class="s1">)) 
+ 
+</span><span class="s4"># Helper for _setoption()</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">_getcategory(category): 
+    </span><span class="s2">import </span><span class="s1">re 
+    </span><span class="s2">if not </span><span class="s1">category: 
+        </span><span class="s2">return </span><span class="s1">Warning 
+    </span><span class="s2">if </span><span class="s1">re.match(</span><span class="s3">&quot;^[a-zA-Z0-9_]+$&quot;</span><span class="s2">, </span><span class="s1">category): 
+        </span><span class="s2">try</span><span class="s1">: 
+            cat = eval(category) 
+        </span><span class="s2">except </span><span class="s1">NameError: 
+            </span><span class="s2">raise </span><span class="s1">_OptionError(</span><span class="s3">&quot;unknown warning category: %r&quot; </span><span class="s1">% (category</span><span class="s2">,</span><span class="s1">)) 
+    </span><span class="s2">else</span><span class="s1">: 
+        i = category.rfind(</span><span class="s3">&quot;.&quot;</span><span class="s1">) 
+        module = category[:i] 
+        klass = category[i+</span><span class="s5">1</span><span class="s1">:] 
+        </span><span class="s2">try</span><span class="s1">: 
+            m = __import__(module</span><span class="s2">, None, None, </span><span class="s1">[klass]) 
+        </span><span class="s2">except </span><span class="s1">ImportError: 
+            </span><span class="s2">raise </span><span class="s1">_OptionError(</span><span class="s3">&quot;invalid module name: %r&quot; </span><span class="s1">% (module</span><span class="s2">,</span><span class="s1">)) 
+        </span><span class="s2">try</span><span class="s1">: 
+            cat = getattr(m</span><span class="s2">, </span><span class="s1">klass) 
+        </span><span class="s2">except </span><span class="s1">AttributeError: 
+            </span><span class="s2">raise </span><span class="s1">_OptionError(</span><span class="s3">&quot;unknown warning category: %r&quot; </span><span class="s1">% (category</span><span class="s2">,</span><span class="s1">)) 
+    </span><span class="s2">if not </span><span class="s1">issubclass(cat</span><span class="s2">, </span><span class="s1">Warning): 
+        </span><span class="s2">raise </span><span class="s1">_OptionError(</span><span class="s3">&quot;invalid warning category: %r&quot; </span><span class="s1">% (category</span><span class="s2">,</span><span class="s1">)) 
+    </span><span class="s2">return </span><span class="s1">cat 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">_is_internal_frame(frame): 
+    </span><span class="s0">&quot;&quot;&quot;Signal whether the frame is an internal CPython implementation detail.&quot;&quot;&quot;</span><span class="s1"> 
+    filename = frame.f_code.co_filename 
+    </span><span class="s2">return </span><span class="s3">'importlib' </span><span class="s2">in </span><span class="s1">filename </span><span class="s2">and </span><span class="s3">'_bootstrap' </span><span class="s2">in </span><span class="s1">filename 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">_next_external_frame(frame): 
+    </span><span class="s0">&quot;&quot;&quot;Find the next frame that doesn't involve CPython internals.&quot;&quot;&quot;</span><span class="s1"> 
+    frame = frame.f_back 
+    </span><span class="s2">while </span><span class="s1">frame </span><span class="s2">is not None and </span><span class="s1">_is_internal_frame(frame): 
+        frame = frame.f_back 
+    </span><span class="s2">return </span><span class="s1">frame 
+ 
+ 
+</span><span class="s4"># Code typically replaced by _warnings</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">warn(message</span><span class="s2">, </span><span class="s1">category=</span><span class="s2">None, </span><span class="s1">stacklevel=</span><span class="s5">1</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Issue a warning, or maybe ignore it or raise an exception.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s4"># Check if message is already a Warning object</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">isinstance(message</span><span class="s2">, </span><span class="s1">Warning): 
+        category = message.__class__ 
+    </span><span class="s4"># Check category argument</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">category </span><span class="s2">is None</span><span class="s1">: 
+        category = UserWarning 
+    </span><span class="s2">if not </span><span class="s1">(isinstance(category</span><span class="s2">, </span><span class="s1">type) </span><span class="s2">and </span><span class="s1">issubclass(category</span><span class="s2">, </span><span class="s1">Warning)): 
+        </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s3">&quot;category must be a Warning subclass, &quot;</span><span class="s1"> 
+                        </span><span class="s3">&quot;not '{:s}'&quot;</span><span class="s1">.format(type(category).__name__)) 
+    </span><span class="s4"># Get context information</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        </span><span class="s2">if </span><span class="s1">stacklevel &lt;= </span><span class="s5">1 </span><span class="s2">or </span><span class="s1">_is_internal_frame(sys._getframe(</span><span class="s5">1</span><span class="s1">)): 
+            </span><span class="s4"># If frame is too small to care or if the warning originated in</span><span class="s1"> 
+            </span><span class="s4"># internal code, then do not try to hide any frames.</span><span class="s1"> 
+            frame = sys._getframe(stacklevel) 
+        </span><span class="s2">else</span><span class="s1">: 
+            frame = sys._getframe(</span><span class="s5">1</span><span class="s1">) 
+            </span><span class="s4"># Look for one frame less since the above line starts us off.</span><span class="s1"> 
+            </span><span class="s2">for </span><span class="s1">x </span><span class="s2">in </span><span class="s1">range(stacklevel-</span><span class="s5">1</span><span class="s1">): 
+                frame = _next_external_frame(frame) 
+                </span><span class="s2">if </span><span class="s1">frame </span><span class="s2">is None</span><span class="s1">: 
+                    </span><span class="s2">raise </span><span class="s1">ValueError 
+    </span><span class="s2">except </span><span class="s1">ValueError: 
+        globals = sys.__dict__ 
+        lineno = </span><span class="s5">1</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        globals = frame.f_globals 
+        lineno = frame.f_lineno 
+    </span><span class="s2">if </span><span class="s3">'__name__' </span><span class="s2">in </span><span class="s1">globals: 
+        module = globals[</span><span class="s3">'__name__'</span><span class="s1">] 
+    </span><span class="s2">else</span><span class="s1">: 
+        module = </span><span class="s3">&quot;&lt;string&gt;&quot;</span><span class="s1"> 
+    filename = globals.get(</span><span class="s3">'__file__'</span><span class="s1">) 
+    </span><span class="s2">if </span><span class="s1">filename: 
+        fnl = filename.lower() 
+        </span><span class="s2">if </span><span class="s1">fnl.endswith(</span><span class="s3">&quot;.pyc&quot;</span><span class="s1">): 
+            filename = filename[:-</span><span class="s5">1</span><span class="s1">] 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s2">if </span><span class="s1">module == </span><span class="s3">&quot;__main__&quot;</span><span class="s1">: 
+            </span><span class="s2">try</span><span class="s1">: 
+                filename = sys.argv[</span><span class="s5">0</span><span class="s1">] 
+            </span><span class="s2">except </span><span class="s1">AttributeError: 
+                </span><span class="s4"># embedded interpreters don't have sys.argv, see bug #839151</span><span class="s1"> 
+                filename = </span><span class="s3">'__main__'</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">filename: 
+            filename = module 
+    registry = globals.setdefault(</span><span class="s3">&quot;__warningregistry__&quot;</span><span class="s2">, </span><span class="s1">{}) 
+    warn_explicit(message</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">, </span><span class="s1">lineno</span><span class="s2">, </span><span class="s1">module</span><span class="s2">, </span><span class="s1">registry</span><span class="s2">,</span><span class="s1"> 
+                  globals) 
+ 
+</span><span class="s2">def </span><span class="s1">warn_explicit(message</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">, </span><span class="s1">lineno</span><span class="s2">,</span><span class="s1"> 
+                  module=</span><span class="s2">None, </span><span class="s1">registry=</span><span class="s2">None, </span><span class="s1">module_globals=</span><span class="s2">None</span><span class="s1">): 
+    lineno = int(lineno) 
+    </span><span class="s2">if </span><span class="s1">module </span><span class="s2">is None</span><span class="s1">: 
+        module = filename </span><span class="s2">or </span><span class="s3">&quot;&lt;unknown&gt;&quot;</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">module[-</span><span class="s5">3</span><span class="s1">:].lower() == </span><span class="s3">&quot;.py&quot;</span><span class="s1">: 
+            module = module[:-</span><span class="s5">3</span><span class="s1">] </span><span class="s4"># XXX What about leading pathname?</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">registry </span><span class="s2">is None</span><span class="s1">: 
+        registry = {} 
+    </span><span class="s2">if </span><span class="s1">registry.get(</span><span class="s3">'version'</span><span class="s2">, </span><span class="s5">0</span><span class="s1">) != _filters_version: 
+        registry.clear() 
+        registry[</span><span class="s3">'version'</span><span class="s1">] = _filters_version 
+    </span><span class="s2">if </span><span class="s1">isinstance(message</span><span class="s2">, </span><span class="s1">Warning): 
+        text = str(message) 
+        category = message.__class__ 
+    </span><span class="s2">else</span><span class="s1">: 
+        text = message 
+        message = category(message) 
+    key = (text</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">lineno) 
+    </span><span class="s4"># Quick test for common case</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">registry.get(key): 
+        </span><span class="s2">return</span><span class="s1"> 
+    </span><span class="s4"># Search the filters</span><span class="s1"> 
+    </span><span class="s2">for </span><span class="s1">item </span><span class="s2">in </span><span class="s1">filters: 
+        action</span><span class="s2">, </span><span class="s1">msg</span><span class="s2">, </span><span class="s1">cat</span><span class="s2">, </span><span class="s1">mod</span><span class="s2">, </span><span class="s1">ln = item 
+        </span><span class="s2">if </span><span class="s1">((msg </span><span class="s2">is None or </span><span class="s1">msg.match(text)) </span><span class="s2">and</span><span class="s1"> 
+            issubclass(category</span><span class="s2">, </span><span class="s1">cat) </span><span class="s2">and</span><span class="s1"> 
+            (mod </span><span class="s2">is None or </span><span class="s1">mod.match(module)) </span><span class="s2">and</span><span class="s1"> 
+            (ln == </span><span class="s5">0 </span><span class="s2">or </span><span class="s1">lineno == ln)): 
+            </span><span class="s2">break</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        action = defaultaction 
+    </span><span class="s4"># Early exit actions</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">action == </span><span class="s3">&quot;ignore&quot;</span><span class="s1">: 
+        registry[key] = </span><span class="s5">1</span><span class="s1"> 
+        </span><span class="s2">return</span><span class="s1"> 
+ 
+    </span><span class="s4"># Prime the linecache for formatting, in case the</span><span class="s1"> 
+    </span><span class="s4"># &quot;file&quot; is actually in a zipfile or something.</span><span class="s1"> 
+    </span><span class="s2">import </span><span class="s1">linecache 
+    linecache.getlines(filename</span><span class="s2">, </span><span class="s1">module_globals) 
+ 
+    </span><span class="s2">if </span><span class="s1">action == </span><span class="s3">&quot;error&quot;</span><span class="s1">: 
+        </span><span class="s2">raise </span><span class="s1">message 
+    </span><span class="s4"># Other actions</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">action == </span><span class="s3">&quot;once&quot;</span><span class="s1">: 
+        registry[key] = </span><span class="s5">1</span><span class="s1"> 
+        oncekey = (text</span><span class="s2">, </span><span class="s1">category) 
+        </span><span class="s2">if </span><span class="s1">onceregistry.get(oncekey): 
+            </span><span class="s2">return</span><span class="s1"> 
+        onceregistry[oncekey] = </span><span class="s5">1</span><span class="s1"> 
+    </span><span class="s2">elif </span><span class="s1">action == </span><span class="s3">&quot;always&quot;</span><span class="s1">: 
+        </span><span class="s2">pass</span><span class="s1"> 
+    </span><span class="s2">elif </span><span class="s1">action == </span><span class="s3">&quot;module&quot;</span><span class="s1">: 
+        registry[key] = </span><span class="s5">1</span><span class="s1"> 
+        altkey = (text</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s5">0</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">registry.get(altkey): 
+            </span><span class="s2">return</span><span class="s1"> 
+        registry[altkey] = </span><span class="s5">1</span><span class="s1"> 
+    </span><span class="s2">elif </span><span class="s1">action == </span><span class="s3">&quot;default&quot;</span><span class="s1">: 
+        registry[key] = </span><span class="s5">1</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s4"># Unrecognized actions are errors</span><span class="s1"> 
+        </span><span class="s2">raise </span><span class="s1">RuntimeError( 
+              </span><span class="s3">&quot;Unrecognized action (%r) in warnings.filters:</span><span class="s2">\n</span><span class="s3"> %s&quot; </span><span class="s1">% 
+              (action</span><span class="s2">, </span><span class="s1">item)) 
+    </span><span class="s2">if not </span><span class="s1">callable(showwarning): 
+        </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s3">&quot;warnings.showwarning() must be set to a &quot;</span><span class="s1"> 
+                        </span><span class="s3">&quot;function or method&quot;</span><span class="s1">) 
+    </span><span class="s4"># Print message and context</span><span class="s1"> 
+    showwarning(message</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">, </span><span class="s1">lineno) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">WarningMessage(object): 
+ 
+    </span><span class="s0">&quot;&quot;&quot;Holds the result of a single showwarning() call.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    _WARNING_DETAILS = (</span><span class="s3">&quot;message&quot;</span><span class="s2">, </span><span class="s3">&quot;category&quot;</span><span class="s2">, </span><span class="s3">&quot;filename&quot;</span><span class="s2">, </span><span class="s3">&quot;lineno&quot;</span><span class="s2">, </span><span class="s3">&quot;file&quot;</span><span class="s2">,</span><span class="s1"> 
+                        </span><span class="s3">&quot;line&quot;</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">message</span><span class="s2">, </span><span class="s1">category</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">, </span><span class="s1">lineno</span><span class="s2">, </span><span class="s1">file=</span><span class="s2">None,</span><span class="s1"> 
+                    line=</span><span class="s2">None</span><span class="s1">): 
+        local_values = locals() 
+        </span><span class="s2">for </span><span class="s1">attr </span><span class="s2">in </span><span class="s1">self._WARNING_DETAILS: 
+            setattr(self</span><span class="s2">, </span><span class="s1">attr</span><span class="s2">, </span><span class="s1">local_values[attr]) 
+        self._category_name = category.__name__ </span><span class="s2">if </span><span class="s1">category </span><span class="s2">else None</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__str__(self): 
+        </span><span class="s2">return </span><span class="s1">(</span><span class="s3">&quot;{message : %r, category : %r, filename : %r, lineno : %s, &quot;</span><span class="s1"> 
+                    </span><span class="s3">&quot;line : %r}&quot; </span><span class="s1">% (self.message</span><span class="s2">, </span><span class="s1">self._category_name</span><span class="s2">,</span><span class="s1"> 
+                                    self.filename</span><span class="s2">, </span><span class="s1">self.lineno</span><span class="s2">, </span><span class="s1">self.line)) 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">catch_warnings(object): 
+ 
+    </span><span class="s0">&quot;&quot;&quot;A context manager that copies and restores the warnings filter upon 
+    exiting the context. 
+ 
+    The 'record' argument specifies whether warnings should be captured by a 
+    custom implementation of warnings.showwarning() and be appended to a list 
+    returned by the context manager. Otherwise None is returned by the context 
+    manager. The objects appended to the list are arguments whose attributes 
+    mirror the arguments to showwarning(). 
+ 
+    The 'module' argument is to specify an alternative module to the module 
+    named 'warnings' and imported under that name. This argument is only useful 
+    when testing the warnings module itself. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">*</span><span class="s2">, </span><span class="s1">record=</span><span class="s2">False, </span><span class="s1">module=</span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Specify whether to record warnings and if an alternative module 
+        should be used other than sys.modules['warnings']. 
+ 
+        For compatibility with Python 3.0, please consider all arguments to be 
+        keyword-only. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self._record = record 
+        self._module = sys.modules[</span><span class="s3">'warnings'</span><span class="s1">] </span><span class="s2">if </span><span class="s1">module </span><span class="s2">is None else </span><span class="s1">module 
+        self._entered = </span><span class="s2">False</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__repr__(self): 
+        args = [] 
+        </span><span class="s2">if </span><span class="s1">self._record: 
+            args.append(</span><span class="s3">&quot;record=True&quot;</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">self._module </span><span class="s2">is not </span><span class="s1">sys.modules[</span><span class="s3">'warnings'</span><span class="s1">]: 
+            args.append(</span><span class="s3">&quot;module=%r&quot; </span><span class="s1">% self._module) 
+        name = type(self).__name__ 
+        </span><span class="s2">return </span><span class="s3">&quot;%s(%s)&quot; </span><span class="s1">% (name</span><span class="s2">, </span><span class="s3">&quot;, &quot;</span><span class="s1">.join(args)) 
+ 
+    </span><span class="s2">def </span><span class="s1">__enter__(self): 
+        </span><span class="s2">if </span><span class="s1">self._entered: 
+            </span><span class="s2">raise </span><span class="s1">RuntimeError(</span><span class="s3">&quot;Cannot enter %r twice&quot; </span><span class="s1">% self) 
+        self._entered = </span><span class="s2">True</span><span class="s1"> 
+        self._filters = self._module.filters 
+        self._module.filters = self._filters[:] 
+        self._module._filters_mutated() 
+        self._showwarning = self._module.showwarning 
+        </span><span class="s2">if </span><span class="s1">self._record: 
+            log = [] 
+            </span><span class="s2">def </span><span class="s1">showwarning(*args</span><span class="s2">, </span><span class="s1">**kwargs): 
+                log.append(WarningMessage(*args</span><span class="s2">, </span><span class="s1">**kwargs)) 
+            self._module.showwarning = showwarning 
+            </span><span class="s2">return </span><span class="s1">log 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return None</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__exit__(self</span><span class="s2">, </span><span class="s1">*exc_info): 
+        </span><span class="s2">if not </span><span class="s1">self._entered: 
+            </span><span class="s2">raise </span><span class="s1">RuntimeError(</span><span class="s3">&quot;Cannot exit %r without entering first&quot; </span><span class="s1">% self) 
+        self._module.filters = self._filters 
+        self._module._filters_mutated() 
+        self._module.showwarning = self._showwarning 
+ 
+ 
+</span><span class="s4"># filters contains a sequence of filter 5-tuples</span><span class="s1"> 
+</span><span class="s4"># The components of the 5-tuple are:</span><span class="s1"> 
+</span><span class="s4"># - an action: error, ignore, always, default, module, or once</span><span class="s1"> 
+</span><span class="s4"># - a compiled regex that must match the warning message</span><span class="s1"> 
+</span><span class="s4"># - a class representing the warning category</span><span class="s1"> 
+</span><span class="s4"># - a compiled regex that must match the module that is being warned</span><span class="s1"> 
+</span><span class="s4"># - a line number for the line being warning, or 0 to mean any line</span><span class="s1"> 
+</span><span class="s4"># If either if the compiled regexs are None, match anything.</span><span class="s1"> 
+_warnings_defaults = </span><span class="s2">False</span><span class="s1"> 
+</span><span class="s2">try</span><span class="s1">: 
+    </span><span class="s2">from </span><span class="s1">_warnings </span><span class="s2">import </span><span class="s1">(filters</span><span class="s2">, </span><span class="s1">_defaultaction</span><span class="s2">, </span><span class="s1">_onceregistry</span><span class="s2">,</span><span class="s1"> 
+                           warn</span><span class="s2">, </span><span class="s1">warn_explicit</span><span class="s2">, </span><span class="s1">_filters_mutated) 
+    defaultaction = _defaultaction 
+    onceregistry = _onceregistry 
+    _warnings_defaults = </span><span class="s2">True</span><span class="s1"> 
+</span><span class="s2">except </span><span class="s1">ImportError: 
+    filters = [] 
+    defaultaction = </span><span class="s3">&quot;default&quot;</span><span class="s1"> 
+    onceregistry = {} 
+ 
+    _filters_version = </span><span class="s5">1</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">_filters_mutated(): 
+        </span><span class="s2">global </span><span class="s1">_filters_version 
+        _filters_version += </span><span class="s5">1</span><span class="s1"> 
+ 
+ 
+</span><span class="s4"># Module initialization</span><span class="s1"> 
+_processoptions(sys.warnoptions) 
+</span><span class="s2">if not </span><span class="s1">_warnings_defaults: 
+    silence = [ImportWarning</span><span class="s2">, </span><span class="s1">PendingDeprecationWarning] 
+    silence.append(DeprecationWarning) 
+    </span><span class="s2">for </span><span class="s1">cls </span><span class="s2">in </span><span class="s1">silence: 
+        simplefilter(</span><span class="s3">&quot;ignore&quot;</span><span class="s2">, </span><span class="s1">category=cls) 
+    bytes_warning = sys.flags.bytes_warning 
+    </span><span class="s2">if </span><span class="s1">bytes_warning &gt; </span><span class="s5">1</span><span class="s1">: 
+        bytes_action = </span><span class="s3">&quot;error&quot;</span><span class="s1"> 
+    </span><span class="s2">elif </span><span class="s1">bytes_warning: 
+        bytes_action = </span><span class="s3">&quot;default&quot;</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        bytes_action = </span><span class="s3">&quot;ignore&quot;</span><span class="s1"> 
+    simplefilter(bytes_action</span><span class="s2">, </span><span class="s1">category=BytesWarning</span><span class="s2">, </span><span class="s1">append=</span><span class="s5">1</span><span class="s1">) 
+    </span><span class="s4"># resource usage warnings are enabled by default in pydebug mode</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">hasattr(sys</span><span class="s2">, </span><span class="s3">'gettotalrefcount'</span><span class="s1">): 
+        resource_action = </span><span class="s3">&quot;always&quot;</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        resource_action = </span><span class="s3">&quot;ignore&quot;</span><span class="s1"> 
+    simplefilter(resource_action</span><span class="s2">, </span><span class="s1">category=ResourceWarning</span><span class="s2">, </span><span class="s1">append=</span><span class="s5">1</span><span class="s1">) 
+ 
+</span><span class="s2">del </span><span class="s1">_warnings_defaults 
+</span></pre>
+</body>
+</html>

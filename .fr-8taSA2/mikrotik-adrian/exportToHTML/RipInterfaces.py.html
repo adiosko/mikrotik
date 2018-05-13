@@ -1,0 +1,171 @@
+<html>
+<head>
+<title>RipInterfaces.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+RipInterfaces.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">RipInterfaces: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listInterfaces(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list interfaces 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/print'</span><span class="s1">] ) 
+        </span><span class="s0">if </span><span class="s1">rip == {}: 
+            print(</span><span class="s4">&quot;no rip interface set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Interface</span><span class="s0">\t</span><span class="s4">Receive</span><span class="s0">\t</span><span class="s4">send</span><span class="s0">\t</span><span class="s4">authentication and authentication key</span><span class="s0">\t</span><span class="s4">key-chain</span><span class="s0">\t</span><span class="s4">pasisve interface</span><span class="s0">\t</span><span class="s4">prefixlist in and out&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">rip: 
+                </span><span class="s5">#print(rip[i])</span><span class="s1"> 
+                print(rip[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+rip[i][</span><span class="s4">'receive'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+rip[i][</span><span class="s4">'send'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+rip[i][</span><span class="s4">'authentication'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1"> 
+                      +rip[i][</span><span class="s4">'authentication-key'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+rip[i][</span><span class="s4">'key-chain'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+rip[i][</span><span class="s4">'passive'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+rip[i][</span><span class="s4">'in-prefix-list'</span><span class="s1">] 
+                      +rip[i][</span><span class="s4">'out-prefix-list'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">addInterfaces(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add rip iface 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk([</span><span class="s4">'/routing/rip/interface/add'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove rip interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable iface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable interface 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;all&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set rip interface 
+        :param number: 
+        :param interface: all or local interface 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setReceive(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">rcv=</span><span class="s4">&quot;v1-2&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set receive version 
+        :param number: 
+        :param rcv: v1,v1-2,v2 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=receive='</span><span class="s1">+rcv] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setSend(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">snd=</span><span class="s4">&quot;v2&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface fdor sending the traffic 
+        :param number: 
+        :param snd: v1,v1-2,v2 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=send=' </span><span class="s1">+ snd] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthentication(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">authent=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set rip authentication 
+        :param number: 
+        :param authent: none,simple,md5 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=authentication=' </span><span class="s1">+ authent] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthenticationKey(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">key): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set authentication key 
+        :param number: 
+        :param key: key for simple and md5 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=authentication-key=' </span><span class="s1">+ key] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setKeyChain(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">chain): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set authentication key chain 
+        :param number: 
+        :param chain: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=key-chain=' </span><span class="s1">+ chain] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassiveInterface(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set iface passive 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=passive=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setInPrefixList(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefix): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set input prefix list 
+        :param number: 
+        :param prefix: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=in-prefix-list=' </span><span class="s1">+ prefix] ) 
+        </span><span class="s0">return </span><span class="s1">rip 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutPrefixList(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">prefix): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prefix output list 
+        :param number: 
+        :param prefix: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        rip = self.client.talk( [</span><span class="s4">'/routing/rip/interface/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=out-prefix-list=' </span><span class="s1">+ prefix] ) 
+        </span><span class="s0">return </span><span class="s1">rip</span></pre>
+</body>
+</html>

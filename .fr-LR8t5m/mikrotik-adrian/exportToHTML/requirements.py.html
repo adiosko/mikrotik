@@ -1,0 +1,151 @@
+<html>
+<head>
+<title>requirements.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+requirements.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># This file is dual licensed under the terms of the Apache License, Version</span><span class="s1"> 
+</span><span class="s0"># 2.0, and the BSD License. See the LICENSE file in the root of this repository</span><span class="s1"> 
+</span><span class="s0"># for complete details.</span><span class="s1"> 
+</span><span class="s2">from </span><span class="s1">__future__ </span><span class="s2">import </span><span class="s1">absolute_import</span><span class="s2">, </span><span class="s1">division</span><span class="s2">, </span><span class="s1">print_function 
+ 
+</span><span class="s2">import </span><span class="s1">string 
+</span><span class="s2">import </span><span class="s1">re 
+ 
+</span><span class="s2">from </span><span class="s1">pkg_resources.extern.pyparsing </span><span class="s2">import </span><span class="s1">stringStart</span><span class="s2">, </span><span class="s1">stringEnd</span><span class="s2">, </span><span class="s1">originalTextFor</span><span class="s2">, </span><span class="s1">ParseException 
+</span><span class="s2">from </span><span class="s1">pkg_resources.extern.pyparsing </span><span class="s2">import </span><span class="s1">ZeroOrMore</span><span class="s2">, </span><span class="s1">Word</span><span class="s2">, </span><span class="s1">Optional</span><span class="s2">, </span><span class="s1">Regex</span><span class="s2">, </span><span class="s1">Combine 
+</span><span class="s2">from </span><span class="s1">pkg_resources.extern.pyparsing </span><span class="s2">import </span><span class="s1">Literal </span><span class="s2">as </span><span class="s1">L  </span><span class="s0"># noqa</span><span class="s1"> 
+</span><span class="s2">from </span><span class="s1">pkg_resources.extern.six.moves.urllib </span><span class="s2">import </span><span class="s1">parse </span><span class="s2">as </span><span class="s1">urlparse 
+ 
+</span><span class="s2">from </span><span class="s1">.markers </span><span class="s2">import </span><span class="s1">MARKER_EXPR</span><span class="s2">, </span><span class="s1">Marker 
+</span><span class="s2">from </span><span class="s1">.specifiers </span><span class="s2">import </span><span class="s1">LegacySpecifier</span><span class="s2">, </span><span class="s1">Specifier</span><span class="s2">, </span><span class="s1">SpecifierSet 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">InvalidRequirement(ValueError): 
+    </span><span class="s3">&quot;&quot;&quot; 
+    An invalid requirement was found, users should refer to PEP 508. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+ 
+ALPHANUM = Word(string.ascii_letters + string.digits) 
+ 
+LBRACKET = L(</span><span class="s4">&quot;[&quot;</span><span class="s1">).suppress() 
+RBRACKET = L(</span><span class="s4">&quot;]&quot;</span><span class="s1">).suppress() 
+LPAREN = L(</span><span class="s4">&quot;(&quot;</span><span class="s1">).suppress() 
+RPAREN = L(</span><span class="s4">&quot;)&quot;</span><span class="s1">).suppress() 
+COMMA = L(</span><span class="s4">&quot;,&quot;</span><span class="s1">).suppress() 
+SEMICOLON = L(</span><span class="s4">&quot;;&quot;</span><span class="s1">).suppress() 
+AT = L(</span><span class="s4">&quot;@&quot;</span><span class="s1">).suppress() 
+ 
+PUNCTUATION = Word(</span><span class="s4">&quot;-_.&quot;</span><span class="s1">) 
+IDENTIFIER_END = ALPHANUM | (ZeroOrMore(PUNCTUATION) + ALPHANUM) 
+IDENTIFIER = Combine(ALPHANUM + ZeroOrMore(IDENTIFIER_END)) 
+ 
+NAME = IDENTIFIER(</span><span class="s4">&quot;name&quot;</span><span class="s1">) 
+EXTRA = IDENTIFIER 
+ 
+URI = Regex(</span><span class="s4">r'[^ ]+'</span><span class="s1">)(</span><span class="s4">&quot;url&quot;</span><span class="s1">) 
+URL = (AT + URI) 
+ 
+EXTRAS_LIST = EXTRA + ZeroOrMore(COMMA + EXTRA) 
+EXTRAS = (LBRACKET + Optional(EXTRAS_LIST) + RBRACKET)(</span><span class="s4">&quot;extras&quot;</span><span class="s1">) 
+ 
+VERSION_PEP440 = Regex(Specifier._regex_str</span><span class="s2">, </span><span class="s1">re.VERBOSE | re.IGNORECASE) 
+VERSION_LEGACY = Regex(LegacySpecifier._regex_str</span><span class="s2">, </span><span class="s1">re.VERBOSE | re.IGNORECASE) 
+ 
+VERSION_ONE = VERSION_PEP440 ^ VERSION_LEGACY 
+VERSION_MANY = Combine(VERSION_ONE + ZeroOrMore(COMMA + VERSION_ONE)</span><span class="s2">,</span><span class="s1"> 
+                       joinString=</span><span class="s4">&quot;,&quot;</span><span class="s2">, </span><span class="s1">adjacent=</span><span class="s2">False</span><span class="s1">)(</span><span class="s4">&quot;_raw_spec&quot;</span><span class="s1">) 
+_VERSION_SPEC = Optional(((LPAREN + VERSION_MANY + RPAREN) | VERSION_MANY)) 
+_VERSION_SPEC.setParseAction(</span><span class="s2">lambda </span><span class="s1">s</span><span class="s2">, </span><span class="s1">l</span><span class="s2">, </span><span class="s1">t: t._raw_spec </span><span class="s2">or </span><span class="s4">''</span><span class="s1">) 
+ 
+VERSION_SPEC = originalTextFor(_VERSION_SPEC)(</span><span class="s4">&quot;specifier&quot;</span><span class="s1">) 
+VERSION_SPEC.setParseAction(</span><span class="s2">lambda </span><span class="s1">s</span><span class="s2">, </span><span class="s1">l</span><span class="s2">, </span><span class="s1">t: t[</span><span class="s5">1</span><span class="s1">]) 
+ 
+MARKER_EXPR = originalTextFor(MARKER_EXPR())(</span><span class="s4">&quot;marker&quot;</span><span class="s1">) 
+MARKER_EXPR.setParseAction( 
+    </span><span class="s2">lambda </span><span class="s1">s</span><span class="s2">, </span><span class="s1">l</span><span class="s2">, </span><span class="s1">t: Marker(s[t._original_start:t._original_end]) 
+) 
+MARKER_SEPERATOR = SEMICOLON 
+MARKER = MARKER_SEPERATOR + MARKER_EXPR 
+ 
+VERSION_AND_MARKER = VERSION_SPEC + Optional(MARKER) 
+URL_AND_MARKER = URL + Optional(MARKER) 
+ 
+NAMED_REQUIREMENT = \ 
+    NAME + Optional(EXTRAS) + (URL_AND_MARKER | VERSION_AND_MARKER) 
+ 
+REQUIREMENT = stringStart + NAMED_REQUIREMENT + stringEnd 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">Requirement(object): 
+    </span><span class="s3">&quot;&quot;&quot;Parse a requirement. 
+ 
+    Parse a given requirement string into its parts, such as name, specifier, 
+    URL, and extras. Raises InvalidRequirement on a badly-formed requirement 
+    string. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0"># TODO: Can we test whether something is contained within a requirement?</span><span class="s1"> 
+    </span><span class="s0">#       If so how do we do that? Do we need to test against the _name_ of</span><span class="s1"> 
+    </span><span class="s0">#       the thing as well as the version? What about the markers?</span><span class="s1"> 
+    </span><span class="s0"># TODO: Can we normalize the name and extra name?</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">requirement_string): 
+        </span><span class="s2">try</span><span class="s1">: 
+            req = REQUIREMENT.parseString(requirement_string) 
+        </span><span class="s2">except </span><span class="s1">ParseException </span><span class="s2">as </span><span class="s1">e: 
+            </span><span class="s2">raise </span><span class="s1">InvalidRequirement( 
+                </span><span class="s4">&quot;Invalid requirement, parse error at </span><span class="s2">\&quot;</span><span class="s4">{0!r}</span><span class="s2">\&quot;</span><span class="s4">&quot;</span><span class="s1">.format( 
+                    requirement_string[e.loc:e.loc + </span><span class="s5">8</span><span class="s1">])) 
+ 
+        self.name = req.name 
+        </span><span class="s2">if </span><span class="s1">req.url: 
+            parsed_url = urlparse.urlparse(req.url) 
+            </span><span class="s2">if not </span><span class="s1">(parsed_url.scheme </span><span class="s2">and </span><span class="s1">parsed_url.netloc) </span><span class="s2">or </span><span class="s1">( 
+                    </span><span class="s2">not </span><span class="s1">parsed_url.scheme </span><span class="s2">and not </span><span class="s1">parsed_url.netloc): 
+                </span><span class="s2">raise </span><span class="s1">InvalidRequirement(</span><span class="s4">&quot;Invalid URL given&quot;</span><span class="s1">) 
+            self.url = req.url 
+        </span><span class="s2">else</span><span class="s1">: 
+            self.url = </span><span class="s2">None</span><span class="s1"> 
+        self.extras = set(req.extras.asList() </span><span class="s2">if </span><span class="s1">req.extras </span><span class="s2">else </span><span class="s1">[]) 
+        self.specifier = SpecifierSet(req.specifier) 
+        self.marker = req.marker </span><span class="s2">if </span><span class="s1">req.marker </span><span class="s2">else None</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__str__(self): 
+        parts = [self.name] 
+ 
+        </span><span class="s2">if </span><span class="s1">self.extras: 
+            parts.append(</span><span class="s4">&quot;[{0}]&quot;</span><span class="s1">.format(</span><span class="s4">&quot;,&quot;</span><span class="s1">.join(sorted(self.extras)))) 
+ 
+        </span><span class="s2">if </span><span class="s1">self.specifier: 
+            parts.append(str(self.specifier)) 
+ 
+        </span><span class="s2">if </span><span class="s1">self.url: 
+            parts.append(</span><span class="s4">&quot;@ {0}&quot;</span><span class="s1">.format(self.url)) 
+ 
+        </span><span class="s2">if </span><span class="s1">self.marker: 
+            parts.append(</span><span class="s4">&quot;; {0}&quot;</span><span class="s1">.format(self.marker)) 
+ 
+        </span><span class="s2">return </span><span class="s4">&quot;&quot;</span><span class="s1">.join(parts) 
+ 
+    </span><span class="s2">def </span><span class="s1">__repr__(self): 
+        </span><span class="s2">return </span><span class="s4">&quot;&lt;Requirement({0!r})&gt;&quot;</span><span class="s1">.format(str(self)) 
+</span></pre>
+</body>
+</html>

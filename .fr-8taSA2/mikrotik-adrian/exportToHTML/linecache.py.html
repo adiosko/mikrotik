@@ -1,0 +1,201 @@
+<html>
+<head>
+<title>linecache.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(104,151,187); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+linecache.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Cache lines from Python source files. 
+ 
+This is intended to read lines from modules imported -- hence if a filename 
+is not found, it will look down the module search path for a file by 
+that name. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">functools 
+</span><span class="s2">import </span><span class="s1">sys 
+</span><span class="s2">import </span><span class="s1">os 
+</span><span class="s2">import </span><span class="s1">tokenize 
+ 
+__all__ = [</span><span class="s3">&quot;getline&quot;</span><span class="s2">, </span><span class="s3">&quot;clearcache&quot;</span><span class="s2">, </span><span class="s3">&quot;checkcache&quot;</span><span class="s1">] 
+ 
+</span><span class="s2">def </span><span class="s1">getline(filename</span><span class="s2">, </span><span class="s1">lineno</span><span class="s2">, </span><span class="s1">module_globals=</span><span class="s2">None</span><span class="s1">): 
+    lines = getlines(filename</span><span class="s2">, </span><span class="s1">module_globals) 
+    </span><span class="s2">if </span><span class="s4">1 </span><span class="s1">&lt;= lineno &lt;= len(lines): 
+        </span><span class="s2">return </span><span class="s1">lines[lineno-</span><span class="s4">1</span><span class="s1">] 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s2">return </span><span class="s3">''</span><span class="s1"> 
+ 
+ 
+</span><span class="s5"># The cache</span><span class="s1"> 
+ 
+</span><span class="s5"># The cache. Maps filenames to either a thunk which will provide source code,</span><span class="s1"> 
+</span><span class="s5"># or a tuple (size, mtime, lines, fullname) once loaded.</span><span class="s1"> 
+cache = {} 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">clearcache(): 
+    </span><span class="s0">&quot;&quot;&quot;Clear the cache entirely.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">global </span><span class="s1">cache 
+    cache = {} 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">getlines(filename</span><span class="s2">, </span><span class="s1">module_globals=</span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Get the lines for a Python source file from the cache. 
+    Update the cache if it doesn't contain an entry for this file already.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">if </span><span class="s1">filename </span><span class="s2">in </span><span class="s1">cache: 
+        entry = cache[filename] 
+        </span><span class="s2">if </span><span class="s1">len(entry) != </span><span class="s4">1</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">cache[filename][</span><span class="s4">2</span><span class="s1">] 
+ 
+    </span><span class="s2">try</span><span class="s1">: 
+        </span><span class="s2">return </span><span class="s1">updatecache(filename</span><span class="s2">, </span><span class="s1">module_globals) 
+    </span><span class="s2">except </span><span class="s1">MemoryError: 
+        clearcache() 
+        </span><span class="s2">return </span><span class="s1">[] 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">checkcache(filename=</span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Discard cache entries that are out of date. 
+    (This is not checked upon each call!)&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">if </span><span class="s1">filename </span><span class="s2">is None</span><span class="s1">: 
+        filenames = list(cache.keys()) 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s2">if </span><span class="s1">filename </span><span class="s2">in </span><span class="s1">cache: 
+            filenames = [filename] 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return</span><span class="s1"> 
+ 
+    </span><span class="s2">for </span><span class="s1">filename </span><span class="s2">in </span><span class="s1">filenames: 
+        entry = cache[filename] 
+        </span><span class="s2">if </span><span class="s1">len(entry) == </span><span class="s4">1</span><span class="s1">: 
+            </span><span class="s5"># lazy cache entry, leave it lazy.</span><span class="s1"> 
+            </span><span class="s2">continue</span><span class="s1"> 
+        size</span><span class="s2">, </span><span class="s1">mtime</span><span class="s2">, </span><span class="s1">lines</span><span class="s2">, </span><span class="s1">fullname = entry 
+        </span><span class="s2">if </span><span class="s1">mtime </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">continue   </span><span class="s5"># no-op for files loaded via a __loader__</span><span class="s1"> 
+        </span><span class="s2">try</span><span class="s1">: 
+            stat = os.stat(fullname) 
+        </span><span class="s2">except </span><span class="s1">OSError: 
+            </span><span class="s2">del </span><span class="s1">cache[filename] 
+            </span><span class="s2">continue</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">size != stat.st_size </span><span class="s2">or </span><span class="s1">mtime != stat.st_mtime: 
+            </span><span class="s2">del </span><span class="s1">cache[filename] 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">updatecache(filename</span><span class="s2">, </span><span class="s1">module_globals=</span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Update a cache entry and return its list of lines. 
+    If something's wrong, print a message, discard the cache entry, 
+    and return an empty list.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">if </span><span class="s1">filename </span><span class="s2">in </span><span class="s1">cache: 
+        </span><span class="s2">if </span><span class="s1">len(cache[filename]) != </span><span class="s4">1</span><span class="s1">: 
+            </span><span class="s2">del </span><span class="s1">cache[filename] 
+    </span><span class="s2">if not </span><span class="s1">filename </span><span class="s2">or </span><span class="s1">(filename.startswith(</span><span class="s3">'&lt;'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">filename.endswith(</span><span class="s3">'&gt;'</span><span class="s1">)): 
+        </span><span class="s2">return </span><span class="s1">[] 
+ 
+    fullname = filename 
+    </span><span class="s2">try</span><span class="s1">: 
+        stat = os.stat(fullname) 
+    </span><span class="s2">except </span><span class="s1">OSError: 
+        basename = filename 
+ 
+        </span><span class="s5"># Realise a lazy loader based lookup if there is one</span><span class="s1"> 
+        </span><span class="s5"># otherwise try to lookup right now.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">lazycache(filename</span><span class="s2">, </span><span class="s1">module_globals): 
+            </span><span class="s2">try</span><span class="s1">: 
+                data = cache[filename][</span><span class="s4">0</span><span class="s1">]() 
+            </span><span class="s2">except </span><span class="s1">(ImportError</span><span class="s2">, </span><span class="s1">OSError): 
+                </span><span class="s2">pass</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">if </span><span class="s1">data </span><span class="s2">is None</span><span class="s1">: 
+                    </span><span class="s5"># No luck, the PEP302 loader cannot find the source</span><span class="s1"> 
+                    </span><span class="s5"># for this module.</span><span class="s1"> 
+                    </span><span class="s2">return </span><span class="s1">[] 
+                cache[filename] = ( 
+                    len(data)</span><span class="s2">, None,</span><span class="s1"> 
+                    [line+</span><span class="s3">'</span><span class="s2">\n</span><span class="s3">' </span><span class="s2">for </span><span class="s1">line </span><span class="s2">in </span><span class="s1">data.splitlines()]</span><span class="s2">, </span><span class="s1">fullname 
+                ) 
+                </span><span class="s2">return </span><span class="s1">cache[filename][</span><span class="s4">2</span><span class="s1">] 
+ 
+        </span><span class="s5"># Try looking through the module search path, which is only useful</span><span class="s1"> 
+        </span><span class="s5"># when handling a relative filename.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">os.path.isabs(filename): 
+            </span><span class="s2">return </span><span class="s1">[] 
+ 
+        </span><span class="s2">for </span><span class="s1">dirname </span><span class="s2">in </span><span class="s1">sys.path: 
+            </span><span class="s2">try</span><span class="s1">: 
+                fullname = os.path.join(dirname</span><span class="s2">, </span><span class="s1">basename) 
+            </span><span class="s2">except </span><span class="s1">(TypeError</span><span class="s2">, </span><span class="s1">AttributeError): 
+                </span><span class="s5"># Not sufficiently string-like to do anything useful with.</span><span class="s1"> 
+                </span><span class="s2">continue</span><span class="s1"> 
+            </span><span class="s2">try</span><span class="s1">: 
+                stat = os.stat(fullname) 
+                </span><span class="s2">break</span><span class="s1"> 
+            </span><span class="s2">except </span><span class="s1">OSError: 
+                </span><span class="s2">pass</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">[] 
+    </span><span class="s2">try</span><span class="s1">: 
+        </span><span class="s2">with </span><span class="s1">tokenize.open(fullname) </span><span class="s2">as </span><span class="s1">fp: 
+            lines = fp.readlines() 
+    </span><span class="s2">except </span><span class="s1">OSError: 
+        </span><span class="s2">return </span><span class="s1">[] 
+    </span><span class="s2">if </span><span class="s1">lines </span><span class="s2">and not </span><span class="s1">lines[-</span><span class="s4">1</span><span class="s1">].endswith(</span><span class="s3">'</span><span class="s2">\n</span><span class="s3">'</span><span class="s1">): 
+        lines[-</span><span class="s4">1</span><span class="s1">] += </span><span class="s3">'</span><span class="s2">\n</span><span class="s3">'</span><span class="s1"> 
+    size</span><span class="s2">, </span><span class="s1">mtime = stat.st_size</span><span class="s2">, </span><span class="s1">stat.st_mtime 
+    cache[filename] = size</span><span class="s2">, </span><span class="s1">mtime</span><span class="s2">, </span><span class="s1">lines</span><span class="s2">, </span><span class="s1">fullname 
+    </span><span class="s2">return </span><span class="s1">lines 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">lazycache(filename</span><span class="s2">, </span><span class="s1">module_globals): 
+    </span><span class="s0">&quot;&quot;&quot;Seed the cache for filename with module_globals. 
+ 
+    The module loader will be asked for the source only when getlines is 
+    called, not immediately. 
+ 
+    If there is an entry in the cache already, it is not altered. 
+ 
+    :return: True if a lazy load is registered in the cache, 
+        otherwise False. To register such a load a module loader with a 
+        get_source method must be found, the filename must be a cachable 
+        filename, and the filename must not be already cached. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">filename </span><span class="s2">in </span><span class="s1">cache: 
+        </span><span class="s2">if </span><span class="s1">len(cache[filename]) == </span><span class="s4">1</span><span class="s1">: 
+            </span><span class="s2">return True</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return False</span><span class="s1"> 
+    </span><span class="s2">if not </span><span class="s1">filename </span><span class="s2">or </span><span class="s1">(filename.startswith(</span><span class="s3">'&lt;'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">filename.endswith(</span><span class="s3">'&gt;'</span><span class="s1">)): 
+        </span><span class="s2">return False</span><span class="s1"> 
+    </span><span class="s5"># Try for a __loader__, if available</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">module_globals </span><span class="s2">and </span><span class="s3">'__loader__' </span><span class="s2">in </span><span class="s1">module_globals: 
+        name = module_globals.get(</span><span class="s3">'__name__'</span><span class="s1">) 
+        loader = module_globals[</span><span class="s3">'__loader__'</span><span class="s1">] 
+        get_source = getattr(loader</span><span class="s2">, </span><span class="s3">'get_source'</span><span class="s2">, None</span><span class="s1">) 
+ 
+        </span><span class="s2">if </span><span class="s1">name </span><span class="s2">and </span><span class="s1">get_source: 
+            get_lines = functools.partial(get_source</span><span class="s2">, </span><span class="s1">name) 
+            cache[filename] = (get_lines</span><span class="s2">,</span><span class="s1">) 
+            </span><span class="s2">return True</span><span class="s1"> 
+    </span><span class="s2">return False</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

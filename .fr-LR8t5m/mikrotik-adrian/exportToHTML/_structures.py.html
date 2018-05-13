@@ -1,0 +1,90 @@
+<html>
+<head>
+<title>_structures.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+_structures.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># This file is dual licensed under the terms of the Apache License, Version</span><span class="s1"> 
+</span><span class="s0"># 2.0, and the BSD License. See the LICENSE file in the root of this repository</span><span class="s1"> 
+</span><span class="s0"># for complete details.</span><span class="s1"> 
+</span><span class="s2">from </span><span class="s1">__future__ </span><span class="s2">import </span><span class="s1">absolute_import</span><span class="s2">, </span><span class="s1">division</span><span class="s2">, </span><span class="s1">print_function 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">Infinity(object): 
+ 
+    </span><span class="s2">def </span><span class="s1">__repr__(self): 
+        </span><span class="s2">return </span><span class="s3">&quot;Infinity&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__hash__(self): 
+        </span><span class="s2">return </span><span class="s1">hash(repr(self)) 
+ 
+    </span><span class="s2">def </span><span class="s1">__lt__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return False</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__le__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return False</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__eq__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return </span><span class="s1">isinstance(other</span><span class="s2">, </span><span class="s1">self.__class__) 
+ 
+    </span><span class="s2">def </span><span class="s1">__ne__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return not </span><span class="s1">isinstance(other</span><span class="s2">, </span><span class="s1">self.__class__) 
+ 
+    </span><span class="s2">def </span><span class="s1">__gt__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return True</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__ge__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return True</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__neg__(self): 
+        </span><span class="s2">return </span><span class="s1">NegativeInfinity 
+ 
+Infinity = Infinity() 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">NegativeInfinity(object): 
+ 
+    </span><span class="s2">def </span><span class="s1">__repr__(self): 
+        </span><span class="s2">return </span><span class="s3">&quot;-Infinity&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__hash__(self): 
+        </span><span class="s2">return </span><span class="s1">hash(repr(self)) 
+ 
+    </span><span class="s2">def </span><span class="s1">__lt__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return True</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__le__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return True</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__eq__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return </span><span class="s1">isinstance(other</span><span class="s2">, </span><span class="s1">self.__class__) 
+ 
+    </span><span class="s2">def </span><span class="s1">__ne__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return not </span><span class="s1">isinstance(other</span><span class="s2">, </span><span class="s1">self.__class__) 
+ 
+    </span><span class="s2">def </span><span class="s1">__gt__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return False</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__ge__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return False</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__neg__(self): 
+        </span><span class="s2">return </span><span class="s1">Infinity 
+ 
+NegativeInfinity = NegativeInfinity() 
+</span></pre>
+</body>
+</html>

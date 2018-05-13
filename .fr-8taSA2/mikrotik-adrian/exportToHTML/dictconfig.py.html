@@ -1,0 +1,589 @@
+<html>
+<head>
+<title>dictconfig.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+dictconfig.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># This is a copy of the Python logging.config.dictconfig module,</span><span class="s1"> 
+</span><span class="s0"># reproduced with permission. It is provided here for backwards</span><span class="s1"> 
+</span><span class="s0"># compatibility for Python versions prior to 2.7.</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># Copyright 2009-2010 by Vinay Sajip. All Rights Reserved.</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># Permission to use, copy, modify, and distribute this software and its</span><span class="s1"> 
+</span><span class="s0"># documentation for any purpose and without fee is hereby granted,</span><span class="s1"> 
+</span><span class="s0"># provided that the above copyright notice appear in all copies and that</span><span class="s1"> 
+</span><span class="s0"># both that copyright notice and this permission notice appear in</span><span class="s1"> 
+</span><span class="s0"># supporting documentation, and that the name of Vinay Sajip</span><span class="s1"> 
+</span><span class="s0"># not be used in advertising or publicity pertaining to distribution</span><span class="s1"> 
+</span><span class="s0"># of the software without specific, written prior permission.</span><span class="s1"> 
+</span><span class="s0"># VINAY SAJIP DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING</span><span class="s1"> 
+</span><span class="s0"># ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL</span><span class="s1"> 
+</span><span class="s0"># VINAY SAJIP BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR</span><span class="s1"> 
+</span><span class="s0"># ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER</span><span class="s1"> 
+</span><span class="s0"># IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT</span><span class="s1"> 
+</span><span class="s0"># OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span><span class="s1"> 
+</span><span class="s2">from </span><span class="s1">__future__ </span><span class="s2">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s2">import </span><span class="s1">logging.handlers 
+</span><span class="s2">import </span><span class="s1">re 
+</span><span class="s2">import </span><span class="s1">sys 
+</span><span class="s2">import </span><span class="s1">types 
+ 
+</span><span class="s2">from </span><span class="s1">pip._vendor </span><span class="s2">import </span><span class="s1">six 
+ 
+</span><span class="s0"># flake8: noqa</span><span class="s1"> 
+ 
+IDENTIFIER = re.compile(</span><span class="s3">'^[a-z_][a-z0-9_]*$'</span><span class="s2">, </span><span class="s1">re.I) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">valid_ident(s): 
+    m = IDENTIFIER.match(s) 
+    </span><span class="s2">if not </span><span class="s1">m: 
+        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Not a valid Python identifier: %r' </span><span class="s1">% s) 
+    </span><span class="s2">return True</span><span class="s1"> 
+ 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># This function is defined in logging only in recent versions of Python</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s2">try</span><span class="s1">: 
+    </span><span class="s2">from </span><span class="s1">logging </span><span class="s2">import </span><span class="s1">_checkLevel 
+</span><span class="s2">except </span><span class="s1">ImportError: 
+    </span><span class="s2">def </span><span class="s1">_checkLevel(level): 
+        </span><span class="s2">if </span><span class="s1">isinstance(level</span><span class="s2">, </span><span class="s1">int): 
+            rv = level 
+        </span><span class="s2">elif </span><span class="s1">str(level) == level: 
+            </span><span class="s2">if </span><span class="s1">level </span><span class="s2">not in </span><span class="s1">logging._levelNames: 
+                </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unknown level: %r' </span><span class="s1">% level) 
+            rv = logging._levelNames[level] 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s3">'Level not an integer or a '</span><span class="s1"> 
+                            </span><span class="s3">'valid string: %r' </span><span class="s1">% level) 
+        </span><span class="s2">return </span><span class="s1">rv 
+ 
+</span><span class="s0"># The ConvertingXXX classes are wrappers around standard Python containers,</span><span class="s1"> 
+</span><span class="s0"># and they serve to convert any suitable values in the container. The</span><span class="s1"> 
+</span><span class="s0"># conversion converts base dicts, lists and tuples to their wrapped</span><span class="s1"> 
+</span><span class="s0"># equivalents, whereas strings which match a conversion format are converted</span><span class="s1"> 
+</span><span class="s0"># appropriately.</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># Each wrapper should have a configurator attribute holding the actual</span><span class="s1"> 
+</span><span class="s0"># configurator to use for conversion.</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">ConvertingDict(dict): 
+    </span><span class="s4">&quot;&quot;&quot;A converting dictionary wrapper.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__getitem__(self</span><span class="s2">, </span><span class="s1">key): 
+        value = dict.__getitem__(self</span><span class="s2">, </span><span class="s1">key) 
+        result = self.configurator.convert(value) 
+        </span><span class="s0"># If the converted value is different, save for next time</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">value </span><span class="s2">is not </span><span class="s1">result: 
+            self[key] = result 
+            </span><span class="s2">if </span><span class="s1">type(result) </span><span class="s2">in </span><span class="s1">(ConvertingDict</span><span class="s2">, </span><span class="s1">ConvertingList</span><span class="s2">,</span><span class="s1"> 
+                                ConvertingTuple): 
+                result.parent = self 
+                result.key = key 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+    </span><span class="s2">def </span><span class="s1">get(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">default=</span><span class="s2">None</span><span class="s1">): 
+        value = dict.get(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">default) 
+        result = self.configurator.convert(value) 
+        </span><span class="s0"># If the converted value is different, save for next time</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">value </span><span class="s2">is not </span><span class="s1">result: 
+            self[key] = result 
+            </span><span class="s2">if </span><span class="s1">type(result) </span><span class="s2">in </span><span class="s1">(ConvertingDict</span><span class="s2">, </span><span class="s1">ConvertingList</span><span class="s2">,</span><span class="s1"> 
+                                ConvertingTuple): 
+                result.parent = self 
+                result.key = key 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+    </span><span class="s2">def </span><span class="s1">pop(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">default=</span><span class="s2">None</span><span class="s1">): 
+        value = dict.pop(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">default) 
+        result = self.configurator.convert(value) 
+        </span><span class="s2">if </span><span class="s1">value </span><span class="s2">is not </span><span class="s1">result: 
+            </span><span class="s2">if </span><span class="s1">type(result) </span><span class="s2">in </span><span class="s1">(ConvertingDict</span><span class="s2">, </span><span class="s1">ConvertingList</span><span class="s2">,</span><span class="s1"> 
+                                ConvertingTuple): 
+                result.parent = self 
+                result.key = key 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">ConvertingList(list): 
+    </span><span class="s4">&quot;&quot;&quot;A converting list wrapper.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">def </span><span class="s1">__getitem__(self</span><span class="s2">, </span><span class="s1">key): 
+        value = list.__getitem__(self</span><span class="s2">, </span><span class="s1">key) 
+        result = self.configurator.convert(value) 
+        </span><span class="s0"># If the converted value is different, save for next time</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">value </span><span class="s2">is not </span><span class="s1">result: 
+            self[key] = result 
+            </span><span class="s2">if </span><span class="s1">type(result) </span><span class="s2">in </span><span class="s1">(ConvertingDict</span><span class="s2">, </span><span class="s1">ConvertingList</span><span class="s2">,</span><span class="s1"> 
+                                ConvertingTuple): 
+                result.parent = self 
+                result.key = key 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+    </span><span class="s2">def </span><span class="s1">pop(self</span><span class="s2">, </span><span class="s1">idx=-</span><span class="s5">1</span><span class="s1">): 
+        value = list.pop(self</span><span class="s2">, </span><span class="s1">idx) 
+        result = self.configurator.convert(value) 
+        </span><span class="s2">if </span><span class="s1">value </span><span class="s2">is not </span><span class="s1">result: 
+            </span><span class="s2">if </span><span class="s1">type(result) </span><span class="s2">in </span><span class="s1">(ConvertingDict</span><span class="s2">, </span><span class="s1">ConvertingList</span><span class="s2">,</span><span class="s1"> 
+                                ConvertingTuple): 
+                result.parent = self 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">ConvertingTuple(tuple): 
+    </span><span class="s4">&quot;&quot;&quot;A converting tuple wrapper.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">def </span><span class="s1">__getitem__(self</span><span class="s2">, </span><span class="s1">key): 
+        value = tuple.__getitem__(self</span><span class="s2">, </span><span class="s1">key) 
+        result = self.configurator.convert(value) 
+        </span><span class="s2">if </span><span class="s1">value </span><span class="s2">is not </span><span class="s1">result: 
+            </span><span class="s2">if </span><span class="s1">type(result) </span><span class="s2">in </span><span class="s1">(ConvertingDict</span><span class="s2">, </span><span class="s1">ConvertingList</span><span class="s2">,</span><span class="s1"> 
+                                ConvertingTuple): 
+                result.parent = self 
+                result.key = key 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">BaseConfigurator(object): 
+    </span><span class="s4">&quot;&quot;&quot; 
+    The configurator base class which defines some useful defaults. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    CONVERT_PATTERN = re.compile(</span><span class="s3">r'^(?P&lt;prefix&gt;[a-z]+)://(?P&lt;suffix&gt;.*)$'</span><span class="s1">) 
+ 
+    WORD_PATTERN = re.compile(</span><span class="s3">r'^\s*(\w+)\s*'</span><span class="s1">) 
+    DOT_PATTERN = re.compile(</span><span class="s3">r'^\.\s*(\w+)\s*'</span><span class="s1">) 
+    INDEX_PATTERN = re.compile(</span><span class="s3">r'^\[\s*(\w+)\s*\]\s*'</span><span class="s1">) 
+    DIGIT_PATTERN = re.compile(</span><span class="s3">r'^\d+$'</span><span class="s1">) 
+ 
+    value_converters = { 
+        </span><span class="s3">'ext' </span><span class="s1">: </span><span class="s3">'ext_convert'</span><span class="s2">,</span><span class="s1"> 
+        </span><span class="s3">'cfg' </span><span class="s1">: </span><span class="s3">'cfg_convert'</span><span class="s2">,</span><span class="s1"> 
+    } 
+ 
+    </span><span class="s0"># We might want to use a different one, e.g. importlib</span><span class="s1"> 
+    importer = __import__ 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">config): 
+        self.config = ConvertingDict(config) 
+        self.config.configurator = self 
+ 
+    </span><span class="s2">def </span><span class="s1">resolve(self</span><span class="s2">, </span><span class="s1">s): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Resolve strings to objects using standard import and attribute 
+        syntax. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        name = s.split(</span><span class="s3">'.'</span><span class="s1">) 
+        used = name.pop(</span><span class="s5">0</span><span class="s1">) 
+        </span><span class="s2">try</span><span class="s1">: 
+            found = self.importer(used) 
+            </span><span class="s2">for </span><span class="s1">frag </span><span class="s2">in </span><span class="s1">name: 
+                used += </span><span class="s3">'.' </span><span class="s1">+ frag 
+                </span><span class="s2">try</span><span class="s1">: 
+                    found = getattr(found</span><span class="s2">, </span><span class="s1">frag) 
+                </span><span class="s2">except </span><span class="s1">AttributeError: 
+                    self.importer(used) 
+                    found = getattr(found</span><span class="s2">, </span><span class="s1">frag) 
+            </span><span class="s2">return </span><span class="s1">found 
+        </span><span class="s2">except </span><span class="s1">ImportError: 
+            e</span><span class="s2">, </span><span class="s1">tb = sys.exc_info()[</span><span class="s5">1</span><span class="s1">:] 
+            v = ValueError(</span><span class="s3">'Cannot resolve %r: %s' </span><span class="s1">% (s</span><span class="s2">, </span><span class="s1">e)) 
+            v.__cause__</span><span class="s2">, </span><span class="s1">v.__traceback__ = e</span><span class="s2">, </span><span class="s1">tb 
+            </span><span class="s2">raise </span><span class="s1">v 
+ 
+    </span><span class="s2">def </span><span class="s1">ext_convert(self</span><span class="s2">, </span><span class="s1">value): 
+        </span><span class="s4">&quot;&quot;&quot;Default converter for the ext:// protocol.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">self.resolve(value) 
+ 
+    </span><span class="s2">def </span><span class="s1">cfg_convert(self</span><span class="s2">, </span><span class="s1">value): 
+        </span><span class="s4">&quot;&quot;&quot;Default converter for the cfg:// protocol.&quot;&quot;&quot;</span><span class="s1"> 
+        rest = value 
+        m = self.WORD_PATTERN.match(rest) 
+        </span><span class="s2">if </span><span class="s1">m </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;Unable to convert %r&quot; </span><span class="s1">% value) 
+        </span><span class="s2">else</span><span class="s1">: 
+            rest = rest[m.end():] 
+            d = self.config[m.groups()[</span><span class="s5">0</span><span class="s1">]] 
+            </span><span class="s0"># print d, rest</span><span class="s1"> 
+            </span><span class="s2">while </span><span class="s1">rest: 
+                m = self.DOT_PATTERN.match(rest) 
+                </span><span class="s2">if </span><span class="s1">m: 
+                    d = d[m.groups()[</span><span class="s5">0</span><span class="s1">]] 
+                </span><span class="s2">else</span><span class="s1">: 
+                    m = self.INDEX_PATTERN.match(rest) 
+                    </span><span class="s2">if </span><span class="s1">m: 
+                        idx = m.groups()[</span><span class="s5">0</span><span class="s1">] 
+                        </span><span class="s2">if not </span><span class="s1">self.DIGIT_PATTERN.match(idx): 
+                            d = d[idx] 
+                        </span><span class="s2">else</span><span class="s1">: 
+                            </span><span class="s2">try</span><span class="s1">: 
+                                n = int(idx)  </span><span class="s0"># try as number first (most likely)</span><span class="s1"> 
+                                d = d[n] 
+                            </span><span class="s2">except </span><span class="s1">TypeError: 
+                                d = d[idx] 
+                </span><span class="s2">if </span><span class="s1">m: 
+                    rest = rest[m.end():] 
+                </span><span class="s2">else</span><span class="s1">: 
+                    </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to convert '</span><span class="s1"> 
+                                     </span><span class="s3">'%r at %r' </span><span class="s1">% (value</span><span class="s2">, </span><span class="s1">rest)) 
+        </span><span class="s0"># rest should be empty</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">d 
+ 
+    </span><span class="s2">def </span><span class="s1">convert(self</span><span class="s2">, </span><span class="s1">value): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Convert values to an appropriate type. dicts, lists and tuples are 
+        replaced by their converting alternatives. Strings are checked to 
+        see if they have a conversion format and are converted if they do. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">isinstance(value</span><span class="s2">, </span><span class="s1">ConvertingDict) </span><span class="s2">and </span><span class="s1">isinstance(value</span><span class="s2">, </span><span class="s1">dict): 
+            value = ConvertingDict(value) 
+            value.configurator = self 
+        </span><span class="s2">elif not </span><span class="s1">isinstance(value</span><span class="s2">, </span><span class="s1">ConvertingList) </span><span class="s2">and </span><span class="s1">isinstance(value</span><span class="s2">, </span><span class="s1">list): 
+            value = ConvertingList(value) 
+            value.configurator = self 
+        </span><span class="s2">elif not </span><span class="s1">isinstance(value</span><span class="s2">, </span><span class="s1">ConvertingTuple) </span><span class="s2">and</span><span class="s1">\ 
+                 isinstance(value</span><span class="s2">, </span><span class="s1">tuple): 
+            value = ConvertingTuple(value) 
+            value.configurator = self 
+        </span><span class="s2">elif </span><span class="s1">isinstance(value</span><span class="s2">, </span><span class="s1">six.string_types):  </span><span class="s0"># str for py3k</span><span class="s1"> 
+            m = self.CONVERT_PATTERN.match(value) 
+            </span><span class="s2">if </span><span class="s1">m: 
+                d = m.groupdict() 
+                prefix = d[</span><span class="s3">'prefix'</span><span class="s1">] 
+                converter = self.value_converters.get(prefix</span><span class="s2">, None</span><span class="s1">) 
+                </span><span class="s2">if </span><span class="s1">converter: 
+                    suffix = d[</span><span class="s3">'suffix'</span><span class="s1">] 
+                    converter = getattr(self</span><span class="s2">, </span><span class="s1">converter) 
+                    value = converter(suffix) 
+        </span><span class="s2">return </span><span class="s1">value 
+ 
+    </span><span class="s2">def </span><span class="s1">configure_custom(self</span><span class="s2">, </span><span class="s1">config): 
+        </span><span class="s4">&quot;&quot;&quot;Configure an object with a user-supplied factory.&quot;&quot;&quot;</span><span class="s1"> 
+        c = config.pop(</span><span class="s3">'()'</span><span class="s1">) 
+        </span><span class="s2">if not </span><span class="s1">hasattr(c</span><span class="s2">, </span><span class="s3">'__call__'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">hasattr(types</span><span class="s2">, </span><span class="s3">'ClassType'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">type(c) != types.ClassType: 
+            c = self.resolve(c) 
+        props = config.pop(</span><span class="s3">'.'</span><span class="s2">, None</span><span class="s1">) 
+        </span><span class="s0"># Check for valid identifiers</span><span class="s1"> 
+        kwargs = dict((k</span><span class="s2">, </span><span class="s1">config[k]) </span><span class="s2">for </span><span class="s1">k </span><span class="s2">in </span><span class="s1">config </span><span class="s2">if </span><span class="s1">valid_ident(k)) 
+        result = c(**kwargs) 
+        </span><span class="s2">if </span><span class="s1">props: 
+            </span><span class="s2">for </span><span class="s1">name</span><span class="s2">, </span><span class="s1">value </span><span class="s2">in </span><span class="s1">props.items(): 
+                setattr(result</span><span class="s2">, </span><span class="s1">name</span><span class="s2">, </span><span class="s1">value) 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+    </span><span class="s2">def </span><span class="s1">as_tuple(self</span><span class="s2">, </span><span class="s1">value): 
+        </span><span class="s4">&quot;&quot;&quot;Utility function which converts lists to tuples.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">isinstance(value</span><span class="s2">, </span><span class="s1">list): 
+            value = tuple(value) 
+        </span><span class="s2">return </span><span class="s1">value 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">DictConfigurator(BaseConfigurator): 
+    </span><span class="s4">&quot;&quot;&quot; 
+    Configure logging using a dictionary-like object to describe the 
+    configuration. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">configure(self): 
+        </span><span class="s4">&quot;&quot;&quot;Do the configuration.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+        config = self.config 
+        </span><span class="s2">if </span><span class="s3">'version' </span><span class="s2">not in </span><span class="s1">config: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;dictionary doesn't specify a version&quot;</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">config[</span><span class="s3">'version'</span><span class="s1">] != </span><span class="s5">1</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">&quot;Unsupported version: %s&quot; </span><span class="s1">% config[</span><span class="s3">'version'</span><span class="s1">]) 
+        incremental = config.pop(</span><span class="s3">'incremental'</span><span class="s2">, False</span><span class="s1">) 
+        EMPTY_DICT = {} 
+        logging._acquireLock() 
+        </span><span class="s2">try</span><span class="s1">: 
+            </span><span class="s2">if </span><span class="s1">incremental: 
+                handlers = config.get(</span><span class="s3">'handlers'</span><span class="s2">, </span><span class="s1">EMPTY_DICT) 
+                </span><span class="s0"># incremental handler config only if handler name</span><span class="s1"> 
+                </span><span class="s0"># ties in to logging._handlers (Python 2.7)</span><span class="s1"> 
+                </span><span class="s2">if </span><span class="s1">sys.version_info[:</span><span class="s5">2</span><span class="s1">] == (</span><span class="s5">2</span><span class="s2">, </span><span class="s5">7</span><span class="s1">): 
+                    </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">handlers: 
+                        </span><span class="s2">if </span><span class="s1">name </span><span class="s2">not in </span><span class="s1">logging._handlers: 
+                            </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'No handler found with '</span><span class="s1"> 
+                                             </span><span class="s3">'name %r'  </span><span class="s1">% name) 
+                        </span><span class="s2">else</span><span class="s1">: 
+                            </span><span class="s2">try</span><span class="s1">: 
+                                handler = logging._handlers[name] 
+                                handler_config = handlers[name] 
+                                level = handler_config.get(</span><span class="s3">'level'</span><span class="s2">, None</span><span class="s1">) 
+                                </span><span class="s2">if </span><span class="s1">level: 
+                                    handler.setLevel(_checkLevel(level)) 
+                            </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                                </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to configure handler '</span><span class="s1"> 
+                                                 </span><span class="s3">'%r: %s' </span><span class="s1">% (name</span><span class="s2">, </span><span class="s1">e)) 
+                loggers = config.get(</span><span class="s3">'loggers'</span><span class="s2">, </span><span class="s1">EMPTY_DICT) 
+                </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">loggers: 
+                    </span><span class="s2">try</span><span class="s1">: 
+                        self.configure_logger(name</span><span class="s2">, </span><span class="s1">loggers[name]</span><span class="s2">, True</span><span class="s1">) 
+                    </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to configure logger '</span><span class="s1"> 
+                                         </span><span class="s3">'%r: %s' </span><span class="s1">% (name</span><span class="s2">, </span><span class="s1">e)) 
+                root = config.get(</span><span class="s3">'root'</span><span class="s2">, None</span><span class="s1">) 
+                </span><span class="s2">if </span><span class="s1">root: 
+                    </span><span class="s2">try</span><span class="s1">: 
+                        self.configure_root(root</span><span class="s2">, True</span><span class="s1">) 
+                    </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to configure root '</span><span class="s1"> 
+                                         </span><span class="s3">'logger: %s' </span><span class="s1">% e) 
+            </span><span class="s2">else</span><span class="s1">: 
+                disable_existing = config.pop(</span><span class="s3">'disable_existing_loggers'</span><span class="s2">, True</span><span class="s1">) 
+ 
+                logging._handlers.clear() 
+                </span><span class="s2">del </span><span class="s1">logging._handlerList[:] 
+ 
+                </span><span class="s0"># Do formatters first - they don't refer to anything else</span><span class="s1"> 
+                formatters = config.get(</span><span class="s3">'formatters'</span><span class="s2">, </span><span class="s1">EMPTY_DICT) 
+                </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">formatters: 
+                    </span><span class="s2">try</span><span class="s1">: 
+                        formatters[name] = self.configure_formatter( 
+                                                            formatters[name]) 
+                    </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to configure '</span><span class="s1"> 
+                                         </span><span class="s3">'formatter %r: %s' </span><span class="s1">% (name</span><span class="s2">, </span><span class="s1">e)) 
+                </span><span class="s0"># Next, do filters - they don't refer to anything else, either</span><span class="s1"> 
+                filters = config.get(</span><span class="s3">'filters'</span><span class="s2">, </span><span class="s1">EMPTY_DICT) 
+                </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">filters: 
+                    </span><span class="s2">try</span><span class="s1">: 
+                        filters[name] = self.configure_filter(filters[name]) 
+                    </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to configure '</span><span class="s1"> 
+                                         </span><span class="s3">'filter %r: %s' </span><span class="s1">% (name</span><span class="s2">, </span><span class="s1">e)) 
+ 
+                </span><span class="s0"># Next, do handlers - they refer to formatters and filters</span><span class="s1"> 
+                </span><span class="s0"># As handlers can refer to other handlers, sort the keys</span><span class="s1"> 
+                </span><span class="s0"># to allow a deterministic order of configuration</span><span class="s1"> 
+                handlers = config.get(</span><span class="s3">'handlers'</span><span class="s2">, </span><span class="s1">EMPTY_DICT) 
+                </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">sorted(handlers): 
+                    </span><span class="s2">try</span><span class="s1">: 
+                        handler = self.configure_handler(handlers[name]) 
+                        handler.name = name 
+                        handlers[name] = handler 
+                    </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to configure handler '</span><span class="s1"> 
+                                         </span><span class="s3">'%r: %s' </span><span class="s1">% (name</span><span class="s2">, </span><span class="s1">e)) 
+                </span><span class="s0"># Next, do loggers - they refer to handlers and filters</span><span class="s1"> 
+ 
+                </span><span class="s0"># we don't want to lose the existing loggers,</span><span class="s1"> 
+                </span><span class="s0"># since other threads may have pointers to them.</span><span class="s1"> 
+                </span><span class="s0"># existing is set to contain all existing loggers,</span><span class="s1"> 
+                </span><span class="s0"># and as we go through the new configuration we</span><span class="s1"> 
+                </span><span class="s0"># remove any which are configured. At the end,</span><span class="s1"> 
+                </span><span class="s0"># what's left in existing is the set of loggers</span><span class="s1"> 
+                </span><span class="s0"># which were in the previous configuration but</span><span class="s1"> 
+                </span><span class="s0"># which are not in the new configuration.</span><span class="s1"> 
+                root = logging.root 
+                existing = list(root.manager.loggerDict) 
+                </span><span class="s0"># The list needs to be sorted so that we can</span><span class="s1"> 
+                </span><span class="s0"># avoid disabling child loggers of explicitly</span><span class="s1"> 
+                </span><span class="s0"># named loggers. With a sorted list it is easier</span><span class="s1"> 
+                </span><span class="s0"># to find the child loggers.</span><span class="s1"> 
+                existing.sort() 
+                </span><span class="s0"># We'll keep the list of existing loggers</span><span class="s1"> 
+                </span><span class="s0"># which are children of named loggers here...</span><span class="s1"> 
+                child_loggers = [] 
+                </span><span class="s0"># now set up the new ones...</span><span class="s1"> 
+                loggers = config.get(</span><span class="s3">'loggers'</span><span class="s2">, </span><span class="s1">EMPTY_DICT) 
+                </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">loggers: 
+                    </span><span class="s2">if </span><span class="s1">name </span><span class="s2">in </span><span class="s1">existing: 
+                        i = existing.index(name) 
+                        prefixed = name + </span><span class="s3">&quot;.&quot;</span><span class="s1"> 
+                        pflen = len(prefixed) 
+                        num_existing = len(existing) 
+                        i = i + </span><span class="s5">1  </span><span class="s0"># look at the entry after name</span><span class="s1"> 
+                        </span><span class="s2">while </span><span class="s1">(i &lt; num_existing) </span><span class="s2">and</span><span class="s1">\ 
+                              (existing[i][:pflen] == prefixed): 
+                            child_loggers.append(existing[i]) 
+                            i = i + </span><span class="s5">1</span><span class="s1"> 
+                        existing.remove(name) 
+                    </span><span class="s2">try</span><span class="s1">: 
+                        self.configure_logger(name</span><span class="s2">, </span><span class="s1">loggers[name]) 
+                    </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to configure logger '</span><span class="s1"> 
+                                         </span><span class="s3">'%r: %s' </span><span class="s1">% (name</span><span class="s2">, </span><span class="s1">e)) 
+ 
+                </span><span class="s0"># Disable any old loggers. There's no point deleting</span><span class="s1"> 
+                </span><span class="s0"># them as other threads may continue to hold references</span><span class="s1"> 
+                </span><span class="s0"># and by disabling them, you stop them doing any logging.</span><span class="s1"> 
+                </span><span class="s0"># However, don't disable children of named loggers, as that's</span><span class="s1"> 
+                </span><span class="s0"># probably not what was intended by the user.</span><span class="s1"> 
+                </span><span class="s2">for </span><span class="s1">log </span><span class="s2">in </span><span class="s1">existing: 
+                    logger = root.manager.loggerDict[log] 
+                    </span><span class="s2">if </span><span class="s1">log </span><span class="s2">in </span><span class="s1">child_loggers: 
+                        logger.level = logging.NOTSET 
+                        logger.handlers = [] 
+                        logger.propagate = </span><span class="s2">True</span><span class="s1"> 
+                    </span><span class="s2">elif </span><span class="s1">disable_existing: 
+                        logger.disabled = </span><span class="s2">True</span><span class="s1"> 
+ 
+                </span><span class="s0"># And finally, do the root logger</span><span class="s1"> 
+                root = config.get(</span><span class="s3">'root'</span><span class="s2">, None</span><span class="s1">) 
+                </span><span class="s2">if </span><span class="s1">root: 
+                    </span><span class="s2">try</span><span class="s1">: 
+                        self.configure_root(root) 
+                    </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                        </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to configure root '</span><span class="s1"> 
+                                         </span><span class="s3">'logger: %s' </span><span class="s1">% e) 
+        </span><span class="s2">finally</span><span class="s1">: 
+            logging._releaseLock() 
+ 
+    </span><span class="s2">def </span><span class="s1">configure_formatter(self</span><span class="s2">, </span><span class="s1">config): 
+        </span><span class="s4">&quot;&quot;&quot;Configure a formatter from a dictionary.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s3">'()' </span><span class="s2">in </span><span class="s1">config: 
+            factory = config[</span><span class="s3">'()'</span><span class="s1">]  </span><span class="s0"># for use in exception handler</span><span class="s1"> 
+            </span><span class="s2">try</span><span class="s1">: 
+                result = self.configure_custom(config) 
+            </span><span class="s2">except </span><span class="s1">TypeError </span><span class="s2">as </span><span class="s1">te: 
+                </span><span class="s2">if </span><span class="s3">&quot;'format'&quot; </span><span class="s2">not in </span><span class="s1">str(te): 
+                    </span><span class="s2">raise</span><span class="s1"> 
+                </span><span class="s0"># Name of parameter changed from fmt to format.</span><span class="s1"> 
+                </span><span class="s0"># Retry with old name.</span><span class="s1"> 
+                </span><span class="s0"># This is so that code can be used with older Python versions</span><span class="s1"> 
+                </span><span class="s0">#(e.g. by Django)</span><span class="s1"> 
+                config[</span><span class="s3">'fmt'</span><span class="s1">] = config.pop(</span><span class="s3">'format'</span><span class="s1">) 
+                config[</span><span class="s3">'()'</span><span class="s1">] = factory 
+                result = self.configure_custom(config) 
+        </span><span class="s2">else</span><span class="s1">: 
+            fmt = config.get(</span><span class="s3">'format'</span><span class="s2">, None</span><span class="s1">) 
+            dfmt = config.get(</span><span class="s3">'datefmt'</span><span class="s2">, None</span><span class="s1">) 
+            result = logging.Formatter(fmt</span><span class="s2">, </span><span class="s1">dfmt) 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+    </span><span class="s2">def </span><span class="s1">configure_filter(self</span><span class="s2">, </span><span class="s1">config): 
+        </span><span class="s4">&quot;&quot;&quot;Configure a filter from a dictionary.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s3">'()' </span><span class="s2">in </span><span class="s1">config: 
+            result = self.configure_custom(config) 
+        </span><span class="s2">else</span><span class="s1">: 
+            name = config.get(</span><span class="s3">'name'</span><span class="s2">, </span><span class="s3">''</span><span class="s1">) 
+            result = logging.Filter(name) 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+    </span><span class="s2">def </span><span class="s1">add_filters(self</span><span class="s2">, </span><span class="s1">filterer</span><span class="s2">, </span><span class="s1">filters): 
+        </span><span class="s4">&quot;&quot;&quot;Add filters to a filterer from a list of names.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">f </span><span class="s2">in </span><span class="s1">filters: 
+            </span><span class="s2">try</span><span class="s1">: 
+                filterer.addFilter(self.config[</span><span class="s3">'filters'</span><span class="s1">][f]) 
+            </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to add filter %r: %s' </span><span class="s1">% (f</span><span class="s2">, </span><span class="s1">e)) 
+ 
+    </span><span class="s2">def </span><span class="s1">configure_handler(self</span><span class="s2">, </span><span class="s1">config): 
+        </span><span class="s4">&quot;&quot;&quot;Configure a handler from a dictionary.&quot;&quot;&quot;</span><span class="s1"> 
+        formatter = config.pop(</span><span class="s3">'formatter'</span><span class="s2">, None</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">formatter: 
+            </span><span class="s2">try</span><span class="s1">: 
+                formatter = self.config[</span><span class="s3">'formatters'</span><span class="s1">][formatter] 
+            </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to set formatter '</span><span class="s1"> 
+                                 </span><span class="s3">'%r: %s' </span><span class="s1">% (formatter</span><span class="s2">, </span><span class="s1">e)) 
+        level = config.pop(</span><span class="s3">'level'</span><span class="s2">, None</span><span class="s1">) 
+        filters = config.pop(</span><span class="s3">'filters'</span><span class="s2">, None</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s3">'()' </span><span class="s2">in </span><span class="s1">config: 
+            c = config.pop(</span><span class="s3">'()'</span><span class="s1">) 
+            </span><span class="s2">if not </span><span class="s1">hasattr(c</span><span class="s2">, </span><span class="s3">'__call__'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">hasattr(types</span><span class="s2">, </span><span class="s3">'ClassType'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">type(c) != types.ClassType: 
+                c = self.resolve(c) 
+            factory = c 
+        </span><span class="s2">else</span><span class="s1">: 
+            klass = self.resolve(config.pop(</span><span class="s3">'class'</span><span class="s1">)) 
+            </span><span class="s0"># Special case for handler which refers to another handler</span><span class="s1"> 
+            </span><span class="s2">if </span><span class="s1">issubclass(klass</span><span class="s2">, </span><span class="s1">logging.handlers.MemoryHandler) </span><span class="s2">and</span><span class="s1">\ 
+                </span><span class="s3">'target' </span><span class="s2">in </span><span class="s1">config: 
+                </span><span class="s2">try</span><span class="s1">: 
+                    config[</span><span class="s3">'target'</span><span class="s1">] = self.config[</span><span class="s3">'handlers'</span><span class="s1">][config[</span><span class="s3">'target'</span><span class="s1">]] 
+                </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                    </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to set target handler '</span><span class="s1"> 
+                                     </span><span class="s3">'%r: %s' </span><span class="s1">% (config[</span><span class="s3">'target'</span><span class="s1">]</span><span class="s2">, </span><span class="s1">e)) 
+            </span><span class="s2">elif </span><span class="s1">issubclass(klass</span><span class="s2">, </span><span class="s1">logging.handlers.SMTPHandler) </span><span class="s2">and</span><span class="s1">\ 
+                </span><span class="s3">'mailhost' </span><span class="s2">in </span><span class="s1">config: 
+                config[</span><span class="s3">'mailhost'</span><span class="s1">] = self.as_tuple(config[</span><span class="s3">'mailhost'</span><span class="s1">]) 
+            </span><span class="s2">elif </span><span class="s1">issubclass(klass</span><span class="s2">, </span><span class="s1">logging.handlers.SysLogHandler) </span><span class="s2">and</span><span class="s1">\ 
+                </span><span class="s3">'address' </span><span class="s2">in </span><span class="s1">config: 
+                config[</span><span class="s3">'address'</span><span class="s1">] = self.as_tuple(config[</span><span class="s3">'address'</span><span class="s1">]) 
+            factory = klass 
+        kwargs = dict((k</span><span class="s2">, </span><span class="s1">config[k]) </span><span class="s2">for </span><span class="s1">k </span><span class="s2">in </span><span class="s1">config </span><span class="s2">if </span><span class="s1">valid_ident(k)) 
+        </span><span class="s2">try</span><span class="s1">: 
+            result = factory(**kwargs) 
+        </span><span class="s2">except </span><span class="s1">TypeError </span><span class="s2">as </span><span class="s1">te: 
+            </span><span class="s2">if </span><span class="s3">&quot;'stream'&quot; </span><span class="s2">not in </span><span class="s1">str(te): 
+                </span><span class="s2">raise</span><span class="s1"> 
+            </span><span class="s0"># The argument name changed from strm to stream</span><span class="s1"> 
+            </span><span class="s0"># Retry with old name.</span><span class="s1"> 
+            </span><span class="s0"># This is so that code can be used with older Python versions</span><span class="s1"> 
+            </span><span class="s0">#(e.g. by Django)</span><span class="s1"> 
+            kwargs[</span><span class="s3">'strm'</span><span class="s1">] = kwargs.pop(</span><span class="s3">'stream'</span><span class="s1">) 
+            result = factory(**kwargs) 
+        </span><span class="s2">if </span><span class="s1">formatter: 
+            result.setFormatter(formatter) 
+        </span><span class="s2">if </span><span class="s1">level </span><span class="s2">is not None</span><span class="s1">: 
+            result.setLevel(_checkLevel(level)) 
+        </span><span class="s2">if </span><span class="s1">filters: 
+            self.add_filters(result</span><span class="s2">, </span><span class="s1">filters) 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+    </span><span class="s2">def </span><span class="s1">add_handlers(self</span><span class="s2">, </span><span class="s1">logger</span><span class="s2">, </span><span class="s1">handlers): 
+        </span><span class="s4">&quot;&quot;&quot;Add handlers to a logger from a list of names.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">h </span><span class="s2">in </span><span class="s1">handlers: 
+            </span><span class="s2">try</span><span class="s1">: 
+                logger.addHandler(self.config[</span><span class="s3">'handlers'</span><span class="s1">][h]) 
+            </span><span class="s2">except </span><span class="s1">StandardError </span><span class="s2">as </span><span class="s1">e: 
+                </span><span class="s2">raise </span><span class="s1">ValueError(</span><span class="s3">'Unable to add handler %r: %s' </span><span class="s1">% (h</span><span class="s2">, </span><span class="s1">e)) 
+ 
+    </span><span class="s2">def </span><span class="s1">common_logger_config(self</span><span class="s2">, </span><span class="s1">logger</span><span class="s2">, </span><span class="s1">config</span><span class="s2">, </span><span class="s1">incremental=</span><span class="s2">False</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Perform configuration which is common to root and non-root loggers. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        level = config.get(</span><span class="s3">'level'</span><span class="s2">, None</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">level </span><span class="s2">is not None</span><span class="s1">: 
+            logger.setLevel(_checkLevel(level)) 
+        </span><span class="s2">if not </span><span class="s1">incremental: 
+            </span><span class="s0"># Remove any existing handlers</span><span class="s1"> 
+            </span><span class="s2">for </span><span class="s1">h </span><span class="s2">in </span><span class="s1">logger.handlers[:]: 
+                logger.removeHandler(h) 
+            handlers = config.get(</span><span class="s3">'handlers'</span><span class="s2">, None</span><span class="s1">) 
+            </span><span class="s2">if </span><span class="s1">handlers: 
+                self.add_handlers(logger</span><span class="s2">, </span><span class="s1">handlers) 
+            filters = config.get(</span><span class="s3">'filters'</span><span class="s2">, None</span><span class="s1">) 
+            </span><span class="s2">if </span><span class="s1">filters: 
+                self.add_filters(logger</span><span class="s2">, </span><span class="s1">filters) 
+ 
+    </span><span class="s2">def </span><span class="s1">configure_logger(self</span><span class="s2">, </span><span class="s1">name</span><span class="s2">, </span><span class="s1">config</span><span class="s2">, </span><span class="s1">incremental=</span><span class="s2">False</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot;Configure a non-root logger from a dictionary.&quot;&quot;&quot;</span><span class="s1"> 
+        logger = logging.getLogger(name) 
+        self.common_logger_config(logger</span><span class="s2">, </span><span class="s1">config</span><span class="s2">, </span><span class="s1">incremental) 
+        propagate = config.get(</span><span class="s3">'propagate'</span><span class="s2">, None</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">propagate </span><span class="s2">is not None</span><span class="s1">: 
+            logger.propagate = propagate 
+ 
+    </span><span class="s2">def </span><span class="s1">configure_root(self</span><span class="s2">, </span><span class="s1">config</span><span class="s2">, </span><span class="s1">incremental=</span><span class="s2">False</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot;Configure a root logger from a dictionary.&quot;&quot;&quot;</span><span class="s1"> 
+        root = logging.getLogger() 
+        self.common_logger_config(root</span><span class="s2">, </span><span class="s1">config</span><span class="s2">, </span><span class="s1">incremental) 
+ 
+dictConfigClass = DictConfigurator 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">dictConfig(config): 
+    </span><span class="s4">&quot;&quot;&quot;Configure logging using a dictionary.&quot;&quot;&quot;</span><span class="s1"> 
+    dictConfigClass(config).configure() 
+</span></pre>
+</body>
+</html>

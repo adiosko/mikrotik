@@ -1,0 +1,383 @@
+<html>
+<head>
+<title>pyopenssl.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+pyopenssl.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">'''SSL with SNI_-support for Python 2. Follow these instructions if you would 
+like to verify SSL certificates in Python 2. Note, the default libraries do 
+*not* do certificate checking; you need to do additional work to validate 
+certificates yourself. 
+ 
+This needs the following packages installed: 
+ 
+* pyOpenSSL (tested with 0.13) 
+* ndg-httpsclient (tested with 0.3.2) 
+* pyasn1 (tested with 0.1.6) 
+ 
+You can install them with the following command: 
+ 
+    pip install pyopenssl ndg-httpsclient pyasn1 
+ 
+To activate certificate checking, call 
+:func:`~urllib3.contrib.pyopenssl.inject_into_urllib3` from your Python code 
+before you begin making HTTP requests. This can be done in a ``sitecustomize`` 
+module, or at any other time before your application begins using ``urllib3``, 
+like this:: 
+ 
+    try: 
+        import urllib3.contrib.pyopenssl 
+        urllib3.contrib.pyopenssl.inject_into_urllib3() 
+    except ImportError: 
+        pass 
+ 
+Now you can use :mod:`urllib3` as you normally would, and it will support SNI 
+when the required modules are installed. 
+ 
+Activating this module also has the positive side effect of disabling SSL/TLS 
+compression in Python 2 (see `CRIME attack`_). 
+ 
+If you want to configure the default list of supported cipher suites, you can 
+set the ``urllib3.contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST`` variable. 
+ 
+Module Variables 
+---------------- 
+ 
+:var DEFAULT_SSL_CIPHER_LIST: The list of supported SSL/TLS cipher suites. 
+ 
+.. _sni: https://en.wikipedia.org/wiki/Server_Name_Indication 
+.. _crime attack: https://en.wikipedia.org/wiki/CRIME_(security_exploit) 
+ 
+'''</span><span class="s1"> 
+</span><span class="s2">from </span><span class="s1">__future__ </span><span class="s2">import </span><span class="s1">absolute_import 
+ 
+</span><span class="s2">try</span><span class="s1">: 
+    </span><span class="s2">from </span><span class="s1">ndg.httpsclient.ssl_peer_verification </span><span class="s2">import </span><span class="s1">SUBJ_ALT_NAME_SUPPORT 
+    </span><span class="s2">from </span><span class="s1">ndg.httpsclient.subj_alt_name </span><span class="s2">import </span><span class="s1">SubjectAltName </span><span class="s2">as </span><span class="s1">BaseSubjectAltName 
+</span><span class="s2">except </span><span class="s1">SyntaxError </span><span class="s2">as </span><span class="s1">e: 
+    </span><span class="s2">raise </span><span class="s1">ImportError(e) 
+ 
+</span><span class="s2">import </span><span class="s1">OpenSSL.SSL 
+</span><span class="s2">from </span><span class="s1">pyasn1.codec.der </span><span class="s2">import </span><span class="s1">decoder </span><span class="s2">as </span><span class="s1">der_decoder 
+</span><span class="s2">from </span><span class="s1">pyasn1.type </span><span class="s2">import </span><span class="s1">univ</span><span class="s2">, </span><span class="s1">constraint 
+</span><span class="s2">from </span><span class="s1">socket </span><span class="s2">import </span><span class="s1">timeout</span><span class="s2">, </span><span class="s1">error </span><span class="s2">as </span><span class="s1">SocketError 
+ 
+</span><span class="s2">try</span><span class="s1">:  </span><span class="s3"># Platform-specific: Python 2</span><span class="s1"> 
+    </span><span class="s2">from </span><span class="s1">socket </span><span class="s2">import </span><span class="s1">_fileobject 
+</span><span class="s2">except </span><span class="s1">ImportError:  </span><span class="s3"># Platform-specific: Python 3</span><span class="s1"> 
+    _fileobject = </span><span class="s2">None</span><span class="s1"> 
+    </span><span class="s2">from </span><span class="s1">urllib3.packages.backports.makefile </span><span class="s2">import </span><span class="s1">backport_makefile 
+ 
+</span><span class="s2">import </span><span class="s1">ssl 
+</span><span class="s2">import </span><span class="s1">select 
+</span><span class="s2">import </span><span class="s1">six 
+ 
+</span><span class="s2">from </span><span class="s1">.. </span><span class="s2">import </span><span class="s1">connection 
+</span><span class="s2">from </span><span class="s1">.. </span><span class="s2">import </span><span class="s1">util 
+ 
+__all__ = [</span><span class="s4">'inject_into_urllib3'</span><span class="s2">, </span><span class="s4">'extract_from_urllib3'</span><span class="s1">] 
+ 
+</span><span class="s3"># SNI only *really* works if we can read the subjectAltName of certificates.</span><span class="s1"> 
+HAS_SNI = SUBJ_ALT_NAME_SUPPORT 
+ 
+</span><span class="s3"># Map from urllib3 to PyOpenSSL compatible parameter-values.</span><span class="s1"> 
+_openssl_versions = { 
+    ssl.PROTOCOL_SSLv23: OpenSSL.SSL.SSLv23_METHOD</span><span class="s2">,</span><span class="s1"> 
+    ssl.PROTOCOL_TLSv1: OpenSSL.SSL.TLSv1_METHOD</span><span class="s2">,</span><span class="s1"> 
+} 
+ 
+</span><span class="s2">if </span><span class="s1">hasattr(ssl</span><span class="s2">, </span><span class="s4">'PROTOCOL_TLSv1_1'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">hasattr(OpenSSL.SSL</span><span class="s2">, </span><span class="s4">'TLSv1_1_METHOD'</span><span class="s1">): 
+    _openssl_versions[ssl.PROTOCOL_TLSv1_1] = OpenSSL.SSL.TLSv1_1_METHOD 
+ 
+</span><span class="s2">if </span><span class="s1">hasattr(ssl</span><span class="s2">, </span><span class="s4">'PROTOCOL_TLSv1_2'</span><span class="s1">) </span><span class="s2">and </span><span class="s1">hasattr(OpenSSL.SSL</span><span class="s2">, </span><span class="s4">'TLSv1_2_METHOD'</span><span class="s1">): 
+    _openssl_versions[ssl.PROTOCOL_TLSv1_2] = OpenSSL.SSL.TLSv1_2_METHOD 
+ 
+</span><span class="s2">try</span><span class="s1">: 
+    _openssl_versions.update({ssl.PROTOCOL_SSLv3: OpenSSL.SSL.SSLv3_METHOD}) 
+</span><span class="s2">except </span><span class="s1">AttributeError: 
+    </span><span class="s2">pass</span><span class="s1"> 
+ 
+_openssl_verify = { 
+    ssl.CERT_NONE: OpenSSL.SSL.VERIFY_NONE</span><span class="s2">,</span><span class="s1"> 
+    ssl.CERT_OPTIONAL: OpenSSL.SSL.VERIFY_PEER</span><span class="s2">,</span><span class="s1"> 
+    ssl.CERT_REQUIRED: 
+        OpenSSL.SSL.VERIFY_PEER + OpenSSL.SSL.VERIFY_FAIL_IF_NO_PEER_CERT</span><span class="s2">,</span><span class="s1"> 
+} 
+ 
+DEFAULT_SSL_CIPHER_LIST = util.ssl_.DEFAULT_CIPHERS.encode(</span><span class="s4">'ascii'</span><span class="s1">) 
+ 
+</span><span class="s3"># OpenSSL will only write 16K at a time</span><span class="s1"> 
+SSL_WRITE_BLOCKSIZE = </span><span class="s5">16384</span><span class="s1"> 
+ 
+orig_util_HAS_SNI = util.HAS_SNI 
+orig_connection_ssl_wrap_socket = connection.ssl_wrap_socket 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">inject_into_urllib3(): 
+    </span><span class="s0">'Monkey-patch urllib3 with PyOpenSSL-backed SSL-support.'</span><span class="s1"> 
+ 
+    connection.ssl_wrap_socket = ssl_wrap_socket 
+    util.HAS_SNI = HAS_SNI 
+    util.IS_PYOPENSSL = </span><span class="s2">True</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">extract_from_urllib3(): 
+    </span><span class="s0">'Undo monkey-patching by :func:`inject_into_urllib3`.'</span><span class="s1"> 
+ 
+    connection.ssl_wrap_socket = orig_connection_ssl_wrap_socket 
+    util.HAS_SNI = orig_util_HAS_SNI 
+    util.IS_PYOPENSSL = </span><span class="s2">False</span><span class="s1"> 
+ 
+ 
+</span><span class="s3"># Note: This is a slightly bug-fixed version of same from ndg-httpsclient.</span><span class="s1"> 
+</span><span class="s2">class </span><span class="s1">SubjectAltName(BaseSubjectAltName): 
+    </span><span class="s0">'''ASN.1 implementation for subjectAltNames support'''</span><span class="s1"> 
+ 
+    </span><span class="s3"># There is no limit to how many SAN certificates a certificate may have,</span><span class="s1"> 
+    </span><span class="s3">#   however this needs to have some limit so we'll set an arbitrarily high</span><span class="s1"> 
+    </span><span class="s3">#   limit.</span><span class="s1"> 
+    sizeSpec = univ.SequenceOf.sizeSpec + \ 
+        constraint.ValueSizeConstraint(</span><span class="s5">1</span><span class="s2">, </span><span class="s5">1024</span><span class="s1">) 
+ 
+ 
+</span><span class="s3"># Note: This is a slightly bug-fixed version of same from ndg-httpsclient.</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">get_subj_alt_name(peer_cert): 
+    </span><span class="s3"># Search through extensions</span><span class="s1"> 
+    dns_name = [] 
+    </span><span class="s2">if not </span><span class="s1">SUBJ_ALT_NAME_SUPPORT: 
+        </span><span class="s2">return </span><span class="s1">dns_name 
+ 
+    general_names = SubjectAltName() 
+    </span><span class="s2">for </span><span class="s1">i </span><span class="s2">in </span><span class="s1">range(peer_cert.get_extension_count()): 
+        ext = peer_cert.get_extension(i) 
+        ext_name = ext.get_short_name() 
+        </span><span class="s2">if </span><span class="s1">ext_name != </span><span class="s6">b'subjectAltName'</span><span class="s1">: 
+            </span><span class="s2">continue</span><span class="s1"> 
+ 
+        </span><span class="s3"># PyOpenSSL returns extension data in ASN.1 encoded form</span><span class="s1"> 
+        ext_dat = ext.get_data() 
+        decoded_dat = der_decoder.decode(ext_dat</span><span class="s2">,</span><span class="s1"> 
+                                         asn1Spec=general_names) 
+ 
+        </span><span class="s2">for </span><span class="s1">name </span><span class="s2">in </span><span class="s1">decoded_dat: 
+            </span><span class="s2">if not </span><span class="s1">isinstance(name</span><span class="s2">, </span><span class="s1">SubjectAltName): 
+                </span><span class="s2">continue</span><span class="s1"> 
+            </span><span class="s2">for </span><span class="s1">entry </span><span class="s2">in </span><span class="s1">range(len(name)): 
+                component = name.getComponentByPosition(entry) 
+                </span><span class="s2">if </span><span class="s1">component.getName() != </span><span class="s4">'dNSName'</span><span class="s1">: 
+                    </span><span class="s2">continue</span><span class="s1"> 
+                dns_name.append(str(component.getComponent())) 
+ 
+    </span><span class="s2">return </span><span class="s1">dns_name 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">WrappedSocket(object): 
+    </span><span class="s0">'''API-compatibility wrapper for Python OpenSSL's Connection-class. 
+ 
+    Note: _makefile_refs, _drop() and _reuse() are needed for the garbage 
+    collector of pypy. 
+    '''</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">connection</span><span class="s2">, </span><span class="s1">socket</span><span class="s2">, </span><span class="s1">suppress_ragged_eofs=</span><span class="s2">True</span><span class="s1">): 
+        self.connection = connection 
+        self.socket = socket 
+        self.suppress_ragged_eofs = suppress_ragged_eofs 
+        self._makefile_refs = </span><span class="s5">0</span><span class="s1"> 
+        self._closed = </span><span class="s2">False</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">fileno(self): 
+        </span><span class="s2">return </span><span class="s1">self.socket.fileno() 
+ 
+    </span><span class="s3"># Copy-pasted from Python 3.5 source code</span><span class="s1"> 
+    </span><span class="s2">def </span><span class="s1">_decref_socketios(self): 
+        </span><span class="s2">if </span><span class="s1">self._makefile_refs &gt; </span><span class="s5">0</span><span class="s1">: 
+            self._makefile_refs -= </span><span class="s5">1</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">self._closed: 
+            self.close() 
+ 
+    </span><span class="s2">def </span><span class="s1">recv(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwargs): 
+        </span><span class="s2">try</span><span class="s1">: 
+            data = self.connection.recv(*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+        </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.SysCallError </span><span class="s2">as </span><span class="s1">e: 
+            </span><span class="s2">if </span><span class="s1">self.suppress_ragged_eofs </span><span class="s2">and </span><span class="s1">e.args == (-</span><span class="s5">1</span><span class="s2">, </span><span class="s4">'Unexpected EOF'</span><span class="s1">): 
+                </span><span class="s2">return </span><span class="s6">b''</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">raise </span><span class="s1">SocketError(str(e)) 
+        </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.ZeroReturnError </span><span class="s2">as </span><span class="s1">e: 
+            </span><span class="s2">if </span><span class="s1">self.connection.get_shutdown() == OpenSSL.SSL.RECEIVED_SHUTDOWN: 
+                </span><span class="s2">return </span><span class="s6">b''</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">raise</span><span class="s1"> 
+        </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.WantReadError: 
+            rd</span><span class="s2">, </span><span class="s1">wd</span><span class="s2">, </span><span class="s1">ed = select.select( 
+                [self.socket]</span><span class="s2">, </span><span class="s1">[]</span><span class="s2">, </span><span class="s1">[]</span><span class="s2">, </span><span class="s1">self.socket.gettimeout()) 
+            </span><span class="s2">if not </span><span class="s1">rd: 
+                </span><span class="s2">raise </span><span class="s1">timeout(</span><span class="s4">'The read operation timed out'</span><span class="s1">) 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">return </span><span class="s1">self.recv(*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">data 
+ 
+    </span><span class="s2">def </span><span class="s1">recv_into(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwargs): 
+        </span><span class="s2">try</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">self.connection.recv_into(*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+        </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.SysCallError </span><span class="s2">as </span><span class="s1">e: 
+            </span><span class="s2">if </span><span class="s1">self.suppress_ragged_eofs </span><span class="s2">and </span><span class="s1">e.args == (-</span><span class="s5">1</span><span class="s2">, </span><span class="s4">'Unexpected EOF'</span><span class="s1">): 
+                </span><span class="s2">return </span><span class="s5">0</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">raise </span><span class="s1">SocketError(str(e)) 
+        </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.ZeroReturnError </span><span class="s2">as </span><span class="s1">e: 
+            </span><span class="s2">if </span><span class="s1">self.connection.get_shutdown() == OpenSSL.SSL.RECEIVED_SHUTDOWN: 
+                </span><span class="s2">return </span><span class="s5">0</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">raise</span><span class="s1"> 
+        </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.WantReadError: 
+            rd</span><span class="s2">, </span><span class="s1">wd</span><span class="s2">, </span><span class="s1">ed = select.select( 
+                [self.socket]</span><span class="s2">, </span><span class="s1">[]</span><span class="s2">, </span><span class="s1">[]</span><span class="s2">, </span><span class="s1">self.socket.gettimeout()) 
+            </span><span class="s2">if not </span><span class="s1">rd: 
+                </span><span class="s2">raise </span><span class="s1">timeout(</span><span class="s4">'The read operation timed out'</span><span class="s1">) 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">return </span><span class="s1">self.recv_into(*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+ 
+    </span><span class="s2">def </span><span class="s1">settimeout(self</span><span class="s2">, </span><span class="s1">timeout): 
+        </span><span class="s2">return </span><span class="s1">self.socket.settimeout(timeout) 
+ 
+    </span><span class="s2">def </span><span class="s1">_send_until_done(self</span><span class="s2">, </span><span class="s1">data): 
+        </span><span class="s2">while True</span><span class="s1">: 
+            </span><span class="s2">try</span><span class="s1">: 
+                </span><span class="s2">return </span><span class="s1">self.connection.send(data) 
+            </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.WantWriteError: 
+                _</span><span class="s2">, </span><span class="s1">wlist</span><span class="s2">, </span><span class="s1">_ = select.select([]</span><span class="s2">, </span><span class="s1">[self.socket]</span><span class="s2">, </span><span class="s1">[]</span><span class="s2">,</span><span class="s1"> 
+                                            self.socket.gettimeout()) 
+                </span><span class="s2">if not </span><span class="s1">wlist: 
+                    </span><span class="s2">raise </span><span class="s1">timeout() 
+                </span><span class="s2">continue</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">sendall(self</span><span class="s2">, </span><span class="s1">data): 
+        total_sent = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s2">while </span><span class="s1">total_sent &lt; len(data): 
+            sent = self._send_until_done(data[total_sent:total_sent + SSL_WRITE_BLOCKSIZE]) 
+            total_sent += sent 
+ 
+    </span><span class="s2">def </span><span class="s1">shutdown(self): 
+        </span><span class="s3"># FIXME rethrow compatible exceptions should we ever use this</span><span class="s1"> 
+        self.connection.shutdown() 
+ 
+    </span><span class="s2">def </span><span class="s1">close(self): 
+        </span><span class="s2">if </span><span class="s1">self._makefile_refs &lt; </span><span class="s5">1</span><span class="s1">: 
+            </span><span class="s2">try</span><span class="s1">: 
+                self._closed = </span><span class="s2">True</span><span class="s1"> 
+                </span><span class="s2">return </span><span class="s1">self.connection.close() 
+            </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.Error: 
+                </span><span class="s2">return</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            self._makefile_refs -= </span><span class="s5">1</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">getpeercert(self</span><span class="s2">, </span><span class="s1">binary_form=</span><span class="s2">False</span><span class="s1">): 
+        x509 = self.connection.get_peer_certificate() 
+ 
+        </span><span class="s2">if not </span><span class="s1">x509: 
+            </span><span class="s2">return </span><span class="s1">x509 
+ 
+        </span><span class="s2">if </span><span class="s1">binary_form: 
+            </span><span class="s2">return </span><span class="s1">OpenSSL.crypto.dump_certificate( 
+                OpenSSL.crypto.FILETYPE_ASN1</span><span class="s2">,</span><span class="s1"> 
+                x509) 
+ 
+        </span><span class="s2">return </span><span class="s1">{ 
+            </span><span class="s4">'subject'</span><span class="s1">: ( 
+                ((</span><span class="s4">'commonName'</span><span class="s2">, </span><span class="s1">x509.get_subject().CN)</span><span class="s2">,</span><span class="s1">)</span><span class="s2">,</span><span class="s1"> 
+            )</span><span class="s2">,</span><span class="s1"> 
+            </span><span class="s4">'subjectAltName'</span><span class="s1">: [ 
+                (</span><span class="s4">'DNS'</span><span class="s2">, </span><span class="s1">value) 
+                </span><span class="s2">for </span><span class="s1">value </span><span class="s2">in </span><span class="s1">get_subj_alt_name(x509) 
+            ] 
+        } 
+ 
+    </span><span class="s2">def </span><span class="s1">_reuse(self): 
+        self._makefile_refs += </span><span class="s5">1</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">_drop(self): 
+        </span><span class="s2">if </span><span class="s1">self._makefile_refs &lt; </span><span class="s5">1</span><span class="s1">: 
+            self.close() 
+        </span><span class="s2">else</span><span class="s1">: 
+            self._makefile_refs -= </span><span class="s5">1</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">if </span><span class="s1">_fileobject:  </span><span class="s3"># Platform-specific: Python 2</span><span class="s1"> 
+    </span><span class="s2">def </span><span class="s1">makefile(self</span><span class="s2">, </span><span class="s1">mode</span><span class="s2">, </span><span class="s1">bufsize=-</span><span class="s5">1</span><span class="s1">): 
+        self._makefile_refs += </span><span class="s5">1</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">_fileobject(self</span><span class="s2">, </span><span class="s1">mode</span><span class="s2">, </span><span class="s1">bufsize</span><span class="s2">, </span><span class="s1">close=</span><span class="s2">True</span><span class="s1">) 
+</span><span class="s2">else</span><span class="s1">:  </span><span class="s3"># Platform-specific: Python 3</span><span class="s1"> 
+    makefile = backport_makefile 
+ 
+WrappedSocket.makefile = makefile 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">_verify_callback(cnx</span><span class="s2">, </span><span class="s1">x509</span><span class="s2">, </span><span class="s1">err_no</span><span class="s2">, </span><span class="s1">err_depth</span><span class="s2">, </span><span class="s1">return_code): 
+    </span><span class="s2">return </span><span class="s1">err_no == </span><span class="s5">0</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">ssl_wrap_socket(sock</span><span class="s2">, </span><span class="s1">keyfile=</span><span class="s2">None, </span><span class="s1">certfile=</span><span class="s2">None, </span><span class="s1">cert_reqs=</span><span class="s2">None,</span><span class="s1"> 
+                    ca_certs=</span><span class="s2">None, </span><span class="s1">server_hostname=</span><span class="s2">None,</span><span class="s1"> 
+                    ssl_version=</span><span class="s2">None, </span><span class="s1">ca_cert_dir=</span><span class="s2">None</span><span class="s1">): 
+    ctx = OpenSSL.SSL.Context(_openssl_versions[ssl_version]) 
+    </span><span class="s2">if </span><span class="s1">certfile: 
+        keyfile = keyfile </span><span class="s2">or </span><span class="s1">certfile  </span><span class="s3"># Match behaviour of the normal python ssl library</span><span class="s1"> 
+        ctx.use_certificate_file(certfile) 
+    </span><span class="s2">if </span><span class="s1">keyfile: 
+        ctx.use_privatekey_file(keyfile) 
+    </span><span class="s2">if </span><span class="s1">cert_reqs != ssl.CERT_NONE: 
+        ctx.set_verify(_openssl_verify[cert_reqs]</span><span class="s2">, </span><span class="s1">_verify_callback) 
+    </span><span class="s2">if </span><span class="s1">ca_certs </span><span class="s2">or </span><span class="s1">ca_cert_dir: 
+        </span><span class="s2">try</span><span class="s1">: 
+            ctx.load_verify_locations(ca_certs</span><span class="s2">, </span><span class="s1">ca_cert_dir) 
+        </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.Error </span><span class="s2">as </span><span class="s1">e: 
+            </span><span class="s2">raise </span><span class="s1">ssl.SSLError(</span><span class="s4">'bad ca_certs: %r' </span><span class="s1">% ca_certs</span><span class="s2">, </span><span class="s1">e) 
+    </span><span class="s2">else</span><span class="s1">: 
+        ctx.set_default_verify_paths() 
+ 
+    </span><span class="s3"># Disable TLS compression to mitigate CRIME attack (issue #309)</span><span class="s1"> 
+    OP_NO_COMPRESSION = </span><span class="s5">0x20000</span><span class="s1"> 
+    ctx.set_options(OP_NO_COMPRESSION) 
+ 
+    </span><span class="s3"># Set list of supported ciphersuites.</span><span class="s1"> 
+    ctx.set_cipher_list(DEFAULT_SSL_CIPHER_LIST) 
+ 
+    cnx = OpenSSL.SSL.Connection(ctx</span><span class="s2">, </span><span class="s1">sock) 
+    </span><span class="s2">if </span><span class="s1">isinstance(server_hostname</span><span class="s2">, </span><span class="s1">six.text_type):  </span><span class="s3"># Platform-specific: Python 3</span><span class="s1"> 
+        server_hostname = server_hostname.encode(</span><span class="s4">'utf-8'</span><span class="s1">) 
+    cnx.set_tlsext_host_name(server_hostname) 
+    cnx.set_connect_state() 
+    </span><span class="s2">while True</span><span class="s1">: 
+        </span><span class="s2">try</span><span class="s1">: 
+            cnx.do_handshake() 
+        </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.WantReadError: 
+            rd</span><span class="s2">, </span><span class="s1">_</span><span class="s2">, </span><span class="s1">_ = select.select([sock]</span><span class="s2">, </span><span class="s1">[]</span><span class="s2">, </span><span class="s1">[]</span><span class="s2">, </span><span class="s1">sock.gettimeout()) 
+            </span><span class="s2">if not </span><span class="s1">rd: 
+                </span><span class="s2">raise </span><span class="s1">timeout(</span><span class="s4">'select timed out'</span><span class="s1">) 
+            </span><span class="s2">continue</span><span class="s1"> 
+        </span><span class="s2">except </span><span class="s1">OpenSSL.SSL.Error </span><span class="s2">as </span><span class="s1">e: 
+            </span><span class="s2">raise </span><span class="s1">ssl.SSLError(</span><span class="s4">'bad handshake: %r' </span><span class="s1">% e) 
+        </span><span class="s2">break</span><span class="s1"> 
+ 
+    </span><span class="s2">return </span><span class="s1">WrappedSocket(cnx</span><span class="s2">, </span><span class="s1">sock) 
+</span></pre>
+</body>
+</html>

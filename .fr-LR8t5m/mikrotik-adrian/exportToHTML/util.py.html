@@ -1,0 +1,201 @@
+<html>
+<head>
+<title>util.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+util.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Utility functions.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">base64 
+</span><span class="s2">import </span><span class="s1">hashlib 
+</span><span class="s2">import </span><span class="s1">json 
+</span><span class="s2">import </span><span class="s1">os 
+</span><span class="s2">import </span><span class="s1">sys 
+</span><span class="s2">from </span><span class="s1">collections </span><span class="s2">import </span><span class="s1">OrderedDict 
+ 
+__all__ = [</span><span class="s3">'urlsafe_b64encode'</span><span class="s2">, </span><span class="s3">'urlsafe_b64decode'</span><span class="s2">, </span><span class="s3">'utf8'</span><span class="s2">,</span><span class="s1"> 
+           </span><span class="s3">'to_json'</span><span class="s2">, </span><span class="s3">'from_json'</span><span class="s2">, </span><span class="s3">'matches_requirement'</span><span class="s1">] 
+ 
+ 
+</span><span class="s4"># For encoding ascii back and forth between bytestrings, as is repeatedly</span><span class="s1"> 
+</span><span class="s4"># necessary in JSON-based crypto under Python 3</span><span class="s1"> 
+</span><span class="s2">if </span><span class="s1">sys.version_info[</span><span class="s5">0</span><span class="s1">] &lt; </span><span class="s5">3</span><span class="s1">: 
+    text_type = unicode  </span><span class="s4"># noqa: F821</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">native(s): 
+        </span><span class="s2">return </span><span class="s1">s 
+</span><span class="s2">else</span><span class="s1">: 
+    text_type = str 
+ 
+    </span><span class="s2">def </span><span class="s1">native(s): 
+        </span><span class="s2">if </span><span class="s1">isinstance(s</span><span class="s2">, </span><span class="s1">bytes): 
+            </span><span class="s2">return </span><span class="s1">s.decode(</span><span class="s3">'ascii'</span><span class="s1">) 
+        </span><span class="s2">return </span><span class="s1">s 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">urlsafe_b64encode(data): 
+    </span><span class="s0">&quot;&quot;&quot;urlsafe_b64encode without padding&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">base64.urlsafe_b64encode(data).rstrip(binary(</span><span class="s3">'='</span><span class="s1">)) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">urlsafe_b64decode(data): 
+    </span><span class="s0">&quot;&quot;&quot;urlsafe_b64decode without padding&quot;&quot;&quot;</span><span class="s1"> 
+    pad = </span><span class="s6">b'=' </span><span class="s1">* (</span><span class="s5">4 </span><span class="s1">- (len(data) &amp; </span><span class="s5">3</span><span class="s1">)) 
+    </span><span class="s2">return </span><span class="s1">base64.urlsafe_b64decode(data + pad) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">to_json(o): 
+    </span><span class="s0">&quot;&quot;&quot;Convert given data to JSON.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">json.dumps(o</span><span class="s2">, </span><span class="s1">sort_keys=</span><span class="s2">True</span><span class="s1">) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">from_json(j): 
+    </span><span class="s0">&quot;&quot;&quot;Decode a JSON payload.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">return </span><span class="s1">json.loads(j) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">open_for_csv(name</span><span class="s2">, </span><span class="s1">mode): 
+    </span><span class="s2">if </span><span class="s1">sys.version_info[</span><span class="s5">0</span><span class="s1">] &lt; </span><span class="s5">3</span><span class="s1">: 
+        nl = {} 
+        bin = </span><span class="s3">'b'</span><span class="s1"> 
+    </span><span class="s2">else</span><span class="s1">: 
+        nl = {</span><span class="s3">'newline'</span><span class="s1">: </span><span class="s3">''</span><span class="s1">} 
+        bin = </span><span class="s3">''</span><span class="s1"> 
+ 
+    </span><span class="s2">return </span><span class="s1">open(name</span><span class="s2">, </span><span class="s1">mode + bin</span><span class="s2">, </span><span class="s1">**nl) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">utf8(data): 
+    </span><span class="s0">&quot;&quot;&quot;Utf-8 encode data.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">isinstance(data</span><span class="s2">, </span><span class="s1">text_type): 
+        </span><span class="s2">return </span><span class="s1">data.encode(</span><span class="s3">'utf-8'</span><span class="s1">) 
+    </span><span class="s2">return </span><span class="s1">data 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">binary(s): 
+    </span><span class="s2">if </span><span class="s1">isinstance(s</span><span class="s2">, </span><span class="s1">text_type): 
+        </span><span class="s2">return </span><span class="s1">s.encode(</span><span class="s3">'ascii'</span><span class="s1">) 
+    </span><span class="s2">return </span><span class="s1">s 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">HashingFile(object): 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">path</span><span class="s2">, </span><span class="s1">mode</span><span class="s2">, </span><span class="s1">hashtype=</span><span class="s3">'sha256'</span><span class="s1">): 
+        self.fd = open(path</span><span class="s2">, </span><span class="s1">mode) 
+        self.hashtype = hashtype 
+        self.hash = hashlib.new(hashtype) 
+        self.length = </span><span class="s5">0</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">write(self</span><span class="s2">, </span><span class="s1">data): 
+        self.hash.update(data) 
+        self.length += len(data) 
+        self.fd.write(data) 
+ 
+    </span><span class="s2">def </span><span class="s1">close(self): 
+        self.fd.close() 
+ 
+    </span><span class="s2">def </span><span class="s1">digest(self): 
+        </span><span class="s2">if </span><span class="s1">self.hashtype == </span><span class="s3">'md5'</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">self.hash.hexdigest() 
+        digest = self.hash.digest() 
+        </span><span class="s2">return </span><span class="s1">self.hashtype + </span><span class="s3">'=' </span><span class="s1">+ native(urlsafe_b64encode(digest)) 
+ 
+    </span><span class="s2">def </span><span class="s1">__enter__(self): 
+        </span><span class="s2">return </span><span class="s1">self 
+ 
+    </span><span class="s2">def </span><span class="s1">__exit__(self</span><span class="s2">, </span><span class="s1">exc_type</span><span class="s2">, </span><span class="s1">exc_val</span><span class="s2">, </span><span class="s1">exc_tb): 
+        self.fd.close() 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">OrderedDefaultDict(OrderedDict): 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwargs): 
+        </span><span class="s2">if not </span><span class="s1">args: 
+            self.default_factory = </span><span class="s2">None</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">if not </span><span class="s1">(args[</span><span class="s5">0</span><span class="s1">] </span><span class="s2">is None or </span><span class="s1">callable(args[</span><span class="s5">0</span><span class="s1">])): 
+                </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s3">'first argument must be callable or None'</span><span class="s1">) 
+            self.default_factory = args[</span><span class="s5">0</span><span class="s1">] 
+            args = args[</span><span class="s5">1</span><span class="s1">:] 
+        super(OrderedDefaultDict</span><span class="s2">, </span><span class="s1">self).__init__(*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+ 
+    </span><span class="s2">def </span><span class="s1">__missing__(self</span><span class="s2">, </span><span class="s1">key): 
+        </span><span class="s2">if </span><span class="s1">self.default_factory </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">KeyError(key) 
+        self[key] = default = self.default_factory() 
+        </span><span class="s2">return </span><span class="s1">default 
+ 
+ 
+</span><span class="s2">if </span><span class="s1">sys.platform == </span><span class="s3">'win32'</span><span class="s1">: 
+    </span><span class="s2">import </span><span class="s1">ctypes.wintypes 
+    </span><span class="s4"># CSIDL_APPDATA for reference - not used here for compatibility with</span><span class="s1"> 
+    </span><span class="s4"># dirspec, which uses LOCAL_APPDATA and COMMON_APPDATA in that order</span><span class="s1"> 
+    csidl = dict(CSIDL_APPDATA=</span><span class="s5">26</span><span class="s2">, </span><span class="s1">CSIDL_LOCAL_APPDATA=</span><span class="s5">28</span><span class="s2">, </span><span class="s1">CSIDL_COMMON_APPDATA=</span><span class="s5">35</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">get_path(name): 
+        SHGFP_TYPE_CURRENT = </span><span class="s5">0</span><span class="s1"> 
+        buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH) 
+        ctypes.windll.shell32.SHGetFolderPathW(</span><span class="s5">0</span><span class="s2">, </span><span class="s1">csidl[name]</span><span class="s2">, </span><span class="s5">0</span><span class="s2">, </span><span class="s1">SHGFP_TYPE_CURRENT</span><span class="s2">, </span><span class="s1">buf) 
+        </span><span class="s2">return </span><span class="s1">buf.value 
+ 
+    </span><span class="s2">def </span><span class="s1">save_config_path(*resource): 
+        appdata = get_path(</span><span class="s3">&quot;CSIDL_LOCAL_APPDATA&quot;</span><span class="s1">) 
+        path = os.path.join(appdata</span><span class="s2">, </span><span class="s1">*resource) 
+        </span><span class="s2">if not </span><span class="s1">os.path.isdir(path): 
+            os.makedirs(path) 
+        </span><span class="s2">return </span><span class="s1">path 
+ 
+    </span><span class="s2">def </span><span class="s1">load_config_paths(*resource): 
+        ids = [</span><span class="s3">&quot;CSIDL_LOCAL_APPDATA&quot;</span><span class="s2">, </span><span class="s3">&quot;CSIDL_COMMON_APPDATA&quot;</span><span class="s1">] 
+        </span><span class="s2">for </span><span class="s1">id </span><span class="s2">in </span><span class="s1">ids: 
+            base = get_path(id) 
+            path = os.path.join(base</span><span class="s2">, </span><span class="s1">*resource) 
+            </span><span class="s2">if </span><span class="s1">os.path.exists(path): 
+                </span><span class="s2">yield </span><span class="s1">path 
+</span><span class="s2">else</span><span class="s1">: 
+    </span><span class="s2">def </span><span class="s1">save_config_path(*resource): 
+        </span><span class="s2">import </span><span class="s1">xdg.BaseDirectory 
+        </span><span class="s2">return </span><span class="s1">xdg.BaseDirectory.save_config_path(*resource) 
+ 
+    </span><span class="s2">def </span><span class="s1">load_config_paths(*resource): 
+        </span><span class="s2">import </span><span class="s1">xdg.BaseDirectory 
+        </span><span class="s2">return </span><span class="s1">xdg.BaseDirectory.load_config_paths(*resource) 
+ 
+ 
+</span><span class="s2">def </span><span class="s1">matches_requirement(req</span><span class="s2">, </span><span class="s1">wheels): 
+    </span><span class="s0">&quot;&quot;&quot;List of wheels matching a requirement. 
+ 
+    :param req: The requirement to satisfy 
+    :param wheels: List of wheels to search. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">try</span><span class="s1">: 
+        </span><span class="s2">from </span><span class="s1">pkg_resources </span><span class="s2">import </span><span class="s1">Distribution</span><span class="s2">, </span><span class="s1">Requirement 
+    </span><span class="s2">except </span><span class="s1">ImportError: 
+        </span><span class="s2">raise </span><span class="s1">RuntimeError(</span><span class="s3">&quot;Cannot use requirements without pkg_resources&quot;</span><span class="s1">) 
+ 
+    req = Requirement.parse(req) 
+ 
+    selected = [] 
+    </span><span class="s2">for </span><span class="s1">wf </span><span class="s2">in </span><span class="s1">wheels: 
+        f = wf.parsed_filename 
+        dist = Distribution(project_name=f.group(</span><span class="s3">&quot;name&quot;</span><span class="s1">)</span><span class="s2">, </span><span class="s1">version=f.group(</span><span class="s3">&quot;ver&quot;</span><span class="s1">)) 
+        </span><span class="s2">if </span><span class="s1">dist </span><span class="s2">in </span><span class="s1">req: 
+            selected.append(wf) 
+    </span><span class="s2">return </span><span class="s1">selected 
+</span></pre>
+</body>
+</html>

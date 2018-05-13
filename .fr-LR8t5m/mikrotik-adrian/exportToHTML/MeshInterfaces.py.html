@@ -1,0 +1,258 @@
+<html>
+<head>
+<title>MeshInterfaces.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+MeshInterfaces.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">MeshInterfaces: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listInterfaces(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will lis tmesh ifaces 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk([</span><span class="s4">'/interface/mesh/print'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">Type</span><span class="s0">\t</span><span class="s4">Mtu</span><span class="s0">\t</span><span class="s4">MAC&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">mesh: 
+            print(mesh[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mesh[i][</span><span class="s4">'mtu'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+mesh[i][</span><span class="s4">'mac-address'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">addInterface(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add mesh interface 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk([</span><span class="s4">'/interface/mesh/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">removeInterface(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove emsh interface 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk([</span><span class="s4">'/interface/mesh/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">enableInterface(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable interface 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">disableInterface(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable interface 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">commentInterface(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment iface 
+        :param name: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s5">#general</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename interface 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=name=' </span><span class="s1">+ newName] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setMtu(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mtu=</span><span class="s4">&quot;1500&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mtu 
+        :param name: 
+        :param mtu: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=mtu=' </span><span class="s1">+ mtu] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setArp(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">arp=</span><span class="s4">&quot;enabled&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set arp 
+        :param name: 
+        :param arp: enabled, local-proxy-arp,proxy-arp,reply-only 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=arp=' </span><span class="s1">+ arp] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setArpTimeout(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set arp timeout 
+        :param name: 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=arp-timeout=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setAdminMac(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">mac): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will ste admin mac address 
+        :param name: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=admin-mac=' </span><span class="s1">+ mac] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s5">#Hwsp</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setMeshPortal(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable mash portal 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=mesh-portal=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setDefaultHopLimit(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">limit=</span><span class="s4">&quot;32&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set hop ;limit 
+        :param name: 
+        :param limit: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=hwmp-default-hoplimit=' </span><span class="s1">+ limit] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setPreqWaitingTime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">time=</span><span class="s4">&quot;4&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set preq waiting time in secs 
+        :param name: 
+        :param time: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=hwmp-preq-waiting-time=' </span><span class="s1">+ time] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setPreqRetries(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">retr=</span><span class="s4">&quot;2&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set preq retries 
+        :param name: 
+        :param retr: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=hwmp-preq-retries=' </span><span class="s1">+ retr] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setPreqDestinationOnly(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=hwmp-preq-destination-only=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setPreqReplyAndForward(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=hwmp-preq-reply-and-forward=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setPrepLifetime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">life=</span><span class="s4">&quot;00:05:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param life: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=hwmp-prep-lifetime=' </span><span class="s1">+ life] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setRannInterval(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;00:00:10&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param interval: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=hwmp-rann-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setRannPropagationDelay(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">delay=</span><span class="s4">&quot;500&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set prop delay in ms 
+        :param name: 
+        :param delay: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=hwmp-rann-propagation-delay=' </span><span class="s1">+ delay] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">setRannLifetime(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">life=</span><span class="s4">&quot;00:00:22&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set rann lifetime 
+        :param name: 
+        :param life: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=hwmp-rann-lifetime=' </span><span class="s1">+ life] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">reoptimizePaths(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will reoptimize paths 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=reoptimize-paths=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+ 
+    </span><span class="s0">def </span><span class="s1">MeshTraceroute(self</span><span class="s0">,</span><span class="s1">iface</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">hoplimit=</span><span class="s4">&quot;255&quot;</span><span class="s0">,</span><span class="s1">duration=</span><span class="s4">&quot;10s&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will trace mesh iface 
+        :param iface: 
+        :param address: mac address to ping 
+        :param hoplimit: 
+        :param: duration: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mesh = self.client.talk( [</span><span class="s4">'/interface/mesh/traceroute'</span><span class="s0">, </span><span class="s4">'=mesh=' </span><span class="s1">+ iface</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address</span><span class="s0">,</span><span class="s4">'=hop-limit='</span><span class="s1">+hoplimit</span><span class="s0">,</span><span class="s4">'=duration='</span><span class="s1">+duration] ) 
+        </span><span class="s0">return </span><span class="s1">mesh 
+</span></pre>
+</body>
+</html>

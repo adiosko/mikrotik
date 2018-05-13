@@ -1,0 +1,976 @@
+<html>
+<head>
+<title>tempfile.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+tempfile.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Temporary files. 
+ 
+This module provides generic, low- and high-level interfaces for 
+creating temporary files and directories.  All of the interfaces 
+provided by this module can be used without fear of race conditions 
+except for 'mktemp'.  'mktemp' is subject to race conditions and 
+should not be used; it is provided for backward compatibility only. 
+ 
+The default path names are returned as str.  If you supply bytes as 
+input, all return values will be in bytes.  Ex: 
+ 
+    &gt;&gt;&gt; tempfile.mkstemp() 
+    (4, '/tmp/tmptpu9nin8') 
+    &gt;&gt;&gt; tempfile.mkdtemp(suffix=b'') 
+    b'/tmp/tmppbi8f0hy' 
+ 
+This module also provides some data items to the user: 
+ 
+  TMP_MAX  - maximum number of names that will be tried before 
+             giving up. 
+  tempdir  - If this is set to a string before the first use of 
+             any routine from this module, it will be considered as 
+             another candidate location to store temporary files. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+__all__ = [ 
+    </span><span class="s2">&quot;NamedTemporaryFile&quot;</span><span class="s3">, </span><span class="s2">&quot;TemporaryFile&quot;</span><span class="s3">, </span><span class="s4"># high level safe interfaces</span><span class="s1"> 
+    </span><span class="s2">&quot;SpooledTemporaryFile&quot;</span><span class="s3">, </span><span class="s2">&quot;TemporaryDirectory&quot;</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s2">&quot;mkstemp&quot;</span><span class="s3">, </span><span class="s2">&quot;mkdtemp&quot;</span><span class="s3">,                  </span><span class="s4"># low level safe interfaces</span><span class="s1"> 
+    </span><span class="s2">&quot;mktemp&quot;</span><span class="s3">,                              </span><span class="s4"># deprecated unsafe interface</span><span class="s1"> 
+    </span><span class="s2">&quot;TMP_MAX&quot;</span><span class="s3">, </span><span class="s2">&quot;gettempprefix&quot;</span><span class="s3">,            </span><span class="s4"># constants</span><span class="s1"> 
+    </span><span class="s2">&quot;tempdir&quot;</span><span class="s3">, </span><span class="s2">&quot;gettempdir&quot;</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s2">&quot;gettempprefixb&quot;</span><span class="s3">, </span><span class="s2">&quot;gettempdirb&quot;</span><span class="s3">,</span><span class="s1"> 
+   ] 
+ 
+ 
+</span><span class="s4"># Imports.</span><span class="s1"> 
+ 
+</span><span class="s3">import </span><span class="s1">functools </span><span class="s3">as </span><span class="s1">_functools 
+</span><span class="s3">import </span><span class="s1">warnings </span><span class="s3">as </span><span class="s1">_warnings 
+</span><span class="s3">import </span><span class="s1">io </span><span class="s3">as </span><span class="s1">_io 
+</span><span class="s3">import </span><span class="s1">os </span><span class="s3">as </span><span class="s1">_os 
+</span><span class="s3">try</span><span class="s1">: 
+  </span><span class="s3">import </span><span class="s1">shutil </span><span class="s3">as </span><span class="s1">_shutil 
+  _rmtree = _shutil.rmtree 
+</span><span class="s3">except </span><span class="s1">ImportError: 
+  </span><span class="s3">import </span><span class="s1">sys </span><span class="s3">as </span><span class="s1">_sys 
+  </span><span class="s3">import </span><span class="s1">stat </span><span class="s3">as </span><span class="s1">_stat 
+  </span><span class="s4"># version vulnerable to race conditions</span><span class="s1"> 
+  </span><span class="s3">def </span><span class="s1">_rmtree_unsafe(path</span><span class="s3">, </span><span class="s1">onerror): 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">_os.path.islink(path): 
+            </span><span class="s4"># symlinks to directories are forbidden, see bug #1669</span><span class="s1"> 
+            </span><span class="s3">raise </span><span class="s1">OSError(</span><span class="s2">&quot;Cannot call rmtree on a symbolic link&quot;</span><span class="s1">) 
+    </span><span class="s3">except </span><span class="s1">OSError: 
+        onerror(_os.path.islink</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+        </span><span class="s4"># can't continue even if onerror hook returns</span><span class="s1"> 
+        </span><span class="s3">return</span><span class="s1"> 
+    names = [] 
+    </span><span class="s3">try</span><span class="s1">: 
+        names = _os.listdir(path) 
+    </span><span class="s3">except </span><span class="s1">OSError: 
+        onerror(_os.listdir</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+    </span><span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">names: 
+        fullname = _os.path.join(path</span><span class="s3">, </span><span class="s1">name) 
+        </span><span class="s3">try</span><span class="s1">: 
+            mode = _os.lstat(fullname).st_mode 
+        </span><span class="s3">except </span><span class="s1">OSError: 
+            mode = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">_stat.S_ISDIR(mode): 
+            _rmtree_unsafe(fullname</span><span class="s3">, </span><span class="s1">onerror) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">try</span><span class="s1">: 
+                _os.unlink(fullname) 
+            </span><span class="s3">except </span><span class="s1">OSError: 
+                onerror(_os.unlink</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+    </span><span class="s3">try</span><span class="s1">: 
+        _os.rmdir(path) 
+    </span><span class="s3">except </span><span class="s1">OSError: 
+        onerror(_os.rmdir</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+ 
+  </span><span class="s4"># Version using fd-based APIs to protect against races</span><span class="s1"> 
+  </span><span class="s3">def </span><span class="s1">_rmtree_safe_fd(topfd</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">onerror): 
+    names = [] 
+    </span><span class="s3">try</span><span class="s1">: 
+        names = _os.listdir(topfd) 
+    </span><span class="s3">except </span><span class="s1">OSError </span><span class="s3">as </span><span class="s1">err: 
+        err.filename = path 
+        onerror(_os.listdir</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+    </span><span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">names: 
+        fullname = _os.path.join(path</span><span class="s3">, </span><span class="s1">name) 
+        </span><span class="s3">try</span><span class="s1">: 
+            orig_st = _os.stat(name</span><span class="s3">, </span><span class="s1">dir_fd=topfd</span><span class="s3">, </span><span class="s1">follow_symlinks=</span><span class="s3">False</span><span class="s1">) 
+            mode = orig_st.st_mode 
+        </span><span class="s3">except </span><span class="s1">OSError: 
+            mode = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">_stat.S_ISDIR(mode): 
+            </span><span class="s3">try</span><span class="s1">: 
+                dirfd = _os.open(name</span><span class="s3">, </span><span class="s1">_os.O_RDONLY</span><span class="s3">, </span><span class="s1">dir_fd=topfd) 
+            </span><span class="s3">except </span><span class="s1">OSError: 
+                onerror(_os.open</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">try</span><span class="s1">: 
+                    </span><span class="s3">if </span><span class="s1">_os.path.samestat(orig_st</span><span class="s3">, </span><span class="s1">_os.fstat(dirfd)): 
+                        _rmtree_safe_fd(dirfd</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">onerror) 
+                        </span><span class="s3">try</span><span class="s1">: 
+                            _os.rmdir(name</span><span class="s3">, </span><span class="s1">dir_fd=topfd) 
+                        </span><span class="s3">except </span><span class="s1">OSError: 
+                            onerror(_os.rmdir</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        </span><span class="s3">try</span><span class="s1">: 
+                            </span><span class="s4"># This can only happen if someone replaces</span><span class="s1"> 
+                            </span><span class="s4"># a directory with a symlink after the call to</span><span class="s1"> 
+                            </span><span class="s4"># stat.S_ISDIR above.</span><span class="s1"> 
+                            </span><span class="s3">raise </span><span class="s1">OSError(</span><span class="s2">&quot;Cannot call rmtree on a symbolic &quot;</span><span class="s1"> 
+                                          </span><span class="s2">&quot;link&quot;</span><span class="s1">) 
+                        </span><span class="s3">except </span><span class="s1">OSError: 
+                            onerror(_os.path.islink</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+                </span><span class="s3">finally</span><span class="s1">: 
+                    _os.close(dirfd) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">try</span><span class="s1">: 
+                _os.unlink(name</span><span class="s3">, </span><span class="s1">dir_fd=topfd) 
+            </span><span class="s3">except </span><span class="s1">OSError: 
+                onerror(_os.unlink</span><span class="s3">, </span><span class="s1">fullname</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+ 
+  _use_fd_functions = ({_os.open</span><span class="s3">, </span><span class="s1">_os.stat</span><span class="s3">, </span><span class="s1">_os.unlink</span><span class="s3">, </span><span class="s1">_os.rmdir} &lt;= 
+                     _os.supports_dir_fd </span><span class="s3">and</span><span class="s1"> 
+                     _os.listdir </span><span class="s3">in </span><span class="s1">_os.supports_fd </span><span class="s3">and</span><span class="s1"> 
+                     _os.stat </span><span class="s3">in </span><span class="s1">_os.supports_follow_symlinks) 
+ 
+  </span><span class="s3">def </span><span class="s1">_rmtree(path</span><span class="s3">, </span><span class="s1">ignore_errors=</span><span class="s3">False, </span><span class="s1">onerror=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Recursively delete a directory tree. 
+ 
+    If ignore_errors is set, errors are ignored; otherwise, if onerror 
+    is set, it is called to handle the error with arguments (func, 
+    path, exc_info) where func is platform and implementation dependent; 
+    path is the argument to that function that caused it to fail; and 
+    exc_info is a tuple returned by sys.exc_info().  If ignore_errors 
+    is false and onerror is None, an exception is raised. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">ignore_errors: 
+        </span><span class="s3">def </span><span class="s1">onerror(*args): 
+            </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">elif </span><span class="s1">onerror </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">def </span><span class="s1">onerror(*args): 
+            </span><span class="s3">raise</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">_use_fd_functions: 
+        </span><span class="s4"># While the unsafe rmtree works fine on bytes, the fd based does not.</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+            path = _os.fsdecode(path) 
+        </span><span class="s4"># Note: To guard against symlink races, we use the standard</span><span class="s1"> 
+        </span><span class="s4"># lstat()/open()/fstat() trick.</span><span class="s1"> 
+        </span><span class="s3">try</span><span class="s1">: 
+            orig_st = _os.lstat(path) 
+        </span><span class="s3">except </span><span class="s1">Exception: 
+            onerror(_os.lstat</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+            </span><span class="s3">return</span><span class="s1"> 
+        </span><span class="s3">try</span><span class="s1">: 
+            fd = _os.open(path</span><span class="s3">, </span><span class="s1">_os.O_RDONLY) 
+        </span><span class="s3">except </span><span class="s1">Exception: 
+            onerror(_os.lstat</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+            </span><span class="s3">return</span><span class="s1"> 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">_os.path.samestat(orig_st</span><span class="s3">, </span><span class="s1">_os.fstat(fd)): 
+                _rmtree_safe_fd(fd</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">onerror) 
+                </span><span class="s3">try</span><span class="s1">: 
+                    _os.rmdir(path) 
+                </span><span class="s3">except </span><span class="s1">OSError: 
+                    onerror(_os.rmdir</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">try</span><span class="s1">: 
+                    </span><span class="s4"># symlinks to directories are forbidden, see bug #1669</span><span class="s1"> 
+                    </span><span class="s3">raise </span><span class="s1">OSError(</span><span class="s2">&quot;Cannot call rmtree on a symbolic link&quot;</span><span class="s1">) 
+                </span><span class="s3">except </span><span class="s1">OSError: 
+                    onerror(_os.path.islink</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">_sys.exc_info()) 
+        </span><span class="s3">finally</span><span class="s1">: 
+            _os.close(fd) 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">_rmtree_unsafe(path</span><span class="s3">, </span><span class="s1">onerror) 
+ 
+</span><span class="s3">import </span><span class="s1">errno </span><span class="s3">as </span><span class="s1">_errno 
+</span><span class="s3">from </span><span class="s1">random </span><span class="s3">import </span><span class="s1">Random </span><span class="s3">as </span><span class="s1">_Random 
+</span><span class="s3">import </span><span class="s1">weakref </span><span class="s3">as </span><span class="s1">_weakref 
+ 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s3">import </span><span class="s1">_thread 
+</span><span class="s3">except </span><span class="s1">ImportError: 
+    </span><span class="s3">import </span><span class="s1">_dummy_thread </span><span class="s3">as </span><span class="s1">_thread 
+_allocate_lock = _thread.allocate_lock 
+ 
+_text_openflags = _os.O_RDWR | _os.O_CREAT | _os.O_EXCL 
+</span><span class="s3">if </span><span class="s1">hasattr(_os</span><span class="s3">, </span><span class="s2">'O_NOFOLLOW'</span><span class="s1">): 
+    _text_openflags |= _os.O_NOFOLLOW 
+ 
+_bin_openflags = _text_openflags 
+</span><span class="s3">if </span><span class="s1">hasattr(_os</span><span class="s3">, </span><span class="s2">'O_BINARY'</span><span class="s1">): 
+    _bin_openflags |= _os.O_BINARY 
+ 
+</span><span class="s3">if </span><span class="s1">hasattr(_os</span><span class="s3">, </span><span class="s2">'TMP_MAX'</span><span class="s1">): 
+    TMP_MAX = _os.TMP_MAX 
+</span><span class="s3">else</span><span class="s1">: 
+    TMP_MAX = </span><span class="s5">10000</span><span class="s1"> 
+ 
+</span><span class="s4"># This variable _was_ unused for legacy reasons, see issue 10354.</span><span class="s1"> 
+</span><span class="s4"># But as of 3.5 we actually use it at runtime so changing it would</span><span class="s1"> 
+</span><span class="s4"># have a possibly desirable side effect...  But we do not want to support</span><span class="s1"> 
+</span><span class="s4"># that as an API.  It is undocumented on purpose.  Do not depend on this.</span><span class="s1"> 
+template = </span><span class="s2">&quot;tmp&quot;</span><span class="s1"> 
+ 
+</span><span class="s4"># Internal routines.</span><span class="s1"> 
+ 
+_once_lock = _allocate_lock() 
+ 
+</span><span class="s3">if </span><span class="s1">hasattr(_os</span><span class="s3">, </span><span class="s2">&quot;lstat&quot;</span><span class="s1">): 
+    _stat = _os.lstat 
+</span><span class="s3">elif </span><span class="s1">hasattr(_os</span><span class="s3">, </span><span class="s2">&quot;stat&quot;</span><span class="s1">): 
+    _stat = _os.stat 
+</span><span class="s3">else</span><span class="s1">: 
+    </span><span class="s4"># Fallback.  All we need is something that raises OSError if the</span><span class="s1"> 
+    </span><span class="s4"># file doesn't exist.</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">_stat(fn): 
+        fd = _os.open(fn</span><span class="s3">, </span><span class="s1">_os.O_RDONLY) 
+        _os.close(fd) 
+ 
+</span><span class="s3">def </span><span class="s1">_exists(fn): 
+    </span><span class="s3">try</span><span class="s1">: 
+        _stat(fn) 
+    </span><span class="s3">except </span><span class="s1">OSError: 
+        </span><span class="s3">return False</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return True</span><span class="s1"> 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_infer_return_type(*args): 
+    </span><span class="s0">&quot;&quot;&quot;Look at the type of all args and divine their implied return type.&quot;&quot;&quot;</span><span class="s1"> 
+    return_type = </span><span class="s3">None</span><span class="s1"> 
+    </span><span class="s3">for </span><span class="s1">arg </span><span class="s3">in </span><span class="s1">args: 
+        </span><span class="s3">if </span><span class="s1">arg </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">continue</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">isinstance(arg</span><span class="s3">, </span><span class="s1">bytes): 
+            </span><span class="s3">if </span><span class="s1">return_type </span><span class="s3">is </span><span class="s1">str: 
+                </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s2">&quot;Can't mix bytes and non-bytes in &quot;</span><span class="s1"> 
+                                </span><span class="s2">&quot;path components.&quot;</span><span class="s1">) 
+            return_type = bytes 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">return_type </span><span class="s3">is </span><span class="s1">bytes: 
+                </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s2">&quot;Can't mix bytes and non-bytes in &quot;</span><span class="s1"> 
+                                </span><span class="s2">&quot;path components.&quot;</span><span class="s1">) 
+            return_type = str 
+    </span><span class="s3">if </span><span class="s1">return_type </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">str  </span><span class="s4"># tempfile APIs return a str by default.</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">return_type 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_sanitize_params(prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir): 
+    </span><span class="s0">&quot;&quot;&quot;Common parameter processing for most APIs in this module.&quot;&quot;&quot;</span><span class="s1"> 
+    output_type = _infer_return_type(prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir) 
+    </span><span class="s3">if </span><span class="s1">suffix </span><span class="s3">is None</span><span class="s1">: 
+        suffix = output_type() 
+    </span><span class="s3">if </span><span class="s1">prefix </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">output_type </span><span class="s3">is </span><span class="s1">str: 
+            prefix = template 
+        </span><span class="s3">else</span><span class="s1">: 
+            prefix = _os.fsencode(template) 
+    </span><span class="s3">if </span><span class="s1">dir </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">output_type </span><span class="s3">is </span><span class="s1">str: 
+            dir = gettempdir() 
+        </span><span class="s3">else</span><span class="s1">: 
+            dir = gettempdirb() 
+    </span><span class="s3">return </span><span class="s1">prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir</span><span class="s3">, </span><span class="s1">output_type 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_RandomNameSequence: 
+    </span><span class="s0">&quot;&quot;&quot;An instance of _RandomNameSequence generates an endless 
+    sequence of unpredictable strings which can safely be incorporated 
+    into file names.  Each string is six characters long.  Multiple 
+    threads can safely use the same instance at the same time. 
+ 
+    _RandomNameSequence is an iterator.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    characters = </span><span class="s2">&quot;abcdefghijklmnopqrstuvwxyz0123456789_&quot;</span><span class="s1"> 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">rng(self): 
+        cur_pid = _os.getpid() 
+        </span><span class="s3">if </span><span class="s1">cur_pid != getattr(self</span><span class="s3">, </span><span class="s2">'_rng_pid'</span><span class="s3">, None</span><span class="s1">): 
+            self._rng = _Random() 
+            self._rng_pid = cur_pid 
+        </span><span class="s3">return </span><span class="s1">self._rng 
+ 
+    </span><span class="s3">def </span><span class="s1">__iter__(self): 
+        </span><span class="s3">return </span><span class="s1">self 
+ 
+    </span><span class="s3">def </span><span class="s1">__next__(self): 
+        c = self.characters 
+        choose = self.rng.choice 
+        letters = [choose(c) </span><span class="s3">for </span><span class="s1">dummy </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">8</span><span class="s1">)] 
+        </span><span class="s3">return </span><span class="s2">''</span><span class="s1">.join(letters) 
+ 
+</span><span class="s3">def </span><span class="s1">_candidate_tempdir_list(): 
+    </span><span class="s0">&quot;&quot;&quot;Generate a list of candidate temporary directories which 
+    _get_default_tempdir will try.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    dirlist = [] 
+ 
+    </span><span class="s4"># First, try the environment.</span><span class="s1"> 
+    </span><span class="s3">for </span><span class="s1">envname </span><span class="s3">in </span><span class="s2">'TMPDIR'</span><span class="s3">, </span><span class="s2">'TEMP'</span><span class="s3">, </span><span class="s2">'TMP'</span><span class="s1">: 
+        dirname = _os.getenv(envname) 
+        </span><span class="s3">if </span><span class="s1">dirname: dirlist.append(dirname) 
+ 
+    </span><span class="s4"># Failing that, try OS-specific locations.</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">_os.name == </span><span class="s2">'nt'</span><span class="s1">: 
+        dirlist.extend([ </span><span class="s2">r'c:\temp'</span><span class="s3">, </span><span class="s2">r'c:\tmp'</span><span class="s3">, </span><span class="s2">r'\temp'</span><span class="s3">, </span><span class="s2">r'\tmp' </span><span class="s1">]) 
+    </span><span class="s3">else</span><span class="s1">: 
+        dirlist.extend([ </span><span class="s2">'/tmp'</span><span class="s3">, </span><span class="s2">'/var/tmp'</span><span class="s3">, </span><span class="s2">'/usr/tmp' </span><span class="s1">]) 
+ 
+    </span><span class="s4"># As a last resort, the current directory.</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        dirlist.append(_os.getcwd()) 
+    </span><span class="s3">except </span><span class="s1">(AttributeError</span><span class="s3">, </span><span class="s1">OSError): 
+        dirlist.append(_os.curdir) 
+ 
+    </span><span class="s3">return </span><span class="s1">dirlist 
+ 
+</span><span class="s3">def </span><span class="s1">_get_default_tempdir(): 
+    </span><span class="s0">&quot;&quot;&quot;Calculate the default directory to use for temporary files. 
+    This routine should be called exactly once. 
+ 
+    We determine whether or not a candidate temp dir is usable by 
+    trying to create and write to a file in that directory.  If this 
+    is successful, the test file is deleted.  To prevent denial of 
+    service, the name of the test file must be randomized.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    namer = _RandomNameSequence() 
+    dirlist = _candidate_tempdir_list() 
+ 
+    </span><span class="s3">for </span><span class="s1">dir </span><span class="s3">in </span><span class="s1">dirlist: 
+        </span><span class="s3">if </span><span class="s1">dir != _os.curdir: 
+            dir = _os.path.abspath(dir) 
+        </span><span class="s4"># Try only a few names per directory.</span><span class="s1"> 
+        </span><span class="s3">for </span><span class="s1">seq </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">100</span><span class="s1">): 
+            name = next(namer) 
+            filename = _os.path.join(dir</span><span class="s3">, </span><span class="s1">name) 
+            </span><span class="s3">try</span><span class="s1">: 
+                fd = _os.open(filename</span><span class="s3">, </span><span class="s1">_bin_openflags</span><span class="s3">, </span><span class="s5">0o600</span><span class="s1">) 
+                </span><span class="s3">try</span><span class="s1">: 
+                    </span><span class="s3">try</span><span class="s1">: 
+                        </span><span class="s3">with </span><span class="s1">_io.open(fd</span><span class="s3">, </span><span class="s2">'wb'</span><span class="s3">, </span><span class="s1">closefd=</span><span class="s3">False</span><span class="s1">) </span><span class="s3">as </span><span class="s1">fp: 
+                            fp.write(</span><span class="s6">b'blat'</span><span class="s1">) 
+                    </span><span class="s3">finally</span><span class="s1">: 
+                        _os.close(fd) 
+                </span><span class="s3">finally</span><span class="s1">: 
+                    _os.unlink(filename) 
+                </span><span class="s3">return </span><span class="s1">dir 
+            </span><span class="s3">except </span><span class="s1">FileExistsError: 
+                </span><span class="s3">pass</span><span class="s1"> 
+            </span><span class="s3">except </span><span class="s1">PermissionError: 
+                </span><span class="s4"># This exception is thrown when a directory with the chosen name</span><span class="s1"> 
+                </span><span class="s4"># already exists on windows.</span><span class="s1"> 
+                </span><span class="s3">if </span><span class="s1">(_os.name == </span><span class="s2">'nt' </span><span class="s3">and </span><span class="s1">_os.path.isdir(dir) </span><span class="s3">and</span><span class="s1"> 
+                    _os.access(dir</span><span class="s3">, </span><span class="s1">_os.W_OK)): 
+                    </span><span class="s3">continue</span><span class="s1"> 
+                </span><span class="s3">break   </span><span class="s4"># no point trying more names in this directory</span><span class="s1"> 
+            </span><span class="s3">except </span><span class="s1">OSError: 
+                </span><span class="s3">break   </span><span class="s4"># no point trying more names in this directory</span><span class="s1"> 
+    </span><span class="s3">raise </span><span class="s1">FileNotFoundError(_errno.ENOENT</span><span class="s3">,</span><span class="s1"> 
+                            </span><span class="s2">&quot;No usable temporary directory found in %s&quot; </span><span class="s1">% 
+                            dirlist) 
+ 
+_name_sequence = </span><span class="s3">None</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">_get_candidate_names(): 
+    </span><span class="s0">&quot;&quot;&quot;Common setup sequence for all user-callable interfaces.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">global </span><span class="s1">_name_sequence 
+    </span><span class="s3">if </span><span class="s1">_name_sequence </span><span class="s3">is None</span><span class="s1">: 
+        _once_lock.acquire() 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">_name_sequence </span><span class="s3">is None</span><span class="s1">: 
+                _name_sequence = _RandomNameSequence() 
+        </span><span class="s3">finally</span><span class="s1">: 
+            _once_lock.release() 
+    </span><span class="s3">return </span><span class="s1">_name_sequence 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">_mkstemp_inner(dir</span><span class="s3">, </span><span class="s1">pre</span><span class="s3">, </span><span class="s1">suf</span><span class="s3">, </span><span class="s1">flags</span><span class="s3">, </span><span class="s1">output_type): 
+    </span><span class="s0">&quot;&quot;&quot;Code common to mkstemp, TemporaryFile, and NamedTemporaryFile.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    names = _get_candidate_names() 
+    </span><span class="s3">if </span><span class="s1">output_type </span><span class="s3">is </span><span class="s1">bytes: 
+        names = map(_os.fsencode</span><span class="s3">, </span><span class="s1">names) 
+ 
+    </span><span class="s3">for </span><span class="s1">seq </span><span class="s3">in </span><span class="s1">range(TMP_MAX): 
+        name = next(names) 
+        file = _os.path.join(dir</span><span class="s3">, </span><span class="s1">pre + name + suf) 
+        </span><span class="s3">try</span><span class="s1">: 
+            fd = _os.open(file</span><span class="s3">, </span><span class="s1">flags</span><span class="s3">, </span><span class="s5">0o600</span><span class="s1">) 
+        </span><span class="s3">except </span><span class="s1">FileExistsError: 
+            </span><span class="s3">continue    </span><span class="s4"># try again</span><span class="s1"> 
+        </span><span class="s3">except </span><span class="s1">PermissionError: 
+            </span><span class="s4"># This exception is thrown when a directory with the chosen name</span><span class="s1"> 
+            </span><span class="s4"># already exists on windows.</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">(_os.name == </span><span class="s2">'nt' </span><span class="s3">and </span><span class="s1">_os.path.isdir(dir) </span><span class="s3">and</span><span class="s1"> 
+                _os.access(dir</span><span class="s3">, </span><span class="s1">_os.W_OK)): 
+                </span><span class="s3">continue</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">raise</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">(fd</span><span class="s3">, </span><span class="s1">_os.path.abspath(file)) 
+ 
+    </span><span class="s3">raise </span><span class="s1">FileExistsError(_errno.EEXIST</span><span class="s3">,</span><span class="s1"> 
+                          </span><span class="s2">&quot;No usable temporary file name found&quot;</span><span class="s1">) 
+ 
+ 
+</span><span class="s4"># User visible interfaces.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">gettempprefix(): 
+    </span><span class="s0">&quot;&quot;&quot;The default prefix for temporary directories.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">template 
+ 
+</span><span class="s3">def </span><span class="s1">gettempprefixb(): 
+    </span><span class="s0">&quot;&quot;&quot;The default prefix for temporary directories as bytes.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">_os.fsencode(gettempprefix()) 
+ 
+tempdir = </span><span class="s3">None</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">gettempdir(): 
+    </span><span class="s0">&quot;&quot;&quot;Accessor for tempfile.tempdir.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">global </span><span class="s1">tempdir 
+    </span><span class="s3">if </span><span class="s1">tempdir </span><span class="s3">is None</span><span class="s1">: 
+        _once_lock.acquire() 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">tempdir </span><span class="s3">is None</span><span class="s1">: 
+                tempdir = _get_default_tempdir() 
+        </span><span class="s3">finally</span><span class="s1">: 
+            _once_lock.release() 
+    </span><span class="s3">return </span><span class="s1">tempdir 
+ 
+</span><span class="s3">def </span><span class="s1">gettempdirb(): 
+    </span><span class="s0">&quot;&quot;&quot;A bytes version of tempfile.gettempdir().&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">_os.fsencode(gettempdir()) 
+ 
+</span><span class="s3">def </span><span class="s1">mkstemp(suffix=</span><span class="s3">None, </span><span class="s1">prefix=</span><span class="s3">None, </span><span class="s1">dir=</span><span class="s3">None, </span><span class="s1">text=</span><span class="s3">False</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;User-callable function to create and return a unique temporary 
+    file.  The return value is a pair (fd, name) where fd is the 
+    file descriptor returned by os.open, and name is the filename. 
+ 
+    If 'suffix' is not None, the file name will end with that suffix, 
+    otherwise there will be no suffix. 
+ 
+    If 'prefix' is not None, the file name will begin with that prefix, 
+    otherwise a default prefix is used. 
+ 
+    If 'dir' is not None, the file will be created in that directory, 
+    otherwise a default directory is used. 
+ 
+    If 'text' is specified and true, the file is opened in text 
+    mode.  Else (the default) the file is opened in binary mode.  On 
+    some operating systems, this makes no difference. 
+ 
+    If any of 'suffix', 'prefix' and 'dir' are not None, they must be the 
+    same type.  If they are bytes, the returned name will be bytes; str 
+    otherwise. 
+ 
+    The file is readable and writable only by the creating user ID. 
+    If the operating system uses permission bits to indicate whether a 
+    file is executable, the file is executable by no one. The file 
+    descriptor is not inherited by children of this process. 
+ 
+    Caller is responsible for deleting the file when done with it. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir</span><span class="s3">, </span><span class="s1">output_type = _sanitize_params(prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir) 
+ 
+    </span><span class="s3">if </span><span class="s1">text: 
+        flags = _text_openflags 
+    </span><span class="s3">else</span><span class="s1">: 
+        flags = _bin_openflags 
+ 
+    </span><span class="s3">return </span><span class="s1">_mkstemp_inner(dir</span><span class="s3">, </span><span class="s1">prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">flags</span><span class="s3">, </span><span class="s1">output_type) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">mkdtemp(suffix=</span><span class="s3">None, </span><span class="s1">prefix=</span><span class="s3">None, </span><span class="s1">dir=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;User-callable function to create and return a unique temporary 
+    directory.  The return value is the pathname of the directory. 
+ 
+    Arguments are as for mkstemp, except that the 'text' argument is 
+    not accepted. 
+ 
+    The directory is readable, writable, and searchable only by the 
+    creating user. 
+ 
+    Caller is responsible for deleting the directory when done with it. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir</span><span class="s3">, </span><span class="s1">output_type = _sanitize_params(prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir) 
+ 
+    names = _get_candidate_names() 
+    </span><span class="s3">if </span><span class="s1">output_type </span><span class="s3">is </span><span class="s1">bytes: 
+        names = map(_os.fsencode</span><span class="s3">, </span><span class="s1">names) 
+ 
+    </span><span class="s3">for </span><span class="s1">seq </span><span class="s3">in </span><span class="s1">range(TMP_MAX): 
+        name = next(names) 
+        file = _os.path.join(dir</span><span class="s3">, </span><span class="s1">prefix + name + suffix) 
+        </span><span class="s3">try</span><span class="s1">: 
+            _os.mkdir(file</span><span class="s3">, </span><span class="s5">0o700</span><span class="s1">) 
+        </span><span class="s3">except </span><span class="s1">FileExistsError: 
+            </span><span class="s3">continue    </span><span class="s4"># try again</span><span class="s1"> 
+        </span><span class="s3">except </span><span class="s1">PermissionError: 
+            </span><span class="s4"># This exception is thrown when a directory with the chosen name</span><span class="s1"> 
+            </span><span class="s4"># already exists on windows.</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">(_os.name == </span><span class="s2">'nt' </span><span class="s3">and </span><span class="s1">_os.path.isdir(dir) </span><span class="s3">and</span><span class="s1"> 
+                _os.access(dir</span><span class="s3">, </span><span class="s1">_os.W_OK)): 
+                </span><span class="s3">continue</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">raise</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">file 
+ 
+    </span><span class="s3">raise </span><span class="s1">FileExistsError(_errno.EEXIST</span><span class="s3">,</span><span class="s1"> 
+                          </span><span class="s2">&quot;No usable temporary directory name found&quot;</span><span class="s1">) 
+ 
+</span><span class="s3">def </span><span class="s1">mktemp(suffix=</span><span class="s2">&quot;&quot;</span><span class="s3">, </span><span class="s1">prefix=template</span><span class="s3">, </span><span class="s1">dir=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;User-callable function to return a unique temporary file name.  The 
+    file is not created. 
+ 
+    Arguments are similar to mkstemp, except that the 'text' argument is 
+    not accepted, and suffix=None, prefix=None and bytes file names are not 
+    supported. 
+ 
+    THIS FUNCTION IS UNSAFE AND SHOULD NOT BE USED.  The file name may 
+    refer to a file that did not exist at some point, but by the time 
+    you get around to creating it, someone else may have beaten you to 
+    the punch. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s4">##    from warnings import warn as _warn</span><span class="s1"> 
+</span><span class="s4">##    _warn(&quot;mktemp is a potential security risk to your program&quot;,</span><span class="s1"> 
+</span><span class="s4">##          RuntimeWarning, stacklevel=2)</span><span class="s1"> 
+ 
+    </span><span class="s3">if </span><span class="s1">dir </span><span class="s3">is None</span><span class="s1">: 
+        dir = gettempdir() 
+ 
+    names = _get_candidate_names() 
+    </span><span class="s3">for </span><span class="s1">seq </span><span class="s3">in </span><span class="s1">range(TMP_MAX): 
+        name = next(names) 
+        file = _os.path.join(dir</span><span class="s3">, </span><span class="s1">prefix + name + suffix) 
+        </span><span class="s3">if not </span><span class="s1">_exists(file): 
+            </span><span class="s3">return </span><span class="s1">file 
+ 
+    </span><span class="s3">raise </span><span class="s1">FileExistsError(_errno.EEXIST</span><span class="s3">,</span><span class="s1"> 
+                          </span><span class="s2">&quot;No usable temporary filename found&quot;</span><span class="s1">) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_TemporaryFileCloser: 
+    </span><span class="s0">&quot;&quot;&quot;A separate object allowing proper closing of a temporary file's 
+    underlying file object, without adding a __del__ method to the 
+    temporary file.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    file = </span><span class="s3">None  </span><span class="s4"># Set here since __del__ checks it</span><span class="s1"> 
+    close_called = </span><span class="s3">False</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">name</span><span class="s3">, </span><span class="s1">delete=</span><span class="s3">True</span><span class="s1">): 
+        self.file = file 
+        self.name = name 
+        self.delete = delete 
+ 
+    </span><span class="s4"># NT provides delete-on-close as a primitive, so we don't need</span><span class="s1"> 
+    </span><span class="s4"># the wrapper to do anything special.  We still use it so that</span><span class="s1"> 
+    </span><span class="s4"># file.name is useful (i.e. not &quot;(fdopen)&quot;) with NamedTemporaryFile.</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">_os.name != </span><span class="s2">'nt'</span><span class="s1">: 
+        </span><span class="s4"># Cache the unlinker so we don't get spurious errors at</span><span class="s1"> 
+        </span><span class="s4"># shutdown when the module-level &quot;os&quot; is None'd out.  Note</span><span class="s1"> 
+        </span><span class="s4"># that this must be referenced as self.unlink, because the</span><span class="s1"> 
+        </span><span class="s4"># name TemporaryFileWrapper may also get None'd out before</span><span class="s1"> 
+        </span><span class="s4"># __del__ is called.</span><span class="s1"> 
+ 
+        </span><span class="s3">def </span><span class="s1">close(self</span><span class="s3">, </span><span class="s1">unlink=_os.unlink): 
+            </span><span class="s3">if not </span><span class="s1">self.close_called </span><span class="s3">and </span><span class="s1">self.file </span><span class="s3">is not None</span><span class="s1">: 
+                self.close_called = </span><span class="s3">True</span><span class="s1"> 
+                </span><span class="s3">try</span><span class="s1">: 
+                    self.file.close() 
+                </span><span class="s3">finally</span><span class="s1">: 
+                    </span><span class="s3">if </span><span class="s1">self.delete: 
+                        unlink(self.name) 
+ 
+        </span><span class="s4"># Need to ensure the file is deleted on __del__</span><span class="s1"> 
+        </span><span class="s3">def </span><span class="s1">__del__(self): 
+            self.close() 
+ 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">def </span><span class="s1">close(self): 
+            </span><span class="s3">if not </span><span class="s1">self.close_called: 
+                self.close_called = </span><span class="s3">True</span><span class="s1"> 
+                self.file.close() 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">_TemporaryFileWrapper: 
+    </span><span class="s0">&quot;&quot;&quot;Temporary file wrapper 
+ 
+    This class provides a wrapper around files opened for 
+    temporary use.  In particular, it seeks to automatically 
+    remove the file when it is no longer needed. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">name</span><span class="s3">, </span><span class="s1">delete=</span><span class="s3">True</span><span class="s1">): 
+        self.file = file 
+        self.name = name 
+        self.delete = delete 
+        self._closer = _TemporaryFileCloser(file</span><span class="s3">, </span><span class="s1">name</span><span class="s3">, </span><span class="s1">delete) 
+ 
+    </span><span class="s3">def </span><span class="s1">__getattr__(self</span><span class="s3">, </span><span class="s1">name): 
+        </span><span class="s4"># Attribute lookups are delegated to the underlying file</span><span class="s1"> 
+        </span><span class="s4"># and cached for non-numeric results</span><span class="s1"> 
+        </span><span class="s4"># (i.e. methods are cached, closed and friends are not)</span><span class="s1"> 
+        file = self.__dict__[</span><span class="s2">'file'</span><span class="s1">] 
+        a = getattr(file</span><span class="s3">, </span><span class="s1">name) 
+        </span><span class="s3">if </span><span class="s1">hasattr(a</span><span class="s3">, </span><span class="s2">'__call__'</span><span class="s1">): 
+            func = a 
+            @_functools.wraps(func) 
+            </span><span class="s3">def </span><span class="s1">func_wrapper(*args</span><span class="s3">, </span><span class="s1">**kwargs): 
+                </span><span class="s3">return </span><span class="s1">func(*args</span><span class="s3">, </span><span class="s1">**kwargs) 
+            </span><span class="s4"># Avoid closing the file as long as the wrapper is alive,</span><span class="s1"> 
+            </span><span class="s4"># see issue #18879.</span><span class="s1"> 
+            func_wrapper._closer = self._closer 
+            a = func_wrapper 
+        </span><span class="s3">if not </span><span class="s1">isinstance(a</span><span class="s3">, </span><span class="s1">int): 
+            setattr(self</span><span class="s3">, </span><span class="s1">name</span><span class="s3">, </span><span class="s1">a) 
+        </span><span class="s3">return </span><span class="s1">a 
+ 
+    </span><span class="s4"># The underlying __enter__ method returns the wrong object</span><span class="s1"> 
+    </span><span class="s4"># (self.file) so override it to return the wrapper</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">__enter__(self): 
+        self.file.__enter__() 
+        </span><span class="s3">return </span><span class="s1">self 
+ 
+    </span><span class="s4"># Need to trap __exit__ as well to ensure the file gets</span><span class="s1"> 
+    </span><span class="s4"># deleted when used in a with statement</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">__exit__(self</span><span class="s3">, </span><span class="s1">exc</span><span class="s3">, </span><span class="s1">value</span><span class="s3">, </span><span class="s1">tb): 
+        result = self.file.__exit__(exc</span><span class="s3">, </span><span class="s1">value</span><span class="s3">, </span><span class="s1">tb) 
+        self.close() 
+        </span><span class="s3">return </span><span class="s1">result 
+ 
+    </span><span class="s3">def </span><span class="s1">close(self): 
+        </span><span class="s0">&quot;&quot;&quot; 
+        Close the temporary file, possibly deleting it. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self._closer.close() 
+ 
+    </span><span class="s4"># iter() doesn't use __getattr__ to find the __iter__ method</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">__iter__(self): 
+        </span><span class="s4"># Don't return iter(self.file), but yield from it to avoid closing</span><span class="s1"> 
+        </span><span class="s4"># file as long as it's being used as iterator (see issue #23700).  We</span><span class="s1"> 
+        </span><span class="s4"># can't use 'yield from' here because iter(file) returns the file</span><span class="s1"> 
+        </span><span class="s4"># object itself, which has a close method, and thus the file would get</span><span class="s1"> 
+        </span><span class="s4"># closed when the generator is finalized, due to PEP380 semantics.</span><span class="s1"> 
+        </span><span class="s3">for </span><span class="s1">line </span><span class="s3">in </span><span class="s1">self.file: 
+            </span><span class="s3">yield </span><span class="s1">line 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">NamedTemporaryFile(mode=</span><span class="s2">'w+b'</span><span class="s3">, </span><span class="s1">buffering=-</span><span class="s5">1</span><span class="s3">, </span><span class="s1">encoding=</span><span class="s3">None,</span><span class="s1"> 
+                       newline=</span><span class="s3">None, </span><span class="s1">suffix=</span><span class="s3">None, </span><span class="s1">prefix=</span><span class="s3">None,</span><span class="s1"> 
+                       dir=</span><span class="s3">None, </span><span class="s1">delete=</span><span class="s3">True</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Create and return a temporary file. 
+    Arguments: 
+    'prefix', 'suffix', 'dir' -- as for mkstemp. 
+    'mode' -- the mode argument to io.open (default &quot;w+b&quot;). 
+    'buffering' -- the buffer size argument to io.open (default -1). 
+    'encoding' -- the encoding argument to io.open (default None) 
+    'newline' -- the newline argument to io.open (default None) 
+    'delete' -- whether the file is deleted on close (default True). 
+    The file is created as mkstemp() would do it. 
+ 
+    Returns an object with a file-like interface; the name of the file 
+    is accessible as its 'name' attribute.  The file will be automatically 
+    deleted when it is closed unless the 'delete' argument is set to False. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir</span><span class="s3">, </span><span class="s1">output_type = _sanitize_params(prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir) 
+ 
+    flags = _bin_openflags 
+ 
+    </span><span class="s4"># Setting O_TEMPORARY in the flags causes the OS to delete</span><span class="s1"> 
+    </span><span class="s4"># the file when it is closed.  This is only supported by Windows.</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">_os.name == </span><span class="s2">'nt' </span><span class="s3">and </span><span class="s1">delete: 
+        flags |= _os.O_TEMPORARY 
+ 
+    (fd</span><span class="s3">, </span><span class="s1">name) = _mkstemp_inner(dir</span><span class="s3">, </span><span class="s1">prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">flags</span><span class="s3">, </span><span class="s1">output_type) 
+    </span><span class="s3">try</span><span class="s1">: 
+        file = _io.open(fd</span><span class="s3">, </span><span class="s1">mode</span><span class="s3">, </span><span class="s1">buffering=buffering</span><span class="s3">,</span><span class="s1"> 
+                        newline=newline</span><span class="s3">, </span><span class="s1">encoding=encoding) 
+ 
+        </span><span class="s3">return </span><span class="s1">_TemporaryFileWrapper(file</span><span class="s3">, </span><span class="s1">name</span><span class="s3">, </span><span class="s1">delete) 
+    </span><span class="s3">except </span><span class="s1">BaseException: 
+        _os.unlink(name) 
+        _os.close(fd) 
+        </span><span class="s3">raise</span><span class="s1"> 
+ 
+</span><span class="s3">if </span><span class="s1">_os.name != </span><span class="s2">'posix' </span><span class="s3">or </span><span class="s1">_os.sys.platform == </span><span class="s2">'cygwin'</span><span class="s1">: 
+    </span><span class="s4"># On non-POSIX and Cygwin systems, assume that we cannot unlink a file</span><span class="s1"> 
+    </span><span class="s4"># while it is open.</span><span class="s1"> 
+    TemporaryFile = NamedTemporaryFile 
+ 
+</span><span class="s3">else</span><span class="s1">: 
+    </span><span class="s4"># Is the O_TMPFILE flag available and does it work?</span><span class="s1"> 
+    </span><span class="s4"># The flag is set to False if os.open(dir, os.O_TMPFILE) raises an</span><span class="s1"> 
+    </span><span class="s4"># IsADirectoryError exception</span><span class="s1"> 
+    _O_TMPFILE_WORKS = hasattr(_os</span><span class="s3">, </span><span class="s2">'O_TMPFILE'</span><span class="s1">) 
+ 
+    </span><span class="s3">def </span><span class="s1">TemporaryFile(mode=</span><span class="s2">'w+b'</span><span class="s3">, </span><span class="s1">buffering=-</span><span class="s5">1</span><span class="s3">, </span><span class="s1">encoding=</span><span class="s3">None,</span><span class="s1"> 
+                      newline=</span><span class="s3">None, </span><span class="s1">suffix=</span><span class="s3">None, </span><span class="s1">prefix=</span><span class="s3">None,</span><span class="s1"> 
+                      dir=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Create and return a temporary file. 
+        Arguments: 
+        'prefix', 'suffix', 'dir' -- as for mkstemp. 
+        'mode' -- the mode argument to io.open (default &quot;w+b&quot;). 
+        'buffering' -- the buffer size argument to io.open (default -1). 
+        'encoding' -- the encoding argument to io.open (default None) 
+        'newline' -- the newline argument to io.open (default None) 
+        The file is created as mkstemp() would do it. 
+ 
+        Returns an object with a file-like interface.  The file has no 
+        name, and will cease to exist when it is closed. 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">global </span><span class="s1">_O_TMPFILE_WORKS 
+ 
+        prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir</span><span class="s3">, </span><span class="s1">output_type = _sanitize_params(prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">dir) 
+ 
+        flags = _bin_openflags 
+        </span><span class="s3">if </span><span class="s1">_O_TMPFILE_WORKS: 
+            </span><span class="s3">try</span><span class="s1">: 
+                flags2 = (flags | _os.O_TMPFILE) &amp; ~_os.O_CREAT 
+                fd = _os.open(dir</span><span class="s3">, </span><span class="s1">flags2</span><span class="s3">, </span><span class="s5">0o600</span><span class="s1">) 
+            </span><span class="s3">except </span><span class="s1">IsADirectoryError: 
+                </span><span class="s4"># Linux kernel older than 3.11 ignores the O_TMPFILE flag:</span><span class="s1"> 
+                </span><span class="s4"># O_TMPFILE is read as O_DIRECTORY. Trying to open a directory</span><span class="s1"> 
+                </span><span class="s4"># with O_RDWR|O_DIRECTORY fails with IsADirectoryError, a</span><span class="s1"> 
+                </span><span class="s4"># directory cannot be open to write. Set flag to False to not</span><span class="s1"> 
+                </span><span class="s4"># try again.</span><span class="s1"> 
+                _O_TMPFILE_WORKS = </span><span class="s3">False</span><span class="s1"> 
+            </span><span class="s3">except </span><span class="s1">OSError: 
+                </span><span class="s4"># The filesystem of the directory does not support O_TMPFILE.</span><span class="s1"> 
+                </span><span class="s4"># For example, OSError(95, 'Operation not supported').</span><span class="s1"> 
+                </span><span class="s4">#</span><span class="s1"> 
+                </span><span class="s4"># On Linux kernel older than 3.11, trying to open a regular</span><span class="s1"> 
+                </span><span class="s4"># file (or a symbolic link to a regular file) with O_TMPFILE</span><span class="s1"> 
+                </span><span class="s4"># fails with NotADirectoryError, because O_TMPFILE is read as</span><span class="s1"> 
+                </span><span class="s4"># O_DIRECTORY.</span><span class="s1"> 
+                </span><span class="s3">pass</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">try</span><span class="s1">: 
+                    </span><span class="s3">return </span><span class="s1">_io.open(fd</span><span class="s3">, </span><span class="s1">mode</span><span class="s3">, </span><span class="s1">buffering=buffering</span><span class="s3">,</span><span class="s1"> 
+                                    newline=newline</span><span class="s3">, </span><span class="s1">encoding=encoding) 
+                </span><span class="s3">except</span><span class="s1">: 
+                    _os.close(fd) 
+                    </span><span class="s3">raise</span><span class="s1"> 
+            </span><span class="s4"># Fallback to _mkstemp_inner().</span><span class="s1"> 
+ 
+        (fd</span><span class="s3">, </span><span class="s1">name) = _mkstemp_inner(dir</span><span class="s3">, </span><span class="s1">prefix</span><span class="s3">, </span><span class="s1">suffix</span><span class="s3">, </span><span class="s1">flags</span><span class="s3">, </span><span class="s1">output_type) 
+        </span><span class="s3">try</span><span class="s1">: 
+            _os.unlink(name) 
+            </span><span class="s3">return </span><span class="s1">_io.open(fd</span><span class="s3">, </span><span class="s1">mode</span><span class="s3">, </span><span class="s1">buffering=buffering</span><span class="s3">,</span><span class="s1"> 
+                            newline=newline</span><span class="s3">, </span><span class="s1">encoding=encoding) 
+        </span><span class="s3">except</span><span class="s1">: 
+            _os.close(fd) 
+            </span><span class="s3">raise</span><span class="s1"> 
+ 
+</span><span class="s3">class </span><span class="s1">SpooledTemporaryFile: 
+    </span><span class="s0">&quot;&quot;&quot;Temporary file wrapper, specialized to switch from BytesIO 
+    or StringIO to a real file when it exceeds a certain size or 
+    when a fileno is needed. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    _rolled = </span><span class="s3">False</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">max_size=</span><span class="s5">0</span><span class="s3">, </span><span class="s1">mode=</span><span class="s2">'w+b'</span><span class="s3">, </span><span class="s1">buffering=-</span><span class="s5">1</span><span class="s3">,</span><span class="s1"> 
+                 encoding=</span><span class="s3">None, </span><span class="s1">newline=</span><span class="s3">None,</span><span class="s1"> 
+                 suffix=</span><span class="s3">None, </span><span class="s1">prefix=</span><span class="s3">None, </span><span class="s1">dir=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s3">if </span><span class="s2">'b' </span><span class="s3">in </span><span class="s1">mode: 
+            self._file = _io.BytesIO() 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s4"># Setting newline=&quot;\n&quot; avoids newline translation;</span><span class="s1"> 
+            </span><span class="s4"># this is important because otherwise on Windows we'd</span><span class="s1"> 
+            </span><span class="s4"># get double newline translation upon rollover().</span><span class="s1"> 
+            self._file = _io.StringIO(newline=</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">&quot;</span><span class="s1">) 
+        self._max_size = max_size 
+        self._rolled = </span><span class="s3">False</span><span class="s1"> 
+        self._TemporaryFileArgs = {</span><span class="s2">'mode'</span><span class="s1">: mode</span><span class="s3">, </span><span class="s2">'buffering'</span><span class="s1">: buffering</span><span class="s3">,</span><span class="s1"> 
+                                   </span><span class="s2">'suffix'</span><span class="s1">: suffix</span><span class="s3">, </span><span class="s2">'prefix'</span><span class="s1">: prefix</span><span class="s3">,</span><span class="s1"> 
+                                   </span><span class="s2">'encoding'</span><span class="s1">: encoding</span><span class="s3">, </span><span class="s2">'newline'</span><span class="s1">: newline</span><span class="s3">,</span><span class="s1"> 
+                                   </span><span class="s2">'dir'</span><span class="s1">: dir} 
+ 
+    </span><span class="s3">def </span><span class="s1">_check(self</span><span class="s3">, </span><span class="s1">file): 
+        </span><span class="s3">if </span><span class="s1">self._rolled: </span><span class="s3">return</span><span class="s1"> 
+        max_size = self._max_size 
+        </span><span class="s3">if </span><span class="s1">max_size </span><span class="s3">and </span><span class="s1">file.tell() &gt; max_size: 
+            self.rollover() 
+ 
+    </span><span class="s3">def </span><span class="s1">rollover(self): 
+        </span><span class="s3">if </span><span class="s1">self._rolled: </span><span class="s3">return</span><span class="s1"> 
+        file = self._file 
+        newfile = self._file = TemporaryFile(**self._TemporaryFileArgs) 
+        </span><span class="s3">del </span><span class="s1">self._TemporaryFileArgs 
+ 
+        newfile.write(file.getvalue()) 
+        newfile.seek(file.tell()</span><span class="s3">, </span><span class="s5">0</span><span class="s1">) 
+ 
+        self._rolled = </span><span class="s3">True</span><span class="s1"> 
+ 
+    </span><span class="s4"># The method caching trick from NamedTemporaryFile</span><span class="s1"> 
+    </span><span class="s4"># won't work here, because _file may change from a</span><span class="s1"> 
+    </span><span class="s4"># BytesIO/StringIO instance to a real file. So we list</span><span class="s1"> 
+    </span><span class="s4"># all the methods directly.</span><span class="s1"> 
+ 
+    </span><span class="s4"># Context management protocol</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">__enter__(self): 
+        </span><span class="s3">if </span><span class="s1">self._file.closed: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s2">&quot;Cannot enter context with closed file&quot;</span><span class="s1">) 
+        </span><span class="s3">return </span><span class="s1">self 
+ 
+    </span><span class="s3">def </span><span class="s1">__exit__(self</span><span class="s3">, </span><span class="s1">exc</span><span class="s3">, </span><span class="s1">value</span><span class="s3">, </span><span class="s1">tb): 
+        self._file.close() 
+ 
+    </span><span class="s4"># file protocol</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">__iter__(self): 
+        </span><span class="s3">return </span><span class="s1">self._file.__iter__() 
+ 
+    </span><span class="s3">def </span><span class="s1">close(self): 
+        self._file.close() 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">closed(self): 
+        </span><span class="s3">return </span><span class="s1">self._file.closed 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">encoding(self): 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">self._file.encoding 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">if </span><span class="s2">'b' </span><span class="s3">in </span><span class="s1">self._TemporaryFileArgs[</span><span class="s2">'mode'</span><span class="s1">]: 
+                </span><span class="s3">raise</span><span class="s1"> 
+            </span><span class="s3">return </span><span class="s1">self._TemporaryFileArgs[</span><span class="s2">'encoding'</span><span class="s1">] 
+ 
+    </span><span class="s3">def </span><span class="s1">fileno(self): 
+        self.rollover() 
+        </span><span class="s3">return </span><span class="s1">self._file.fileno() 
+ 
+    </span><span class="s3">def </span><span class="s1">flush(self): 
+        self._file.flush() 
+ 
+    </span><span class="s3">def </span><span class="s1">isatty(self): 
+        </span><span class="s3">return </span><span class="s1">self._file.isatty() 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">mode(self): 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">self._file.mode 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">return </span><span class="s1">self._TemporaryFileArgs[</span><span class="s2">'mode'</span><span class="s1">] 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">name(self): 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">self._file.name 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">return None</span><span class="s1"> 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">newlines(self): 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">self._file.newlines 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">if </span><span class="s2">'b' </span><span class="s3">in </span><span class="s1">self._TemporaryFileArgs[</span><span class="s2">'mode'</span><span class="s1">]: 
+                </span><span class="s3">raise</span><span class="s1"> 
+            </span><span class="s3">return </span><span class="s1">self._TemporaryFileArgs[</span><span class="s2">'newline'</span><span class="s1">] 
+ 
+    </span><span class="s3">def </span><span class="s1">read(self</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s3">return </span><span class="s1">self._file.read(*args) 
+ 
+    </span><span class="s3">def </span><span class="s1">readline(self</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s3">return </span><span class="s1">self._file.readline(*args) 
+ 
+    </span><span class="s3">def </span><span class="s1">readlines(self</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s3">return </span><span class="s1">self._file.readlines(*args) 
+ 
+    </span><span class="s3">def </span><span class="s1">seek(self</span><span class="s3">, </span><span class="s1">*args): 
+        self._file.seek(*args) 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">softspace(self): 
+        </span><span class="s3">return </span><span class="s1">self._file.softspace 
+ 
+    </span><span class="s3">def </span><span class="s1">tell(self): 
+        </span><span class="s3">return </span><span class="s1">self._file.tell() 
+ 
+    </span><span class="s3">def </span><span class="s1">truncate(self</span><span class="s3">, </span><span class="s1">size=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s3">if </span><span class="s1">size </span><span class="s3">is None</span><span class="s1">: 
+            self._file.truncate() 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">size &gt; self._max_size: 
+                self.rollover() 
+            self._file.truncate(size) 
+ 
+    </span><span class="s3">def </span><span class="s1">write(self</span><span class="s3">, </span><span class="s1">s): 
+        file = self._file 
+        rv = file.write(s) 
+        self._check(file) 
+        </span><span class="s3">return </span><span class="s1">rv 
+ 
+    </span><span class="s3">def </span><span class="s1">writelines(self</span><span class="s3">, </span><span class="s1">iterable): 
+        file = self._file 
+        rv = file.writelines(iterable) 
+        self._check(file) 
+        </span><span class="s3">return </span><span class="s1">rv 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">TemporaryDirectory(object): 
+    </span><span class="s0">&quot;&quot;&quot;Create and return a temporary directory.  This has the same 
+    behavior as mkdtemp but can be used as a context manager.  For 
+    example: 
+ 
+        with TemporaryDirectory() as tmpdir: 
+            ... 
+ 
+    Upon exiting the context, the directory and everything contained 
+    in it are removed. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">suffix=</span><span class="s3">None, </span><span class="s1">prefix=</span><span class="s3">None, </span><span class="s1">dir=</span><span class="s3">None</span><span class="s1">): 
+        self.name = mkdtemp(suffix</span><span class="s3">, </span><span class="s1">prefix</span><span class="s3">, </span><span class="s1">dir) 
+        self._finalizer = _weakref.finalize( 
+            self</span><span class="s3">, </span><span class="s1">self._cleanup</span><span class="s3">, </span><span class="s1">self.name</span><span class="s3">,</span><span class="s1"> 
+            warn_message=</span><span class="s2">&quot;Implicitly cleaning up {!r}&quot;</span><span class="s1">.format(self)) 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">_cleanup(cls</span><span class="s3">, </span><span class="s1">name</span><span class="s3">, </span><span class="s1">warn_message): 
+        _rmtree(name) 
+        _warnings.warn(warn_message</span><span class="s3">, </span><span class="s1">ResourceWarning) 
+ 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        </span><span class="s3">return </span><span class="s2">&quot;&lt;{} {!r}&gt;&quot;</span><span class="s1">.format(self.__class__.__name__</span><span class="s3">, </span><span class="s1">self.name) 
+ 
+    </span><span class="s3">def </span><span class="s1">__enter__(self): 
+        </span><span class="s3">return </span><span class="s1">self.name 
+ 
+    </span><span class="s3">def </span><span class="s1">__exit__(self</span><span class="s3">, </span><span class="s1">exc</span><span class="s3">, </span><span class="s1">value</span><span class="s3">, </span><span class="s1">tb): 
+        self.cleanup() 
+ 
+    </span><span class="s3">def </span><span class="s1">cleanup(self): 
+        </span><span class="s3">if </span><span class="s1">self._finalizer.detach(): 
+            _rmtree(self.name) 
+</span></pre>
+</body>
+</html>

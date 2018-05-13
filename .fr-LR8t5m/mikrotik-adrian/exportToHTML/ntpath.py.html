@@ -1,0 +1,705 @@
+<html>
+<head>
+<title>ntpath.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(165,194,97); }
+.s6 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ntpath.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># Module 'ntpath' -- common operations on WinNT/Win95 pathnames</span><span class="s1"> 
+</span><span class="s2">&quot;&quot;&quot;Common pathname manipulations, WindowsNT/95 version. 
+ 
+Instead of importing this module directly, import os and refer to this 
+module as os.path. 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s3">import </span><span class="s1">os 
+</span><span class="s3">import </span><span class="s1">sys 
+</span><span class="s3">import </span><span class="s1">stat 
+</span><span class="s3">import </span><span class="s1">genericpath 
+</span><span class="s3">from </span><span class="s1">genericpath </span><span class="s3">import </span><span class="s1">* 
+ 
+__all__ = [</span><span class="s4">&quot;normcase&quot;</span><span class="s3">,</span><span class="s4">&quot;isabs&quot;</span><span class="s3">,</span><span class="s4">&quot;join&quot;</span><span class="s3">,</span><span class="s4">&quot;splitdrive&quot;</span><span class="s3">,</span><span class="s4">&quot;split&quot;</span><span class="s3">,</span><span class="s4">&quot;splitext&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;basename&quot;</span><span class="s3">,</span><span class="s4">&quot;dirname&quot;</span><span class="s3">,</span><span class="s4">&quot;commonprefix&quot;</span><span class="s3">,</span><span class="s4">&quot;getsize&quot;</span><span class="s3">,</span><span class="s4">&quot;getmtime&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;getatime&quot;</span><span class="s3">,</span><span class="s4">&quot;getctime&quot;</span><span class="s3">, </span><span class="s4">&quot;islink&quot;</span><span class="s3">,</span><span class="s4">&quot;exists&quot;</span><span class="s3">,</span><span class="s4">&quot;lexists&quot;</span><span class="s3">,</span><span class="s4">&quot;isdir&quot;</span><span class="s3">,</span><span class="s4">&quot;isfile&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;ismount&quot;</span><span class="s3">, </span><span class="s4">&quot;expanduser&quot;</span><span class="s3">,</span><span class="s4">&quot;expandvars&quot;</span><span class="s3">,</span><span class="s4">&quot;normpath&quot;</span><span class="s3">,</span><span class="s4">&quot;abspath&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;splitunc&quot;</span><span class="s3">,</span><span class="s4">&quot;curdir&quot;</span><span class="s3">,</span><span class="s4">&quot;pardir&quot;</span><span class="s3">,</span><span class="s4">&quot;sep&quot;</span><span class="s3">,</span><span class="s4">&quot;pathsep&quot;</span><span class="s3">,</span><span class="s4">&quot;defpath&quot;</span><span class="s3">,</span><span class="s4">&quot;altsep&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;extsep&quot;</span><span class="s3">,</span><span class="s4">&quot;devnull&quot;</span><span class="s3">,</span><span class="s4">&quot;realpath&quot;</span><span class="s3">,</span><span class="s4">&quot;supports_unicode_filenames&quot;</span><span class="s3">,</span><span class="s4">&quot;relpath&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;samefile&quot;</span><span class="s3">, </span><span class="s4">&quot;sameopenfile&quot;</span><span class="s3">, </span><span class="s4">&quot;samestat&quot;</span><span class="s3">, </span><span class="s4">&quot;commonpath&quot;</span><span class="s1">] 
+ 
+</span><span class="s0"># strings representing various path-related bits and pieces</span><span class="s1"> 
+</span><span class="s0"># These are primarily for export; internally, they are hardcoded.</span><span class="s1"> 
+curdir = </span><span class="s4">'.'</span><span class="s1"> 
+pardir = </span><span class="s4">'..'</span><span class="s1"> 
+extsep = </span><span class="s4">'.'</span><span class="s1"> 
+sep = </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">'</span><span class="s1"> 
+pathsep = </span><span class="s4">';'</span><span class="s1"> 
+altsep = </span><span class="s4">'/'</span><span class="s1"> 
+defpath = </span><span class="s4">'.;C:</span><span class="s3">\\</span><span class="s4">bin'</span><span class="s1"> 
+</span><span class="s3">if </span><span class="s4">'ce' </span><span class="s3">in </span><span class="s1">sys.builtin_module_names: 
+    defpath = </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">Windows'</span><span class="s1"> 
+devnull = </span><span class="s4">'nul'</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">_get_bothseps(path): 
+    </span><span class="s3">if </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+        </span><span class="s3">return </span><span class="s5">b'</span><span class="s3">\\</span><span class="s5">/'</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">/'</span><span class="s1"> 
+ 
+</span><span class="s0"># Normalize the case of a pathname and map slashes to backslashes.</span><span class="s1"> 
+</span><span class="s0"># Other normalizations (such as optimizing '../' away) are not done</span><span class="s1"> 
+</span><span class="s0"># (this is done by normpath).</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">normcase(s): 
+    </span><span class="s2">&quot;&quot;&quot;Normalize case of pathname. 
+ 
+    Makes all characters lowercase and all slashes into backslashes.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">isinstance(s</span><span class="s3">, </span><span class="s1">bytes): 
+            </span><span class="s3">return </span><span class="s1">s.replace(</span><span class="s5">b'/'</span><span class="s3">, </span><span class="s5">b'</span><span class="s3">\\</span><span class="s5">'</span><span class="s1">).lower() 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">s.replace(</span><span class="s4">'/'</span><span class="s3">, </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">'</span><span class="s1">).lower() 
+    </span><span class="s3">except </span><span class="s1">(TypeError</span><span class="s3">, </span><span class="s1">AttributeError): 
+        </span><span class="s3">if not </span><span class="s1">isinstance(s</span><span class="s3">, </span><span class="s1">(bytes</span><span class="s3">, </span><span class="s1">str)): 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;normcase() argument must be str or bytes, &quot;</span><span class="s1"> 
+                            </span><span class="s4">&quot;not %r&quot; </span><span class="s1">% s.__class__.__name__) </span><span class="s3">from None</span><span class="s1"> 
+        </span><span class="s3">raise</span><span class="s1"> 
+ 
+ 
+</span><span class="s0"># Return whether a path is absolute.</span><span class="s1"> 
+</span><span class="s0"># Trivial in Posix, harder on Windows.</span><span class="s1"> 
+</span><span class="s0"># For Windows it is absolute if it starts with a slash or backslash (current</span><span class="s1"> 
+</span><span class="s0"># volume), or if a pathname after the volume-letter-and-colon or UNC-resource</span><span class="s1"> 
+</span><span class="s0"># starts with a slash or backslash.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">isabs(s): 
+    </span><span class="s2">&quot;&quot;&quot;Test whether a path is absolute&quot;&quot;&quot;</span><span class="s1"> 
+    s = splitdrive(s)[</span><span class="s6">1</span><span class="s1">] 
+    </span><span class="s3">return </span><span class="s1">len(s) &gt; </span><span class="s6">0 </span><span class="s3">and </span><span class="s1">s[</span><span class="s6">0</span><span class="s1">] </span><span class="s3">in </span><span class="s1">_get_bothseps(s) 
+ 
+ 
+</span><span class="s0"># Join two (or more) paths.</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">join(path</span><span class="s3">, </span><span class="s1">*paths): 
+    </span><span class="s3">if </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+        sep = </span><span class="s5">b'</span><span class="s3">\\</span><span class="s5">'</span><span class="s1"> 
+        seps = </span><span class="s5">b'</span><span class="s3">\\</span><span class="s5">/'</span><span class="s1"> 
+        colon = </span><span class="s5">b':'</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        sep = </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">'</span><span class="s1"> 
+        seps = </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">/'</span><span class="s1"> 
+        colon = </span><span class="s4">':'</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">if not </span><span class="s1">paths: 
+            path[:</span><span class="s6">0</span><span class="s1">] + sep  </span><span class="s0">#23780: Ensure compatible data type even if p is null.</span><span class="s1"> 
+        result_drive</span><span class="s3">, </span><span class="s1">result_path = splitdrive(path) 
+        </span><span class="s3">for </span><span class="s1">p </span><span class="s3">in </span><span class="s1">paths: 
+            p_drive</span><span class="s3">, </span><span class="s1">p_path = splitdrive(p) 
+            </span><span class="s3">if </span><span class="s1">p_path </span><span class="s3">and </span><span class="s1">p_path[</span><span class="s6">0</span><span class="s1">] </span><span class="s3">in </span><span class="s1">seps: 
+                </span><span class="s0"># Second path is absolute</span><span class="s1"> 
+                </span><span class="s3">if </span><span class="s1">p_drive </span><span class="s3">or not </span><span class="s1">result_drive: 
+                    result_drive = p_drive 
+                result_path = p_path 
+                </span><span class="s3">continue</span><span class="s1"> 
+            </span><span class="s3">elif </span><span class="s1">p_drive </span><span class="s3">and </span><span class="s1">p_drive != result_drive: 
+                </span><span class="s3">if </span><span class="s1">p_drive.lower() != result_drive.lower(): 
+                    </span><span class="s0"># Different drives =&gt; ignore the first path entirely</span><span class="s1"> 
+                    result_drive = p_drive 
+                    result_path = p_path 
+                    </span><span class="s3">continue</span><span class="s1"> 
+                </span><span class="s0"># Same drive in different case</span><span class="s1"> 
+                result_drive = p_drive 
+            </span><span class="s0"># Second path is relative to the first</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">result_path </span><span class="s3">and </span><span class="s1">result_path[-</span><span class="s6">1</span><span class="s1">] </span><span class="s3">not in </span><span class="s1">seps: 
+                result_path = result_path + sep 
+            result_path = result_path + p_path 
+        </span><span class="s0">## add separator between UNC and non-absolute path</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">(result_path </span><span class="s3">and </span><span class="s1">result_path[</span><span class="s6">0</span><span class="s1">] </span><span class="s3">not in </span><span class="s1">seps </span><span class="s3">and</span><span class="s1"> 
+            result_drive </span><span class="s3">and </span><span class="s1">result_drive[-</span><span class="s6">1</span><span class="s1">:] != colon): 
+            </span><span class="s3">return </span><span class="s1">result_drive + sep + result_path 
+        </span><span class="s3">return </span><span class="s1">result_drive + result_path 
+    </span><span class="s3">except </span><span class="s1">(TypeError</span><span class="s3">, </span><span class="s1">AttributeError</span><span class="s3">, </span><span class="s1">BytesWarning): 
+        genericpath._check_arg_types(</span><span class="s4">'join'</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">*paths) 
+        </span><span class="s3">raise</span><span class="s1"> 
+ 
+ 
+</span><span class="s0"># Split a path in a drive specification (a drive letter followed by a</span><span class="s1"> 
+</span><span class="s0"># colon) and the path specification.</span><span class="s1"> 
+</span><span class="s0"># It is always true that drivespec + pathspec == p</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">splitdrive(p): 
+    </span><span class="s2">&quot;&quot;&quot;Split a pathname into drive/UNC sharepoint and relative path specifiers. 
+    Returns a 2-tuple (drive_or_unc, path); either part may be empty. 
+ 
+    If you assign 
+        result = splitdrive(p) 
+    It is always true that: 
+        result[0] + result[1] == p 
+ 
+    If the path contained a drive letter, drive_or_unc will contain everything 
+    up to and including the colon.  e.g. splitdrive(&quot;c:/dir&quot;) returns (&quot;c:&quot;, &quot;/dir&quot;) 
+ 
+    If the path contained a UNC path, the drive_or_unc will contain the host name 
+    and share up to but not including the fourth directory separator character. 
+    e.g. splitdrive(&quot;//host/computer/dir&quot;) returns (&quot;//host/computer&quot;, &quot;/dir&quot;) 
+ 
+    Paths cannot contain both a drive letter and a UNC path. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">len(p) &gt;= </span><span class="s6">2</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">isinstance(p</span><span class="s3">, </span><span class="s1">bytes): 
+            sep = </span><span class="s5">b'</span><span class="s3">\\</span><span class="s5">'</span><span class="s1"> 
+            altsep = </span><span class="s5">b'/'</span><span class="s1"> 
+            colon = </span><span class="s5">b':'</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            sep = </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">'</span><span class="s1"> 
+            altsep = </span><span class="s4">'/'</span><span class="s1"> 
+            colon = </span><span class="s4">':'</span><span class="s1"> 
+        normp = p.replace(altsep</span><span class="s3">, </span><span class="s1">sep) 
+        </span><span class="s3">if </span><span class="s1">(normp[</span><span class="s6">0</span><span class="s1">:</span><span class="s6">2</span><span class="s1">] == sep*</span><span class="s6">2</span><span class="s1">) </span><span class="s3">and </span><span class="s1">(normp[</span><span class="s6">2</span><span class="s1">:</span><span class="s6">3</span><span class="s1">] != sep): 
+            </span><span class="s0"># is a UNC path:</span><span class="s1"> 
+            </span><span class="s0"># vvvvvvvvvvvvvvvvvvvv drive letter or UNC path</span><span class="s1"> 
+            </span><span class="s0"># \\machine\mountpoint\directory\etc\...</span><span class="s1"> 
+            </span><span class="s0">#           directory ^^^^^^^^^^^^^^^</span><span class="s1"> 
+            index = normp.find(sep</span><span class="s3">, </span><span class="s6">2</span><span class="s1">) 
+            </span><span class="s3">if </span><span class="s1">index == -</span><span class="s6">1</span><span class="s1">: 
+                </span><span class="s3">return </span><span class="s1">p[:</span><span class="s6">0</span><span class="s1">]</span><span class="s3">, </span><span class="s1">p 
+            index2 = normp.find(sep</span><span class="s3">, </span><span class="s1">index + </span><span class="s6">1</span><span class="s1">) 
+            </span><span class="s0"># a UNC path can't have two slashes in a row</span><span class="s1"> 
+            </span><span class="s0"># (after the initial two)</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">index2 == index + </span><span class="s6">1</span><span class="s1">: 
+                </span><span class="s3">return </span><span class="s1">p[:</span><span class="s6">0</span><span class="s1">]</span><span class="s3">, </span><span class="s1">p 
+            </span><span class="s3">if </span><span class="s1">index2 == -</span><span class="s6">1</span><span class="s1">: 
+                index2 = len(p) 
+            </span><span class="s3">return </span><span class="s1">p[:index2]</span><span class="s3">, </span><span class="s1">p[index2:] 
+        </span><span class="s3">if </span><span class="s1">normp[</span><span class="s6">1</span><span class="s1">:</span><span class="s6">2</span><span class="s1">] == colon: 
+            </span><span class="s3">return </span><span class="s1">p[:</span><span class="s6">2</span><span class="s1">]</span><span class="s3">, </span><span class="s1">p[</span><span class="s6">2</span><span class="s1">:] 
+    </span><span class="s3">return </span><span class="s1">p[:</span><span class="s6">0</span><span class="s1">]</span><span class="s3">, </span><span class="s1">p 
+ 
+ 
+</span><span class="s0"># Parse UNC paths</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">splitunc(p): 
+    </span><span class="s2">&quot;&quot;&quot;Deprecated since Python 3.1.  Please use splitdrive() instead; 
+    it now handles UNC paths. 
+ 
+    Split a pathname into UNC mount point and relative path specifiers. 
+ 
+    Return a 2-tuple (unc, rest); either part may be empty. 
+    If unc is not empty, it has the form '//host/mount' (or similar 
+    using backslashes).  unc+rest is always the input path. 
+    Paths containing drive letters never have a UNC part. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">import </span><span class="s1">warnings 
+    warnings.warn(</span><span class="s4">&quot;ntpath.splitunc is deprecated, use ntpath.splitdrive instead&quot;</span><span class="s3">,</span><span class="s1"> 
+                  DeprecationWarning</span><span class="s3">, </span><span class="s6">2</span><span class="s1">) 
+    drive</span><span class="s3">, </span><span class="s1">path = splitdrive(p) 
+    </span><span class="s3">if </span><span class="s1">len(drive) == </span><span class="s6">2</span><span class="s1">: 
+         </span><span class="s0"># Drive letter present</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">p[:</span><span class="s6">0</span><span class="s1">]</span><span class="s3">, </span><span class="s1">p 
+    </span><span class="s3">return </span><span class="s1">drive</span><span class="s3">, </span><span class="s1">path 
+ 
+ 
+</span><span class="s0"># Split a path in head (everything up to the last '/') and tail (the</span><span class="s1"> 
+</span><span class="s0"># rest).  After the trailing '/' is stripped, the invariant</span><span class="s1"> 
+</span><span class="s0"># join(head, tail) == p holds.</span><span class="s1"> 
+</span><span class="s0"># The resulting head won't end in '/' unless it is the root.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">split(p): 
+    </span><span class="s2">&quot;&quot;&quot;Split a pathname. 
+ 
+    Return tuple (head, tail) where tail is everything after the final slash. 
+    Either part may be empty.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    seps = _get_bothseps(p) 
+    d</span><span class="s3">, </span><span class="s1">p = splitdrive(p) 
+    </span><span class="s0"># set i to index beyond p's last slash</span><span class="s1"> 
+    i = len(p) 
+    </span><span class="s3">while </span><span class="s1">i </span><span class="s3">and </span><span class="s1">p[i-</span><span class="s6">1</span><span class="s1">] </span><span class="s3">not in </span><span class="s1">seps: 
+        i -= </span><span class="s6">1</span><span class="s1"> 
+    head</span><span class="s3">, </span><span class="s1">tail = p[:i]</span><span class="s3">, </span><span class="s1">p[i:]  </span><span class="s0"># now tail has no slashes</span><span class="s1"> 
+    </span><span class="s0"># remove trailing slashes from head, unless it's all slashes</span><span class="s1"> 
+    head = head.rstrip(seps) </span><span class="s3">or </span><span class="s1">head 
+    </span><span class="s3">return </span><span class="s1">d + head</span><span class="s3">, </span><span class="s1">tail 
+ 
+ 
+</span><span class="s0"># Split a path in root and extension.</span><span class="s1"> 
+</span><span class="s0"># The extension is everything starting at the last dot in the last</span><span class="s1"> 
+</span><span class="s0"># pathname component; the root is everything before that.</span><span class="s1"> 
+</span><span class="s0"># It is always true that root + ext == p.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">splitext(p): 
+    </span><span class="s3">if </span><span class="s1">isinstance(p</span><span class="s3">, </span><span class="s1">bytes): 
+        </span><span class="s3">return </span><span class="s1">genericpath._splitext(p</span><span class="s3">, </span><span class="s5">b'</span><span class="s3">\\</span><span class="s5">'</span><span class="s3">, </span><span class="s5">b'/'</span><span class="s3">, </span><span class="s5">b'.'</span><span class="s1">) 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">genericpath._splitext(p</span><span class="s3">, </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">'</span><span class="s3">, </span><span class="s4">'/'</span><span class="s3">, </span><span class="s4">'.'</span><span class="s1">) 
+splitext.__doc__ = genericpath._splitext.__doc__ 
+ 
+ 
+</span><span class="s0"># Return the tail (basename) part of a path.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">basename(p): 
+    </span><span class="s2">&quot;&quot;&quot;Returns the final component of a pathname&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">split(p)[</span><span class="s6">1</span><span class="s1">] 
+ 
+ 
+</span><span class="s0"># Return the head (dirname) part of a path.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">dirname(p): 
+    </span><span class="s2">&quot;&quot;&quot;Returns the directory component of a pathname&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">split(p)[</span><span class="s6">0</span><span class="s1">] 
+ 
+</span><span class="s0"># Is a path a symbolic link?</span><span class="s1"> 
+</span><span class="s0"># This will always return false on systems where os.lstat doesn't exist.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">islink(path): 
+    </span><span class="s2">&quot;&quot;&quot;Test whether a path is a symbolic link. 
+    This will always return false for Windows prior to 6.0. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        st = os.lstat(path) 
+    </span><span class="s3">except </span><span class="s1">(OSError</span><span class="s3">, </span><span class="s1">AttributeError): 
+        </span><span class="s3">return False</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">stat.S_ISLNK(st.st_mode) 
+ 
+</span><span class="s0"># Being true for dangling symbolic links is also useful.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">lexists(path): 
+    </span><span class="s2">&quot;&quot;&quot;Test whether a path exists.  Returns True for broken symbolic links&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        st = os.lstat(path) 
+    </span><span class="s3">except </span><span class="s1">OSError: 
+        </span><span class="s3">return False</span><span class="s1"> 
+    </span><span class="s3">return True</span><span class="s1"> 
+ 
+</span><span class="s0"># Is a path a mount point?</span><span class="s1"> 
+</span><span class="s0"># Any drive letter root (eg c:\)</span><span class="s1"> 
+</span><span class="s0"># Any share UNC (eg \\server\share)</span><span class="s1"> 
+</span><span class="s0"># Any volume mounted on a filesystem folder</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># No one method detects all three situations. Historically we've lexically</span><span class="s1"> 
+</span><span class="s0"># detected drive letter roots and share UNCs. The canonical approach to</span><span class="s1"> 
+</span><span class="s0"># detecting mounted volumes (querying the reparse tag) fails for the most</span><span class="s1"> 
+</span><span class="s0"># common case: drive letter roots. The alternative which uses GetVolumePathName</span><span class="s1"> 
+</span><span class="s0"># fails if the drive letter is the result of a SUBST.</span><span class="s1"> 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s3">from </span><span class="s1">nt </span><span class="s3">import </span><span class="s1">_getvolumepathname 
+</span><span class="s3">except </span><span class="s1">ImportError: 
+    _getvolumepathname = </span><span class="s3">None</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">ismount(path): 
+    </span><span class="s2">&quot;&quot;&quot;Test whether a path is a mount point (a drive root, the root of a 
+    share, or a mounted volume)&quot;&quot;&quot;</span><span class="s1"> 
+    seps = _get_bothseps(path) 
+    path = abspath(path) 
+    root</span><span class="s3">, </span><span class="s1">rest = splitdrive(path) 
+    </span><span class="s3">if </span><span class="s1">root </span><span class="s3">and </span><span class="s1">root[</span><span class="s6">0</span><span class="s1">] </span><span class="s3">in </span><span class="s1">seps: 
+        </span><span class="s3">return </span><span class="s1">(</span><span class="s3">not </span><span class="s1">rest) </span><span class="s3">or </span><span class="s1">(rest </span><span class="s3">in </span><span class="s1">seps) 
+    </span><span class="s3">if </span><span class="s1">rest </span><span class="s3">in </span><span class="s1">seps: 
+        </span><span class="s3">return True</span><span class="s1"> 
+ 
+    </span><span class="s3">if </span><span class="s1">_getvolumepathname: 
+        </span><span class="s3">return </span><span class="s1">path.rstrip(seps) == _getvolumepathname(path).rstrip(seps) 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">return False</span><span class="s1"> 
+ 
+ 
+</span><span class="s0"># Expand paths beginning with '~' or '~user'.</span><span class="s1"> 
+</span><span class="s0"># '~' means $HOME; '~user' means that user's home directory.</span><span class="s1"> 
+</span><span class="s0"># If the path doesn't begin with '~', or if the user or $HOME is unknown,</span><span class="s1"> 
+</span><span class="s0"># the path is returned unchanged (leaving error reporting to whatever</span><span class="s1"> 
+</span><span class="s0"># function is called with the expanded path as argument).</span><span class="s1"> 
+</span><span class="s0"># See also module 'glob' for expansion of *, ? and [...] in pathnames.</span><span class="s1"> 
+</span><span class="s0"># (A function should also be defined to do full *sh-style environment</span><span class="s1"> 
+</span><span class="s0"># variable expansion.)</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">expanduser(path): 
+    </span><span class="s2">&quot;&quot;&quot;Expand ~ and ~user constructs. 
+ 
+    If user or $HOME is unknown, do nothing.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+        tilde = </span><span class="s5">b'~'</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        tilde = </span><span class="s4">'~'</span><span class="s1"> 
+    </span><span class="s3">if not </span><span class="s1">path.startswith(tilde): 
+        </span><span class="s3">return </span><span class="s1">path 
+    i</span><span class="s3">, </span><span class="s1">n = </span><span class="s6">1</span><span class="s3">, </span><span class="s1">len(path) 
+    </span><span class="s3">while </span><span class="s1">i &lt; n </span><span class="s3">and </span><span class="s1">path[i] </span><span class="s3">not in </span><span class="s1">_get_bothseps(path): 
+        i += </span><span class="s6">1</span><span class="s1"> 
+ 
+    </span><span class="s3">if </span><span class="s4">'HOME' </span><span class="s3">in </span><span class="s1">os.environ: 
+        userhome = os.environ[</span><span class="s4">'HOME'</span><span class="s1">] 
+    </span><span class="s3">elif </span><span class="s4">'USERPROFILE' </span><span class="s3">in </span><span class="s1">os.environ: 
+        userhome = os.environ[</span><span class="s4">'USERPROFILE'</span><span class="s1">] 
+    </span><span class="s3">elif not </span><span class="s4">'HOMEPATH' </span><span class="s3">in </span><span class="s1">os.environ: 
+        </span><span class="s3">return </span><span class="s1">path 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">try</span><span class="s1">: 
+            drive = os.environ[</span><span class="s4">'HOMEDRIVE'</span><span class="s1">] 
+        </span><span class="s3">except </span><span class="s1">KeyError: 
+            drive = </span><span class="s4">''</span><span class="s1"> 
+        userhome = join(drive</span><span class="s3">, </span><span class="s1">os.environ[</span><span class="s4">'HOMEPATH'</span><span class="s1">]) 
+ 
+    </span><span class="s3">if </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+        userhome = os.fsencode(userhome) 
+ 
+    </span><span class="s3">if </span><span class="s1">i != </span><span class="s6">1</span><span class="s1">: </span><span class="s0">#~user</span><span class="s1"> 
+        userhome = join(dirname(userhome)</span><span class="s3">, </span><span class="s1">path[</span><span class="s6">1</span><span class="s1">:i]) 
+ 
+    </span><span class="s3">return </span><span class="s1">userhome + path[i:] 
+ 
+ 
+</span><span class="s0"># Expand paths containing shell variable substitutions.</span><span class="s1"> 
+</span><span class="s0"># The following rules apply:</span><span class="s1"> 
+</span><span class="s0">#       - no expansion within single quotes</span><span class="s1"> 
+</span><span class="s0">#       - '$$' is translated into '$'</span><span class="s1"> 
+</span><span class="s0">#       - '%%' is translated into '%' if '%%' are not seen in %var1%%var2%</span><span class="s1"> 
+</span><span class="s0">#       - ${varname} is accepted.</span><span class="s1"> 
+</span><span class="s0">#       - $varname is accepted.</span><span class="s1"> 
+</span><span class="s0">#       - %varname% is accepted.</span><span class="s1"> 
+</span><span class="s0">#       - varnames can be made out of letters, digits and the characters '_-'</span><span class="s1"> 
+</span><span class="s0">#         (though is not verified in the ${varname} and %varname% cases)</span><span class="s1"> 
+</span><span class="s0"># XXX With COMMAND.COM you can use any characters in a variable name,</span><span class="s1"> 
+</span><span class="s0"># XXX except '^|&lt;&gt;='.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">expandvars(path): 
+    </span><span class="s2">&quot;&quot;&quot;Expand shell variables of the forms $var, ${var} and %var%. 
+ 
+    Unknown variables are left unchanged.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+        </span><span class="s3">if </span><span class="s5">b'$' </span><span class="s3">not in </span><span class="s1">path </span><span class="s3">and </span><span class="s5">b'%' </span><span class="s3">not in </span><span class="s1">path: 
+            </span><span class="s3">return </span><span class="s1">path 
+        </span><span class="s3">import </span><span class="s1">string 
+        varchars = bytes(string.ascii_letters + string.digits + </span><span class="s4">'_-'</span><span class="s3">, </span><span class="s4">'ascii'</span><span class="s1">) 
+        quote = </span><span class="s5">b'</span><span class="s3">\'</span><span class="s5">'</span><span class="s1"> 
+        percent = </span><span class="s5">b'%'</span><span class="s1"> 
+        brace = </span><span class="s5">b'{'</span><span class="s1"> 
+        rbrace = </span><span class="s5">b'}'</span><span class="s1"> 
+        dollar = </span><span class="s5">b'$'</span><span class="s1"> 
+        environ = getattr(os</span><span class="s3">, </span><span class="s4">'environb'</span><span class="s3">, None</span><span class="s1">) 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s4">'$' </span><span class="s3">not in </span><span class="s1">path </span><span class="s3">and </span><span class="s4">'%' </span><span class="s3">not in </span><span class="s1">path: 
+            </span><span class="s3">return </span><span class="s1">path 
+        </span><span class="s3">import </span><span class="s1">string 
+        varchars = string.ascii_letters + string.digits + </span><span class="s4">'_-'</span><span class="s1"> 
+        quote = </span><span class="s4">'</span><span class="s3">\'</span><span class="s4">'</span><span class="s1"> 
+        percent = </span><span class="s4">'%'</span><span class="s1"> 
+        brace = </span><span class="s4">'{'</span><span class="s1"> 
+        rbrace = </span><span class="s4">'}'</span><span class="s1"> 
+        dollar = </span><span class="s4">'$'</span><span class="s1"> 
+        environ = os.environ 
+    res = path[:</span><span class="s6">0</span><span class="s1">] 
+    index = </span><span class="s6">0</span><span class="s1"> 
+    pathlen = len(path) 
+    </span><span class="s3">while </span><span class="s1">index &lt; pathlen: 
+        c = path[index:index+</span><span class="s6">1</span><span class="s1">] 
+        </span><span class="s3">if </span><span class="s1">c == quote:   </span><span class="s0"># no expansion within single quotes</span><span class="s1"> 
+            path = path[index + </span><span class="s6">1</span><span class="s1">:] 
+            pathlen = len(path) 
+            </span><span class="s3">try</span><span class="s1">: 
+                index = path.index(c) 
+                res += c + path[:index + </span><span class="s6">1</span><span class="s1">] 
+            </span><span class="s3">except </span><span class="s1">ValueError: 
+                res += c + path 
+                index = pathlen - </span><span class="s6">1</span><span class="s1"> 
+        </span><span class="s3">elif </span><span class="s1">c == percent:  </span><span class="s0"># variable or '%'</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">path[index + </span><span class="s6">1</span><span class="s1">:index + </span><span class="s6">2</span><span class="s1">] == percent: 
+                res += c 
+                index += </span><span class="s6">1</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                path = path[index+</span><span class="s6">1</span><span class="s1">:] 
+                pathlen = len(path) 
+                </span><span class="s3">try</span><span class="s1">: 
+                    index = path.index(percent) 
+                </span><span class="s3">except </span><span class="s1">ValueError: 
+                    res += percent + path 
+                    index = pathlen - </span><span class="s6">1</span><span class="s1"> 
+                </span><span class="s3">else</span><span class="s1">: 
+                    var = path[:index] 
+                    </span><span class="s3">try</span><span class="s1">: 
+                        </span><span class="s3">if </span><span class="s1">environ </span><span class="s3">is None</span><span class="s1">: 
+                            value = os.fsencode(os.environ[os.fsdecode(var)]) 
+                        </span><span class="s3">else</span><span class="s1">: 
+                            value = environ[var] 
+                    </span><span class="s3">except </span><span class="s1">KeyError: 
+                        value = percent + var + percent 
+                    res += value 
+        </span><span class="s3">elif </span><span class="s1">c == dollar:  </span><span class="s0"># variable or '$$'</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">path[index + </span><span class="s6">1</span><span class="s1">:index + </span><span class="s6">2</span><span class="s1">] == dollar: 
+                res += c 
+                index += </span><span class="s6">1</span><span class="s1"> 
+            </span><span class="s3">elif </span><span class="s1">path[index + </span><span class="s6">1</span><span class="s1">:index + </span><span class="s6">2</span><span class="s1">] == brace: 
+                path = path[index+</span><span class="s6">2</span><span class="s1">:] 
+                pathlen = len(path) 
+                </span><span class="s3">try</span><span class="s1">: 
+                    index = path.index(rbrace) 
+                </span><span class="s3">except </span><span class="s1">ValueError: 
+                    res += dollar + brace + path 
+                    index = pathlen - </span><span class="s6">1</span><span class="s1"> 
+                </span><span class="s3">else</span><span class="s1">: 
+                    var = path[:index] 
+                    </span><span class="s3">try</span><span class="s1">: 
+                        </span><span class="s3">if </span><span class="s1">environ </span><span class="s3">is None</span><span class="s1">: 
+                            value = os.fsencode(os.environ[os.fsdecode(var)]) 
+                        </span><span class="s3">else</span><span class="s1">: 
+                            value = environ[var] 
+                    </span><span class="s3">except </span><span class="s1">KeyError: 
+                        value = dollar + brace + var + rbrace 
+                    res += value 
+            </span><span class="s3">else</span><span class="s1">: 
+                var = path[:</span><span class="s6">0</span><span class="s1">] 
+                index += </span><span class="s6">1</span><span class="s1"> 
+                c = path[index:index + </span><span class="s6">1</span><span class="s1">] 
+                </span><span class="s3">while </span><span class="s1">c </span><span class="s3">and </span><span class="s1">c </span><span class="s3">in </span><span class="s1">varchars: 
+                    var += c 
+                    index += </span><span class="s6">1</span><span class="s1"> 
+                    c = path[index:index + </span><span class="s6">1</span><span class="s1">] 
+                </span><span class="s3">try</span><span class="s1">: 
+                    </span><span class="s3">if </span><span class="s1">environ </span><span class="s3">is None</span><span class="s1">: 
+                        value = os.fsencode(os.environ[os.fsdecode(var)]) 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        value = environ[var] 
+                </span><span class="s3">except </span><span class="s1">KeyError: 
+                    value = dollar + var 
+                res += value 
+                </span><span class="s3">if </span><span class="s1">c: 
+                    index -= </span><span class="s6">1</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            res += c 
+        index += </span><span class="s6">1</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">res 
+ 
+ 
+</span><span class="s0"># Normalize a path, e.g. A//B, A/./B and A/foo/../B all become A\B.</span><span class="s1"> 
+</span><span class="s0"># Previously, this function also truncated pathnames to 8+3 format,</span><span class="s1"> 
+</span><span class="s0"># but as this module is called &quot;ntpath&quot;, that's obviously wrong!</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">normpath(path): 
+    </span><span class="s2">&quot;&quot;&quot;Normalize path, eliminating double slashes, etc.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+        sep = </span><span class="s5">b'</span><span class="s3">\\</span><span class="s5">'</span><span class="s1"> 
+        altsep = </span><span class="s5">b'/'</span><span class="s1"> 
+        curdir = </span><span class="s5">b'.'</span><span class="s1"> 
+        pardir = </span><span class="s5">b'..'</span><span class="s1"> 
+        special_prefixes = (</span><span class="s5">b'</span><span class="s3">\\\\</span><span class="s5">.</span><span class="s3">\\</span><span class="s5">'</span><span class="s3">, </span><span class="s5">b'</span><span class="s3">\\\\</span><span class="s5">?</span><span class="s3">\\</span><span class="s5">'</span><span class="s1">) 
+    </span><span class="s3">else</span><span class="s1">: 
+        sep = </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">'</span><span class="s1"> 
+        altsep = </span><span class="s4">'/'</span><span class="s1"> 
+        curdir = </span><span class="s4">'.'</span><span class="s1"> 
+        pardir = </span><span class="s4">'..'</span><span class="s1"> 
+        special_prefixes = (</span><span class="s4">'</span><span class="s3">\\\\</span><span class="s4">.</span><span class="s3">\\</span><span class="s4">'</span><span class="s3">, </span><span class="s4">'</span><span class="s3">\\\\</span><span class="s4">?</span><span class="s3">\\</span><span class="s4">'</span><span class="s1">) 
+    </span><span class="s3">if </span><span class="s1">path.startswith(special_prefixes): 
+        </span><span class="s0"># in the case of paths with these prefixes:</span><span class="s1"> 
+        </span><span class="s0"># \\.\ -&gt; device names</span><span class="s1"> 
+        </span><span class="s0"># \\?\ -&gt; literal paths</span><span class="s1"> 
+        </span><span class="s0"># do not do any normalization, but return the path unchanged</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">path 
+    path = path.replace(altsep</span><span class="s3">, </span><span class="s1">sep) 
+    prefix</span><span class="s3">, </span><span class="s1">path = splitdrive(path) 
+ 
+    </span><span class="s0"># collapse initial backslashes</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">path.startswith(sep): 
+        prefix += sep 
+        path = path.lstrip(sep) 
+ 
+    comps = path.split(sep) 
+    i = </span><span class="s6">0</span><span class="s1"> 
+    </span><span class="s3">while </span><span class="s1">i &lt; len(comps): 
+        </span><span class="s3">if not </span><span class="s1">comps[i] </span><span class="s3">or </span><span class="s1">comps[i] == curdir: 
+            </span><span class="s3">del </span><span class="s1">comps[i] 
+        </span><span class="s3">elif </span><span class="s1">comps[i] == pardir: 
+            </span><span class="s3">if </span><span class="s1">i &gt; </span><span class="s6">0 </span><span class="s3">and </span><span class="s1">comps[i-</span><span class="s6">1</span><span class="s1">] != pardir: 
+                </span><span class="s3">del </span><span class="s1">comps[i-</span><span class="s6">1</span><span class="s1">:i+</span><span class="s6">1</span><span class="s1">] 
+                i -= </span><span class="s6">1</span><span class="s1"> 
+            </span><span class="s3">elif </span><span class="s1">i == </span><span class="s6">0 </span><span class="s3">and </span><span class="s1">prefix.endswith(sep): 
+                </span><span class="s3">del </span><span class="s1">comps[i] 
+            </span><span class="s3">else</span><span class="s1">: 
+                i += </span><span class="s6">1</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            i += </span><span class="s6">1</span><span class="s1"> 
+    </span><span class="s0"># If the path is now empty, substitute '.'</span><span class="s1"> 
+    </span><span class="s3">if not </span><span class="s1">prefix </span><span class="s3">and not </span><span class="s1">comps: 
+        comps.append(curdir) 
+    </span><span class="s3">return </span><span class="s1">prefix + sep.join(comps) 
+ 
+ 
+</span><span class="s0"># Return an absolute path.</span><span class="s1"> 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s3">from </span><span class="s1">nt </span><span class="s3">import </span><span class="s1">_getfullpathname 
+ 
+</span><span class="s3">except </span><span class="s1">ImportError: </span><span class="s0"># not running on Windows - mock up something sensible</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">abspath(path): 
+        </span><span class="s2">&quot;&quot;&quot;Return the absolute version of a path.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">if not </span><span class="s1">isabs(path): 
+            </span><span class="s3">if </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+                cwd = os.getcwdb() 
+            </span><span class="s3">else</span><span class="s1">: 
+                cwd = os.getcwd() 
+            path = join(cwd</span><span class="s3">, </span><span class="s1">path) 
+        </span><span class="s3">return </span><span class="s1">normpath(path) 
+ 
+</span><span class="s3">else</span><span class="s1">:  </span><span class="s0"># use native Windows method on Windows</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">abspath(path): 
+        </span><span class="s2">&quot;&quot;&quot;Return the absolute version of a path.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s3">if </span><span class="s1">path: </span><span class="s0"># Empty path must return current working directory.</span><span class="s1"> 
+            </span><span class="s3">try</span><span class="s1">: 
+                path = _getfullpathname(path) 
+            </span><span class="s3">except </span><span class="s1">OSError: 
+                </span><span class="s3">pass </span><span class="s0"># Bad path - return unchanged.</span><span class="s1"> 
+        </span><span class="s3">elif </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+            path = os.getcwdb() 
+        </span><span class="s3">else</span><span class="s1">: 
+            path = os.getcwd() 
+        </span><span class="s3">return </span><span class="s1">normpath(path) 
+ 
+</span><span class="s0"># realpath is a no-op on systems without islink support</span><span class="s1"> 
+realpath = abspath 
+</span><span class="s0"># Win9x family and earlier have no Unicode filename support.</span><span class="s1"> 
+supports_unicode_filenames = (hasattr(sys</span><span class="s3">, </span><span class="s4">&quot;getwindowsversion&quot;</span><span class="s1">) </span><span class="s3">and</span><span class="s1"> 
+                              sys.getwindowsversion()[</span><span class="s6">3</span><span class="s1">] &gt;= </span><span class="s6">2</span><span class="s1">) 
+ 
+</span><span class="s3">def </span><span class="s1">relpath(path</span><span class="s3">, </span><span class="s1">start=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s2">&quot;&quot;&quot;Return a relative version of a path&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">isinstance(path</span><span class="s3">, </span><span class="s1">bytes): 
+        sep = </span><span class="s5">b'</span><span class="s3">\\</span><span class="s5">'</span><span class="s1"> 
+        curdir = </span><span class="s5">b'.'</span><span class="s1"> 
+        pardir = </span><span class="s5">b'..'</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        sep = </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">'</span><span class="s1"> 
+        curdir = </span><span class="s4">'.'</span><span class="s1"> 
+        pardir = </span><span class="s4">'..'</span><span class="s1"> 
+ 
+    </span><span class="s3">if </span><span class="s1">start </span><span class="s3">is None</span><span class="s1">: 
+        start = curdir 
+ 
+    </span><span class="s3">if not </span><span class="s1">path: 
+        </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;no path specified&quot;</span><span class="s1">) 
+ 
+    </span><span class="s3">try</span><span class="s1">: 
+        start_abs = abspath(normpath(start)) 
+        path_abs = abspath(normpath(path)) 
+        start_drive</span><span class="s3">, </span><span class="s1">start_rest = splitdrive(start_abs) 
+        path_drive</span><span class="s3">, </span><span class="s1">path_rest = splitdrive(path_abs) 
+        </span><span class="s3">if </span><span class="s1">normcase(start_drive) != normcase(path_drive): 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;path is on mount %r, start on mount %r&quot; </span><span class="s1">% ( 
+                path_drive</span><span class="s3">, </span><span class="s1">start_drive)) 
+ 
+        start_list = [x </span><span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">start_rest.split(sep) </span><span class="s3">if </span><span class="s1">x] 
+        path_list = [x </span><span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">path_rest.split(sep) </span><span class="s3">if </span><span class="s1">x] 
+        </span><span class="s0"># Work out how much of the filepath is shared by start and path.</span><span class="s1"> 
+        i = </span><span class="s6">0</span><span class="s1"> 
+        </span><span class="s3">for </span><span class="s1">e1</span><span class="s3">, </span><span class="s1">e2 </span><span class="s3">in </span><span class="s1">zip(start_list</span><span class="s3">, </span><span class="s1">path_list): 
+            </span><span class="s3">if </span><span class="s1">normcase(e1) != normcase(e2): 
+                </span><span class="s3">break</span><span class="s1"> 
+            i += </span><span class="s6">1</span><span class="s1"> 
+ 
+        rel_list = [pardir] * (len(start_list)-i) + path_list[i:] 
+        </span><span class="s3">if not </span><span class="s1">rel_list: 
+            </span><span class="s3">return </span><span class="s1">curdir 
+        </span><span class="s3">return </span><span class="s1">join(*rel_list) 
+    </span><span class="s3">except </span><span class="s1">(TypeError</span><span class="s3">, </span><span class="s1">ValueError</span><span class="s3">, </span><span class="s1">AttributeError</span><span class="s3">, </span><span class="s1">BytesWarning</span><span class="s3">, </span><span class="s1">DeprecationWarning): 
+        genericpath._check_arg_types(</span><span class="s4">'relpath'</span><span class="s3">, </span><span class="s1">path</span><span class="s3">, </span><span class="s1">start) 
+        </span><span class="s3">raise</span><span class="s1"> 
+ 
+ 
+</span><span class="s0"># Return the longest common sub-path of the sequence of paths given as input.</span><span class="s1"> 
+</span><span class="s0"># The function is case-insensitive and 'separator-insensitive', i.e. if the</span><span class="s1"> 
+</span><span class="s0"># only difference between two paths is the use of '\' versus '/' as separator,</span><span class="s1"> 
+</span><span class="s0"># they are deemed to be equal.</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># However, the returned path will have the standard '\' separator (even if the</span><span class="s1"> 
+</span><span class="s0"># given paths had the alternative '/' separator) and will have the case of the</span><span class="s1"> 
+</span><span class="s0"># first path given in the sequence. Additionally, any trailing separator is</span><span class="s1"> 
+</span><span class="s0"># stripped from the returned path.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">commonpath(paths): 
+    </span><span class="s2">&quot;&quot;&quot;Given a sequence of path names, returns the longest common sub-path.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">if not </span><span class="s1">paths: 
+        </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">'commonpath() arg is an empty sequence'</span><span class="s1">) 
+ 
+    </span><span class="s3">if </span><span class="s1">isinstance(paths[</span><span class="s6">0</span><span class="s1">]</span><span class="s3">, </span><span class="s1">bytes): 
+        sep = </span><span class="s5">b'</span><span class="s3">\\</span><span class="s5">'</span><span class="s1"> 
+        altsep = </span><span class="s5">b'/'</span><span class="s1"> 
+        curdir = </span><span class="s5">b'.'</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        sep = </span><span class="s4">'</span><span class="s3">\\</span><span class="s4">'</span><span class="s1"> 
+        altsep = </span><span class="s4">'/'</span><span class="s1"> 
+        curdir = </span><span class="s4">'.'</span><span class="s1"> 
+ 
+    </span><span class="s3">try</span><span class="s1">: 
+        drivesplits = [splitdrive(p.replace(altsep</span><span class="s3">, </span><span class="s1">sep).lower()) </span><span class="s3">for </span><span class="s1">p </span><span class="s3">in </span><span class="s1">paths] 
+        split_paths = [p.split(sep) </span><span class="s3">for </span><span class="s1">d</span><span class="s3">, </span><span class="s1">p </span><span class="s3">in </span><span class="s1">drivesplits] 
+ 
+        </span><span class="s3">try</span><span class="s1">: 
+            isabs</span><span class="s3">, </span><span class="s1">= set(p[:</span><span class="s6">1</span><span class="s1">] == sep </span><span class="s3">for </span><span class="s1">d</span><span class="s3">, </span><span class="s1">p </span><span class="s3">in </span><span class="s1">drivesplits) 
+        </span><span class="s3">except </span><span class="s1">ValueError: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;Can't mix absolute and relative paths&quot;</span><span class="s1">) </span><span class="s3">from None</span><span class="s1"> 
+ 
+        </span><span class="s0"># Check that all drive letters or UNC paths match. The check is made only</span><span class="s1"> 
+        </span><span class="s0"># now otherwise type errors for mixing strings and bytes would not be</span><span class="s1"> 
+        </span><span class="s0"># caught.</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">len(set(d </span><span class="s3">for </span><span class="s1">d</span><span class="s3">, </span><span class="s1">p </span><span class="s3">in </span><span class="s1">drivesplits)) != </span><span class="s6">1</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;Paths don't have the same drive&quot;</span><span class="s1">) 
+ 
+        drive</span><span class="s3">, </span><span class="s1">path = splitdrive(paths[</span><span class="s6">0</span><span class="s1">].replace(altsep</span><span class="s3">, </span><span class="s1">sep)) 
+        common = path.split(sep) 
+        common = [c </span><span class="s3">for </span><span class="s1">c </span><span class="s3">in </span><span class="s1">common </span><span class="s3">if </span><span class="s1">c </span><span class="s3">and </span><span class="s1">c != curdir] 
+ 
+        split_paths = [[c </span><span class="s3">for </span><span class="s1">c </span><span class="s3">in </span><span class="s1">s </span><span class="s3">if </span><span class="s1">c </span><span class="s3">and </span><span class="s1">c != curdir] </span><span class="s3">for </span><span class="s1">s </span><span class="s3">in </span><span class="s1">split_paths] 
+        s1 = min(split_paths) 
+        s2 = max(split_paths) 
+        </span><span class="s3">for </span><span class="s1">i</span><span class="s3">, </span><span class="s1">c </span><span class="s3">in </span><span class="s1">enumerate(s1): 
+            </span><span class="s3">if </span><span class="s1">c != s2[i]: 
+                common = common[:i] 
+                </span><span class="s3">break</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            common = common[:len(s1)] 
+ 
+        prefix = drive + sep </span><span class="s3">if </span><span class="s1">isabs </span><span class="s3">else </span><span class="s1">drive 
+        </span><span class="s3">return </span><span class="s1">prefix + sep.join(common) 
+    </span><span class="s3">except </span><span class="s1">(TypeError</span><span class="s3">, </span><span class="s1">AttributeError): 
+        genericpath._check_arg_types(</span><span class="s4">'commonpath'</span><span class="s3">, </span><span class="s1">*paths) 
+        </span><span class="s3">raise</span><span class="s1"> 
+ 
+ 
+</span><span class="s0"># determine if two files are in fact the same file</span><span class="s1"> 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s0"># GetFinalPathNameByHandle is available starting with Windows 6.0.</span><span class="s1"> 
+    </span><span class="s0"># Windows XP and non-Windows OS'es will mock _getfinalpathname.</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">sys.getwindowsversion()[:</span><span class="s6">2</span><span class="s1">] &gt;= (</span><span class="s6">6</span><span class="s3">, </span><span class="s6">0</span><span class="s1">): 
+        </span><span class="s3">from </span><span class="s1">nt </span><span class="s3">import </span><span class="s1">_getfinalpathname 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">raise </span><span class="s1">ImportError 
+</span><span class="s3">except </span><span class="s1">(AttributeError</span><span class="s3">, </span><span class="s1">ImportError): 
+    </span><span class="s0"># On Windows XP and earlier, two files are the same if their absolute</span><span class="s1"> 
+    </span><span class="s0"># pathnames are the same.</span><span class="s1"> 
+    </span><span class="s0"># Non-Windows operating systems fake this method with an XP</span><span class="s1"> 
+    </span><span class="s0"># approximation.</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">_getfinalpathname(f): 
+        </span><span class="s3">return </span><span class="s1">normcase(abspath(f)) 
+ 
+ 
+</span><span class="s3">try</span><span class="s1">: 
+    </span><span class="s0"># The genericpath.isdir implementation uses os.stat and checks the mode</span><span class="s1"> 
+    </span><span class="s0"># attribute to tell whether or not the path is a directory.</span><span class="s1"> 
+    </span><span class="s0"># This is overkill on Windows - just pass the path to GetFileAttributes</span><span class="s1"> 
+    </span><span class="s0"># and check the attribute from there.</span><span class="s1"> 
+    </span><span class="s3">from </span><span class="s1">nt </span><span class="s3">import </span><span class="s1">_isdir </span><span class="s3">as </span><span class="s1">isdir 
+</span><span class="s3">except </span><span class="s1">ImportError: 
+    </span><span class="s0"># Use genericpath.isdir as imported above.</span><span class="s1"> 
+    </span><span class="s3">pass</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

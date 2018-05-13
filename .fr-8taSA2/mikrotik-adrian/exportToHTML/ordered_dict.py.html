@@ -1,0 +1,283 @@
+<html>
+<head>
+<title>ordered_dict.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(104,151,187); }
+.s5 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ordered_dict.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># Backport of OrderedDict() class that runs on Python 2.4, 2.5, 2.6, 2.7 and pypy.</span><span class="s1"> 
+</span><span class="s0"># Passes Python2.7's test suite and incorporates all the latest updates.</span><span class="s1"> 
+</span><span class="s0"># Copyright 2009 Raymond Hettinger, released under the MIT License.</span><span class="s1"> 
+</span><span class="s0"># http://code.activestate.com/recipes/576693/</span><span class="s1"> 
+</span><span class="s2">try</span><span class="s1">: 
+    </span><span class="s2">from </span><span class="s1">thread </span><span class="s2">import </span><span class="s1">get_ident </span><span class="s2">as </span><span class="s1">_get_ident 
+</span><span class="s2">except </span><span class="s1">ImportError: 
+    </span><span class="s2">from </span><span class="s1">dummy_thread </span><span class="s2">import </span><span class="s1">get_ident </span><span class="s2">as </span><span class="s1">_get_ident 
+ 
+</span><span class="s2">try</span><span class="s1">: 
+    </span><span class="s2">from </span><span class="s1">_abcoll </span><span class="s2">import </span><span class="s1">KeysView</span><span class="s2">, </span><span class="s1">ValuesView</span><span class="s2">, </span><span class="s1">ItemsView 
+</span><span class="s2">except </span><span class="s1">ImportError: 
+    </span><span class="s2">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">OrderedDict(dict): 
+    </span><span class="s3">'Dictionary that remembers insertion order'</span><span class="s1"> 
+    </span><span class="s0"># An inherited dict maps keys to values.</span><span class="s1"> 
+    </span><span class="s0"># The inherited dict provides __getitem__, __len__, __contains__, and get.</span><span class="s1"> 
+    </span><span class="s0"># The remaining methods are order-aware.</span><span class="s1"> 
+    </span><span class="s0"># Big-O running times for all methods are the same as for regular dictionaries.</span><span class="s1"> 
+ 
+    </span><span class="s0"># The internal self.__map dictionary maps keys to links in a doubly linked list.</span><span class="s1"> 
+    </span><span class="s0"># The circular doubly linked list starts and ends with a sentinel element.</span><span class="s1"> 
+    </span><span class="s0"># The sentinel element never gets deleted (this simplifies the algorithm).</span><span class="s1"> 
+    </span><span class="s0"># Each link is stored as a list of length three:  [PREV, NEXT, KEY].</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">*args</span><span class="s2">, </span><span class="s1">**kwds): 
+        </span><span class="s3">'''Initialize an ordered dictionary.  Signature is the same as for 
+        regular dictionaries, but keyword arguments are not recommended 
+        because their insertion order is arbitrary. 
+ 
+        '''</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">len(args) &gt; </span><span class="s4">1</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s5">'expected at most 1 arguments, got %d' </span><span class="s1">% len(args)) 
+        </span><span class="s2">try</span><span class="s1">: 
+            self.__root 
+        </span><span class="s2">except </span><span class="s1">AttributeError: 
+            self.__root = root = []                     </span><span class="s0"># sentinel node</span><span class="s1"> 
+            root[:] = [root</span><span class="s2">, </span><span class="s1">root</span><span class="s2">, None</span><span class="s1">] 
+            self.__map = {} 
+        self.__update(*args</span><span class="s2">, </span><span class="s1">**kwds) 
+ 
+    </span><span class="s2">def </span><span class="s1">__setitem__(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value</span><span class="s2">, </span><span class="s1">dict_setitem=dict.__setitem__): 
+        </span><span class="s3">'od.__setitem__(i, y) &lt;==&gt; od[i]=y'</span><span class="s1"> 
+        </span><span class="s0"># Setting a new item creates a new link which goes at the end of the linked</span><span class="s1"> 
+        </span><span class="s0"># list, and the inherited dictionary is updated with the new key/value pair.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">key </span><span class="s2">not in </span><span class="s1">self: 
+            root = self.__root 
+            last = root[</span><span class="s4">0</span><span class="s1">] 
+            last[</span><span class="s4">1</span><span class="s1">] = root[</span><span class="s4">0</span><span class="s1">] = self.__map[key] = [last</span><span class="s2">, </span><span class="s1">root</span><span class="s2">, </span><span class="s1">key] 
+        dict_setitem(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value) 
+ 
+    </span><span class="s2">def </span><span class="s1">__delitem__(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">dict_delitem=dict.__delitem__): 
+        </span><span class="s3">'od.__delitem__(y) &lt;==&gt; del od[y]'</span><span class="s1"> 
+        </span><span class="s0"># Deleting an existing item uses self.__map to find the link which is</span><span class="s1"> 
+        </span><span class="s0"># then removed by updating the links in the predecessor and successor nodes.</span><span class="s1"> 
+        dict_delitem(self</span><span class="s2">, </span><span class="s1">key) 
+        link_prev</span><span class="s2">, </span><span class="s1">link_next</span><span class="s2">, </span><span class="s1">key = self.__map.pop(key) 
+        link_prev[</span><span class="s4">1</span><span class="s1">] = link_next 
+        link_next[</span><span class="s4">0</span><span class="s1">] = link_prev 
+ 
+    </span><span class="s2">def </span><span class="s1">__iter__(self): 
+        </span><span class="s3">'od.__iter__() &lt;==&gt; iter(od)'</span><span class="s1"> 
+        root = self.__root 
+        curr = root[</span><span class="s4">1</span><span class="s1">] 
+        </span><span class="s2">while </span><span class="s1">curr </span><span class="s2">is not </span><span class="s1">root: 
+            </span><span class="s2">yield </span><span class="s1">curr[</span><span class="s4">2</span><span class="s1">] 
+            curr = curr[</span><span class="s4">1</span><span class="s1">] 
+ 
+    </span><span class="s2">def </span><span class="s1">__reversed__(self): 
+        </span><span class="s3">'od.__reversed__() &lt;==&gt; reversed(od)'</span><span class="s1"> 
+        root = self.__root 
+        curr = root[</span><span class="s4">0</span><span class="s1">] 
+        </span><span class="s2">while </span><span class="s1">curr </span><span class="s2">is not </span><span class="s1">root: 
+            </span><span class="s2">yield </span><span class="s1">curr[</span><span class="s4">2</span><span class="s1">] 
+            curr = curr[</span><span class="s4">0</span><span class="s1">] 
+ 
+    </span><span class="s2">def </span><span class="s1">clear(self): 
+        </span><span class="s3">'od.clear() -&gt; None.  Remove all items from od.'</span><span class="s1"> 
+        </span><span class="s2">try</span><span class="s1">: 
+            </span><span class="s2">for </span><span class="s1">node </span><span class="s2">in </span><span class="s1">self.__map.itervalues(): 
+                </span><span class="s2">del </span><span class="s1">node[:] 
+            root = self.__root 
+            root[:] = [root</span><span class="s2">, </span><span class="s1">root</span><span class="s2">, None</span><span class="s1">] 
+            self.__map.clear() 
+        </span><span class="s2">except </span><span class="s1">AttributeError: 
+            </span><span class="s2">pass</span><span class="s1"> 
+        dict.clear(self) 
+ 
+    </span><span class="s2">def </span><span class="s1">popitem(self</span><span class="s2">, </span><span class="s1">last=</span><span class="s2">True</span><span class="s1">): 
+        </span><span class="s3">'''od.popitem() -&gt; (k, v), return and remove a (key, value) pair. 
+        Pairs are returned in LIFO order if last is true or FIFO order if false. 
+ 
+        '''</span><span class="s1"> 
+        </span><span class="s2">if not </span><span class="s1">self: 
+            </span><span class="s2">raise </span><span class="s1">KeyError(</span><span class="s5">'dictionary is empty'</span><span class="s1">) 
+        root = self.__root 
+        </span><span class="s2">if </span><span class="s1">last: 
+            link = root[</span><span class="s4">0</span><span class="s1">] 
+            link_prev = link[</span><span class="s4">0</span><span class="s1">] 
+            link_prev[</span><span class="s4">1</span><span class="s1">] = root 
+            root[</span><span class="s4">0</span><span class="s1">] = link_prev 
+        </span><span class="s2">else</span><span class="s1">: 
+            link = root[</span><span class="s4">1</span><span class="s1">] 
+            link_next = link[</span><span class="s4">1</span><span class="s1">] 
+            root[</span><span class="s4">1</span><span class="s1">] = link_next 
+            link_next[</span><span class="s4">0</span><span class="s1">] = root 
+        key = link[</span><span class="s4">2</span><span class="s1">] 
+        </span><span class="s2">del </span><span class="s1">self.__map[key] 
+        value = dict.pop(self</span><span class="s2">, </span><span class="s1">key) 
+        </span><span class="s2">return </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value 
+ 
+    </span><span class="s0"># -- the following methods do not depend on the internal structure --</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">keys(self): 
+        </span><span class="s3">'od.keys() -&gt; list of keys in od'</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">list(self) 
+ 
+    </span><span class="s2">def </span><span class="s1">values(self): 
+        </span><span class="s3">'od.values() -&gt; list of values in od'</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">[self[key] </span><span class="s2">for </span><span class="s1">key </span><span class="s2">in </span><span class="s1">self] 
+ 
+    </span><span class="s2">def </span><span class="s1">items(self): 
+        </span><span class="s3">'od.items() -&gt; list of (key, value) pairs in od'</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">[(key</span><span class="s2">, </span><span class="s1">self[key]) </span><span class="s2">for </span><span class="s1">key </span><span class="s2">in </span><span class="s1">self] 
+ 
+    </span><span class="s2">def </span><span class="s1">iterkeys(self): 
+        </span><span class="s3">'od.iterkeys() -&gt; an iterator over the keys in od'</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">iter(self) 
+ 
+    </span><span class="s2">def </span><span class="s1">itervalues(self): 
+        </span><span class="s3">'od.itervalues -&gt; an iterator over the values in od'</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">k </span><span class="s2">in </span><span class="s1">self: 
+            </span><span class="s2">yield </span><span class="s1">self[k] 
+ 
+    </span><span class="s2">def </span><span class="s1">iteritems(self): 
+        </span><span class="s3">'od.iteritems -&gt; an iterator over the (key, value) items in od'</span><span class="s1"> 
+        </span><span class="s2">for </span><span class="s1">k </span><span class="s2">in </span><span class="s1">self: 
+            </span><span class="s2">yield </span><span class="s1">(k</span><span class="s2">, </span><span class="s1">self[k]) 
+ 
+    </span><span class="s2">def </span><span class="s1">update(*args</span><span class="s2">, </span><span class="s1">**kwds): 
+        </span><span class="s3">'''od.update(E, **F) -&gt; None.  Update od from dict/iterable E and F. 
+ 
+        If E is a dict instance, does:           for k in E: od[k] = E[k] 
+        If E has a .keys() method, does:         for k in E.keys(): od[k] = E[k] 
+        Or if E is an iterable of items, does:   for k, v in E: od[k] = v 
+        In either case, this is followed by:     for k, v in F.items(): od[k] = v 
+ 
+        '''</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">len(args) &gt; </span><span class="s4">2</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s5">'update() takes at most 2 positional '</span><span class="s1"> 
+                            </span><span class="s5">'arguments (%d given)' </span><span class="s1">% (len(args)</span><span class="s2">,</span><span class="s1">)) 
+        </span><span class="s2">elif not </span><span class="s1">args: 
+            </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s5">'update() takes at least 1 argument (0 given)'</span><span class="s1">) 
+        self = args[</span><span class="s4">0</span><span class="s1">] 
+        </span><span class="s0"># Make progressively weaker assumptions about &quot;other&quot;</span><span class="s1"> 
+        other = () 
+        </span><span class="s2">if </span><span class="s1">len(args) == </span><span class="s4">2</span><span class="s1">: 
+            other = args[</span><span class="s4">1</span><span class="s1">] 
+        </span><span class="s2">if </span><span class="s1">isinstance(other</span><span class="s2">, </span><span class="s1">dict): 
+            </span><span class="s2">for </span><span class="s1">key </span><span class="s2">in </span><span class="s1">other: 
+                self[key] = other[key] 
+        </span><span class="s2">elif </span><span class="s1">hasattr(other</span><span class="s2">, </span><span class="s5">'keys'</span><span class="s1">): 
+            </span><span class="s2">for </span><span class="s1">key </span><span class="s2">in </span><span class="s1">other.keys(): 
+                self[key] = other[key] 
+        </span><span class="s2">else</span><span class="s1">: 
+            </span><span class="s2">for </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value </span><span class="s2">in </span><span class="s1">other: 
+                self[key] = value 
+        </span><span class="s2">for </span><span class="s1">key</span><span class="s2">, </span><span class="s1">value </span><span class="s2">in </span><span class="s1">kwds.items(): 
+            self[key] = value 
+ 
+    __update = update  </span><span class="s0"># let subclasses override update without breaking __init__</span><span class="s1"> 
+ 
+    __marker = object() 
+ 
+    </span><span class="s2">def </span><span class="s1">pop(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">default=__marker): 
+        </span><span class="s3">'''od.pop(k[,d]) -&gt; v, remove specified key and return the corresponding value. 
+        If key is not found, d is returned if given, otherwise KeyError is raised. 
+ 
+        '''</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">key </span><span class="s2">in </span><span class="s1">self: 
+            result = self[key] 
+            </span><span class="s2">del </span><span class="s1">self[key] 
+            </span><span class="s2">return </span><span class="s1">result 
+        </span><span class="s2">if </span><span class="s1">default </span><span class="s2">is </span><span class="s1">self.__marker: 
+            </span><span class="s2">raise </span><span class="s1">KeyError(key) 
+        </span><span class="s2">return </span><span class="s1">default 
+ 
+    </span><span class="s2">def </span><span class="s1">setdefault(self</span><span class="s2">, </span><span class="s1">key</span><span class="s2">, </span><span class="s1">default=</span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s3">'od.setdefault(k[,d]) -&gt; od.get(k,d), also set od[k]=d if k not in od'</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">key </span><span class="s2">in </span><span class="s1">self: 
+            </span><span class="s2">return </span><span class="s1">self[key] 
+        self[key] = default 
+        </span><span class="s2">return </span><span class="s1">default 
+ 
+    </span><span class="s2">def </span><span class="s1">__repr__(self</span><span class="s2">, </span><span class="s1">_repr_running={}): 
+        </span><span class="s3">'od.__repr__() &lt;==&gt; repr(od)'</span><span class="s1"> 
+        call_key = id(self)</span><span class="s2">, </span><span class="s1">_get_ident() 
+        </span><span class="s2">if </span><span class="s1">call_key </span><span class="s2">in </span><span class="s1">_repr_running: 
+            </span><span class="s2">return </span><span class="s5">'...'</span><span class="s1"> 
+        _repr_running[call_key] = </span><span class="s4">1</span><span class="s1"> 
+        </span><span class="s2">try</span><span class="s1">: 
+            </span><span class="s2">if not </span><span class="s1">self: 
+                </span><span class="s2">return </span><span class="s5">'%s()' </span><span class="s1">% (self.__class__.__name__</span><span class="s2">,</span><span class="s1">) 
+            </span><span class="s2">return </span><span class="s5">'%s(%r)' </span><span class="s1">% (self.__class__.__name__</span><span class="s2">, </span><span class="s1">self.items()) 
+        </span><span class="s2">finally</span><span class="s1">: 
+            </span><span class="s2">del </span><span class="s1">_repr_running[call_key] 
+ 
+    </span><span class="s2">def </span><span class="s1">__reduce__(self): 
+        </span><span class="s3">'Return state information for pickling'</span><span class="s1"> 
+        items = [[k</span><span class="s2">, </span><span class="s1">self[k]] </span><span class="s2">for </span><span class="s1">k </span><span class="s2">in </span><span class="s1">self] 
+        inst_dict = vars(self).copy() 
+        </span><span class="s2">for </span><span class="s1">k </span><span class="s2">in </span><span class="s1">vars(OrderedDict()): 
+            inst_dict.pop(k</span><span class="s2">, None</span><span class="s1">) 
+        </span><span class="s2">if </span><span class="s1">inst_dict: 
+            </span><span class="s2">return </span><span class="s1">(self.__class__</span><span class="s2">, </span><span class="s1">(items</span><span class="s2">,</span><span class="s1">)</span><span class="s2">, </span><span class="s1">inst_dict) 
+        </span><span class="s2">return </span><span class="s1">self.__class__</span><span class="s2">, </span><span class="s1">(items</span><span class="s2">,</span><span class="s1">) 
+ 
+    </span><span class="s2">def </span><span class="s1">copy(self): 
+        </span><span class="s3">'od.copy() -&gt; a shallow copy of od'</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">self.__class__(self) 
+ 
+    @classmethod 
+    </span><span class="s2">def </span><span class="s1">fromkeys(cls</span><span class="s2">, </span><span class="s1">iterable</span><span class="s2">, </span><span class="s1">value=</span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s3">'''OD.fromkeys(S[, v]) -&gt; New ordered dictionary with keys from S 
+        and values equal to v (which defaults to None). 
+ 
+        '''</span><span class="s1"> 
+        d = cls() 
+        </span><span class="s2">for </span><span class="s1">key </span><span class="s2">in </span><span class="s1">iterable: 
+            d[key] = value 
+        </span><span class="s2">return </span><span class="s1">d 
+ 
+    </span><span class="s2">def </span><span class="s1">__eq__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s3">'''od.__eq__(y) &lt;==&gt; od==y.  Comparison to another OD is order-sensitive 
+        while comparison to a regular mapping is order-insensitive. 
+ 
+        '''</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">isinstance(other</span><span class="s2">, </span><span class="s1">OrderedDict): 
+            </span><span class="s2">return </span><span class="s1">len(self)==len(other) </span><span class="s2">and </span><span class="s1">self.items() == other.items() 
+        </span><span class="s2">return </span><span class="s1">dict.__eq__(self</span><span class="s2">, </span><span class="s1">other) 
+ 
+    </span><span class="s2">def </span><span class="s1">__ne__(self</span><span class="s2">, </span><span class="s1">other): 
+        </span><span class="s2">return not </span><span class="s1">self == other 
+ 
+    </span><span class="s0"># -- the following methods are only used in Python 2.7 --</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">viewkeys(self): 
+        </span><span class="s3">&quot;od.viewkeys() -&gt; a set-like object providing a view on od's keys&quot;</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">KeysView(self) 
+ 
+    </span><span class="s2">def </span><span class="s1">viewvalues(self): 
+        </span><span class="s3">&quot;od.viewvalues() -&gt; an object providing a view on od's values&quot;</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">ValuesView(self) 
+ 
+    </span><span class="s2">def </span><span class="s1">viewitems(self): 
+        </span><span class="s3">&quot;od.viewitems() -&gt; a set-like object providing a view on od's items&quot;</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">ItemsView(self) 
+</span></pre>
+</body>
+</html>

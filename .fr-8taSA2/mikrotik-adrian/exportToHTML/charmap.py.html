@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>charmap.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(106,135,89); }
+.s1 { color: rgb(128,128,128); }
+.s2 { color: rgb(169,183,198); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+charmap.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; Generic Python Character Mapping Codec. 
+ 
+    Use this codec directly rather than through the automatic 
+    conversion mechanisms supplied by unicode() and .encode(). 
+ 
+ 
+Written by Marc-Andre Lemburg (mal@lemburg.com). 
+ 
+(c) Copyright CNRI, All Rights Reserved. NO WARRANTY. 
+ 
+&quot;&quot;&quot;</span><span class="s1">#&quot;</span><span class="s2"> 
+ 
+</span><span class="s3">import </span><span class="s2">codecs 
+ 
+</span><span class="s1">### Codec APIs</span><span class="s2"> 
+ 
+</span><span class="s3">class </span><span class="s2">Codec(codecs.Codec): 
+ 
+    </span><span class="s1"># Note: Binding these as C functions will result in the class not</span><span class="s2"> 
+    </span><span class="s1"># converting them to methods. This is intended.</span><span class="s2"> 
+    encode = codecs.charmap_encode 
+    decode = codecs.charmap_decode 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalEncoder(codecs.IncrementalEncoder): 
+    </span><span class="s3">def </span><span class="s2">__init__(self</span><span class="s3">, </span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s3">, </span><span class="s2">mapping=</span><span class="s3">None</span><span class="s2">): 
+        codecs.IncrementalEncoder.__init__(self</span><span class="s3">, </span><span class="s2">errors) 
+        self.mapping = mapping 
+ 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_encode(input</span><span class="s3">, </span><span class="s2">self.errors</span><span class="s3">, </span><span class="s2">self.mapping)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">IncrementalDecoder(codecs.IncrementalDecoder): 
+    </span><span class="s3">def </span><span class="s2">__init__(self</span><span class="s3">, </span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s3">, </span><span class="s2">mapping=</span><span class="s3">None</span><span class="s2">): 
+        codecs.IncrementalDecoder.__init__(self</span><span class="s3">, </span><span class="s2">errors) 
+        self.mapping = mapping 
+ 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">, </span><span class="s2">input</span><span class="s3">, </span><span class="s2">final=</span><span class="s3">False</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">codecs.charmap_decode(input</span><span class="s3">, </span><span class="s2">self.errors</span><span class="s3">, </span><span class="s2">self.mapping)[</span><span class="s4">0</span><span class="s2">] 
+ 
+</span><span class="s3">class </span><span class="s2">StreamWriter(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamWriter): 
+ 
+    </span><span class="s3">def </span><span class="s2">__init__(self</span><span class="s3">,</span><span class="s2">stream</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s3">,</span><span class="s2">mapping=</span><span class="s3">None</span><span class="s2">): 
+        codecs.StreamWriter.__init__(self</span><span class="s3">,</span><span class="s2">stream</span><span class="s3">,</span><span class="s2">errors) 
+        self.mapping = mapping 
+ 
+    </span><span class="s3">def </span><span class="s2">encode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">Codec.encode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">self.mapping) 
+ 
+</span><span class="s3">class </span><span class="s2">StreamReader(Codec</span><span class="s3">,</span><span class="s2">codecs.StreamReader): 
+ 
+    </span><span class="s3">def </span><span class="s2">__init__(self</span><span class="s3">,</span><span class="s2">stream</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s3">,</span><span class="s2">mapping=</span><span class="s3">None</span><span class="s2">): 
+        codecs.StreamReader.__init__(self</span><span class="s3">,</span><span class="s2">stream</span><span class="s3">,</span><span class="s2">errors) 
+        self.mapping = mapping 
+ 
+    </span><span class="s3">def </span><span class="s2">decode(self</span><span class="s3">,</span><span class="s2">input</span><span class="s3">,</span><span class="s2">errors=</span><span class="s0">'strict'</span><span class="s2">): 
+        </span><span class="s3">return </span><span class="s2">Codec.decode(input</span><span class="s3">,</span><span class="s2">errors</span><span class="s3">,</span><span class="s2">self.mapping) 
+ 
+</span><span class="s1">### encodings module API</span><span class="s2"> 
+ 
+</span><span class="s3">def </span><span class="s2">getregentry(): 
+    </span><span class="s3">return </span><span class="s2">codecs.CodecInfo( 
+        name=</span><span class="s0">'charmap'</span><span class="s3">,</span><span class="s2"> 
+        encode=Codec.encode</span><span class="s3">,</span><span class="s2"> 
+        decode=Codec.decode</span><span class="s3">,</span><span class="s2"> 
+        incrementalencoder=IncrementalEncoder</span><span class="s3">,</span><span class="s2"> 
+        incrementaldecoder=IncrementalDecoder</span><span class="s3">,</span><span class="s2"> 
+        streamwriter=StreamWriter</span><span class="s3">,</span><span class="s2"> 
+        streamreader=StreamReader</span><span class="s3">,</span><span class="s2"> 
+    ) 
+</span></pre>
+</body>
+</html>

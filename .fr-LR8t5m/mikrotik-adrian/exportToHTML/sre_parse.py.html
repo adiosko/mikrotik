@@ -1,0 +1,965 @@
+<html>
+<head>
+<title>sre_parse.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+sre_parse.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># Secret Labs' Regular Expression Engine</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># convert re-style regular expression to sre pattern</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># Copyright (c) 1998-2001 by Secret Labs AB.  All rights reserved.</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+</span><span class="s0"># See the sre.py file for information on usage and redistribution.</span><span class="s1"> 
+</span><span class="s0">#</span><span class="s1"> 
+ 
+</span><span class="s2">&quot;&quot;&quot;Internal support module for sre&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s0"># XXX: show string offset and offending character for all errors</span><span class="s1"> 
+ 
+</span><span class="s3">from </span><span class="s1">sre_constants </span><span class="s3">import </span><span class="s1">* 
+ 
+SPECIAL_CHARS = </span><span class="s4">&quot;.</span><span class="s3">\\</span><span class="s4">[{()*+?^$|&quot;</span><span class="s1"> 
+REPEAT_CHARS = </span><span class="s4">&quot;*+?{&quot;</span><span class="s1"> 
+ 
+DIGITS = frozenset(</span><span class="s4">&quot;0123456789&quot;</span><span class="s1">) 
+ 
+OCTDIGITS = frozenset(</span><span class="s4">&quot;01234567&quot;</span><span class="s1">) 
+HEXDIGITS = frozenset(</span><span class="s4">&quot;0123456789abcdefABCDEF&quot;</span><span class="s1">) 
+ASCIILETTERS = frozenset(</span><span class="s4">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span><span class="s1">) 
+ 
+WHITESPACE = frozenset(</span><span class="s4">&quot; </span><span class="s3">\t\n\r\v\f</span><span class="s4">&quot;</span><span class="s1">) 
+ 
+_REPEATCODES = frozenset({MIN_REPEAT</span><span class="s3">, </span><span class="s1">MAX_REPEAT}) 
+_UNITCODES = frozenset({ANY</span><span class="s3">, </span><span class="s1">RANGE</span><span class="s3">, </span><span class="s1">IN</span><span class="s3">, </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">NOT_LITERAL</span><span class="s3">, </span><span class="s1">CATEGORY}) 
+ 
+ESCAPES = { 
+    </span><span class="s4">r&quot;\a&quot;</span><span class="s1">: (LITERAL</span><span class="s3">, </span><span class="s1">ord(</span><span class="s4">&quot;</span><span class="s3">\a</span><span class="s4">&quot;</span><span class="s1">))</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\b&quot;</span><span class="s1">: (LITERAL</span><span class="s3">, </span><span class="s1">ord(</span><span class="s4">&quot;</span><span class="s3">\b</span><span class="s4">&quot;</span><span class="s1">))</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\f&quot;</span><span class="s1">: (LITERAL</span><span class="s3">, </span><span class="s1">ord(</span><span class="s4">&quot;</span><span class="s3">\f</span><span class="s4">&quot;</span><span class="s1">))</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\n&quot;</span><span class="s1">: (LITERAL</span><span class="s3">, </span><span class="s1">ord(</span><span class="s4">&quot;</span><span class="s3">\n</span><span class="s4">&quot;</span><span class="s1">))</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\r&quot;</span><span class="s1">: (LITERAL</span><span class="s3">, </span><span class="s1">ord(</span><span class="s4">&quot;</span><span class="s3">\r</span><span class="s4">&quot;</span><span class="s1">))</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\t&quot;</span><span class="s1">: (LITERAL</span><span class="s3">, </span><span class="s1">ord(</span><span class="s4">&quot;</span><span class="s3">\t</span><span class="s4">&quot;</span><span class="s1">))</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\v&quot;</span><span class="s1">: (LITERAL</span><span class="s3">, </span><span class="s1">ord(</span><span class="s4">&quot;</span><span class="s3">\v</span><span class="s4">&quot;</span><span class="s1">))</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\\&quot;</span><span class="s1">: (LITERAL</span><span class="s3">, </span><span class="s1">ord(</span><span class="s4">&quot;</span><span class="s3">\\</span><span class="s4">&quot;</span><span class="s1">)) 
+} 
+ 
+CATEGORIES = { 
+    </span><span class="s4">r&quot;\A&quot;</span><span class="s1">: (AT</span><span class="s3">, </span><span class="s1">AT_BEGINNING_STRING)</span><span class="s3">, </span><span class="s0"># start of string</span><span class="s1"> 
+    </span><span class="s4">r&quot;\b&quot;</span><span class="s1">: (AT</span><span class="s3">, </span><span class="s1">AT_BOUNDARY)</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\B&quot;</span><span class="s1">: (AT</span><span class="s3">, </span><span class="s1">AT_NON_BOUNDARY)</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\d&quot;</span><span class="s1">: (IN</span><span class="s3">, </span><span class="s1">[(CATEGORY</span><span class="s3">, </span><span class="s1">CATEGORY_DIGIT)])</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\D&quot;</span><span class="s1">: (IN</span><span class="s3">, </span><span class="s1">[(CATEGORY</span><span class="s3">, </span><span class="s1">CATEGORY_NOT_DIGIT)])</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\s&quot;</span><span class="s1">: (IN</span><span class="s3">, </span><span class="s1">[(CATEGORY</span><span class="s3">, </span><span class="s1">CATEGORY_SPACE)])</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\S&quot;</span><span class="s1">: (IN</span><span class="s3">, </span><span class="s1">[(CATEGORY</span><span class="s3">, </span><span class="s1">CATEGORY_NOT_SPACE)])</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\w&quot;</span><span class="s1">: (IN</span><span class="s3">, </span><span class="s1">[(CATEGORY</span><span class="s3">, </span><span class="s1">CATEGORY_WORD)])</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\W&quot;</span><span class="s1">: (IN</span><span class="s3">, </span><span class="s1">[(CATEGORY</span><span class="s3">, </span><span class="s1">CATEGORY_NOT_WORD)])</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">r&quot;\Z&quot;</span><span class="s1">: (AT</span><span class="s3">, </span><span class="s1">AT_END_STRING)</span><span class="s3">, </span><span class="s0"># end of string</span><span class="s1"> 
+} 
+ 
+FLAGS = { 
+    </span><span class="s0"># standard flags</span><span class="s1"> 
+    </span><span class="s4">&quot;i&quot;</span><span class="s1">: SRE_FLAG_IGNORECASE</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">&quot;L&quot;</span><span class="s1">: SRE_FLAG_LOCALE</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">&quot;m&quot;</span><span class="s1">: SRE_FLAG_MULTILINE</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">&quot;s&quot;</span><span class="s1">: SRE_FLAG_DOTALL</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">&quot;x&quot;</span><span class="s1">: SRE_FLAG_VERBOSE</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s0"># extensions</span><span class="s1"> 
+    </span><span class="s4">&quot;a&quot;</span><span class="s1">: SRE_FLAG_ASCII</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">&quot;t&quot;</span><span class="s1">: SRE_FLAG_TEMPLATE</span><span class="s3">,</span><span class="s1"> 
+    </span><span class="s4">&quot;u&quot;</span><span class="s1">: SRE_FLAG_UNICODE</span><span class="s3">,</span><span class="s1"> 
+} 
+ 
+</span><span class="s3">class </span><span class="s1">Pattern: 
+    </span><span class="s0"># master pattern object.  keeps track of global attributes</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">__init__(self): 
+        self.flags = </span><span class="s5">0</span><span class="s1"> 
+        self.groupdict = {} 
+        self.groupwidths = [</span><span class="s3">None</span><span class="s1">]  </span><span class="s0"># group 0</span><span class="s1"> 
+        self.lookbehindgroups = </span><span class="s3">None</span><span class="s1"> 
+    @property 
+    </span><span class="s3">def </span><span class="s1">groups(self): 
+        </span><span class="s3">return </span><span class="s1">len(self.groupwidths) 
+    </span><span class="s3">def </span><span class="s1">opengroup(self</span><span class="s3">, </span><span class="s1">name=</span><span class="s3">None</span><span class="s1">): 
+        gid = self.groups 
+        self.groupwidths.append(</span><span class="s3">None</span><span class="s1">) 
+        </span><span class="s3">if </span><span class="s1">self.groups &gt; MAXGROUPS: 
+            </span><span class="s3">raise </span><span class="s1">error(</span><span class="s4">&quot;too many groups&quot;</span><span class="s1">) 
+        </span><span class="s3">if </span><span class="s1">name </span><span class="s3">is not None</span><span class="s1">: 
+            ogid = self.groupdict.get(name</span><span class="s3">, None</span><span class="s1">) 
+            </span><span class="s3">if </span><span class="s1">ogid </span><span class="s3">is not None</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">error(</span><span class="s4">&quot;redefinition of group name %r as group %d; &quot;</span><span class="s1"> 
+                            </span><span class="s4">&quot;was group %d&quot; </span><span class="s1">% (name</span><span class="s3">, </span><span class="s1">gid</span><span class="s3">,  </span><span class="s1">ogid)) 
+            self.groupdict[name] = gid 
+        </span><span class="s3">return </span><span class="s1">gid 
+    </span><span class="s3">def </span><span class="s1">closegroup(self</span><span class="s3">, </span><span class="s1">gid</span><span class="s3">, </span><span class="s1">p): 
+        self.groupwidths[gid] = p.getwidth() 
+    </span><span class="s3">def </span><span class="s1">checkgroup(self</span><span class="s3">, </span><span class="s1">gid): 
+        </span><span class="s3">return </span><span class="s1">gid &lt; self.groups </span><span class="s3">and </span><span class="s1">self.groupwidths[gid] </span><span class="s3">is not None</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">checklookbehindgroup(self</span><span class="s3">, </span><span class="s1">gid</span><span class="s3">, </span><span class="s1">source): 
+        </span><span class="s3">if </span><span class="s1">self.lookbehindgroups </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s3">if not </span><span class="s1">self.checkgroup(gid): 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">'cannot refer to an open group'</span><span class="s1">) 
+            </span><span class="s3">if </span><span class="s1">gid &gt;= self.lookbehindgroups: 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">'cannot refer to group defined in the same '</span><span class="s1"> 
+                                   </span><span class="s4">'lookbehind subpattern'</span><span class="s1">) 
+ 
+</span><span class="s3">class </span><span class="s1">SubPattern: 
+    </span><span class="s0"># a subpattern, in intermediate form</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">pattern</span><span class="s3">, </span><span class="s1">data=</span><span class="s3">None</span><span class="s1">): 
+        self.pattern = pattern 
+        </span><span class="s3">if </span><span class="s1">data </span><span class="s3">is None</span><span class="s1">: 
+            data = [] 
+        self.data = data 
+        self.width = </span><span class="s3">None</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">dump(self</span><span class="s3">, </span><span class="s1">level=</span><span class="s5">0</span><span class="s1">): 
+        nl = </span><span class="s3">True</span><span class="s1"> 
+        seqtypes = (tuple</span><span class="s3">, </span><span class="s1">list) 
+        </span><span class="s3">for </span><span class="s1">op</span><span class="s3">, </span><span class="s1">av </span><span class="s3">in </span><span class="s1">self.data: 
+            print(level*</span><span class="s4">&quot;  &quot; </span><span class="s1">+ str(op)</span><span class="s3">, </span><span class="s1">end=</span><span class="s4">''</span><span class="s1">) 
+            </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">IN: 
+                </span><span class="s0"># member sublanguage</span><span class="s1"> 
+                print() 
+                </span><span class="s3">for </span><span class="s1">op</span><span class="s3">, </span><span class="s1">a </span><span class="s3">in </span><span class="s1">av: 
+                    print((level+</span><span class="s5">1</span><span class="s1">)*</span><span class="s4">&quot;  &quot; </span><span class="s1">+ str(op)</span><span class="s3">, </span><span class="s1">a) 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">BRANCH: 
+                print() 
+                </span><span class="s3">for </span><span class="s1">i</span><span class="s3">, </span><span class="s1">a </span><span class="s3">in </span><span class="s1">enumerate(av[</span><span class="s5">1</span><span class="s1">]): 
+                    </span><span class="s3">if </span><span class="s1">i: 
+                        print(level*</span><span class="s4">&quot;  &quot; </span><span class="s1">+ </span><span class="s4">&quot;OR&quot;</span><span class="s1">) 
+                    a.dump(level+</span><span class="s5">1</span><span class="s1">) 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">GROUPREF_EXISTS: 
+                condgroup</span><span class="s3">, </span><span class="s1">item_yes</span><span class="s3">, </span><span class="s1">item_no = av 
+                print(</span><span class="s4">''</span><span class="s3">, </span><span class="s1">condgroup) 
+                item_yes.dump(level+</span><span class="s5">1</span><span class="s1">) 
+                </span><span class="s3">if </span><span class="s1">item_no: 
+                    print(level*</span><span class="s4">&quot;  &quot; </span><span class="s1">+ </span><span class="s4">&quot;ELSE&quot;</span><span class="s1">) 
+                    item_no.dump(level+</span><span class="s5">1</span><span class="s1">) 
+            </span><span class="s3">elif </span><span class="s1">isinstance(av</span><span class="s3">, </span><span class="s1">seqtypes): 
+                nl = </span><span class="s3">False</span><span class="s1"> 
+                </span><span class="s3">for </span><span class="s1">a </span><span class="s3">in </span><span class="s1">av: 
+                    </span><span class="s3">if </span><span class="s1">isinstance(a</span><span class="s3">, </span><span class="s1">SubPattern): 
+                        </span><span class="s3">if not </span><span class="s1">nl: 
+                            print() 
+                        a.dump(level+</span><span class="s5">1</span><span class="s1">) 
+                        nl = </span><span class="s3">True</span><span class="s1"> 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        </span><span class="s3">if not </span><span class="s1">nl: 
+                            print(</span><span class="s4">' '</span><span class="s3">, </span><span class="s1">end=</span><span class="s4">''</span><span class="s1">) 
+                        print(a</span><span class="s3">, </span><span class="s1">end=</span><span class="s4">''</span><span class="s1">) 
+                        nl = </span><span class="s3">False</span><span class="s1"> 
+                </span><span class="s3">if not </span><span class="s1">nl: 
+                    print() 
+            </span><span class="s3">else</span><span class="s1">: 
+                print(</span><span class="s4">''</span><span class="s3">, </span><span class="s1">av) 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        </span><span class="s3">return </span><span class="s1">repr(self.data) 
+    </span><span class="s3">def </span><span class="s1">__len__(self): 
+        </span><span class="s3">return </span><span class="s1">len(self.data) 
+    </span><span class="s3">def </span><span class="s1">__delitem__(self</span><span class="s3">, </span><span class="s1">index): 
+        </span><span class="s3">del </span><span class="s1">self.data[index] 
+    </span><span class="s3">def </span><span class="s1">__getitem__(self</span><span class="s3">, </span><span class="s1">index): 
+        </span><span class="s3">if </span><span class="s1">isinstance(index</span><span class="s3">, </span><span class="s1">slice): 
+            </span><span class="s3">return </span><span class="s1">SubPattern(self.pattern</span><span class="s3">, </span><span class="s1">self.data[index]) 
+        </span><span class="s3">return </span><span class="s1">self.data[index] 
+    </span><span class="s3">def </span><span class="s1">__setitem__(self</span><span class="s3">, </span><span class="s1">index</span><span class="s3">, </span><span class="s1">code): 
+        self.data[index] = code 
+    </span><span class="s3">def </span><span class="s1">insert(self</span><span class="s3">, </span><span class="s1">index</span><span class="s3">, </span><span class="s1">code): 
+        self.data.insert(index</span><span class="s3">, </span><span class="s1">code) 
+    </span><span class="s3">def </span><span class="s1">append(self</span><span class="s3">, </span><span class="s1">code): 
+        self.data.append(code) 
+    </span><span class="s3">def </span><span class="s1">getwidth(self): 
+        </span><span class="s0"># determine the width (min, max) for this subpattern</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">self.width </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">self.width 
+        lo = hi = </span><span class="s5">0</span><span class="s1"> 
+        </span><span class="s3">for </span><span class="s1">op</span><span class="s3">, </span><span class="s1">av </span><span class="s3">in </span><span class="s1">self.data: 
+            </span><span class="s3">if </span><span class="s1">op </span><span class="s3">is </span><span class="s1">BRANCH: 
+                i = MAXREPEAT - </span><span class="s5">1</span><span class="s1"> 
+                j = </span><span class="s5">0</span><span class="s1"> 
+                </span><span class="s3">for </span><span class="s1">av </span><span class="s3">in </span><span class="s1">av[</span><span class="s5">1</span><span class="s1">]: 
+                    l</span><span class="s3">, </span><span class="s1">h = av.getwidth() 
+                    i = min(i</span><span class="s3">, </span><span class="s1">l) 
+                    j = max(j</span><span class="s3">, </span><span class="s1">h) 
+                lo = lo + i 
+                hi = hi + j 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">CALL: 
+                i</span><span class="s3">, </span><span class="s1">j = av.getwidth() 
+                lo = lo + i 
+                hi = hi + j 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">SUBPATTERN: 
+                i</span><span class="s3">, </span><span class="s1">j = av[</span><span class="s5">1</span><span class="s1">].getwidth() 
+                lo = lo + i 
+                hi = hi + j 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">in </span><span class="s1">_REPEATCODES: 
+                i</span><span class="s3">, </span><span class="s1">j = av[</span><span class="s5">2</span><span class="s1">].getwidth() 
+                lo = lo + i * av[</span><span class="s5">0</span><span class="s1">] 
+                hi = hi + j * av[</span><span class="s5">1</span><span class="s1">] 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">in </span><span class="s1">_UNITCODES: 
+                lo = lo + </span><span class="s5">1</span><span class="s1"> 
+                hi = hi + </span><span class="s5">1</span><span class="s1"> 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">GROUPREF: 
+                i</span><span class="s3">, </span><span class="s1">j = self.pattern.groupwidths[av] 
+                lo = lo + i 
+                hi = hi + j 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">GROUPREF_EXISTS: 
+                i</span><span class="s3">, </span><span class="s1">j = av[</span><span class="s5">1</span><span class="s1">].getwidth() 
+                </span><span class="s3">if </span><span class="s1">av[</span><span class="s5">2</span><span class="s1">] </span><span class="s3">is not None</span><span class="s1">: 
+                    l</span><span class="s3">, </span><span class="s1">h = av[</span><span class="s5">2</span><span class="s1">].getwidth() 
+                    i = min(i</span><span class="s3">, </span><span class="s1">l) 
+                    j = max(j</span><span class="s3">, </span><span class="s1">h) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    i = </span><span class="s5">0</span><span class="s1"> 
+                lo = lo + i 
+                hi = hi + j 
+            </span><span class="s3">elif </span><span class="s1">op </span><span class="s3">is </span><span class="s1">SUCCESS: 
+                </span><span class="s3">break</span><span class="s1"> 
+        self.width = min(lo</span><span class="s3">, </span><span class="s1">MAXREPEAT - </span><span class="s5">1</span><span class="s1">)</span><span class="s3">, </span><span class="s1">min(hi</span><span class="s3">, </span><span class="s1">MAXREPEAT) 
+        </span><span class="s3">return </span><span class="s1">self.width 
+ 
+</span><span class="s3">class </span><span class="s1">Tokenizer: 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">string): 
+        self.istext = isinstance(string</span><span class="s3">, </span><span class="s1">str) 
+        self.string = string 
+        </span><span class="s3">if not </span><span class="s1">self.istext: 
+            string = str(string</span><span class="s3">, </span><span class="s4">'latin1'</span><span class="s1">) 
+        self.decoded_string = string 
+        self.index = </span><span class="s5">0</span><span class="s1"> 
+        self.next = </span><span class="s3">None</span><span class="s1"> 
+        self.__next() 
+    </span><span class="s3">def </span><span class="s1">__next(self): 
+        index = self.index 
+        </span><span class="s3">try</span><span class="s1">: 
+            char = self.decoded_string[index] 
+        </span><span class="s3">except </span><span class="s1">IndexError: 
+            self.next = </span><span class="s3">None</span><span class="s1"> 
+            </span><span class="s3">return</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">char == </span><span class="s4">&quot;</span><span class="s3">\\</span><span class="s4">&quot;</span><span class="s1">: 
+            index += </span><span class="s5">1</span><span class="s1"> 
+            </span><span class="s3">try</span><span class="s1">: 
+                char += self.decoded_string[index] 
+            </span><span class="s3">except </span><span class="s1">IndexError: 
+                </span><span class="s3">raise </span><span class="s1">error(</span><span class="s4">&quot;bad escape (end of pattern)&quot;</span><span class="s3">,</span><span class="s1"> 
+                            self.string</span><span class="s3">, </span><span class="s1">len(self.string) - </span><span class="s5">1</span><span class="s1">) </span><span class="s3">from None</span><span class="s1"> 
+        self.index = index + </span><span class="s5">1</span><span class="s1"> 
+        self.next = char 
+    </span><span class="s3">def </span><span class="s1">match(self</span><span class="s3">, </span><span class="s1">char): 
+        </span><span class="s3">if </span><span class="s1">char == self.next: 
+            self.__next() 
+            </span><span class="s3">return True</span><span class="s1"> 
+        </span><span class="s3">return False</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">get(self): 
+        this = self.next 
+        self.__next() 
+        </span><span class="s3">return </span><span class="s1">this 
+    </span><span class="s3">def </span><span class="s1">getwhile(self</span><span class="s3">, </span><span class="s1">n</span><span class="s3">, </span><span class="s1">charset): 
+        result = </span><span class="s4">''</span><span class="s1"> 
+        </span><span class="s3">for </span><span class="s1">_ </span><span class="s3">in </span><span class="s1">range(n): 
+            c = self.next 
+            </span><span class="s3">if </span><span class="s1">c </span><span class="s3">not in </span><span class="s1">charset: 
+                </span><span class="s3">break</span><span class="s1"> 
+            result += c 
+            self.__next() 
+        </span><span class="s3">return </span><span class="s1">result 
+    </span><span class="s3">def </span><span class="s1">getuntil(self</span><span class="s3">, </span><span class="s1">terminator): 
+        result = </span><span class="s4">''</span><span class="s1"> 
+        </span><span class="s3">while True</span><span class="s1">: 
+            c = self.next 
+            self.__next() 
+            </span><span class="s3">if </span><span class="s1">c </span><span class="s3">is None</span><span class="s1">: 
+                </span><span class="s3">if not </span><span class="s1">result: 
+                    </span><span class="s3">raise </span><span class="s1">self.error(</span><span class="s4">&quot;missing group name&quot;</span><span class="s1">) 
+                </span><span class="s3">raise </span><span class="s1">self.error(</span><span class="s4">&quot;missing %s, unterminated name&quot; </span><span class="s1">% terminator</span><span class="s3">,</span><span class="s1"> 
+                                 len(result)) 
+            </span><span class="s3">if </span><span class="s1">c == terminator: 
+                </span><span class="s3">if not </span><span class="s1">result: 
+                    </span><span class="s3">raise </span><span class="s1">self.error(</span><span class="s4">&quot;missing group name&quot;</span><span class="s3">, </span><span class="s5">1</span><span class="s1">) 
+                </span><span class="s3">break</span><span class="s1"> 
+            result += c 
+        </span><span class="s3">return </span><span class="s1">result 
+    </span><span class="s3">def </span><span class="s1">tell(self): 
+        </span><span class="s3">return </span><span class="s1">self.index - len(self.next </span><span class="s3">or </span><span class="s4">''</span><span class="s1">) 
+    </span><span class="s3">def </span><span class="s1">seek(self</span><span class="s3">, </span><span class="s1">index): 
+        self.index = index 
+        self.__next() 
+ 
+    </span><span class="s3">def </span><span class="s1">error(self</span><span class="s3">, </span><span class="s1">msg</span><span class="s3">, </span><span class="s1">offset=</span><span class="s5">0</span><span class="s1">): 
+        </span><span class="s3">return </span><span class="s1">error(msg</span><span class="s3">, </span><span class="s1">self.string</span><span class="s3">, </span><span class="s1">self.tell() - offset) 
+ 
+</span><span class="s0"># The following three functions are not used in this module anymore, but we keep</span><span class="s1"> 
+</span><span class="s0"># them here (with DeprecationWarnings) for backwards compatibility.</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">isident(char): 
+    </span><span class="s3">import </span><span class="s1">warnings 
+    warnings.warn(</span><span class="s4">'sre_parse.isident() will be removed in 3.5'</span><span class="s3">,</span><span class="s1"> 
+                  DeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">2</span><span class="s1">) 
+    </span><span class="s3">return </span><span class="s4">&quot;a&quot; </span><span class="s1">&lt;= char &lt;= </span><span class="s4">&quot;z&quot; </span><span class="s3">or </span><span class="s4">&quot;A&quot; </span><span class="s1">&lt;= char &lt;= </span><span class="s4">&quot;Z&quot; </span><span class="s3">or </span><span class="s1">char == </span><span class="s4">&quot;_&quot;</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">isdigit(char): 
+    </span><span class="s3">import </span><span class="s1">warnings 
+    warnings.warn(</span><span class="s4">'sre_parse.isdigit() will be removed in 3.5'</span><span class="s3">,</span><span class="s1"> 
+                  DeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">2</span><span class="s1">) 
+    </span><span class="s3">return </span><span class="s4">&quot;0&quot; </span><span class="s1">&lt;= char &lt;= </span><span class="s4">&quot;9&quot;</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">isname(name): 
+    </span><span class="s3">import </span><span class="s1">warnings 
+    warnings.warn(</span><span class="s4">'sre_parse.isname() will be removed in 3.5'</span><span class="s3">,</span><span class="s1"> 
+                  DeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">2</span><span class="s1">) 
+    </span><span class="s0"># check that group name is a valid string</span><span class="s1"> 
+    </span><span class="s3">if not </span><span class="s1">isident(name[</span><span class="s5">0</span><span class="s1">]): 
+        </span><span class="s3">return False</span><span class="s1"> 
+    </span><span class="s3">for </span><span class="s1">char </span><span class="s3">in </span><span class="s1">name[</span><span class="s5">1</span><span class="s1">:]: 
+        </span><span class="s3">if not </span><span class="s1">isident(char) </span><span class="s3">and not </span><span class="s1">isdigit(char): 
+            </span><span class="s3">return False</span><span class="s1"> 
+    </span><span class="s3">return True</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">_class_escape(source</span><span class="s3">, </span><span class="s1">escape): 
+    </span><span class="s0"># handle escape code inside character class</span><span class="s1"> 
+    code = ESCAPES.get(escape) 
+    </span><span class="s3">if </span><span class="s1">code: 
+        </span><span class="s3">return </span><span class="s1">code 
+    code = CATEGORIES.get(escape) 
+    </span><span class="s3">if </span><span class="s1">code </span><span class="s3">and </span><span class="s1">code[</span><span class="s5">0</span><span class="s1">] </span><span class="s3">is </span><span class="s1">IN: 
+        </span><span class="s3">return </span><span class="s1">code 
+    </span><span class="s3">try</span><span class="s1">: 
+        c = escape[</span><span class="s5">1</span><span class="s1">:</span><span class="s5">2</span><span class="s1">] 
+        </span><span class="s3">if </span><span class="s1">c == </span><span class="s4">&quot;x&quot;</span><span class="s1">: 
+            </span><span class="s0"># hexadecimal escape (exactly two digits)</span><span class="s1"> 
+            escape += source.getwhile(</span><span class="s5">2</span><span class="s3">, </span><span class="s1">HEXDIGITS) 
+            </span><span class="s3">if </span><span class="s1">len(escape) != </span><span class="s5">4</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;incomplete escape %s&quot; </span><span class="s1">% escape</span><span class="s3">, </span><span class="s1">len(escape)) 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">int(escape[</span><span class="s5">2</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">16</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">c == </span><span class="s4">&quot;u&quot; </span><span class="s3">and </span><span class="s1">source.istext: 
+            </span><span class="s0"># unicode escape (exactly four digits)</span><span class="s1"> 
+            escape += source.getwhile(</span><span class="s5">4</span><span class="s3">, </span><span class="s1">HEXDIGITS) 
+            </span><span class="s3">if </span><span class="s1">len(escape) != </span><span class="s5">6</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;incomplete escape %s&quot; </span><span class="s1">% escape</span><span class="s3">, </span><span class="s1">len(escape)) 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">int(escape[</span><span class="s5">2</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">16</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">c == </span><span class="s4">&quot;U&quot; </span><span class="s3">and </span><span class="s1">source.istext: 
+            </span><span class="s0"># unicode escape (exactly eight digits)</span><span class="s1"> 
+            escape += source.getwhile(</span><span class="s5">8</span><span class="s3">, </span><span class="s1">HEXDIGITS) 
+            </span><span class="s3">if </span><span class="s1">len(escape) != </span><span class="s5">10</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;incomplete escape %s&quot; </span><span class="s1">% escape</span><span class="s3">, </span><span class="s1">len(escape)) 
+            c = int(escape[</span><span class="s5">2</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">16</span><span class="s1">) 
+            chr(c) </span><span class="s0"># raise ValueError for invalid code</span><span class="s1"> 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">c 
+        </span><span class="s3">elif </span><span class="s1">c </span><span class="s3">in </span><span class="s1">OCTDIGITS: 
+            </span><span class="s0"># octal escape (up to three digits)</span><span class="s1"> 
+            escape += source.getwhile(</span><span class="s5">2</span><span class="s3">, </span><span class="s1">OCTDIGITS) 
+            c = int(escape[</span><span class="s5">1</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">8</span><span class="s1">) 
+            </span><span class="s3">if </span><span class="s1">c &gt; </span><span class="s5">0o377</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">'octal escape value %s outside of '</span><span class="s1"> 
+                                   </span><span class="s4">'range 0-0o377' </span><span class="s1">% escape</span><span class="s3">, </span><span class="s1">len(escape)) 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">c 
+        </span><span class="s3">elif </span><span class="s1">c </span><span class="s3">in </span><span class="s1">DIGITS: 
+            </span><span class="s3">raise </span><span class="s1">ValueError 
+        </span><span class="s3">if </span><span class="s1">len(escape) == </span><span class="s5">2</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">c </span><span class="s3">in </span><span class="s1">ASCIILETTERS: 
+                </span><span class="s3">import </span><span class="s1">warnings 
+                warnings.warn(</span><span class="s4">'bad escape %s' </span><span class="s1">% escape</span><span class="s3">,</span><span class="s1"> 
+                              DeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">8</span><span class="s1">) 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">ord(escape[</span><span class="s5">1</span><span class="s1">]) 
+    </span><span class="s3">except </span><span class="s1">ValueError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;bad escape %s&quot; </span><span class="s1">% escape</span><span class="s3">, </span><span class="s1">len(escape)) 
+ 
+</span><span class="s3">def </span><span class="s1">_escape(source</span><span class="s3">, </span><span class="s1">escape</span><span class="s3">, </span><span class="s1">state): 
+    </span><span class="s0"># handle escape code in expression</span><span class="s1"> 
+    code = CATEGORIES.get(escape) 
+    </span><span class="s3">if </span><span class="s1">code: 
+        </span><span class="s3">return </span><span class="s1">code 
+    code = ESCAPES.get(escape) 
+    </span><span class="s3">if </span><span class="s1">code: 
+        </span><span class="s3">return </span><span class="s1">code 
+    </span><span class="s3">try</span><span class="s1">: 
+        c = escape[</span><span class="s5">1</span><span class="s1">:</span><span class="s5">2</span><span class="s1">] 
+        </span><span class="s3">if </span><span class="s1">c == </span><span class="s4">&quot;x&quot;</span><span class="s1">: 
+            </span><span class="s0"># hexadecimal escape</span><span class="s1"> 
+            escape += source.getwhile(</span><span class="s5">2</span><span class="s3">, </span><span class="s1">HEXDIGITS) 
+            </span><span class="s3">if </span><span class="s1">len(escape) != </span><span class="s5">4</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;incomplete escape %s&quot; </span><span class="s1">% escape</span><span class="s3">, </span><span class="s1">len(escape)) 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">int(escape[</span><span class="s5">2</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">16</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">c == </span><span class="s4">&quot;u&quot; </span><span class="s3">and </span><span class="s1">source.istext: 
+            </span><span class="s0"># unicode escape (exactly four digits)</span><span class="s1"> 
+            escape += source.getwhile(</span><span class="s5">4</span><span class="s3">, </span><span class="s1">HEXDIGITS) 
+            </span><span class="s3">if </span><span class="s1">len(escape) != </span><span class="s5">6</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;incomplete escape %s&quot; </span><span class="s1">% escape</span><span class="s3">, </span><span class="s1">len(escape)) 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">int(escape[</span><span class="s5">2</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">16</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">c == </span><span class="s4">&quot;U&quot; </span><span class="s3">and </span><span class="s1">source.istext: 
+            </span><span class="s0"># unicode escape (exactly eight digits)</span><span class="s1"> 
+            escape += source.getwhile(</span><span class="s5">8</span><span class="s3">, </span><span class="s1">HEXDIGITS) 
+            </span><span class="s3">if </span><span class="s1">len(escape) != </span><span class="s5">10</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;incomplete escape %s&quot; </span><span class="s1">% escape</span><span class="s3">, </span><span class="s1">len(escape)) 
+            c = int(escape[</span><span class="s5">2</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">16</span><span class="s1">) 
+            chr(c) </span><span class="s0"># raise ValueError for invalid code</span><span class="s1"> 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">c 
+        </span><span class="s3">elif </span><span class="s1">c == </span><span class="s4">&quot;0&quot;</span><span class="s1">: 
+            </span><span class="s0"># octal escape</span><span class="s1"> 
+            escape += source.getwhile(</span><span class="s5">2</span><span class="s3">, </span><span class="s1">OCTDIGITS) 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">int(escape[</span><span class="s5">1</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">8</span><span class="s1">) 
+        </span><span class="s3">elif </span><span class="s1">c </span><span class="s3">in </span><span class="s1">DIGITS: 
+            </span><span class="s0"># octal escape *or* decimal group reference (sigh)</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">source.next </span><span class="s3">in </span><span class="s1">DIGITS: 
+                escape += source.get() 
+                </span><span class="s3">if </span><span class="s1">(escape[</span><span class="s5">1</span><span class="s1">] </span><span class="s3">in </span><span class="s1">OCTDIGITS </span><span class="s3">and </span><span class="s1">escape[</span><span class="s5">2</span><span class="s1">] </span><span class="s3">in </span><span class="s1">OCTDIGITS </span><span class="s3">and</span><span class="s1"> 
+                    source.next </span><span class="s3">in </span><span class="s1">OCTDIGITS): 
+                    </span><span class="s0"># got three octal digits; this is an octal escape</span><span class="s1"> 
+                    escape += source.get() 
+                    c = int(escape[</span><span class="s5">1</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">8</span><span class="s1">) 
+                    </span><span class="s3">if </span><span class="s1">c &gt; </span><span class="s5">0o377</span><span class="s1">: 
+                        </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">'octal escape value %s outside of '</span><span class="s1"> 
+                                           </span><span class="s4">'range 0-0o377' </span><span class="s1">% escape</span><span class="s3">,</span><span class="s1"> 
+                                           len(escape)) 
+                    </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">c 
+            </span><span class="s0"># not an octal escape, so this is a group reference</span><span class="s1"> 
+            group = int(escape[</span><span class="s5">1</span><span class="s1">:]) 
+            </span><span class="s3">if </span><span class="s1">group &lt; state.groups: 
+                </span><span class="s3">if not </span><span class="s1">state.checkgroup(group): 
+                    </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;cannot refer to an open group&quot;</span><span class="s3">,</span><span class="s1"> 
+                                       len(escape)) 
+                state.checklookbehindgroup(group</span><span class="s3">, </span><span class="s1">source) 
+                </span><span class="s3">return </span><span class="s1">GROUPREF</span><span class="s3">, </span><span class="s1">group 
+            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;invalid group reference&quot;</span><span class="s3">, </span><span class="s1">len(escape)) 
+        </span><span class="s3">if </span><span class="s1">len(escape) == </span><span class="s5">2</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">c </span><span class="s3">in </span><span class="s1">ASCIILETTERS: 
+                </span><span class="s3">import </span><span class="s1">warnings 
+                warnings.warn(</span><span class="s4">'bad escape %s' </span><span class="s1">% escape</span><span class="s3">,</span><span class="s1"> 
+                              DeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">8</span><span class="s1">) 
+            </span><span class="s3">return </span><span class="s1">LITERAL</span><span class="s3">, </span><span class="s1">ord(escape[</span><span class="s5">1</span><span class="s1">]) 
+    </span><span class="s3">except </span><span class="s1">ValueError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;bad escape %s&quot; </span><span class="s1">% escape</span><span class="s3">, </span><span class="s1">len(escape)) 
+ 
+</span><span class="s3">def </span><span class="s1">_parse_sub(source</span><span class="s3">, </span><span class="s1">state</span><span class="s3">, </span><span class="s1">nested=</span><span class="s3">True</span><span class="s1">): 
+    </span><span class="s0"># parse an alternation: a|b|c</span><span class="s1"> 
+ 
+    items = [] 
+    itemsappend = items.append 
+    sourcematch = source.match 
+    start = source.tell() 
+    </span><span class="s3">while True</span><span class="s1">: 
+        itemsappend(_parse(source</span><span class="s3">, </span><span class="s1">state)) 
+        </span><span class="s3">if not </span><span class="s1">sourcematch(</span><span class="s4">&quot;|&quot;</span><span class="s1">): 
+            </span><span class="s3">break</span><span class="s1"> 
+ 
+    </span><span class="s3">if </span><span class="s1">len(items) == </span><span class="s5">1</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">items[</span><span class="s5">0</span><span class="s1">] 
+ 
+    subpattern = SubPattern(state) 
+    subpatternappend = subpattern.append 
+ 
+    </span><span class="s0"># check if all items share a common prefix</span><span class="s1"> 
+    </span><span class="s3">while True</span><span class="s1">: 
+        prefix = </span><span class="s3">None</span><span class="s1"> 
+        </span><span class="s3">for </span><span class="s1">item </span><span class="s3">in </span><span class="s1">items: 
+            </span><span class="s3">if not </span><span class="s1">item: 
+                </span><span class="s3">break</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">prefix </span><span class="s3">is None</span><span class="s1">: 
+                prefix = item[</span><span class="s5">0</span><span class="s1">] 
+            </span><span class="s3">elif </span><span class="s1">item[</span><span class="s5">0</span><span class="s1">] != prefix: 
+                </span><span class="s3">break</span><span class="s1"> 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s0"># all subitems start with a common &quot;prefix&quot;.</span><span class="s1"> 
+            </span><span class="s0"># move it out of the branch</span><span class="s1"> 
+            </span><span class="s3">for </span><span class="s1">item </span><span class="s3">in </span><span class="s1">items: 
+                </span><span class="s3">del </span><span class="s1">item[</span><span class="s5">0</span><span class="s1">] 
+            subpatternappend(prefix) 
+            </span><span class="s3">continue </span><span class="s0"># check next one</span><span class="s1"> 
+        </span><span class="s3">break</span><span class="s1"> 
+ 
+    </span><span class="s0"># check if the branch can be replaced by a character set</span><span class="s1"> 
+    </span><span class="s3">for </span><span class="s1">item </span><span class="s3">in </span><span class="s1">items: 
+        </span><span class="s3">if </span><span class="s1">len(item) != </span><span class="s5">1 </span><span class="s3">or </span><span class="s1">item[</span><span class="s5">0</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] </span><span class="s3">is not </span><span class="s1">LITERAL: 
+            </span><span class="s3">break</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s0"># we can store this as a character set instead of a</span><span class="s1"> 
+        </span><span class="s0"># branch (the compiler may optimize this even more)</span><span class="s1"> 
+        subpatternappend((IN</span><span class="s3">, </span><span class="s1">[item[</span><span class="s5">0</span><span class="s1">] </span><span class="s3">for </span><span class="s1">item </span><span class="s3">in </span><span class="s1">items])) 
+        </span><span class="s3">return </span><span class="s1">subpattern 
+ 
+    subpattern.append((BRANCH</span><span class="s3">, </span><span class="s1">(</span><span class="s3">None, </span><span class="s1">items))) 
+    </span><span class="s3">return </span><span class="s1">subpattern 
+ 
+</span><span class="s3">def </span><span class="s1">_parse_sub_cond(source</span><span class="s3">, </span><span class="s1">state</span><span class="s3">, </span><span class="s1">condgroup): 
+    item_yes = _parse(source</span><span class="s3">, </span><span class="s1">state) 
+    </span><span class="s3">if </span><span class="s1">source.match(</span><span class="s4">&quot;|&quot;</span><span class="s1">): 
+        item_no = _parse(source</span><span class="s3">, </span><span class="s1">state) 
+        </span><span class="s3">if </span><span class="s1">source.next == </span><span class="s4">&quot;|&quot;</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;conditional backref with more than two branches&quot;</span><span class="s1">) 
+    </span><span class="s3">else</span><span class="s1">: 
+        item_no = </span><span class="s3">None</span><span class="s1"> 
+    subpattern = SubPattern(state) 
+    subpattern.append((GROUPREF_EXISTS</span><span class="s3">, </span><span class="s1">(condgroup</span><span class="s3">, </span><span class="s1">item_yes</span><span class="s3">, </span><span class="s1">item_no))) 
+    </span><span class="s3">return </span><span class="s1">subpattern 
+ 
+</span><span class="s3">def </span><span class="s1">_parse(source</span><span class="s3">, </span><span class="s1">state): 
+    </span><span class="s0"># parse a simple pattern</span><span class="s1"> 
+    subpattern = SubPattern(state) 
+ 
+    </span><span class="s0"># precompute constants into local variables</span><span class="s1"> 
+    subpatternappend = subpattern.append 
+    sourceget = source.get 
+    sourcematch = source.match 
+    _len = len 
+    _ord = ord 
+    verbose = state.flags &amp; SRE_FLAG_VERBOSE 
+ 
+    </span><span class="s3">while True</span><span class="s1">: 
+ 
+        this = source.next 
+        </span><span class="s3">if </span><span class="s1">this </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">break </span><span class="s0"># end of pattern</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">this </span><span class="s3">in </span><span class="s4">&quot;|)&quot;</span><span class="s1">: 
+            </span><span class="s3">break </span><span class="s0"># end of subpattern</span><span class="s1"> 
+        sourceget() 
+ 
+        </span><span class="s3">if </span><span class="s1">verbose: 
+            </span><span class="s0"># skip whitespace and comments</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">this </span><span class="s3">in </span><span class="s1">WHITESPACE: 
+                </span><span class="s3">continue</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">this == </span><span class="s4">&quot;#&quot;</span><span class="s1">: 
+                </span><span class="s3">while True</span><span class="s1">: 
+                    this = sourceget() 
+                    </span><span class="s3">if </span><span class="s1">this </span><span class="s3">is None or </span><span class="s1">this == </span><span class="s4">&quot;</span><span class="s3">\n</span><span class="s4">&quot;</span><span class="s1">: 
+                        </span><span class="s3">break</span><span class="s1"> 
+                </span><span class="s3">continue</span><span class="s1"> 
+ 
+        </span><span class="s3">if </span><span class="s1">this[</span><span class="s5">0</span><span class="s1">] == </span><span class="s4">&quot;</span><span class="s3">\\</span><span class="s4">&quot;</span><span class="s1">: 
+            code = _escape(source</span><span class="s3">, </span><span class="s1">this</span><span class="s3">, </span><span class="s1">state) 
+            subpatternappend(code) 
+ 
+        </span><span class="s3">elif </span><span class="s1">this </span><span class="s3">not in </span><span class="s1">SPECIAL_CHARS: 
+            subpatternappend((LITERAL</span><span class="s3">, </span><span class="s1">_ord(this))) 
+ 
+        </span><span class="s3">elif </span><span class="s1">this == </span><span class="s4">&quot;[&quot;</span><span class="s1">: 
+            here = source.tell() - </span><span class="s5">1</span><span class="s1"> 
+            </span><span class="s0"># character set</span><span class="s1"> 
+            set = [] 
+            setappend = set.append 
+</span><span class="s0">##          if sourcematch(&quot;:&quot;):</span><span class="s1"> 
+</span><span class="s0">##              pass # handle character classes</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">sourcematch(</span><span class="s4">&quot;^&quot;</span><span class="s1">): 
+                setappend((NEGATE</span><span class="s3">, None</span><span class="s1">)) 
+            </span><span class="s0"># check remaining characters</span><span class="s1"> 
+            start = set[:] 
+            </span><span class="s3">while True</span><span class="s1">: 
+                this = sourceget() 
+                </span><span class="s3">if </span><span class="s1">this </span><span class="s3">is None</span><span class="s1">: 
+                    </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unterminated character set&quot;</span><span class="s3">,</span><span class="s1"> 
+                                       source.tell() - here) 
+                </span><span class="s3">if </span><span class="s1">this == </span><span class="s4">&quot;]&quot; </span><span class="s3">and </span><span class="s1">set != start: 
+                    </span><span class="s3">break</span><span class="s1"> 
+                </span><span class="s3">elif </span><span class="s1">this[</span><span class="s5">0</span><span class="s1">] == </span><span class="s4">&quot;</span><span class="s3">\\</span><span class="s4">&quot;</span><span class="s1">: 
+                    code1 = _class_escape(source</span><span class="s3">, </span><span class="s1">this) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    code1 = LITERAL</span><span class="s3">, </span><span class="s1">_ord(this) 
+                </span><span class="s3">if </span><span class="s1">sourcematch(</span><span class="s4">&quot;-&quot;</span><span class="s1">): 
+                    </span><span class="s0"># potential range</span><span class="s1"> 
+                    that = sourceget() 
+                    </span><span class="s3">if </span><span class="s1">that </span><span class="s3">is None</span><span class="s1">: 
+                        </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unterminated character set&quot;</span><span class="s3">,</span><span class="s1"> 
+                                           source.tell() - here) 
+                    </span><span class="s3">if </span><span class="s1">that == </span><span class="s4">&quot;]&quot;</span><span class="s1">: 
+                        </span><span class="s3">if </span><span class="s1">code1[</span><span class="s5">0</span><span class="s1">] </span><span class="s3">is </span><span class="s1">IN: 
+                            code1 = code1[</span><span class="s5">1</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] 
+                        setappend(code1) 
+                        setappend((LITERAL</span><span class="s3">, </span><span class="s1">_ord(</span><span class="s4">&quot;-&quot;</span><span class="s1">))) 
+                        </span><span class="s3">break</span><span class="s1"> 
+                    </span><span class="s3">if </span><span class="s1">that[</span><span class="s5">0</span><span class="s1">] == </span><span class="s4">&quot;</span><span class="s3">\\</span><span class="s4">&quot;</span><span class="s1">: 
+                        code2 = _class_escape(source</span><span class="s3">, </span><span class="s1">that) 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        code2 = LITERAL</span><span class="s3">, </span><span class="s1">_ord(that) 
+                    </span><span class="s3">if </span><span class="s1">code1[</span><span class="s5">0</span><span class="s1">] != LITERAL </span><span class="s3">or </span><span class="s1">code2[</span><span class="s5">0</span><span class="s1">] != LITERAL: 
+                        msg = </span><span class="s4">&quot;bad character range %s-%s&quot; </span><span class="s1">% (this</span><span class="s3">, </span><span class="s1">that) 
+                        </span><span class="s3">raise </span><span class="s1">source.error(msg</span><span class="s3">, </span><span class="s1">len(this) + </span><span class="s5">1 </span><span class="s1">+ len(that)) 
+                    lo = code1[</span><span class="s5">1</span><span class="s1">] 
+                    hi = code2[</span><span class="s5">1</span><span class="s1">] 
+                    </span><span class="s3">if </span><span class="s1">hi &lt; lo: 
+                        msg = </span><span class="s4">&quot;bad character range %s-%s&quot; </span><span class="s1">% (this</span><span class="s3">, </span><span class="s1">that) 
+                        </span><span class="s3">raise </span><span class="s1">source.error(msg</span><span class="s3">, </span><span class="s1">len(this) + </span><span class="s5">1 </span><span class="s1">+ len(that)) 
+                    setappend((RANGE</span><span class="s3">, </span><span class="s1">(lo</span><span class="s3">, </span><span class="s1">hi))) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    </span><span class="s3">if </span><span class="s1">code1[</span><span class="s5">0</span><span class="s1">] </span><span class="s3">is </span><span class="s1">IN: 
+                        code1 = code1[</span><span class="s5">1</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] 
+                    setappend(code1) 
+ 
+            </span><span class="s0"># XXX: &lt;fl&gt; should move set optimization to compiler!</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">_len(set)==</span><span class="s5">1 </span><span class="s3">and </span><span class="s1">set[</span><span class="s5">0</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] </span><span class="s3">is </span><span class="s1">LITERAL: 
+                subpatternappend(set[</span><span class="s5">0</span><span class="s1">]) </span><span class="s0"># optimization</span><span class="s1"> 
+            </span><span class="s3">elif </span><span class="s1">_len(set)==</span><span class="s5">2 </span><span class="s3">and </span><span class="s1">set[</span><span class="s5">0</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] </span><span class="s3">is </span><span class="s1">NEGATE </span><span class="s3">and </span><span class="s1">set[</span><span class="s5">1</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] </span><span class="s3">is </span><span class="s1">LITERAL: 
+                subpatternappend((NOT_LITERAL</span><span class="s3">, </span><span class="s1">set[</span><span class="s5">1</span><span class="s1">][</span><span class="s5">1</span><span class="s1">])) </span><span class="s0"># optimization</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s0"># XXX: &lt;fl&gt; should add charmap optimization here</span><span class="s1"> 
+                subpatternappend((IN</span><span class="s3">, </span><span class="s1">set)) 
+ 
+        </span><span class="s3">elif </span><span class="s1">this </span><span class="s3">in </span><span class="s1">REPEAT_CHARS: 
+            </span><span class="s0"># repeat previous item</span><span class="s1"> 
+            here = source.tell() 
+            </span><span class="s3">if </span><span class="s1">this == </span><span class="s4">&quot;?&quot;</span><span class="s1">: 
+                min</span><span class="s3">, </span><span class="s1">max = </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s1"> 
+            </span><span class="s3">elif </span><span class="s1">this == </span><span class="s4">&quot;*&quot;</span><span class="s1">: 
+                min</span><span class="s3">, </span><span class="s1">max = </span><span class="s5">0</span><span class="s3">, </span><span class="s1">MAXREPEAT 
+ 
+            </span><span class="s3">elif </span><span class="s1">this == </span><span class="s4">&quot;+&quot;</span><span class="s1">: 
+                min</span><span class="s3">, </span><span class="s1">max = </span><span class="s5">1</span><span class="s3">, </span><span class="s1">MAXREPEAT 
+            </span><span class="s3">elif </span><span class="s1">this == </span><span class="s4">&quot;{&quot;</span><span class="s1">: 
+                </span><span class="s3">if </span><span class="s1">source.next == </span><span class="s4">&quot;}&quot;</span><span class="s1">: 
+                    subpatternappend((LITERAL</span><span class="s3">, </span><span class="s1">_ord(this))) 
+                    </span><span class="s3">continue</span><span class="s1"> 
+                min</span><span class="s3">, </span><span class="s1">max = </span><span class="s5">0</span><span class="s3">, </span><span class="s1">MAXREPEAT 
+                lo = hi = </span><span class="s4">&quot;&quot;</span><span class="s1"> 
+                </span><span class="s3">while </span><span class="s1">source.next </span><span class="s3">in </span><span class="s1">DIGITS: 
+                    lo += sourceget() 
+                </span><span class="s3">if </span><span class="s1">sourcematch(</span><span class="s4">&quot;,&quot;</span><span class="s1">): 
+                    </span><span class="s3">while </span><span class="s1">source.next </span><span class="s3">in </span><span class="s1">DIGITS: 
+                        hi += sourceget() 
+                </span><span class="s3">else</span><span class="s1">: 
+                    hi = lo 
+                </span><span class="s3">if not </span><span class="s1">sourcematch(</span><span class="s4">&quot;}&quot;</span><span class="s1">): 
+                    subpatternappend((LITERAL</span><span class="s3">, </span><span class="s1">_ord(this))) 
+                    source.seek(here) 
+                    </span><span class="s3">continue</span><span class="s1"> 
+                </span><span class="s3">if </span><span class="s1">lo: 
+                    min = int(lo) 
+                    </span><span class="s3">if </span><span class="s1">min &gt;= MAXREPEAT: 
+                        </span><span class="s3">raise </span><span class="s1">OverflowError(</span><span class="s4">&quot;the repetition number is too large&quot;</span><span class="s1">) 
+                </span><span class="s3">if </span><span class="s1">hi: 
+                    max = int(hi) 
+                    </span><span class="s3">if </span><span class="s1">max &gt;= MAXREPEAT: 
+                        </span><span class="s3">raise </span><span class="s1">OverflowError(</span><span class="s4">&quot;the repetition number is too large&quot;</span><span class="s1">) 
+                    </span><span class="s3">if </span><span class="s1">max &lt; min: 
+                        </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;min repeat greater than max repeat&quot;</span><span class="s3">,</span><span class="s1"> 
+                                           source.tell() - here) 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">raise </span><span class="s1">AssertionError(</span><span class="s4">&quot;unsupported quantifier %r&quot; </span><span class="s1">% (char</span><span class="s3">,</span><span class="s1">)) 
+            </span><span class="s0"># figure out which item to repeat</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">subpattern: 
+                item = subpattern[-</span><span class="s5">1</span><span class="s1">:] 
+            </span><span class="s3">else</span><span class="s1">: 
+                item = </span><span class="s3">None</span><span class="s1"> 
+            </span><span class="s3">if not </span><span class="s1">item </span><span class="s3">or </span><span class="s1">(_len(item) == </span><span class="s5">1 </span><span class="s3">and </span><span class="s1">item[</span><span class="s5">0</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] </span><span class="s3">is </span><span class="s1">AT): 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;nothing to repeat&quot;</span><span class="s3">,</span><span class="s1"> 
+                                   source.tell() - here + len(this)) 
+            </span><span class="s3">if </span><span class="s1">item[</span><span class="s5">0</span><span class="s1">][</span><span class="s5">0</span><span class="s1">] </span><span class="s3">in </span><span class="s1">_REPEATCODES: 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;multiple repeat&quot;</span><span class="s3">,</span><span class="s1"> 
+                                   source.tell() - here + len(this)) 
+            </span><span class="s3">if </span><span class="s1">sourcematch(</span><span class="s4">&quot;?&quot;</span><span class="s1">): 
+                subpattern[-</span><span class="s5">1</span><span class="s1">] = (MIN_REPEAT</span><span class="s3">, </span><span class="s1">(min</span><span class="s3">, </span><span class="s1">max</span><span class="s3">, </span><span class="s1">item)) 
+            </span><span class="s3">else</span><span class="s1">: 
+                subpattern[-</span><span class="s5">1</span><span class="s1">] = (MAX_REPEAT</span><span class="s3">, </span><span class="s1">(min</span><span class="s3">, </span><span class="s1">max</span><span class="s3">, </span><span class="s1">item)) 
+ 
+        </span><span class="s3">elif </span><span class="s1">this == </span><span class="s4">&quot;.&quot;</span><span class="s1">: 
+            subpatternappend((ANY</span><span class="s3">, None</span><span class="s1">)) 
+ 
+        </span><span class="s3">elif </span><span class="s1">this == </span><span class="s4">&quot;(&quot;</span><span class="s1">: 
+            start = source.tell() - </span><span class="s5">1</span><span class="s1"> 
+            group = </span><span class="s3">True</span><span class="s1"> 
+            name = </span><span class="s3">None</span><span class="s1"> 
+            condgroup = </span><span class="s3">None</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">sourcematch(</span><span class="s4">&quot;?&quot;</span><span class="s1">): 
+                </span><span class="s0"># options</span><span class="s1"> 
+                char = sourceget() 
+                </span><span class="s3">if </span><span class="s1">char </span><span class="s3">is None</span><span class="s1">: 
+                    </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unexpected end of pattern&quot;</span><span class="s1">) 
+                </span><span class="s3">if </span><span class="s1">char == </span><span class="s4">&quot;P&quot;</span><span class="s1">: 
+                    </span><span class="s0"># python extensions</span><span class="s1"> 
+                    </span><span class="s3">if </span><span class="s1">sourcematch(</span><span class="s4">&quot;&lt;&quot;</span><span class="s1">): 
+                        </span><span class="s0"># named group: skip forward to end of name</span><span class="s1"> 
+                        name = source.getuntil(</span><span class="s4">&quot;&gt;&quot;</span><span class="s1">) 
+                        </span><span class="s3">if not </span><span class="s1">name.isidentifier(): 
+                            msg = </span><span class="s4">&quot;bad character in group name %r&quot; </span><span class="s1">% name 
+                            </span><span class="s3">raise </span><span class="s1">source.error(msg</span><span class="s3">, </span><span class="s1">len(name) + </span><span class="s5">1</span><span class="s1">) 
+                    </span><span class="s3">elif </span><span class="s1">sourcematch(</span><span class="s4">&quot;=&quot;</span><span class="s1">): 
+                        </span><span class="s0"># named backreference</span><span class="s1"> 
+                        name = source.getuntil(</span><span class="s4">&quot;)&quot;</span><span class="s1">) 
+                        </span><span class="s3">if not </span><span class="s1">name.isidentifier(): 
+                            msg = </span><span class="s4">&quot;bad character in group name %r&quot; </span><span class="s1">% name 
+                            </span><span class="s3">raise </span><span class="s1">source.error(msg</span><span class="s3">, </span><span class="s1">len(name) + </span><span class="s5">1</span><span class="s1">) 
+                        gid = state.groupdict.get(name) 
+                        </span><span class="s3">if </span><span class="s1">gid </span><span class="s3">is None</span><span class="s1">: 
+                            msg = </span><span class="s4">&quot;unknown group name %r&quot; </span><span class="s1">% name 
+                            </span><span class="s3">raise </span><span class="s1">source.error(msg</span><span class="s3">, </span><span class="s1">len(name) + </span><span class="s5">1</span><span class="s1">) 
+                        </span><span class="s3">if not </span><span class="s1">state.checkgroup(gid): 
+                            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;cannot refer to an open group&quot;</span><span class="s3">,</span><span class="s1"> 
+                                               len(name) + </span><span class="s5">1</span><span class="s1">) 
+                        state.checklookbehindgroup(gid</span><span class="s3">, </span><span class="s1">source) 
+                        subpatternappend((GROUPREF</span><span class="s3">, </span><span class="s1">gid)) 
+                        </span><span class="s3">continue</span><span class="s1"> 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        char = sourceget() 
+                        </span><span class="s3">if </span><span class="s1">char </span><span class="s3">is None</span><span class="s1">: 
+                            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unexpected end of pattern&quot;</span><span class="s1">) 
+                        </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unknown extension ?P&quot; </span><span class="s1">+ char</span><span class="s3">,</span><span class="s1"> 
+                                           len(char) + </span><span class="s5">2</span><span class="s1">) 
+                </span><span class="s3">elif </span><span class="s1">char == </span><span class="s4">&quot;:&quot;</span><span class="s1">: 
+                    </span><span class="s0"># non-capturing group</span><span class="s1"> 
+                    group = </span><span class="s3">None</span><span class="s1"> 
+                </span><span class="s3">elif </span><span class="s1">char == </span><span class="s4">&quot;#&quot;</span><span class="s1">: 
+                    </span><span class="s0"># comment</span><span class="s1"> 
+                    </span><span class="s3">while True</span><span class="s1">: 
+                        </span><span class="s3">if </span><span class="s1">source.next </span><span class="s3">is None</span><span class="s1">: 
+                            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;missing ), unterminated comment&quot;</span><span class="s3">,</span><span class="s1"> 
+                                               source.tell() - start) 
+                        </span><span class="s3">if </span><span class="s1">sourceget() == </span><span class="s4">&quot;)&quot;</span><span class="s1">: 
+                            </span><span class="s3">break</span><span class="s1"> 
+                    </span><span class="s3">continue</span><span class="s1"> 
+                </span><span class="s3">elif </span><span class="s1">char </span><span class="s3">in </span><span class="s4">&quot;=!&lt;&quot;</span><span class="s1">: 
+                    </span><span class="s0"># lookahead assertions</span><span class="s1"> 
+                    dir = </span><span class="s5">1</span><span class="s1"> 
+                    </span><span class="s3">if </span><span class="s1">char == </span><span class="s4">&quot;&lt;&quot;</span><span class="s1">: 
+                        char = sourceget() 
+                        </span><span class="s3">if </span><span class="s1">char </span><span class="s3">is None</span><span class="s1">: 
+                            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unexpected end of pattern&quot;</span><span class="s1">) 
+                        </span><span class="s3">if </span><span class="s1">char </span><span class="s3">not in </span><span class="s4">&quot;=!&quot;</span><span class="s1">: 
+                            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unknown extension ?&lt;&quot; </span><span class="s1">+ char</span><span class="s3">,</span><span class="s1"> 
+                                               len(char) + </span><span class="s5">2</span><span class="s1">) 
+                        dir = -</span><span class="s5">1 </span><span class="s0"># lookbehind</span><span class="s1"> 
+                        lookbehindgroups = state.lookbehindgroups 
+                        </span><span class="s3">if </span><span class="s1">lookbehindgroups </span><span class="s3">is None</span><span class="s1">: 
+                            state.lookbehindgroups = state.groups 
+                    p = _parse_sub(source</span><span class="s3">, </span><span class="s1">state) 
+                    </span><span class="s3">if </span><span class="s1">dir &lt; </span><span class="s5">0</span><span class="s1">: 
+                        </span><span class="s3">if </span><span class="s1">lookbehindgroups </span><span class="s3">is None</span><span class="s1">: 
+                            state.lookbehindgroups = </span><span class="s3">None</span><span class="s1"> 
+                    </span><span class="s3">if not </span><span class="s1">sourcematch(</span><span class="s4">&quot;)&quot;</span><span class="s1">): 
+                        </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;missing ), unterminated subpattern&quot;</span><span class="s3">,</span><span class="s1"> 
+                                           source.tell() - start) 
+                    </span><span class="s3">if </span><span class="s1">char == </span><span class="s4">&quot;=&quot;</span><span class="s1">: 
+                        subpatternappend((ASSERT</span><span class="s3">, </span><span class="s1">(dir</span><span class="s3">, </span><span class="s1">p))) 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        subpatternappend((ASSERT_NOT</span><span class="s3">, </span><span class="s1">(dir</span><span class="s3">, </span><span class="s1">p))) 
+                    </span><span class="s3">continue</span><span class="s1"> 
+                </span><span class="s3">elif </span><span class="s1">char == </span><span class="s4">&quot;(&quot;</span><span class="s1">: 
+                    </span><span class="s0"># conditional backreference group</span><span class="s1"> 
+                    condname = source.getuntil(</span><span class="s4">&quot;)&quot;</span><span class="s1">) 
+                    group = </span><span class="s3">None</span><span class="s1"> 
+                    </span><span class="s3">if </span><span class="s1">condname.isidentifier(): 
+                        condgroup = state.groupdict.get(condname) 
+                        </span><span class="s3">if </span><span class="s1">condgroup </span><span class="s3">is None</span><span class="s1">: 
+                            msg = </span><span class="s4">&quot;unknown group name %r&quot; </span><span class="s1">% condname 
+                            </span><span class="s3">raise </span><span class="s1">source.error(msg</span><span class="s3">, </span><span class="s1">len(condname) + </span><span class="s5">1</span><span class="s1">) 
+                    </span><span class="s3">else</span><span class="s1">: 
+                        </span><span class="s3">try</span><span class="s1">: 
+                            condgroup = int(condname) 
+                            </span><span class="s3">if </span><span class="s1">condgroup &lt; </span><span class="s5">0</span><span class="s1">: 
+                                </span><span class="s3">raise </span><span class="s1">ValueError 
+                        </span><span class="s3">except </span><span class="s1">ValueError: 
+                            msg = </span><span class="s4">&quot;bad character in group name %r&quot; </span><span class="s1">% condname 
+                            </span><span class="s3">raise </span><span class="s1">source.error(msg</span><span class="s3">, </span><span class="s1">len(condname) + </span><span class="s5">1</span><span class="s1">) </span><span class="s3">from None</span><span class="s1"> 
+                        </span><span class="s3">if not </span><span class="s1">condgroup: 
+                            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;bad group number&quot;</span><span class="s3">,</span><span class="s1"> 
+                                               len(condname) + </span><span class="s5">1</span><span class="s1">) 
+                        </span><span class="s3">if </span><span class="s1">condgroup &gt;= MAXGROUPS: 
+                            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;invalid group reference&quot;</span><span class="s3">,</span><span class="s1"> 
+                                               len(condname) + </span><span class="s5">1</span><span class="s1">) 
+                    state.checklookbehindgroup(condgroup</span><span class="s3">, </span><span class="s1">source) 
+                </span><span class="s3">elif </span><span class="s1">char </span><span class="s3">in </span><span class="s1">FLAGS: 
+                    </span><span class="s0"># flags</span><span class="s1"> 
+                    </span><span class="s3">while True</span><span class="s1">: 
+                        state.flags |= FLAGS[char] 
+                        char = sourceget() 
+                        </span><span class="s3">if </span><span class="s1">char </span><span class="s3">is None</span><span class="s1">: 
+                            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;missing )&quot;</span><span class="s1">) 
+                        </span><span class="s3">if </span><span class="s1">char == </span><span class="s4">&quot;)&quot;</span><span class="s1">: 
+                            </span><span class="s3">break</span><span class="s1"> 
+                        </span><span class="s3">if </span><span class="s1">char </span><span class="s3">not in </span><span class="s1">FLAGS: 
+                            </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unknown flag&quot;</span><span class="s3">, </span><span class="s1">len(char)) 
+                    verbose = state.flags &amp; SRE_FLAG_VERBOSE 
+                    </span><span class="s3">continue</span><span class="s1"> 
+                </span><span class="s3">else</span><span class="s1">: 
+                    </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unknown extension ?&quot; </span><span class="s1">+ char</span><span class="s3">,</span><span class="s1"> 
+                                       len(char) + </span><span class="s5">1</span><span class="s1">) 
+ 
+            </span><span class="s0"># parse group contents</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">group </span><span class="s3">is not None</span><span class="s1">: 
+                </span><span class="s3">try</span><span class="s1">: 
+                    group = state.opengroup(name) 
+                </span><span class="s3">except </span><span class="s1">error </span><span class="s3">as </span><span class="s1">err: 
+                    </span><span class="s3">raise </span><span class="s1">source.error(err.msg</span><span class="s3">, </span><span class="s1">len(name) + </span><span class="s5">1</span><span class="s1">) </span><span class="s3">from None</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">condgroup: 
+                p = _parse_sub_cond(source</span><span class="s3">, </span><span class="s1">state</span><span class="s3">, </span><span class="s1">condgroup) 
+            </span><span class="s3">else</span><span class="s1">: 
+                p = _parse_sub(source</span><span class="s3">, </span><span class="s1">state) 
+            </span><span class="s3">if not </span><span class="s1">source.match(</span><span class="s4">&quot;)&quot;</span><span class="s1">): 
+                </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;missing ), unterminated subpattern&quot;</span><span class="s3">,</span><span class="s1"> 
+                                   source.tell() - start) 
+            </span><span class="s3">if </span><span class="s1">group </span><span class="s3">is not None</span><span class="s1">: 
+                state.closegroup(group</span><span class="s3">, </span><span class="s1">p) 
+            subpatternappend((SUBPATTERN</span><span class="s3">, </span><span class="s1">(group</span><span class="s3">, </span><span class="s1">p))) 
+ 
+        </span><span class="s3">elif </span><span class="s1">this == </span><span class="s4">&quot;^&quot;</span><span class="s1">: 
+            subpatternappend((AT</span><span class="s3">, </span><span class="s1">AT_BEGINNING)) 
+ 
+        </span><span class="s3">elif </span><span class="s1">this == </span><span class="s4">&quot;$&quot;</span><span class="s1">: 
+            subpattern.append((AT</span><span class="s3">, </span><span class="s1">AT_END)) 
+ 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">AssertionError(</span><span class="s4">&quot;unsupported special character %r&quot; </span><span class="s1">% (char</span><span class="s3">,</span><span class="s1">)) 
+ 
+    </span><span class="s3">return </span><span class="s1">subpattern 
+ 
+</span><span class="s3">def </span><span class="s1">fix_flags(src</span><span class="s3">, </span><span class="s1">flags): 
+    </span><span class="s0"># Check and fix flags according to the type of pattern (str or bytes)</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">isinstance(src</span><span class="s3">, </span><span class="s1">str): 
+        </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_LOCALE: 
+            </span><span class="s3">import </span><span class="s1">warnings 
+            warnings.warn(</span><span class="s4">&quot;LOCALE flag with a str pattern is deprecated. &quot;</span><span class="s1"> 
+                          </span><span class="s4">&quot;Will be an error in 3.6&quot;</span><span class="s3">,</span><span class="s1"> 
+                          DeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">6</span><span class="s1">) 
+        </span><span class="s3">if not </span><span class="s1">flags &amp; SRE_FLAG_ASCII: 
+            flags |= SRE_FLAG_UNICODE 
+        </span><span class="s3">elif </span><span class="s1">flags &amp; SRE_FLAG_UNICODE: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;ASCII and UNICODE flags are incompatible&quot;</span><span class="s1">) 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_UNICODE: 
+            </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;cannot use UNICODE flag with a bytes pattern&quot;</span><span class="s1">) 
+        </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_LOCALE </span><span class="s3">and </span><span class="s1">flags &amp; SRE_FLAG_ASCII: 
+            </span><span class="s3">import </span><span class="s1">warnings 
+            warnings.warn(</span><span class="s4">&quot;ASCII and LOCALE flags are incompatible. &quot;</span><span class="s1"> 
+                          </span><span class="s4">&quot;Will be an error in 3.6&quot;</span><span class="s3">,</span><span class="s1"> 
+                          DeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">6</span><span class="s1">) 
+    </span><span class="s3">return </span><span class="s1">flags 
+ 
+</span><span class="s3">def </span><span class="s1">parse(str</span><span class="s3">, </span><span class="s1">flags=</span><span class="s5">0</span><span class="s3">, </span><span class="s1">pattern=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0"># parse 're' pattern into list of (opcode, argument) tuples</span><span class="s1"> 
+ 
+    source = Tokenizer(str) 
+ 
+    </span><span class="s3">if </span><span class="s1">pattern </span><span class="s3">is None</span><span class="s1">: 
+        pattern = Pattern() 
+    pattern.flags = flags 
+    pattern.str = str 
+ 
+    p = _parse_sub(source</span><span class="s3">, </span><span class="s1">pattern</span><span class="s3">, </span><span class="s5">0</span><span class="s1">) 
+    p.pattern.flags = fix_flags(str</span><span class="s3">, </span><span class="s1">p.pattern.flags) 
+ 
+    </span><span class="s3">if </span><span class="s1">source.next </span><span class="s3">is not None</span><span class="s1">: 
+        </span><span class="s3">assert </span><span class="s1">source.next == </span><span class="s4">&quot;)&quot;</span><span class="s1"> 
+        </span><span class="s3">raise </span><span class="s1">source.error(</span><span class="s4">&quot;unbalanced parenthesis&quot;</span><span class="s1">) 
+ 
+    </span><span class="s3">if not </span><span class="s1">(flags &amp; SRE_FLAG_VERBOSE) </span><span class="s3">and </span><span class="s1">p.pattern.flags &amp; SRE_FLAG_VERBOSE: 
+        </span><span class="s0"># the VERBOSE flag was switched on inside the pattern.  to be</span><span class="s1"> 
+        </span><span class="s0"># on the safe side, we'll parse the whole thing again...</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">parse(str</span><span class="s3">, </span><span class="s1">p.pattern.flags) 
+ 
+    </span><span class="s3">if </span><span class="s1">flags &amp; SRE_FLAG_DEBUG: 
+        p.dump() 
+ 
+    </span><span class="s3">return </span><span class="s1">p 
+ 
+</span><span class="s3">def </span><span class="s1">parse_template(source</span><span class="s3">, </span><span class="s1">pattern): 
+    </span><span class="s0"># parse 're' replacement string into list of literals and</span><span class="s1"> 
+    </span><span class="s0"># group references</span><span class="s1"> 
+    s = Tokenizer(source) 
+    sget = s.get 
+    groups = [] 
+    literals = [] 
+    literal = [] 
+    lappend = literal.append 
+    </span><span class="s3">def </span><span class="s1">addgroup(index): 
+        </span><span class="s3">if </span><span class="s1">literal: 
+            literals.append(</span><span class="s4">''</span><span class="s1">.join(literal)) 
+            </span><span class="s3">del </span><span class="s1">literal[:] 
+        groups.append((len(literals)</span><span class="s3">, </span><span class="s1">index)) 
+        literals.append(</span><span class="s3">None</span><span class="s1">) 
+    groupindex = pattern.groupindex 
+    </span><span class="s3">while True</span><span class="s1">: 
+        this = sget() 
+        </span><span class="s3">if </span><span class="s1">this </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">break </span><span class="s0"># end of replacement string</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">this[</span><span class="s5">0</span><span class="s1">] == </span><span class="s4">&quot;</span><span class="s3">\\</span><span class="s4">&quot;</span><span class="s1">: 
+            </span><span class="s0"># group</span><span class="s1"> 
+            c = this[</span><span class="s5">1</span><span class="s1">] 
+            </span><span class="s3">if </span><span class="s1">c == </span><span class="s4">&quot;g&quot;</span><span class="s1">: 
+                name = </span><span class="s4">&quot;&quot;</span><span class="s1"> 
+                </span><span class="s3">if not </span><span class="s1">s.match(</span><span class="s4">&quot;&lt;&quot;</span><span class="s1">): 
+                    </span><span class="s3">raise </span><span class="s1">s.error(</span><span class="s4">&quot;missing &lt;&quot;</span><span class="s1">) 
+                name = s.getuntil(</span><span class="s4">&quot;&gt;&quot;</span><span class="s1">) 
+                </span><span class="s3">if </span><span class="s1">name.isidentifier(): 
+                    </span><span class="s3">try</span><span class="s1">: 
+                        index = groupindex[name] 
+                    </span><span class="s3">except </span><span class="s1">KeyError: 
+                        </span><span class="s3">raise </span><span class="s1">IndexError(</span><span class="s4">&quot;unknown group name %r&quot; </span><span class="s1">% name) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    </span><span class="s3">try</span><span class="s1">: 
+                        index = int(name) 
+                        </span><span class="s3">if </span><span class="s1">index &lt; </span><span class="s5">0</span><span class="s1">: 
+                            </span><span class="s3">raise </span><span class="s1">ValueError 
+                    </span><span class="s3">except </span><span class="s1">ValueError: 
+                        </span><span class="s3">raise </span><span class="s1">s.error(</span><span class="s4">&quot;bad character in group name %r&quot; </span><span class="s1">% name</span><span class="s3">,</span><span class="s1"> 
+                                      len(name) + </span><span class="s5">1</span><span class="s1">) </span><span class="s3">from None</span><span class="s1"> 
+                    </span><span class="s3">if </span><span class="s1">index &gt;= MAXGROUPS: 
+                        </span><span class="s3">raise </span><span class="s1">s.error(</span><span class="s4">&quot;invalid group reference&quot;</span><span class="s3">,</span><span class="s1"> 
+                                      len(name) + </span><span class="s5">1</span><span class="s1">) 
+                addgroup(index) 
+            </span><span class="s3">elif </span><span class="s1">c == </span><span class="s4">&quot;0&quot;</span><span class="s1">: 
+                </span><span class="s3">if </span><span class="s1">s.next </span><span class="s3">in </span><span class="s1">OCTDIGITS: 
+                    this += sget() 
+                    </span><span class="s3">if </span><span class="s1">s.next </span><span class="s3">in </span><span class="s1">OCTDIGITS: 
+                        this += sget() 
+                lappend(chr(int(this[</span><span class="s5">1</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">8</span><span class="s1">) &amp; </span><span class="s5">0xff</span><span class="s1">)) 
+            </span><span class="s3">elif </span><span class="s1">c </span><span class="s3">in </span><span class="s1">DIGITS: 
+                isoctal = </span><span class="s3">False</span><span class="s1"> 
+                </span><span class="s3">if </span><span class="s1">s.next </span><span class="s3">in </span><span class="s1">DIGITS: 
+                    this += sget() 
+                    </span><span class="s3">if </span><span class="s1">(c </span><span class="s3">in </span><span class="s1">OCTDIGITS </span><span class="s3">and </span><span class="s1">this[</span><span class="s5">2</span><span class="s1">] </span><span class="s3">in </span><span class="s1">OCTDIGITS </span><span class="s3">and</span><span class="s1"> 
+                        s.next </span><span class="s3">in </span><span class="s1">OCTDIGITS): 
+                        this += sget() 
+                        isoctal = </span><span class="s3">True</span><span class="s1"> 
+                        c = int(this[</span><span class="s5">1</span><span class="s1">:]</span><span class="s3">, </span><span class="s5">8</span><span class="s1">) 
+                        </span><span class="s3">if </span><span class="s1">c &gt; </span><span class="s5">0o377</span><span class="s1">: 
+                            </span><span class="s3">raise </span><span class="s1">s.error(</span><span class="s4">'octal escape value %s outside of '</span><span class="s1"> 
+                                          </span><span class="s4">'range 0-0o377' </span><span class="s1">% this</span><span class="s3">, </span><span class="s1">len(this)) 
+                        lappend(chr(c)) 
+                </span><span class="s3">if not </span><span class="s1">isoctal: 
+                    addgroup(int(this[</span><span class="s5">1</span><span class="s1">:])) 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">try</span><span class="s1">: 
+                    this = chr(ESCAPES[this][</span><span class="s5">1</span><span class="s1">]) 
+                </span><span class="s3">except </span><span class="s1">KeyError: 
+                    </span><span class="s3">if </span><span class="s1">c </span><span class="s3">in </span><span class="s1">ASCIILETTERS: 
+                        </span><span class="s3">import </span><span class="s1">warnings 
+                        warnings.warn(</span><span class="s4">'bad escape %s' </span><span class="s1">% this</span><span class="s3">,</span><span class="s1"> 
+                                      DeprecationWarning</span><span class="s3">, </span><span class="s1">stacklevel=</span><span class="s5">4</span><span class="s1">) 
+                lappend(this) 
+        </span><span class="s3">else</span><span class="s1">: 
+            lappend(this) 
+    </span><span class="s3">if </span><span class="s1">literal: 
+        literals.append(</span><span class="s4">''</span><span class="s1">.join(literal)) 
+    </span><span class="s3">if not </span><span class="s1">isinstance(source</span><span class="s3">, </span><span class="s1">str): 
+        </span><span class="s0"># The tokenizer implicitly decodes bytes objects as latin-1, we must</span><span class="s1"> 
+        </span><span class="s0"># therefore re-encode the final representation.</span><span class="s1"> 
+        literals = [</span><span class="s3">None if </span><span class="s1">s </span><span class="s3">is None else </span><span class="s1">s.encode(</span><span class="s4">'latin-1'</span><span class="s1">) </span><span class="s3">for </span><span class="s1">s </span><span class="s3">in </span><span class="s1">literals] 
+    </span><span class="s3">return </span><span class="s1">groups</span><span class="s3">, </span><span class="s1">literals 
+ 
+</span><span class="s3">def </span><span class="s1">expand_template(template</span><span class="s3">, </span><span class="s1">match): 
+    g = match.group 
+    empty = match.string[:</span><span class="s5">0</span><span class="s1">] 
+    groups</span><span class="s3">, </span><span class="s1">literals = template 
+    literals = literals[:] 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">for </span><span class="s1">index</span><span class="s3">, </span><span class="s1">group </span><span class="s3">in </span><span class="s1">groups: 
+            literals[index] = g(group) </span><span class="s3">or </span><span class="s1">empty 
+    </span><span class="s3">except </span><span class="s1">IndexError: 
+        </span><span class="s3">raise </span><span class="s1">error(</span><span class="s4">&quot;invalid group reference&quot;</span><span class="s1">) 
+    </span><span class="s3">return </span><span class="s1">empty.join(literals) 
+</span></pre>
+</body>
+</html>

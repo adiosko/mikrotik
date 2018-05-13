@@ -1,0 +1,173 @@
+<html>
+<head>
+<title>lteApnSet.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+lteApnSet.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">lteApnSet: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">address</span><span class="s0">, </span><span class="s1">username</span><span class="s0">, </span><span class="s1">password): 
+        self.client = TikapyClient(address</span><span class="s0">, </span><span class="s2">8728</span><span class="s1">) 
+        self.client.login(username</span><span class="s0">, </span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newName]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setApnName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">apnName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param apnName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=apn=' </span><span class="s1">+ apnName]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpType(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">iptype=</span><span class="s4">&quot;ipv4&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param iptype: ipv4,ipv4-ipv6,ipv6 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=ip-type=' </span><span class="s1">+ iptype]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">usePeerDns(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=use-peer-dns=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">notUsePeerDns(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=use-peer-dns=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">addDefaultRoute(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=add-default-route=yes'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">notAddDefaultRoute(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=add-default-route=no'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setRouteDistance(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">distance=</span><span class="s4">&quot;2&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param distance: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=default-route-distance='</span><span class="s1">+distance]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpv6Interface(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param interface: none, or other 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=ipv6-interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthentication(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">auth=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param auth: none,chap,pap 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=authentication='</span><span class="s1">+auth]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setUser(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">username): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param username: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self.setAuthentication(name</span><span class="s0">,</span><span class="s4">&quot;chap&quot;</span><span class="s1">) </span><span class="s0">or </span><span class="s1">self.setAuthentication(name</span><span class="s0">,</span><span class="s4">&quot;pap&quot;</span><span class="s1">): 
+            iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=user='</span><span class="s1">+username]) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Error&quot;</span><span class="s1">) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassword(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param password: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s0">if </span><span class="s1">self.setAuthentication(name</span><span class="s0">,</span><span class="s4">&quot;chap&quot;</span><span class="s1">) </span><span class="s0">or </span><span class="s1">self.setAuthentication(name</span><span class="s0">,</span><span class="s4">&quot;pap&quot;</span><span class="s1">): 
+            iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=password='</span><span class="s1">+password]) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Error&quot;</span><span class="s1">) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassthroughInterface(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interface=</span><span class="s4">&quot;none&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param interface:none or physical iface 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=passthrough-interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">iface 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassthroughMac(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">mac): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param name: 
+        :param interface: 
+        :param mac: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        self.setPassthroughInterface(name</span><span class="s0">,</span><span class="s1">interface) 
+        iface = self.client.talk([</span><span class="s4">'/interface/lte/apn/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=passthrough-mac='</span><span class="s1">+mac]) 
+        </span><span class="s0">return </span><span class="s1">iface</span></pre>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<html>
+<head>
+<title>types.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(104,151,187); }
+.s5 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+types.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot; 
+Define names for built-in types that aren't directly accessible as a builtin. 
+&quot;&quot;&quot;</span><span class="s1"> 
+</span><span class="s2">import </span><span class="s1">sys 
+ 
+</span><span class="s3"># Iterators in Python aren't a matter of type but of protocol.  A large</span><span class="s1"> 
+</span><span class="s3"># and changing number of builtin types implement *some* flavor of</span><span class="s1"> 
+</span><span class="s3"># iterator.  Don't check the type!  Use hasattr to check for both</span><span class="s1"> 
+</span><span class="s3"># &quot;__iter__&quot; and &quot;__next__&quot; attributes instead.</span><span class="s1"> 
+ 
+</span><span class="s2">def </span><span class="s1">_f(): </span><span class="s2">pass</span><span class="s1"> 
+FunctionType = type(_f) 
+LambdaType = type(</span><span class="s2">lambda</span><span class="s1">: </span><span class="s2">None</span><span class="s1">)         </span><span class="s3"># Same as FunctionType</span><span class="s1"> 
+CodeType = type(_f.__code__) 
+MappingProxyType = type(type.__dict__) 
+SimpleNamespace = type(sys.implementation) 
+ 
+</span><span class="s2">def </span><span class="s1">_g(): 
+    </span><span class="s2">yield </span><span class="s4">1</span><span class="s1"> 
+GeneratorType = type(_g()) 
+ 
+async </span><span class="s2">def </span><span class="s1">_c(): </span><span class="s2">pass</span><span class="s1"> 
+_c = _c() 
+CoroutineType = type(_c) 
+_c.close()  </span><span class="s3"># Prevent ResourceWarning</span><span class="s1"> 
+ 
+</span><span class="s2">class </span><span class="s1">_C: 
+    </span><span class="s2">def </span><span class="s1">_m(self): </span><span class="s2">pass</span><span class="s1"> 
+MethodType = type(_C()._m) 
+ 
+BuiltinFunctionType = type(len) 
+BuiltinMethodType = type([].append)     </span><span class="s3"># Same as BuiltinFunctionType</span><span class="s1"> 
+ 
+ModuleType = type(sys) 
+ 
+</span><span class="s2">try</span><span class="s1">: 
+    </span><span class="s2">raise </span><span class="s1">TypeError 
+</span><span class="s2">except </span><span class="s1">TypeError: 
+    tb = sys.exc_info()[</span><span class="s4">2</span><span class="s1">] 
+    TracebackType = type(tb) 
+    FrameType = type(tb.tb_frame) 
+    tb = </span><span class="s2">None</span><span class="s1">; </span><span class="s2">del </span><span class="s1">tb 
+ 
+</span><span class="s3"># For Jython, the following two types are identical</span><span class="s1"> 
+GetSetDescriptorType = type(FunctionType.__code__) 
+MemberDescriptorType = type(FunctionType.__globals__) 
+ 
+</span><span class="s2">del </span><span class="s1">sys</span><span class="s2">, </span><span class="s1">_f</span><span class="s2">, </span><span class="s1">_g</span><span class="s2">, </span><span class="s1">_C</span><span class="s2">, </span><span class="s1">_c</span><span class="s2">,                           </span><span class="s3"># Not for export</span><span class="s1"> 
+ 
+ 
+</span><span class="s3"># Provide a PEP 3115 compliant mechanism for class creation</span><span class="s1"> 
+</span><span class="s2">def </span><span class="s1">new_class(name</span><span class="s2">, </span><span class="s1">bases=()</span><span class="s2">, </span><span class="s1">kwds=</span><span class="s2">None, </span><span class="s1">exec_body=</span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Create a class object dynamically using the appropriate metaclass.&quot;&quot;&quot;</span><span class="s1"> 
+    meta</span><span class="s2">, </span><span class="s1">ns</span><span class="s2">, </span><span class="s1">kwds = prepare_class(name</span><span class="s2">, </span><span class="s1">bases</span><span class="s2">, </span><span class="s1">kwds) 
+    </span><span class="s2">if </span><span class="s1">exec_body </span><span class="s2">is not None</span><span class="s1">: 
+        exec_body(ns) 
+    </span><span class="s2">return </span><span class="s1">meta(name</span><span class="s2">, </span><span class="s1">bases</span><span class="s2">, </span><span class="s1">ns</span><span class="s2">, </span><span class="s1">**kwds) 
+ 
+</span><span class="s2">def </span><span class="s1">prepare_class(name</span><span class="s2">, </span><span class="s1">bases=()</span><span class="s2">, </span><span class="s1">kwds=</span><span class="s2">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Call the __prepare__ method of the appropriate metaclass. 
+ 
+    Returns (metaclass, namespace, kwds) as a 3-tuple 
+ 
+    *metaclass* is the appropriate metaclass 
+    *namespace* is the prepared class namespace 
+    *kwds* is an updated copy of the passed in kwds argument with any 
+    'metaclass' entry removed. If no kwds argument is passed in, this will 
+    be an empty dict. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s1">kwds </span><span class="s2">is None</span><span class="s1">: 
+        kwds = {} 
+    </span><span class="s2">else</span><span class="s1">: 
+        kwds = dict(kwds) </span><span class="s3"># Don't alter the provided mapping</span><span class="s1"> 
+    </span><span class="s2">if </span><span class="s5">'metaclass' </span><span class="s2">in </span><span class="s1">kwds: 
+        meta = kwds.pop(</span><span class="s5">'metaclass'</span><span class="s1">) 
+    </span><span class="s2">else</span><span class="s1">: 
+        </span><span class="s2">if </span><span class="s1">bases: 
+            meta = type(bases[</span><span class="s4">0</span><span class="s1">]) 
+        </span><span class="s2">else</span><span class="s1">: 
+            meta = type 
+    </span><span class="s2">if </span><span class="s1">isinstance(meta</span><span class="s2">, </span><span class="s1">type): 
+        </span><span class="s3"># when meta is a type, we first determine the most-derived metaclass</span><span class="s1"> 
+        </span><span class="s3"># instead of invoking the initial candidate directly</span><span class="s1"> 
+        meta = _calculate_meta(meta</span><span class="s2">, </span><span class="s1">bases) 
+    </span><span class="s2">if </span><span class="s1">hasattr(meta</span><span class="s2">, </span><span class="s5">'__prepare__'</span><span class="s1">): 
+        ns = meta.__prepare__(name</span><span class="s2">, </span><span class="s1">bases</span><span class="s2">, </span><span class="s1">**kwds) 
+    </span><span class="s2">else</span><span class="s1">: 
+        ns = {} 
+    </span><span class="s2">return </span><span class="s1">meta</span><span class="s2">, </span><span class="s1">ns</span><span class="s2">, </span><span class="s1">kwds 
+ 
+</span><span class="s2">def </span><span class="s1">_calculate_meta(meta</span><span class="s2">, </span><span class="s1">bases): 
+    </span><span class="s0">&quot;&quot;&quot;Calculate the most derived metaclass.&quot;&quot;&quot;</span><span class="s1"> 
+    winner = meta 
+    </span><span class="s2">for </span><span class="s1">base </span><span class="s2">in </span><span class="s1">bases: 
+        base_meta = type(base) 
+        </span><span class="s2">if </span><span class="s1">issubclass(winner</span><span class="s2">, </span><span class="s1">base_meta): 
+            </span><span class="s2">continue</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">issubclass(base_meta</span><span class="s2">, </span><span class="s1">winner): 
+            winner = base_meta 
+            </span><span class="s2">continue</span><span class="s1"> 
+        </span><span class="s3"># else:</span><span class="s1"> 
+        </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s5">&quot;metaclass conflict: &quot;</span><span class="s1"> 
+                        </span><span class="s5">&quot;the metaclass of a derived class &quot;</span><span class="s1"> 
+                        </span><span class="s5">&quot;must be a (non-strict) subclass &quot;</span><span class="s1"> 
+                        </span><span class="s5">&quot;of the metaclasses of all its bases&quot;</span><span class="s1">) 
+    </span><span class="s2">return </span><span class="s1">winner 
+ 
+</span><span class="s2">class </span><span class="s1">DynamicClassAttribute: 
+    </span><span class="s0">&quot;&quot;&quot;Route attribute access on a class to __getattr__. 
+ 
+    This is a descriptor, used to define attributes that act differently when 
+    accessed through an instance and through a class.  Instance access remains 
+    normal, but access to an attribute through a class will be routed to the 
+    class's __getattr__ method; this is done by raising AttributeError. 
+ 
+    This allows one to have properties active on an instance, and have virtual 
+    attributes on the class with the same name (see Enum for an example). 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">fget=</span><span class="s2">None, </span><span class="s1">fset=</span><span class="s2">None, </span><span class="s1">fdel=</span><span class="s2">None, </span><span class="s1">doc=</span><span class="s2">None</span><span class="s1">): 
+        self.fget = fget 
+        self.fset = fset 
+        self.fdel = fdel 
+        </span><span class="s3"># next two lines make DynamicClassAttribute act the same as property</span><span class="s1"> 
+        self.__doc__ = doc </span><span class="s2">or </span><span class="s1">fget.__doc__ 
+        self.overwrite_doc = doc </span><span class="s2">is None</span><span class="s1"> 
+        </span><span class="s3"># support for abstract methods</span><span class="s1"> 
+        self.__isabstractmethod__ = bool(getattr(fget</span><span class="s2">, </span><span class="s5">'__isabstractmethod__'</span><span class="s2">, False</span><span class="s1">)) 
+ 
+    </span><span class="s2">def </span><span class="s1">__get__(self</span><span class="s2">, </span><span class="s1">instance</span><span class="s2">, </span><span class="s1">ownerclass=</span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s2">if </span><span class="s1">instance </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">if </span><span class="s1">self.__isabstractmethod__: 
+                </span><span class="s2">return </span><span class="s1">self 
+            </span><span class="s2">raise </span><span class="s1">AttributeError() 
+        </span><span class="s2">elif </span><span class="s1">self.fget </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">AttributeError(</span><span class="s5">&quot;unreadable attribute&quot;</span><span class="s1">) 
+        </span><span class="s2">return </span><span class="s1">self.fget(instance) 
+ 
+    </span><span class="s2">def </span><span class="s1">__set__(self</span><span class="s2">, </span><span class="s1">instance</span><span class="s2">, </span><span class="s1">value): 
+        </span><span class="s2">if </span><span class="s1">self.fset </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">AttributeError(</span><span class="s5">&quot;can't set attribute&quot;</span><span class="s1">) 
+        self.fset(instance</span><span class="s2">, </span><span class="s1">value) 
+ 
+    </span><span class="s2">def </span><span class="s1">__delete__(self</span><span class="s2">, </span><span class="s1">instance): 
+        </span><span class="s2">if </span><span class="s1">self.fdel </span><span class="s2">is None</span><span class="s1">: 
+            </span><span class="s2">raise </span><span class="s1">AttributeError(</span><span class="s5">&quot;can't delete attribute&quot;</span><span class="s1">) 
+        self.fdel(instance) 
+ 
+    </span><span class="s2">def </span><span class="s1">getter(self</span><span class="s2">, </span><span class="s1">fget): 
+        fdoc = fget.__doc__ </span><span class="s2">if </span><span class="s1">self.overwrite_doc </span><span class="s2">else None</span><span class="s1"> 
+        result = type(self)(fget</span><span class="s2">, </span><span class="s1">self.fset</span><span class="s2">, </span><span class="s1">self.fdel</span><span class="s2">, </span><span class="s1">fdoc </span><span class="s2">or </span><span class="s1">self.__doc__) 
+        result.overwrite_doc = self.overwrite_doc 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+    </span><span class="s2">def </span><span class="s1">setter(self</span><span class="s2">, </span><span class="s1">fset): 
+        result = type(self)(self.fget</span><span class="s2">, </span><span class="s1">fset</span><span class="s2">, </span><span class="s1">self.fdel</span><span class="s2">, </span><span class="s1">self.__doc__) 
+        result.overwrite_doc = self.overwrite_doc 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+    </span><span class="s2">def </span><span class="s1">deleter(self</span><span class="s2">, </span><span class="s1">fdel): 
+        result = type(self)(self.fget</span><span class="s2">, </span><span class="s1">self.fset</span><span class="s2">, </span><span class="s1">fdel</span><span class="s2">, </span><span class="s1">self.__doc__) 
+        result.overwrite_doc = self.overwrite_doc 
+        </span><span class="s2">return </span><span class="s1">result 
+ 
+ 
+</span><span class="s2">import </span><span class="s1">functools </span><span class="s2">as </span><span class="s1">_functools 
+</span><span class="s2">import </span><span class="s1">collections.abc </span><span class="s2">as </span><span class="s1">_collections_abc 
+ 
+</span><span class="s2">class </span><span class="s1">_GeneratorWrapper: 
+    </span><span class="s3"># TODO: Implement this in C.</span><span class="s1"> 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">gen): 
+        self.__wrapped = gen 
+        self.__isgen = gen.__class__ </span><span class="s2">is </span><span class="s1">GeneratorType 
+        self.__name__ = getattr(gen</span><span class="s2">, </span><span class="s5">'__name__'</span><span class="s2">, None</span><span class="s1">) 
+        self.__qualname__ = getattr(gen</span><span class="s2">, </span><span class="s5">'__qualname__'</span><span class="s2">, None</span><span class="s1">) 
+    </span><span class="s2">def </span><span class="s1">send(self</span><span class="s2">, </span><span class="s1">val): 
+        </span><span class="s2">return </span><span class="s1">self.__wrapped.send(val) 
+    </span><span class="s2">def </span><span class="s1">throw(self</span><span class="s2">, </span><span class="s1">tp</span><span class="s2">, </span><span class="s1">*rest): 
+        </span><span class="s2">return </span><span class="s1">self.__wrapped.throw(tp</span><span class="s2">, </span><span class="s1">*rest) 
+    </span><span class="s2">def </span><span class="s1">close(self): 
+        </span><span class="s2">return </span><span class="s1">self.__wrapped.close() 
+    @property 
+    </span><span class="s2">def </span><span class="s1">gi_code(self): 
+        </span><span class="s2">return </span><span class="s1">self.__wrapped.gi_code 
+    @property 
+    </span><span class="s2">def </span><span class="s1">gi_frame(self): 
+        </span><span class="s2">return </span><span class="s1">self.__wrapped.gi_frame 
+    @property 
+    </span><span class="s2">def </span><span class="s1">gi_running(self): 
+        </span><span class="s2">return </span><span class="s1">self.__wrapped.gi_running 
+    @property 
+    </span><span class="s2">def </span><span class="s1">gi_yieldfrom(self): 
+        </span><span class="s2">return </span><span class="s1">self.__wrapped.gi_yieldfrom 
+    cr_code = gi_code 
+    cr_frame = gi_frame 
+    cr_running = gi_running 
+    cr_await = gi_yieldfrom 
+    </span><span class="s2">def </span><span class="s1">__next__(self): 
+        </span><span class="s2">return </span><span class="s1">next(self.__wrapped) 
+    </span><span class="s2">def </span><span class="s1">__iter__(self): 
+        </span><span class="s2">if </span><span class="s1">self.__isgen: 
+            </span><span class="s2">return </span><span class="s1">self.__wrapped 
+        </span><span class="s2">return </span><span class="s1">self 
+    __await__ = __iter__ 
+ 
+</span><span class="s2">def </span><span class="s1">coroutine(func): 
+    </span><span class="s0">&quot;&quot;&quot;Convert regular generator function to a coroutine.&quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2">if not </span><span class="s1">callable(func): 
+        </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s5">'types.coroutine() expects a callable'</span><span class="s1">) 
+ 
+    </span><span class="s2">if </span><span class="s1">(func.__class__ </span><span class="s2">is </span><span class="s1">FunctionType </span><span class="s2">and</span><span class="s1"> 
+        getattr(func</span><span class="s2">, </span><span class="s5">'__code__'</span><span class="s2">, None</span><span class="s1">).__class__ </span><span class="s2">is </span><span class="s1">CodeType): 
+ 
+        co_flags = func.__code__.co_flags 
+ 
+        </span><span class="s3"># Check if 'func' is a coroutine function.</span><span class="s1"> 
+        </span><span class="s3"># (0x180 == CO_COROUTINE | CO_ITERABLE_COROUTINE)</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">co_flags &amp; </span><span class="s4">0x180</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">func 
+ 
+        </span><span class="s3"># Check if 'func' is a generator function.</span><span class="s1"> 
+        </span><span class="s3"># (0x20 == CO_GENERATOR)</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">co_flags &amp; </span><span class="s4">0x20</span><span class="s1">: 
+            </span><span class="s3"># TODO: Implement this in C.</span><span class="s1"> 
+            co = func.__code__ 
+            func.__code__ = CodeType( 
+                co.co_argcount</span><span class="s2">, </span><span class="s1">co.co_kwonlyargcount</span><span class="s2">, </span><span class="s1">co.co_nlocals</span><span class="s2">,</span><span class="s1"> 
+                co.co_stacksize</span><span class="s2">,</span><span class="s1"> 
+                co.co_flags | </span><span class="s4">0x100</span><span class="s2">,  </span><span class="s3"># 0x100 == CO_ITERABLE_COROUTINE</span><span class="s1"> 
+                co.co_code</span><span class="s2">,</span><span class="s1"> 
+                co.co_consts</span><span class="s2">, </span><span class="s1">co.co_names</span><span class="s2">, </span><span class="s1">co.co_varnames</span><span class="s2">, </span><span class="s1">co.co_filename</span><span class="s2">,</span><span class="s1"> 
+                co.co_name</span><span class="s2">, </span><span class="s1">co.co_firstlineno</span><span class="s2">, </span><span class="s1">co.co_lnotab</span><span class="s2">, </span><span class="s1">co.co_freevars</span><span class="s2">,</span><span class="s1"> 
+                co.co_cellvars) 
+            </span><span class="s2">return </span><span class="s1">func 
+ 
+    </span><span class="s3"># The following code is primarily to support functions that</span><span class="s1"> 
+    </span><span class="s3"># return generator-like objects (for instance generators</span><span class="s1"> 
+    </span><span class="s3"># compiled with Cython).</span><span class="s1"> 
+ 
+    @_functools.wraps(func) 
+    </span><span class="s2">def </span><span class="s1">wrapped(*args</span><span class="s2">, </span><span class="s1">**kwargs): 
+        coro = func(*args</span><span class="s2">, </span><span class="s1">**kwargs) 
+        </span><span class="s2">if </span><span class="s1">(coro.__class__ </span><span class="s2">is </span><span class="s1">CoroutineType </span><span class="s2">or</span><span class="s1"> 
+            coro.__class__ </span><span class="s2">is </span><span class="s1">GeneratorType </span><span class="s2">and </span><span class="s1">coro.gi_code.co_flags &amp; </span><span class="s4">0x100</span><span class="s1">): 
+            </span><span class="s3"># 'coro' is a native coroutine object or an iterable coroutine</span><span class="s1"> 
+            </span><span class="s2">return </span><span class="s1">coro 
+        </span><span class="s2">if </span><span class="s1">(isinstance(coro</span><span class="s2">, </span><span class="s1">_collections_abc.Generator) </span><span class="s2">and</span><span class="s1"> 
+            </span><span class="s2">not </span><span class="s1">isinstance(coro</span><span class="s2">, </span><span class="s1">_collections_abc.Coroutine)): 
+            </span><span class="s3"># 'coro' is either a pure Python generator iterator, or it</span><span class="s1"> 
+            </span><span class="s3"># implements collections.abc.Generator (and does not implement</span><span class="s1"> 
+            </span><span class="s3"># collections.abc.Coroutine).</span><span class="s1"> 
+            </span><span class="s2">return </span><span class="s1">_GeneratorWrapper(coro) 
+        </span><span class="s3"># 'coro' is either an instance of collections.abc.Coroutine or</span><span class="s1"> 
+        </span><span class="s3"># some other object -- pass it through.</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">coro 
+ 
+    </span><span class="s2">return </span><span class="s1">wrapped 
+ 
+ 
+__all__ = [n </span><span class="s2">for </span><span class="s1">n </span><span class="s2">in </span><span class="s1">globals() </span><span class="s2">if </span><span class="s1">n[:</span><span class="s4">1</span><span class="s1">] != </span><span class="s5">'_'</span><span class="s1">] 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<html>
+<head>
+<title>activate</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(169,183,198); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+activate</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># This file must be used with &quot;source bin/activate&quot; *from bash* 
+# you cannot run it directly 
+ 
+deactivate () { 
+    unset -f pydoc &gt;/dev/null 2&gt;&amp;1 
+ 
+    # reset old environment variables 
+    # ! [ -z ${VAR+_} ] returns true if VAR is declared at all 
+    if ! [ -z &quot;${_OLD_VIRTUAL_PATH+_}&quot; ] ; then 
+        PATH=&quot;$_OLD_VIRTUAL_PATH&quot; 
+        export PATH 
+        unset _OLD_VIRTUAL_PATH 
+    fi 
+    if ! [ -z &quot;${_OLD_VIRTUAL_PYTHONHOME+_}&quot; ] ; then 
+        PYTHONHOME=&quot;$_OLD_VIRTUAL_PYTHONHOME&quot; 
+        export PYTHONHOME 
+        unset _OLD_VIRTUAL_PYTHONHOME 
+    fi 
+ 
+    # This should detect bash and zsh, which have a hash command that must 
+    # be called to get it to forget past commands.  Without forgetting 
+    # past commands the $PATH changes we made may not be respected 
+    if [ -n &quot;${BASH-}&quot; ] || [ -n &quot;${ZSH_VERSION-}&quot; ] ; then 
+        hash -r 2&gt;/dev/null 
+    fi 
+ 
+    if ! [ -z &quot;${_OLD_VIRTUAL_PS1+_}&quot; ] ; then 
+        PS1=&quot;$_OLD_VIRTUAL_PS1&quot; 
+        export PS1 
+        unset _OLD_VIRTUAL_PS1 
+    fi 
+ 
+    unset VIRTUAL_ENV 
+    if [ ! &quot;${1-}&quot; = &quot;nondestructive&quot; ] ; then 
+    # Self destruct! 
+        unset -f deactivate 
+    fi 
+} 
+ 
+# unset irrelevant variables 
+deactivate nondestructive 
+ 
+VIRTUAL_ENV=&quot;/home/adrian/PycharmProjects/diplomkap3/venv&quot; 
+export VIRTUAL_ENV 
+ 
+_OLD_VIRTUAL_PATH=&quot;$PATH&quot; 
+PATH=&quot;$VIRTUAL_ENV/bin:$PATH&quot; 
+export PATH 
+ 
+# unset PYTHONHOME if set 
+if ! [ -z &quot;${PYTHONHOME+_}&quot; ] ; then 
+    _OLD_VIRTUAL_PYTHONHOME=&quot;$PYTHONHOME&quot; 
+    unset PYTHONHOME 
+fi 
+ 
+if [ -z &quot;${VIRTUAL_ENV_DISABLE_PROMPT-}&quot; ] ; then 
+    _OLD_VIRTUAL_PS1=&quot;$PS1&quot; 
+    if [ &quot;x&quot; != x ] ; then 
+        PS1=&quot;$PS1&quot; 
+    else 
+        PS1=&quot;(`basename \&quot;$VIRTUAL_ENV\&quot;`) $PS1&quot; 
+    fi 
+    export PS1 
+fi 
+ 
+# Make sure to unalias pydoc if it's already there 
+alias pydoc 2&gt;/dev/null &gt;/dev/null &amp;&amp; unalias pydoc 
+ 
+pydoc () { 
+    python -m pydoc &quot;$@&quot; 
+} 
+ 
+# This should detect bash and zsh, which have a hash command that must 
+# be called to get it to forget past commands.  Without forgetting 
+# past commands the $PATH changes we made may not be respected 
+if [ -n &quot;${BASH-}&quot; ] || [ -n &quot;${ZSH_VERSION-}&quot; ] ; then 
+    hash -r 2&gt;/dev/null 
+fi 
+</span></pre>
+</body>
+</html>

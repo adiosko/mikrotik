@@ -1,0 +1,71 @@
+<html>
+<head>
+<title>check.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(169,183,198); }
+.s1 { color: rgb(204,120,50); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+check.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"> 
+ 
+</span><span class="s1">def </span><span class="s0">check_requirements(installed_dists): 
+    missing_reqs_dict = {} 
+    incompatible_reqs_dict = {} 
+ 
+    </span><span class="s1">for </span><span class="s0">dist </span><span class="s1">in </span><span class="s0">installed_dists: 
+        key = </span><span class="s2">'%s==%s' </span><span class="s0">% (dist.project_name</span><span class="s1">, </span><span class="s0">dist.version) 
+ 
+        missing_reqs = list(get_missing_reqs(dist</span><span class="s1">, </span><span class="s0">installed_dists)) 
+        </span><span class="s1">if </span><span class="s0">missing_reqs: 
+            missing_reqs_dict[key] = missing_reqs 
+ 
+        incompatible_reqs = list(get_incompatible_reqs( 
+            dist</span><span class="s1">, </span><span class="s0">installed_dists)) 
+        </span><span class="s1">if </span><span class="s0">incompatible_reqs: 
+            incompatible_reqs_dict[key] = incompatible_reqs 
+ 
+    </span><span class="s1">return </span><span class="s0">(missing_reqs_dict</span><span class="s1">, </span><span class="s0">incompatible_reqs_dict) 
+ 
+ 
+</span><span class="s1">def </span><span class="s0">get_missing_reqs(dist</span><span class="s1">, </span><span class="s0">installed_dists): 
+    </span><span class="s3">&quot;&quot;&quot;Return all of the requirements of `dist` that aren't present in 
+    `installed_dists`. 
+ 
+    &quot;&quot;&quot;</span><span class="s0"> 
+    installed_names = set(d.project_name.lower() </span><span class="s1">for </span><span class="s0">d </span><span class="s1">in </span><span class="s0">installed_dists) 
+    missing_requirements = set() 
+ 
+    </span><span class="s1">for </span><span class="s0">requirement </span><span class="s1">in </span><span class="s0">dist.requires(): 
+        </span><span class="s1">if </span><span class="s0">requirement.project_name.lower() </span><span class="s1">not in </span><span class="s0">installed_names: 
+            missing_requirements.add(requirement) 
+            </span><span class="s1">yield </span><span class="s0">requirement 
+ 
+ 
+</span><span class="s1">def </span><span class="s0">get_incompatible_reqs(dist</span><span class="s1">, </span><span class="s0">installed_dists): 
+    </span><span class="s3">&quot;&quot;&quot;Return all of the requirements of `dist` that are present in 
+    `installed_dists`, but have incompatible versions. 
+ 
+    &quot;&quot;&quot;</span><span class="s0"> 
+    installed_dists_by_name = {} 
+    </span><span class="s1">for </span><span class="s0">installed_dist </span><span class="s1">in </span><span class="s0">installed_dists: 
+        installed_dists_by_name[installed_dist.project_name] = installed_dist 
+ 
+    </span><span class="s1">for </span><span class="s0">requirement </span><span class="s1">in </span><span class="s0">dist.requires(): 
+        present_dist = installed_dists_by_name.get(requirement.project_name) 
+ 
+        </span><span class="s1">if </span><span class="s0">present_dist </span><span class="s1">and </span><span class="s0">present_dist </span><span class="s1">not in </span><span class="s0">requirement: 
+            </span><span class="s1">yield </span><span class="s0">(requirement</span><span class="s1">, </span><span class="s0">present_dist) 
+</span></pre>
+</body>
+</html>

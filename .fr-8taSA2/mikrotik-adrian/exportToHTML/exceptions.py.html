@@ -1,0 +1,233 @@
+<html>
+<head>
+<title>exceptions.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+exceptions.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">absolute_import 
+</span><span class="s2"># Base Exceptions</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">HTTPError(Exception): 
+    </span><span class="s3">&quot;Base exception used by this module.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">HTTPWarning(Warning): 
+    </span><span class="s3">&quot;Base warning used by this module.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">PoolError(HTTPError): 
+    </span><span class="s3">&quot;Base exception for errors caused within a pool.&quot;</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">pool</span><span class="s0">, </span><span class="s1">message): 
+        self.pool = pool 
+        HTTPError.__init__(self</span><span class="s0">, </span><span class="s4">&quot;%s: %s&quot; </span><span class="s1">% (pool</span><span class="s0">, </span><span class="s1">message)) 
+ 
+    </span><span class="s0">def </span><span class="s1">__reduce__(self): 
+        </span><span class="s2"># For pickling purposes.</span><span class="s1"> 
+        </span><span class="s0">return </span><span class="s1">self.__class__</span><span class="s0">, </span><span class="s1">(</span><span class="s0">None, None</span><span class="s1">) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">RequestError(PoolError): 
+    </span><span class="s3">&quot;Base exception for PoolErrors that have associated URLs.&quot;</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">pool</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">message): 
+        self.url = url 
+        PoolError.__init__(self</span><span class="s0">, </span><span class="s1">pool</span><span class="s0">, </span><span class="s1">message) 
+ 
+    </span><span class="s0">def </span><span class="s1">__reduce__(self): 
+        </span><span class="s2"># For pickling purposes.</span><span class="s1"> 
+        </span><span class="s0">return </span><span class="s1">self.__class__</span><span class="s0">, </span><span class="s1">(</span><span class="s0">None, </span><span class="s1">self.url</span><span class="s0">, None</span><span class="s1">) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">SSLError(HTTPError): 
+    </span><span class="s3">&quot;Raised when SSL certificate fails in an HTTPS connection.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">ProxyError(HTTPError): 
+    </span><span class="s3">&quot;Raised when the connection to a proxy fails.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">DecodeError(HTTPError): 
+    </span><span class="s3">&quot;Raised when automatic decoding based on Content-Type fails.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">ProtocolError(HTTPError): 
+    </span><span class="s3">&quot;Raised when something unexpected happens mid-request/response.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s2">#: Renamed to ProtocolError but aliased for backwards compatibility.</span><span class="s1"> 
+ConnectionError = ProtocolError 
+ 
+ 
+</span><span class="s2"># Leaf Exceptions</span><span class="s1"> 
+ 
+</span><span class="s0">class </span><span class="s1">MaxRetryError(RequestError): 
+    </span><span class="s3">&quot;&quot;&quot;Raised when the maximum number of retries is exceeded. 
+ 
+    :param pool: The connection pool 
+    :type pool: :class:`~urllib3.connectionpool.HTTPConnectionPool` 
+    :param string url: The requested Url 
+    :param exceptions.Exception reason: The underlying error 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">pool</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">reason=</span><span class="s0">None</span><span class="s1">): 
+        self.reason = reason 
+ 
+        message = </span><span class="s4">&quot;Max retries exceeded with url: %s (Caused by %r)&quot; </span><span class="s1">% ( 
+            url</span><span class="s0">, </span><span class="s1">reason) 
+ 
+        RequestError.__init__(self</span><span class="s0">, </span><span class="s1">pool</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">message) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">HostChangedError(RequestError): 
+    </span><span class="s3">&quot;Raised when an existing pool gets a request for a foreign host.&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">pool</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">retries=</span><span class="s5">3</span><span class="s1">): 
+        message = </span><span class="s4">&quot;Tried to open a foreign host with url: %s&quot; </span><span class="s1">% url 
+        RequestError.__init__(self</span><span class="s0">, </span><span class="s1">pool</span><span class="s0">, </span><span class="s1">url</span><span class="s0">, </span><span class="s1">message) 
+        self.retries = retries 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">TimeoutStateError(HTTPError): 
+    </span><span class="s3">&quot;&quot;&quot; Raised when passing an invalid state to a timeout &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">TimeoutError(HTTPError): 
+    </span><span class="s3">&quot;&quot;&quot; Raised when a socket timeout error occurs. 
+ 
+    Catching this error will catch both :exc:`ReadTimeoutErrors 
+    &lt;ReadTimeoutError&gt;` and :exc:`ConnectTimeoutErrors &lt;ConnectTimeoutError&gt;`. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">ReadTimeoutError(TimeoutError</span><span class="s0">, </span><span class="s1">RequestError): 
+    </span><span class="s3">&quot;Raised when a socket timeout occurs while receiving data from a server&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s2"># This timeout error does not have a URL attached and needs to inherit from the</span><span class="s1"> 
+</span><span class="s2"># base HTTPError</span><span class="s1"> 
+</span><span class="s0">class </span><span class="s1">ConnectTimeoutError(TimeoutError): 
+    </span><span class="s3">&quot;Raised when a socket timeout occurs while connecting to a server&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">NewConnectionError(ConnectTimeoutError</span><span class="s0">, </span><span class="s1">PoolError): 
+    </span><span class="s3">&quot;Raised when we fail to establish a new connection. Usually ECONNREFUSED.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">EmptyPoolError(PoolError): 
+    </span><span class="s3">&quot;Raised when a pool runs out of connections and no more are allowed.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">ClosedPoolError(PoolError): 
+    </span><span class="s3">&quot;Raised when a request enters a pool after the pool has been closed.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">LocationValueError(ValueError</span><span class="s0">, </span><span class="s1">HTTPError): 
+    </span><span class="s3">&quot;Raised when there is something wrong with a given URL input.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">LocationParseError(LocationValueError): 
+    </span><span class="s3">&quot;Raised when get_host or similar fails to parse the URL input.&quot;</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">location): 
+        message = </span><span class="s4">&quot;Failed to parse: %s&quot; </span><span class="s1">% location 
+        HTTPError.__init__(self</span><span class="s0">, </span><span class="s1">message) 
+ 
+        self.location = location 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">ResponseError(HTTPError): 
+    </span><span class="s3">&quot;Used as a container for an error reason supplied in a MaxRetryError.&quot;</span><span class="s1"> 
+    GENERIC_ERROR = </span><span class="s4">'too many error responses'</span><span class="s1"> 
+    SPECIFIC_ERROR = </span><span class="s4">'too many {status_code} error responses'</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">SecurityWarning(HTTPWarning): 
+    </span><span class="s3">&quot;Warned when perfoming security reducing actions&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">SubjectAltNameWarning(SecurityWarning): 
+    </span><span class="s3">&quot;Warned when connecting to a host with a certificate missing a SAN.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">InsecureRequestWarning(SecurityWarning): 
+    </span><span class="s3">&quot;Warned when making an unverified HTTPS request.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">SystemTimeWarning(SecurityWarning): 
+    </span><span class="s3">&quot;Warned when system time is suspected to be wrong&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">InsecurePlatformWarning(SecurityWarning): 
+    </span><span class="s3">&quot;Warned when certain SSL configuration is not available on a platform.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">SNIMissingWarning(HTTPWarning): 
+    </span><span class="s3">&quot;Warned when making a HTTPS request without SNI available.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">DependencyWarning(HTTPWarning): 
+    </span><span class="s3">&quot;&quot;&quot; 
+    Warned when an attempt is made to import a module with missing optional 
+    dependencies. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">ResponseNotChunked(ProtocolError</span><span class="s0">, </span><span class="s1">ValueError): 
+    </span><span class="s3">&quot;Response needs to be chunked in order to read it as chunks.&quot;</span><span class="s1"> 
+    </span><span class="s0">pass</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">ProxySchemeUnknown(AssertionError</span><span class="s0">, </span><span class="s1">ValueError): 
+    </span><span class="s3">&quot;ProxyManager does not support the supplied scheme&quot;</span><span class="s1"> 
+    </span><span class="s2"># TODO(t-8ch): Stop inheriting from AssertionError in v2.0.</span><span class="s1"> 
+ 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">scheme): 
+        message = </span><span class="s4">&quot;Not supported proxy scheme %s&quot; </span><span class="s1">% scheme 
+        super(ProxySchemeUnknown</span><span class="s0">, </span><span class="s1">self).__init__(message) 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">HeaderParsingError(HTTPError): 
+    </span><span class="s3">&quot;Raised by assert_header_parsing, but we convert it to a log.warning statement.&quot;</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">defects</span><span class="s0">, </span><span class="s1">unparsed_data): 
+        message = </span><span class="s4">'%s, unparsed data: %r' </span><span class="s1">% (defects </span><span class="s0">or </span><span class="s4">'Unknown'</span><span class="s0">, </span><span class="s1">unparsed_data) 
+        super(HeaderParsingError</span><span class="s0">, </span><span class="s1">self).__init__(message) 
+</span></pre>
+</body>
+</html>

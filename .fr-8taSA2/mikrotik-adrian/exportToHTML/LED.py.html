@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>LED.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+LED.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">LED: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listSystemLEDs(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all leds status 
+        :return:list of leds or empty dictionary 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        leds = self.client.talk([</span><span class="s4">&quot;/system/leds/print&quot;</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">leds == {}: 
+            print(</span><span class="s4">&quot;No leds enabled&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(leds) 
+        </span><span class="s0">return </span><span class="s1">leds 
+ 
+    </span><span class="s0">def </span><span class="s1">addLedTrigger(self</span><span class="s0">,</span><span class="s1">type</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add LED Triger 
+        :param type:  ap-cap, interface-activity, interface-speed, interface-status, interface-receive, interface-speed-1G 
+        interface-transmit, off, wireless-signal-strength,, fan-fault, modem-signal, on, wireless-status, flash-access, 
+         modem-technology, poe-out 
+        :param interface: interface on mikrotik 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        leds = self.client.talk([</span><span class="s4">'/system/leds/add'</span><span class="s0">,</span><span class="s4">'=type='</span><span class="s1">+type</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface]) 
+        </span><span class="s0">return </span><span class="s1">leds 
+ 
+    </span><span class="s0">def </span><span class="s1">setLedTrigger(self</span><span class="s0">,</span><span class="s1">type</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will edit system led trigger 
+        :param type: ap-cap, interface-activity, interface-speed, interface-status, interface-receive, interface-speed-1G 
+        interface-transmit, off, wireless-signal-strength,, fan-fault, modem-signal, on, wireless-status, flash-access, 
+         modem-technology, poe-out 
+        :param interface: interface on mikrotik 
+        :return: list of ifaces 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        leds = self.client.talk( [</span><span class="s4">'/system/leds/set'</span><span class="s0">, </span><span class="s4">'=type=' </span><span class="s1">+ type</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">leds 
+ 
+    </span><span class="s0">def </span><span class="s1">enableTrigger(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable trigger 
+        :param triggerName: type: ap-cap, interface-activity, interface-speed, interface-status, interface-receive, interface-speed-1G 
+        interface-transmit, off, wireless-signal-strength,, fan-fault, modem-signal, on, wireless-status, flash-access, 
+         modem-technology, poe-out 
+        :return: list of trogers 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        leds = self.client.talk([</span><span class="s4">'/system/leds/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">leds 
+ 
+    </span><span class="s0">def </span><span class="s1">disableTrigger(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable trigger 
+        :param triggerName: type: ap-cap, interface-activity, interface-speed, interface-status, interface-receive, interface-speed-1G 
+        interface-transmit, off, wireless-signal-strength,, fan-fault, modem-signal, on, wireless-status, flash-access, 
+         modem-technology, poe-out 
+        :return: list of trogers 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        leds = self.client.talk( [</span><span class="s4">'/system/leds/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">leds 
+ 
+    </span><span class="s0">def </span><span class="s1">removeTrigger(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove trigger 
+        :param number: number of trigger from list 
+        :return: list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        leds = self.client.talk([</span><span class="s4">'/system/leds/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">leds 
+ 
+    </span><span class="s0">def </span><span class="s1">turnoffLEDS(self</span><span class="s0">,</span><span class="s1">when): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will setup all leds on mikrotik 
+        :param when: after-1h, after-1m, immediate, never 
+        :return: list of words response 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        leds = self.client.talk([</span><span class="s4">'/system/leds/settings/set'</span><span class="s0">,</span><span class="s4">'=all-leds-off='</span><span class="s1">+when]) 
+        </span><span class="s0">return </span><span class="s1">leds</span></pre>
+</body>
+</html>

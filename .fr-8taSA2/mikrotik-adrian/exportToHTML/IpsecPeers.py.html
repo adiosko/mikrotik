@@ -1,0 +1,292 @@
+<html>
+<head>
+<title>IpsecPeers.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+IpsecPeers.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">IPsecPeers: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listPeers(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list peers 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk([</span><span class="s4">'/ip/ipsec/peer/print'</span><span class="s1">]) 
+        print(</span><span class="s4">&quot;Address</span><span class="s0">\t</span><span class="s4">Port</span><span class="s0">\t</span><span class="s4">Proposal</span><span class="s0">\t</span><span class="s4">Hash</span><span class="s0">\t</span><span class="s4">Encryption&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">ipsec: 
+            print(ipsec[i][</span><span class="s4">'address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'port'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'proposal-check'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'hash-algorithm'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+ipsec[i][</span><span class="s4">'enc-algorithm'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">addPeer(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add peer 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk([</span><span class="s4">'/ip/ipsec/peer/add'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">removePeer(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove peer 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk([</span><span class="s4">'/ip/ipsec/peer/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">enablePeer(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable peer 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">disablePeer(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">commentPeer(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment peer 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will se taddress 
+        :param number: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setPort(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">port=</span><span class="s4">&quot;500&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set port 
+        :param number: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=port=' </span><span class="s1">+ port] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setLocalAddress(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">laddress): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set local address 
+        :param number: 
+        :param laddress: LAN address 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=local-address=' </span><span class="s1">+ laddress] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setAuthMethod(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">method=</span><span class="s4">&quot;pre-shared-key&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param method: pre-shared-key,pre-shared-key-xauth,rsa-key,rsa-signature,rsa-signature-hybrid 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=auth-method=' </span><span class="s1">+ method] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setPassive(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set passive method 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=passive=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setSecret(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tunnel secret 
+        :param number: 
+        :param password: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=secret=' </span><span class="s1">+ password] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setPolicyTemplateGroup(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">, </span><span class="s1">tmp=</span><span class="s4">&quot;default&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set policy template 
+        :param number: 
+        :param tmp: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=policy-template-group=' </span><span class="s1">+ tmp] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setExchangeMethod(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">method=</span><span class="s4">&quot;main&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        methdd will set method 
+        :param number: 
+        :param method: aggressive, base,main,main-l2tp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=exchange-mode=' </span><span class="s1">+ method] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">sendInitialCOntact(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=send-initial-contact=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">natTraversal(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=nat-traversal=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setId(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">username=</span><span class="s0">None</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set username 
+        :param number: 
+        :param username: auto, fqdn:username,user-fqdn:username 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=my-id=' </span><span class="s1">+ username] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setProposalCheck(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">proposal=</span><span class="s4">&quot;obey&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set proposal check 
+        :param number: 
+        :param proposal: claim, exact, obey, strict 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=proposal-check=' </span><span class="s1">+ proposal] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setHashAlgorithm(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">alg=</span><span class="s4">&quot;sha1&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set hashing alghoritm 
+        :param number: 
+        :param alg: md5, sha1,sha256,sha512 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=hash-algorithm=' </span><span class="s1">+ alg] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setEncryptionAlgorithm(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">alg=</span><span class="s4">&quot;3des,aes-128&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will se tencryption 
+        :param number: 
+        :param alg: 3des,aes-128,aes-192,aes-256,blowfish,camelia-128,camelia-192,camelia-256,des 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=enc-algorithm=' </span><span class="s1">+ alg] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setModeConfiguration(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mode=</span><span class="s4">&quot;request-only&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set mode 
+        :param number: 
+        :param mode: request-only or cfg file 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=mode-config=' </span><span class="s1">+ mode] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setDhGroup(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">dh=</span><span class="s4">&quot;modp1024&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set modp 
+        :param number: 
+        :param dh: modp768,modp1024,ec2n155,ec2n185,modp1536,modp2048,modp3072,modp4096,modp6144,modp8192 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dh-group=' </span><span class="s1">+ dh] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">generatePolicy(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">policy=</span><span class="s4">&quot;no&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will generate policy 
+        :param number: 
+        :param policy: no,port-override,port-strict 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=generate-policy=' </span><span class="s1">+ policy] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setLifetime(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">life=</span><span class="s4">&quot;1d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set lifetime 
+        :param number: 
+        :param life: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=lifetime=' </span><span class="s1">+ life] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setLifeBytes(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">bytes=</span><span class="s4">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will se t lifetime byes 
+        :param number: 
+        :param bytes: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=lifebytes=' </span><span class="s1">+ bytes] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setDpdInterval(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">interval=</span><span class="s4">&quot;120&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Methgod will set dpd interval 
+        :param number: 
+        :param interval: interval to check in secs 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dpd-interval=' </span><span class="s1">+ interval] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec 
+ 
+    </span><span class="s0">def </span><span class="s1">setDpdMaxFailures(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">maximum=</span><span class="s4">&quot;5&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max failures for dpd 
+        :param number: 
+        :param maximum: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        ipsec = self.client.talk( [</span><span class="s4">'/ip/ipsec/peer/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=dpd-maximum-failures=' </span><span class="s1">+ maximum] ) 
+        </span><span class="s0">return </span><span class="s1">ipsec</span></pre>
+</body>
+</html>

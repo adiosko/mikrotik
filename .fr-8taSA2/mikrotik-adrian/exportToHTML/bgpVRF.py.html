@@ -1,0 +1,176 @@
+<html>
+<head>
+<title>bgpVRF.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(128,128,128); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+bgpVRF.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">bgpVRF: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listVrf(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list vrf instances 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk([</span><span class="s4">'/routing/bgp/instance/vrf/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">vrf == {}: 
+            print(</span><span class="s4">&quot;No vrf set&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Instance</span><span class="s0">\t</span><span class="s4">Routing mark</span><span class="s0">\t</span><span class="s4">in filter </span><span class="s0">\t</span><span class="s4"> out filter&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">vrf: 
+                </span><span class="s5">#print(vrf)</span><span class="s1"> 
+                print(vrf[i][</span><span class="s4">'instance'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+vrf[i][</span><span class="s4">'routing-mark'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+vrf[i][</span><span class="s4">'in-filter'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+vrf[i][</span><span class="s4">'out-filter'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">addVrf(self</span><span class="s0">,</span><span class="s1">routingMark): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add new vrf instance 
+        :param routingMark: routing table except from main 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk([</span><span class="s4">'/routing/bgp/instance/vrf/add'</span><span class="s0">,</span><span class="s4">'=routing-mark='</span><span class="s1">+routingMark]) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">removeVrf(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove brf instance 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">disableVrf(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable instance 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">enableVrf(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable vrf instance 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">commentVrfInstance(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment vrf 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">setVrfInstance(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">instance): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set instance vrf 
+        :param number: 
+        :param instance: default or created name f.e bgp 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk([</span><span class="s4">'/routing/bgp/instance/vrf/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+number</span><span class="s0">,</span><span class="s4">'=instance='</span><span class="s1">+instance]) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRoutingMArk(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">mark): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set routing mark 
+        :param number: 
+        :param mark: bgp or default or custom 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=routing-mark=' </span><span class="s1">+ mark] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeConnected(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable connected nwks 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=redistribute-connected=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeStatic(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable connected nwks 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=redistribute-static=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeRIP(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable connected nwks 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=redistribute-rip=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeOSPF(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable connected nwks 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=redistribute-ospf=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">setRedistributeBGP(self</span><span class="s0">, </span><span class="s1">number): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable connected nwks 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=redistribute-other-bgp=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">setInFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">filter): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set input filter 
+        :param number: 
+        :param filter: connected-in,dynamic-in,rip-in,rip-out 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=in-filter='</span><span class="s1">+filter] ) 
+        </span><span class="s0">return </span><span class="s1">vrf 
+ 
+    </span><span class="s0">def </span><span class="s1">setOutputFilter(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">filter): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set output filter 
+        :param number: 
+        :param filter: filter: connected-in,dynamic-in,rip-in,rip-out 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        vrf = self.client.talk( [</span><span class="s4">'/routing/bgp/instance/vrf/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s4">'=out-filter='</span><span class="s1">+filter] ) 
+        </span><span class="s0">return </span><span class="s1">vrf</span></pre>
+</body>
+</html>

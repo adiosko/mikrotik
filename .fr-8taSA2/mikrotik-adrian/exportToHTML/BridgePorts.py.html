@@ -1,0 +1,248 @@
+<html>
+<head>
+<title>BridgePorts.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(98,151,85); font-style: italic; }
+.s5 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+BridgePorts.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">BridgePorts: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s3">#opravit!!!!!!!</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">listPort(self): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will list ports 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk([</span><span class="s5">'/interface/bridge/port/print'</span><span class="s1">]) 
+        print(</span><span class="s5">&quot;Interface</span><span class="s0">\t</span><span class="s5">Bridge</span><span class="s0">\t</span><span class="s5">priority&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">bridge: 
+            print(bridge[i][</span><span class="s5">'interface'</span><span class="s1">]+</span><span class="s5">&quot;</span><span class="s0">\t</span><span class="s5">&quot;</span><span class="s1">+bridge[i][</span><span class="s5">'bridge'</span><span class="s1">]+</span><span class="s5">&quot;</span><span class="s0">\t</span><span class="s5">&quot;</span><span class="s1">+bridge[i][</span><span class="s5">'priority'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">addPort(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">bridge): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will add port 
+        :param interface: 
+        :param bridge: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk([</span><span class="s5">'/interface/bridge/port/add'</span><span class="s0">,</span><span class="s5">'=interface='</span><span class="s1">+interface</span><span class="s0">,</span><span class="s5">'=bridge='</span><span class="s1">+bridge]) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">removePort(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Metjhod will remove port 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk([</span><span class="s5">'/interface/bridge/port/remove'</span><span class="s0">,</span><span class="s5">'=numbers='</span><span class="s1">+number]) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">enablePort(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will enable port 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/enable'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">disablePort(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will disable port 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/disable'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">commentPort(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        bridge = self.client.talk(['/interface/bridge/port/remove','=numbers='+number]) 
+        return bridge 
+        :param number: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/comment'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">,</span><span class="s5">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s3">#General</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setInterface(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">iface): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set iface 
+        :param number: 
+        :param iface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=interface=' </span><span class="s1">+ iface] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setBridge(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">bridge): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set bridge 
+        :param number: 
+        :param bridge: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=bridge=' </span><span class="s1">+ bridge] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setHorizon(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">horizon=</span><span class="s5">&quot;0&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set horizon 
+        :param number: 
+        :param horizon: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=horizon=' </span><span class="s1">+ horizon] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setExternalFdb(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">fdb=</span><span class="s5">&quot;auto&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :param fdb: auto,no,yes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=external-fdb=' </span><span class="s1">+ fdb] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">hardwareOffload(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+ 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=hw=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s3">#STP</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setPriority(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">priority=</span><span class="s5">&quot;80&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set priority 
+        :param number: 
+        :param priority: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=priority=' </span><span class="s1">+ priority] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setPAthCost(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">cost=</span><span class="s5">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set path cost 
+        :param number: 
+        :param cost: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=path-cost=' </span><span class="s1">+ cost] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setInternalPathCOst(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">path=</span><span class="s5">&quot;10&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set internal path cost 
+        :param number: 
+        :param path: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=internal-path-cost=' </span><span class="s1">+ path] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setEdge(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">edge=</span><span class="s5">&quot;auto&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Methdo wil let edge emthod 
+        :param number: 
+        :param edge: auto,no,no-discover,yes,yes-discover 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=edge=' </span><span class="s1">+ edge] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setP2P(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">p2p=</span><span class="s5">&quot;auto&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method ill swt p2p method 
+        :param number: 
+        :param p2p: auto,no,yes 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=point-to-point=' </span><span class="s1">+ p2p] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">autoIsolate(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will auto isolate 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=auto-isolate=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">restrictedRole(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will enable restricted role 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=restricted-role=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">restrictedTcn(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will set restricted tcn 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=restricted-tcn=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s3">#vlan</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">setVlanId(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">vlan=</span><span class="s5">&quot;1&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will set vlan id 
+        :param number: 
+        :param vlan: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=pvid=' </span><span class="s1">+ vlan] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">setFrameType(self</span><span class="s0">,</span><span class="s1">number</span><span class="s0">,</span><span class="s1">frame=</span><span class="s5">&quot;admit-all&quot;</span><span class="s1">): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        method will set  frame type 
+        :param number: 
+        :param frame: admit-all,admit-only-untagged-and-priority-tagged,admin-only-vlan-tagged 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=frame-types=' </span><span class="s1">+ frame] ) 
+        </span><span class="s0">return </span><span class="s1">bridge 
+ 
+    </span><span class="s0">def </span><span class="s1">ingressFiltering(self</span><span class="s0">,</span><span class="s1">number): 
+        </span><span class="s4">&quot;&quot;&quot; 
+        Method will ingress filtering 
+        :param number: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        bridge = self.client.talk( [</span><span class="s5">'/interface/bridge/port/set'</span><span class="s0">, </span><span class="s5">'=numbers=' </span><span class="s1">+ number</span><span class="s0">, </span><span class="s5">'=ingress-filtering=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">bridge</span></pre>
+</body>
+</html>

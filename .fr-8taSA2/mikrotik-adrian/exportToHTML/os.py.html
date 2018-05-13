@@ -1,0 +1,1097 @@
+<html>
+<head>
+<title>os.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+.s6 { color: rgb(165,194,97); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+os.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">r&quot;&quot;&quot;OS routines for NT or Posix depending on what system we're on. 
+ 
+This exports: 
+  - all functions from posix, nt or ce, e.g. unlink, stat, etc. 
+  - os.path is either posixpath or ntpath 
+  - os.name is either 'posix', 'nt' or 'ce'. 
+  - os.curdir is a string representing the current directory ('.' or ':') 
+  - os.pardir is a string representing the parent directory ('..' or '::') 
+  - os.sep is the (or a most common) pathname separator ('/' or ':' or '\\') 
+  - os.extsep is the extension separator (always '.') 
+  - os.altsep is the alternate pathname separator (None or '/') 
+  - os.pathsep is the component separator used in $PATH etc 
+  - os.linesep is the line separator in text files ('\r' or '\n' or '\r\n') 
+  - os.defpath is the default search path for executables 
+  - os.devnull is the file path of the null device ('/dev/null', etc.) 
+ 
+Programs that import and use 'os' stand a better chance of being 
+portable between different platforms.  Of course, they must then 
+only use functions that are defined by all platforms (e.g., unlink 
+and opendir), and leave all pathname manipulation to os.path 
+(e.g., split and join). 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">#'</span><span class="s1"> 
+ 
+</span><span class="s3">import </span><span class="s1">sys</span><span class="s3">, </span><span class="s1">errno 
+</span><span class="s3">import </span><span class="s1">stat </span><span class="s3">as </span><span class="s1">st 
+ 
+_names = sys.builtin_module_names 
+ 
+</span><span class="s2"># Note:  more names are added to __all__ later.</span><span class="s1"> 
+__all__ = [</span><span class="s4">&quot;altsep&quot;</span><span class="s3">, </span><span class="s4">&quot;curdir&quot;</span><span class="s3">, </span><span class="s4">&quot;pardir&quot;</span><span class="s3">, </span><span class="s4">&quot;sep&quot;</span><span class="s3">, </span><span class="s4">&quot;pathsep&quot;</span><span class="s3">, </span><span class="s4">&quot;linesep&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;defpath&quot;</span><span class="s3">, </span><span class="s4">&quot;name&quot;</span><span class="s3">, </span><span class="s4">&quot;path&quot;</span><span class="s3">, </span><span class="s4">&quot;devnull&quot;</span><span class="s3">, </span><span class="s4">&quot;SEEK_SET&quot;</span><span class="s3">, </span><span class="s4">&quot;SEEK_CUR&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;SEEK_END&quot;</span><span class="s3">, </span><span class="s4">&quot;fsencode&quot;</span><span class="s3">, </span><span class="s4">&quot;fsdecode&quot;</span><span class="s3">, </span><span class="s4">&quot;get_exec_path&quot;</span><span class="s3">, </span><span class="s4">&quot;fdopen&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;popen&quot;</span><span class="s3">, </span><span class="s4">&quot;extsep&quot;</span><span class="s1">] 
+ 
+</span><span class="s3">def </span><span class="s1">_exists(name): 
+    </span><span class="s3">return </span><span class="s1">name </span><span class="s3">in </span><span class="s1">globals() 
+ 
+</span><span class="s3">def </span><span class="s1">_get_exports_list(module): 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">return </span><span class="s1">list(module.__all__) 
+    </span><span class="s3">except </span><span class="s1">AttributeError: 
+        </span><span class="s3">return </span><span class="s1">[n </span><span class="s3">for </span><span class="s1">n </span><span class="s3">in </span><span class="s1">dir(module) </span><span class="s3">if </span><span class="s1">n[</span><span class="s5">0</span><span class="s1">] != </span><span class="s4">'_'</span><span class="s1">] 
+ 
+</span><span class="s2"># Any new dependencies of the os module and/or changes in path separator</span><span class="s1"> 
+</span><span class="s2"># requires updating importlib as well.</span><span class="s1"> 
+</span><span class="s3">if </span><span class="s4">'posix' </span><span class="s3">in </span><span class="s1">_names: 
+    name = </span><span class="s4">'posix'</span><span class="s1"> 
+    linesep = </span><span class="s4">'</span><span class="s3">\n</span><span class="s4">'</span><span class="s1"> 
+    </span><span class="s3">from </span><span class="s1">posix </span><span class="s3">import </span><span class="s1">* 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">from </span><span class="s1">posix </span><span class="s3">import </span><span class="s1">_exit 
+        __all__.append(</span><span class="s4">'_exit'</span><span class="s1">) 
+    </span><span class="s3">except </span><span class="s1">ImportError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">import </span><span class="s1">posixpath </span><span class="s3">as </span><span class="s1">path 
+ 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">from </span><span class="s1">posix </span><span class="s3">import </span><span class="s1">_have_functions 
+    </span><span class="s3">except </span><span class="s1">ImportError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+ 
+    </span><span class="s3">import </span><span class="s1">posix 
+    __all__.extend(_get_exports_list(posix)) 
+    </span><span class="s3">del </span><span class="s1">posix 
+ 
+</span><span class="s3">elif </span><span class="s4">'nt' </span><span class="s3">in </span><span class="s1">_names: 
+    name = </span><span class="s4">'nt'</span><span class="s1"> 
+    linesep = </span><span class="s4">'</span><span class="s3">\r\n</span><span class="s4">'</span><span class="s1"> 
+    </span><span class="s3">from </span><span class="s1">nt </span><span class="s3">import </span><span class="s1">* 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">from </span><span class="s1">nt </span><span class="s3">import </span><span class="s1">_exit 
+        __all__.append(</span><span class="s4">'_exit'</span><span class="s1">) 
+    </span><span class="s3">except </span><span class="s1">ImportError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s3">import </span><span class="s1">ntpath </span><span class="s3">as </span><span class="s1">path 
+ 
+    </span><span class="s3">import </span><span class="s1">nt 
+    __all__.extend(_get_exports_list(nt)) 
+    </span><span class="s3">del </span><span class="s1">nt 
+ 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">from </span><span class="s1">nt </span><span class="s3">import </span><span class="s1">_have_functions 
+    </span><span class="s3">except </span><span class="s1">ImportError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+ 
+</span><span class="s3">elif </span><span class="s4">'ce' </span><span class="s3">in </span><span class="s1">_names: 
+    name = </span><span class="s4">'ce'</span><span class="s1"> 
+    linesep = </span><span class="s4">'</span><span class="s3">\r\n</span><span class="s4">'</span><span class="s1"> 
+    </span><span class="s3">from </span><span class="s1">ce </span><span class="s3">import </span><span class="s1">* 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">from </span><span class="s1">ce </span><span class="s3">import </span><span class="s1">_exit 
+        __all__.append(</span><span class="s4">'_exit'</span><span class="s1">) 
+    </span><span class="s3">except </span><span class="s1">ImportError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+    </span><span class="s2"># We can use the standard Windows path.</span><span class="s1"> 
+    </span><span class="s3">import </span><span class="s1">ntpath </span><span class="s3">as </span><span class="s1">path 
+ 
+    </span><span class="s3">import </span><span class="s1">ce 
+    __all__.extend(_get_exports_list(ce)) 
+    </span><span class="s3">del </span><span class="s1">ce 
+ 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">from </span><span class="s1">ce </span><span class="s3">import </span><span class="s1">_have_functions 
+    </span><span class="s3">except </span><span class="s1">ImportError: 
+        </span><span class="s3">pass</span><span class="s1"> 
+ 
+</span><span class="s3">else</span><span class="s1">: 
+    </span><span class="s3">raise </span><span class="s1">ImportError(</span><span class="s4">'no os specific module found'</span><span class="s1">) 
+ 
+sys.modules[</span><span class="s4">'os.path'</span><span class="s1">] = path 
+</span><span class="s3">from </span><span class="s1">os.path </span><span class="s3">import </span><span class="s1">(curdir</span><span class="s3">, </span><span class="s1">pardir</span><span class="s3">, </span><span class="s1">sep</span><span class="s3">, </span><span class="s1">pathsep</span><span class="s3">, </span><span class="s1">defpath</span><span class="s3">, </span><span class="s1">extsep</span><span class="s3">, </span><span class="s1">altsep</span><span class="s3">,</span><span class="s1"> 
+    devnull) 
+ 
+</span><span class="s3">del </span><span class="s1">_names 
+ 
+ 
+</span><span class="s3">if </span><span class="s1">_exists(</span><span class="s4">&quot;_have_functions&quot;</span><span class="s1">): 
+    _globals = globals() 
+    </span><span class="s3">def </span><span class="s1">_add(str</span><span class="s3">, </span><span class="s1">fn): 
+        </span><span class="s3">if </span><span class="s1">(fn </span><span class="s3">in </span><span class="s1">_globals) </span><span class="s3">and </span><span class="s1">(str </span><span class="s3">in </span><span class="s1">_have_functions): 
+            _set.add(_globals[fn]) 
+ 
+    _set = set() 
+    _add(</span><span class="s4">&quot;HAVE_FACCESSAT&quot;</span><span class="s3">,  </span><span class="s4">&quot;access&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FCHMODAT&quot;</span><span class="s3">,   </span><span class="s4">&quot;chmod&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FCHOWNAT&quot;</span><span class="s3">,   </span><span class="s4">&quot;chown&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FSTATAT&quot;</span><span class="s3">,    </span><span class="s4">&quot;stat&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FUTIMESAT&quot;</span><span class="s3">,  </span><span class="s4">&quot;utime&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_LINKAT&quot;</span><span class="s3">,     </span><span class="s4">&quot;link&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_MKDIRAT&quot;</span><span class="s3">,    </span><span class="s4">&quot;mkdir&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_MKFIFOAT&quot;</span><span class="s3">,   </span><span class="s4">&quot;mkfifo&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_MKNODAT&quot;</span><span class="s3">,    </span><span class="s4">&quot;mknod&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_OPENAT&quot;</span><span class="s3">,     </span><span class="s4">&quot;open&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_READLINKAT&quot;</span><span class="s3">, </span><span class="s4">&quot;readlink&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_RENAMEAT&quot;</span><span class="s3">,   </span><span class="s4">&quot;rename&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_SYMLINKAT&quot;</span><span class="s3">,  </span><span class="s4">&quot;symlink&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_UNLINKAT&quot;</span><span class="s3">,   </span><span class="s4">&quot;unlink&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_UNLINKAT&quot;</span><span class="s3">,   </span><span class="s4">&quot;rmdir&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_UTIMENSAT&quot;</span><span class="s3">,  </span><span class="s4">&quot;utime&quot;</span><span class="s1">) 
+    supports_dir_fd = _set 
+ 
+    _set = set() 
+    _add(</span><span class="s4">&quot;HAVE_FACCESSAT&quot;</span><span class="s3">,  </span><span class="s4">&quot;access&quot;</span><span class="s1">) 
+    supports_effective_ids = _set 
+ 
+    _set = set() 
+    _add(</span><span class="s4">&quot;HAVE_FCHDIR&quot;</span><span class="s3">,     </span><span class="s4">&quot;chdir&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FCHMOD&quot;</span><span class="s3">,     </span><span class="s4">&quot;chmod&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FCHOWN&quot;</span><span class="s3">,     </span><span class="s4">&quot;chown&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FDOPENDIR&quot;</span><span class="s3">,  </span><span class="s4">&quot;listdir&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FEXECVE&quot;</span><span class="s3">,    </span><span class="s4">&quot;execve&quot;</span><span class="s1">) 
+    _set.add(stat) </span><span class="s2"># fstat always works</span><span class="s1"> 
+    _add(</span><span class="s4">&quot;HAVE_FTRUNCATE&quot;</span><span class="s3">,  </span><span class="s4">&quot;truncate&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FUTIMENS&quot;</span><span class="s3">,   </span><span class="s4">&quot;utime&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FUTIMES&quot;</span><span class="s3">,    </span><span class="s4">&quot;utime&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FPATHCONF&quot;</span><span class="s3">,  </span><span class="s4">&quot;pathconf&quot;</span><span class="s1">) 
+    </span><span class="s3">if </span><span class="s1">_exists(</span><span class="s4">&quot;statvfs&quot;</span><span class="s1">) </span><span class="s3">and </span><span class="s1">_exists(</span><span class="s4">&quot;fstatvfs&quot;</span><span class="s1">): </span><span class="s2"># mac os x10.3</span><span class="s1"> 
+        _add(</span><span class="s4">&quot;HAVE_FSTATVFS&quot;</span><span class="s3">, </span><span class="s4">&quot;statvfs&quot;</span><span class="s1">) 
+    supports_fd = _set 
+ 
+    _set = set() 
+    _add(</span><span class="s4">&quot;HAVE_FACCESSAT&quot;</span><span class="s3">,  </span><span class="s4">&quot;access&quot;</span><span class="s1">) 
+    </span><span class="s2"># Some platforms don't support lchmod().  Often the function exists</span><span class="s1"> 
+    </span><span class="s2"># anyway, as a stub that always returns ENOSUP or perhaps EOPNOTSUPP.</span><span class="s1"> 
+    </span><span class="s2"># (No, I don't know why that's a good design.)  ./configure will detect</span><span class="s1"> 
+    </span><span class="s2"># this and reject it--so HAVE_LCHMOD still won't be defined on such</span><span class="s1"> 
+    </span><span class="s2"># platforms.  This is Very Helpful.</span><span class="s1"> 
+    </span><span class="s2">#</span><span class="s1"> 
+    </span><span class="s2"># However, sometimes platforms without a working lchmod() *do* have</span><span class="s1"> 
+    </span><span class="s2"># fchmodat().  (Examples: Linux kernel 3.2 with glibc 2.15,</span><span class="s1"> 
+    </span><span class="s2"># OpenIndiana 3.x.)  And fchmodat() has a flag that theoretically makes</span><span class="s1"> 
+    </span><span class="s2"># it behave like lchmod().  So in theory it would be a suitable</span><span class="s1"> 
+    </span><span class="s2"># replacement for lchmod().  But when lchmod() doesn't work, fchmodat()'s</span><span class="s1"> 
+    </span><span class="s2"># flag doesn't work *either*.  Sadly ./configure isn't sophisticated</span><span class="s1"> 
+    </span><span class="s2"># enough to detect this condition--it only determines whether or not</span><span class="s1"> 
+    </span><span class="s2"># fchmodat() minimally works.</span><span class="s1"> 
+    </span><span class="s2">#</span><span class="s1"> 
+    </span><span class="s2"># Therefore we simply ignore fchmodat() when deciding whether or not</span><span class="s1"> 
+    </span><span class="s2"># os.chmod supports follow_symlinks.  Just checking lchmod() is</span><span class="s1"> 
+    </span><span class="s2"># sufficient.  After all--if you have a working fchmodat(), your</span><span class="s1"> 
+    </span><span class="s2"># lchmod() almost certainly works too.</span><span class="s1"> 
+    </span><span class="s2">#</span><span class="s1"> 
+    </span><span class="s2"># _add(&quot;HAVE_FCHMODAT&quot;,   &quot;chmod&quot;)</span><span class="s1"> 
+    _add(</span><span class="s4">&quot;HAVE_FCHOWNAT&quot;</span><span class="s3">,   </span><span class="s4">&quot;chown&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FSTATAT&quot;</span><span class="s3">,    </span><span class="s4">&quot;stat&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_LCHFLAGS&quot;</span><span class="s3">,   </span><span class="s4">&quot;chflags&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_LCHMOD&quot;</span><span class="s3">,     </span><span class="s4">&quot;chmod&quot;</span><span class="s1">) 
+    </span><span class="s3">if </span><span class="s1">_exists(</span><span class="s4">&quot;lchown&quot;</span><span class="s1">): </span><span class="s2"># mac os x10.3</span><span class="s1"> 
+        _add(</span><span class="s4">&quot;HAVE_LCHOWN&quot;</span><span class="s3">, </span><span class="s4">&quot;chown&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_LINKAT&quot;</span><span class="s3">,     </span><span class="s4">&quot;link&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_LUTIMES&quot;</span><span class="s3">,    </span><span class="s4">&quot;utime&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_LSTAT&quot;</span><span class="s3">,      </span><span class="s4">&quot;stat&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_FSTATAT&quot;</span><span class="s3">,    </span><span class="s4">&quot;stat&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;HAVE_UTIMENSAT&quot;</span><span class="s3">,  </span><span class="s4">&quot;utime&quot;</span><span class="s1">) 
+    _add(</span><span class="s4">&quot;MS_WINDOWS&quot;</span><span class="s3">,      </span><span class="s4">&quot;stat&quot;</span><span class="s1">) 
+    supports_follow_symlinks = _set 
+ 
+    </span><span class="s3">del </span><span class="s1">_set 
+    </span><span class="s3">del </span><span class="s1">_have_functions 
+    </span><span class="s3">del </span><span class="s1">_globals 
+    </span><span class="s3">del </span><span class="s1">_add 
+ 
+ 
+</span><span class="s2"># Python uses fixed values for the SEEK_ constants; they are mapped</span><span class="s1"> 
+</span><span class="s2"># to native constants if necessary in posixmodule.c</span><span class="s1"> 
+</span><span class="s2"># Other possible SEEK values are directly imported from posixmodule.c</span><span class="s1"> 
+SEEK_SET = </span><span class="s5">0</span><span class="s1"> 
+SEEK_CUR = </span><span class="s5">1</span><span class="s1"> 
+SEEK_END = </span><span class="s5">2</span><span class="s1"> 
+ 
+</span><span class="s2"># Super directory utilities.</span><span class="s1"> 
+</span><span class="s2"># (Inspired by Eric Raymond; the doc strings are mostly his)</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">makedirs(name</span><span class="s3">, </span><span class="s1">mode=</span><span class="s5">0o777</span><span class="s3">, </span><span class="s1">exist_ok=</span><span class="s3">False</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;makedirs(name [, mode=0o777][, exist_ok=False]) 
+ 
+    Super-mkdir; create a leaf directory and all intermediate ones.  Works like 
+    mkdir, except that any intermediate path segment (not just the rightmost) 
+    will be created if it does not exist. If the target directory already 
+    exists, raise an OSError if exist_ok is False. Otherwise no exception is 
+    raised.  This is recursive. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    head</span><span class="s3">, </span><span class="s1">tail = path.split(name) 
+    </span><span class="s3">if not </span><span class="s1">tail: 
+        head</span><span class="s3">, </span><span class="s1">tail = path.split(head) 
+    </span><span class="s3">if </span><span class="s1">head </span><span class="s3">and </span><span class="s1">tail </span><span class="s3">and not </span><span class="s1">path.exists(head): 
+        </span><span class="s3">try</span><span class="s1">: 
+            makedirs(head</span><span class="s3">, </span><span class="s1">mode</span><span class="s3">, </span><span class="s1">exist_ok) 
+        </span><span class="s3">except </span><span class="s1">FileExistsError: 
+            </span><span class="s2"># Defeats race condition when another thread created the path</span><span class="s1"> 
+            </span><span class="s3">pass</span><span class="s1"> 
+        cdir = curdir 
+        </span><span class="s3">if </span><span class="s1">isinstance(tail</span><span class="s3">, </span><span class="s1">bytes): 
+            cdir = bytes(curdir</span><span class="s3">, </span><span class="s4">'ASCII'</span><span class="s1">) 
+        </span><span class="s3">if </span><span class="s1">tail == cdir:           </span><span class="s2"># xxx/newdir/. exists if xxx/newdir exists</span><span class="s1"> 
+            </span><span class="s3">return</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        mkdir(name</span><span class="s3">, </span><span class="s1">mode) 
+    </span><span class="s3">except </span><span class="s1">OSError: 
+        </span><span class="s2"># Cannot rely on checking for EEXIST, since the operating system</span><span class="s1"> 
+        </span><span class="s2"># could give priority to other errors like EACCES or EROFS</span><span class="s1"> 
+        </span><span class="s3">if not </span><span class="s1">exist_ok </span><span class="s3">or not </span><span class="s1">path.isdir(name): 
+            </span><span class="s3">raise</span><span class="s1"> 
+ 
+</span><span class="s3">def </span><span class="s1">removedirs(name): 
+    </span><span class="s0">&quot;&quot;&quot;removedirs(name) 
+ 
+    Super-rmdir; remove a leaf directory and all empty intermediate 
+    ones.  Works like rmdir except that, if the leaf directory is 
+    successfully removed, directories corresponding to rightmost path 
+    segments will be pruned away until either the whole path is 
+    consumed or an error occurs.  Errors during this latter phase are 
+    ignored -- they generally mean that a directory was not empty. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    rmdir(name) 
+    head</span><span class="s3">, </span><span class="s1">tail = path.split(name) 
+    </span><span class="s3">if not </span><span class="s1">tail: 
+        head</span><span class="s3">, </span><span class="s1">tail = path.split(head) 
+    </span><span class="s3">while </span><span class="s1">head </span><span class="s3">and </span><span class="s1">tail: 
+        </span><span class="s3">try</span><span class="s1">: 
+            rmdir(head) 
+        </span><span class="s3">except </span><span class="s1">OSError: 
+            </span><span class="s3">break</span><span class="s1"> 
+        head</span><span class="s3">, </span><span class="s1">tail = path.split(head) 
+ 
+</span><span class="s3">def </span><span class="s1">renames(old</span><span class="s3">, </span><span class="s1">new): 
+    </span><span class="s0">&quot;&quot;&quot;renames(old, new) 
+ 
+    Super-rename; create directories as necessary and delete any left 
+    empty.  Works like rename, except creation of any intermediate 
+    directories needed to make the new pathname good is attempted 
+    first.  After the rename, directories corresponding to rightmost 
+    path segments of the old name will be pruned until either the 
+    whole path is consumed or a nonempty directory is found. 
+ 
+    Note: this function can fail with the new directory structure made 
+    if you lack permissions needed to unlink the leaf directory or 
+    file. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    head</span><span class="s3">, </span><span class="s1">tail = path.split(new) 
+    </span><span class="s3">if </span><span class="s1">head </span><span class="s3">and </span><span class="s1">tail </span><span class="s3">and not </span><span class="s1">path.exists(head): 
+        makedirs(head) 
+    rename(old</span><span class="s3">, </span><span class="s1">new) 
+    head</span><span class="s3">, </span><span class="s1">tail = path.split(old) 
+    </span><span class="s3">if </span><span class="s1">head </span><span class="s3">and </span><span class="s1">tail: 
+        </span><span class="s3">try</span><span class="s1">: 
+            removedirs(head) 
+        </span><span class="s3">except </span><span class="s1">OSError: 
+            </span><span class="s3">pass</span><span class="s1"> 
+ 
+__all__.extend([</span><span class="s4">&quot;makedirs&quot;</span><span class="s3">, </span><span class="s4">&quot;removedirs&quot;</span><span class="s3">, </span><span class="s4">&quot;renames&quot;</span><span class="s1">]) 
+ 
+</span><span class="s3">def </span><span class="s1">walk(top</span><span class="s3">, </span><span class="s1">topdown=</span><span class="s3">True, </span><span class="s1">onerror=</span><span class="s3">None, </span><span class="s1">followlinks=</span><span class="s3">False</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Directory tree generator. 
+ 
+    For each directory in the directory tree rooted at top (including top 
+    itself, but excluding '.' and '..'), yields a 3-tuple 
+ 
+        dirpath, dirnames, filenames 
+ 
+    dirpath is a string, the path to the directory.  dirnames is a list of 
+    the names of the subdirectories in dirpath (excluding '.' and '..'). 
+    filenames is a list of the names of the non-directory files in dirpath. 
+    Note that the names in the lists are just names, with no path components. 
+    To get a full path (which begins with top) to a file or directory in 
+    dirpath, do os.path.join(dirpath, name). 
+ 
+    If optional arg 'topdown' is true or not specified, the triple for a 
+    directory is generated before the triples for any of its subdirectories 
+    (directories are generated top down).  If topdown is false, the triple 
+    for a directory is generated after the triples for all of its 
+    subdirectories (directories are generated bottom up). 
+ 
+    When topdown is true, the caller can modify the dirnames list in-place 
+    (e.g., via del or slice assignment), and walk will only recurse into the 
+    subdirectories whose names remain in dirnames; this can be used to prune the 
+    search, or to impose a specific order of visiting.  Modifying dirnames when 
+    topdown is false is ineffective, since the directories in dirnames have 
+    already been generated by the time dirnames itself is generated. No matter 
+    the value of topdown, the list of subdirectories is retrieved before the 
+    tuples for the directory and its subdirectories are generated. 
+ 
+    By default errors from the os.scandir() call are ignored.  If 
+    optional arg 'onerror' is specified, it should be a function; it 
+    will be called with one argument, an OSError instance.  It can 
+    report the error to continue with the walk, or raise the exception 
+    to abort the walk.  Note that the filename is available as the 
+    filename attribute of the exception object. 
+ 
+    By default, os.walk does not follow symbolic links to subdirectories on 
+    systems that support them.  In order to get this functionality, set the 
+    optional argument 'followlinks' to true. 
+ 
+    Caution:  if you pass a relative pathname for top, don't change the 
+    current working directory between resumptions of walk.  walk never 
+    changes the current directory, and assumes that the client doesn't 
+    either. 
+ 
+    Example: 
+ 
+    import os 
+    from os.path import join, getsize 
+    for root, dirs, files in os.walk('python/Lib/email'): 
+        print(root, &quot;consumes&quot;, end=&quot;&quot;) 
+        print(sum([getsize(join(root, name)) for name in files]), end=&quot;&quot;) 
+        print(&quot;bytes in&quot;, len(files), &quot;non-directory files&quot;) 
+        if 'CVS' in dirs: 
+            dirs.remove('CVS')  # don't visit CVS directories 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    dirs = [] 
+    nondirs = [] 
+ 
+    </span><span class="s2"># We may not have read permission for top, in which case we can't</span><span class="s1"> 
+    </span><span class="s2"># get a list of the files the directory contains.  os.walk</span><span class="s1"> 
+    </span><span class="s2"># always suppressed the exception then, rather than blow up for a</span><span class="s1"> 
+    </span><span class="s2"># minor reason when (say) a thousand readable directories are still</span><span class="s1"> 
+    </span><span class="s2"># left to visit.  That logic is copied here.</span><span class="s1"> 
+    </span><span class="s3">try</span><span class="s1">: 
+        </span><span class="s3">if </span><span class="s1">name == </span><span class="s4">'nt' </span><span class="s3">and </span><span class="s1">isinstance(top</span><span class="s3">, </span><span class="s1">bytes): 
+            scandir_it = _dummy_scandir(top) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s2"># Note that scandir is global in this module due</span><span class="s1"> 
+            </span><span class="s2"># to earlier import-*.</span><span class="s1"> 
+            scandir_it = scandir(top) 
+        entries = list(scandir_it) 
+    </span><span class="s3">except </span><span class="s1">OSError </span><span class="s3">as </span><span class="s1">error: 
+        </span><span class="s3">if </span><span class="s1">onerror </span><span class="s3">is not None</span><span class="s1">: 
+            onerror(error) 
+        </span><span class="s3">return</span><span class="s1"> 
+ 
+    </span><span class="s3">for </span><span class="s1">entry </span><span class="s3">in </span><span class="s1">entries: 
+        </span><span class="s3">try</span><span class="s1">: 
+            is_dir = entry.is_dir() 
+        </span><span class="s3">except </span><span class="s1">OSError: 
+            </span><span class="s2"># If is_dir() raises an OSError, consider that the entry is not</span><span class="s1"> 
+            </span><span class="s2"># a directory, same behaviour than os.path.isdir().</span><span class="s1"> 
+            is_dir = </span><span class="s3">False</span><span class="s1"> 
+ 
+        </span><span class="s3">if </span><span class="s1">is_dir: 
+            dirs.append(entry.name) 
+        </span><span class="s3">else</span><span class="s1">: 
+            nondirs.append(entry.name) 
+ 
+        </span><span class="s3">if not </span><span class="s1">topdown </span><span class="s3">and </span><span class="s1">is_dir: 
+            </span><span class="s2"># Bottom-up: recurse into sub-directory, but exclude symlinks to</span><span class="s1"> 
+            </span><span class="s2"># directories if followlinks is False</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">followlinks: 
+                walk_into = </span><span class="s3">True</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">try</span><span class="s1">: 
+                    is_symlink = entry.is_symlink() 
+                </span><span class="s3">except </span><span class="s1">OSError: 
+                    </span><span class="s2"># If is_symlink() raises an OSError, consider that the</span><span class="s1"> 
+                    </span><span class="s2"># entry is not a symbolic link, same behaviour than</span><span class="s1"> 
+                    </span><span class="s2"># os.path.islink().</span><span class="s1"> 
+                    is_symlink = </span><span class="s3">False</span><span class="s1"> 
+                walk_into = </span><span class="s3">not </span><span class="s1">is_symlink 
+ 
+            </span><span class="s3">if </span><span class="s1">walk_into: 
+                </span><span class="s3">yield from </span><span class="s1">walk(entry.path</span><span class="s3">, </span><span class="s1">topdown</span><span class="s3">, </span><span class="s1">onerror</span><span class="s3">, </span><span class="s1">followlinks) 
+ 
+    </span><span class="s2"># Yield before recursion if going top down</span><span class="s1"> 
+    </span><span class="s3">if </span><span class="s1">topdown: 
+        </span><span class="s3">yield </span><span class="s1">top</span><span class="s3">, </span><span class="s1">dirs</span><span class="s3">, </span><span class="s1">nondirs 
+ 
+        </span><span class="s2"># Recurse into sub-directories</span><span class="s1"> 
+        islink</span><span class="s3">, </span><span class="s1">join = path.islink</span><span class="s3">, </span><span class="s1">path.join 
+        </span><span class="s3">for </span><span class="s1">dirname </span><span class="s3">in </span><span class="s1">dirs: 
+            new_path = join(top</span><span class="s3">, </span><span class="s1">dirname) 
+            </span><span class="s2"># Issue #23605: os.path.islink() is used instead of caching</span><span class="s1"> 
+            </span><span class="s2"># entry.is_symlink() result during the loop on os.scandir() because</span><span class="s1"> 
+            </span><span class="s2"># the caller can replace the directory entry during the &quot;yield&quot;</span><span class="s1"> 
+            </span><span class="s2"># above.</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">followlinks </span><span class="s3">or not </span><span class="s1">islink(new_path): 
+                </span><span class="s3">yield from </span><span class="s1">walk(new_path</span><span class="s3">, </span><span class="s1">topdown</span><span class="s3">, </span><span class="s1">onerror</span><span class="s3">, </span><span class="s1">followlinks) 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s2"># Yield after recursion if going bottom up</span><span class="s1"> 
+        </span><span class="s3">yield </span><span class="s1">top</span><span class="s3">, </span><span class="s1">dirs</span><span class="s3">, </span><span class="s1">nondirs 
+ 
+</span><span class="s3">class </span><span class="s1">_DummyDirEntry: 
+    </span><span class="s0">&quot;&quot;&quot;Dummy implementation of DirEntry 
+ 
+    Only used internally by os.walk(bytes). Since os.walk() doesn't need the 
+    follow_symlinks parameter: don't implement it, always follow symbolic 
+    links. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">dir</span><span class="s3">, </span><span class="s1">name): 
+        self.name = name 
+        self.path = path.join(dir</span><span class="s3">, </span><span class="s1">name) 
+        </span><span class="s2"># Mimick FindFirstFile/FindNextFile: we should get file attributes</span><span class="s1"> 
+        </span><span class="s2"># while iterating on a directory</span><span class="s1"> 
+        self._stat = </span><span class="s3">None</span><span class="s1"> 
+        self._lstat = </span><span class="s3">None</span><span class="s1"> 
+        </span><span class="s3">try</span><span class="s1">: 
+            self.stat(follow_symlinks=</span><span class="s3">False</span><span class="s1">) 
+        </span><span class="s3">except </span><span class="s1">OSError: 
+            </span><span class="s3">pass</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">stat(self</span><span class="s3">, </span><span class="s1">*</span><span class="s3">, </span><span class="s1">follow_symlinks=</span><span class="s3">True</span><span class="s1">): 
+        </span><span class="s3">if </span><span class="s1">follow_symlinks: 
+            </span><span class="s3">if </span><span class="s1">self._stat </span><span class="s3">is None</span><span class="s1">: 
+                self._stat = stat(self.path) 
+            </span><span class="s3">return </span><span class="s1">self._stat 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">self._lstat </span><span class="s3">is None</span><span class="s1">: 
+                self._lstat = stat(self.path</span><span class="s3">, </span><span class="s1">follow_symlinks=</span><span class="s3">False</span><span class="s1">) 
+            </span><span class="s3">return </span><span class="s1">self._lstat 
+ 
+    </span><span class="s3">def </span><span class="s1">is_dir(self): 
+        </span><span class="s3">if </span><span class="s1">self._lstat </span><span class="s3">is not None and not </span><span class="s1">self.is_symlink(): 
+            </span><span class="s2"># use the cache lstat</span><span class="s1"> 
+            stat = self.stat(follow_symlinks=</span><span class="s3">False</span><span class="s1">) 
+            </span><span class="s3">return </span><span class="s1">st.S_ISDIR(stat.st_mode) 
+ 
+        stat = self.stat() 
+        </span><span class="s3">return </span><span class="s1">st.S_ISDIR(stat.st_mode) 
+ 
+    </span><span class="s3">def </span><span class="s1">is_symlink(self): 
+        stat = self.stat(follow_symlinks=</span><span class="s3">False</span><span class="s1">) 
+        </span><span class="s3">return </span><span class="s1">st.S_ISLNK(stat.st_mode) 
+ 
+</span><span class="s3">def </span><span class="s1">_dummy_scandir(dir): 
+    </span><span class="s2"># listdir-based implementation for bytes patches on Windows</span><span class="s1"> 
+    </span><span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">listdir(dir): 
+        </span><span class="s3">yield </span><span class="s1">_DummyDirEntry(dir</span><span class="s3">, </span><span class="s1">name) 
+ 
+__all__.append(</span><span class="s4">&quot;walk&quot;</span><span class="s1">) 
+ 
+</span><span class="s3">if </span><span class="s1">{open</span><span class="s3">, </span><span class="s1">stat} &lt;= supports_dir_fd </span><span class="s3">and </span><span class="s1">{listdir</span><span class="s3">, </span><span class="s1">stat} &lt;= supports_fd: 
+ 
+    </span><span class="s3">def </span><span class="s1">fwalk(top=</span><span class="s4">&quot;.&quot;</span><span class="s3">, </span><span class="s1">topdown=</span><span class="s3">True, </span><span class="s1">onerror=</span><span class="s3">None, </span><span class="s1">*</span><span class="s3">, </span><span class="s1">follow_symlinks=</span><span class="s3">False, </span><span class="s1">dir_fd=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Directory tree generator. 
+ 
+        This behaves exactly like walk(), except that it yields a 4-tuple 
+ 
+            dirpath, dirnames, filenames, dirfd 
+ 
+        `dirpath`, `dirnames` and `filenames` are identical to walk() output, 
+        and `dirfd` is a file descriptor referring to the directory `dirpath`. 
+ 
+        The advantage of fwalk() over walk() is that it's safe against symlink 
+        races (when follow_symlinks is False). 
+ 
+        If dir_fd is not None, it should be a file descriptor open to a directory, 
+          and top should be relative; top will then be relative to that directory. 
+          (dir_fd is always supported for fwalk.) 
+ 
+        Caution: 
+        Since fwalk() yields file descriptors, those are only valid until the 
+        next iteration step, so you should dup() them if you want to keep them 
+        for a longer period. 
+ 
+        Example: 
+ 
+        import os 
+        for root, dirs, files, rootfd in os.fwalk('python/Lib/email'): 
+            print(root, &quot;consumes&quot;, end=&quot;&quot;) 
+            print(sum([os.stat(name, dir_fd=rootfd).st_size for name in files]), 
+                  end=&quot;&quot;) 
+            print(&quot;bytes in&quot;, len(files), &quot;non-directory files&quot;) 
+            if 'CVS' in dirs: 
+                dirs.remove('CVS')  # don't visit CVS directories 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2"># Note: To guard against symlink races, we use the standard</span><span class="s1"> 
+        </span><span class="s2"># lstat()/open()/fstat() trick.</span><span class="s1"> 
+        orig_st = stat(top</span><span class="s3">, </span><span class="s1">follow_symlinks=</span><span class="s3">False, </span><span class="s1">dir_fd=dir_fd) 
+        topfd = open(top</span><span class="s3">, </span><span class="s1">O_RDONLY</span><span class="s3">, </span><span class="s1">dir_fd=dir_fd) 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">(follow_symlinks </span><span class="s3">or </span><span class="s1">(st.S_ISDIR(orig_st.st_mode) </span><span class="s3">and</span><span class="s1"> 
+                                    path.samestat(orig_st</span><span class="s3">, </span><span class="s1">stat(topfd)))): 
+                </span><span class="s3">yield from </span><span class="s1">_fwalk(topfd</span><span class="s3">, </span><span class="s1">top</span><span class="s3">, </span><span class="s1">topdown</span><span class="s3">, </span><span class="s1">onerror</span><span class="s3">, </span><span class="s1">follow_symlinks) 
+        </span><span class="s3">finally</span><span class="s1">: 
+            close(topfd) 
+ 
+    </span><span class="s3">def </span><span class="s1">_fwalk(topfd</span><span class="s3">, </span><span class="s1">toppath</span><span class="s3">, </span><span class="s1">topdown</span><span class="s3">, </span><span class="s1">onerror</span><span class="s3">, </span><span class="s1">follow_symlinks): 
+        </span><span class="s2"># Note: This uses O(depth of the directory tree) file descriptors: if</span><span class="s1"> 
+        </span><span class="s2"># necessary, it can be adapted to only require O(1) FDs, see issue</span><span class="s1"> 
+        </span><span class="s2"># #13734.</span><span class="s1"> 
+ 
+        names = listdir(topfd) 
+        dirs</span><span class="s3">, </span><span class="s1">nondirs = []</span><span class="s3">, </span><span class="s1">[] 
+        </span><span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">names: 
+            </span><span class="s3">try</span><span class="s1">: 
+                </span><span class="s2"># Here, we don't use AT_SYMLINK_NOFOLLOW to be consistent with</span><span class="s1"> 
+                </span><span class="s2"># walk() which reports symlinks to directories as directories.</span><span class="s1"> 
+                </span><span class="s2"># We do however check for symlinks before recursing into</span><span class="s1"> 
+                </span><span class="s2"># a subdirectory.</span><span class="s1"> 
+                </span><span class="s3">if </span><span class="s1">st.S_ISDIR(stat(name</span><span class="s3">, </span><span class="s1">dir_fd=topfd).st_mode): 
+                    dirs.append(name) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    nondirs.append(name) 
+            </span><span class="s3">except </span><span class="s1">FileNotFoundError: 
+                </span><span class="s3">try</span><span class="s1">: 
+                    </span><span class="s2"># Add dangling symlinks, ignore disappeared files</span><span class="s1"> 
+                    </span><span class="s3">if </span><span class="s1">st.S_ISLNK(stat(name</span><span class="s3">, </span><span class="s1">dir_fd=topfd</span><span class="s3">, </span><span class="s1">follow_symlinks=</span><span class="s3">False</span><span class="s1">) 
+                                .st_mode): 
+                        nondirs.append(name) 
+                </span><span class="s3">except </span><span class="s1">FileNotFoundError: 
+                    </span><span class="s3">continue</span><span class="s1"> 
+ 
+        </span><span class="s3">if </span><span class="s1">topdown: 
+            </span><span class="s3">yield </span><span class="s1">toppath</span><span class="s3">, </span><span class="s1">dirs</span><span class="s3">, </span><span class="s1">nondirs</span><span class="s3">, </span><span class="s1">topfd 
+ 
+        </span><span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">dirs: 
+            </span><span class="s3">try</span><span class="s1">: 
+                orig_st = stat(name</span><span class="s3">, </span><span class="s1">dir_fd=topfd</span><span class="s3">, </span><span class="s1">follow_symlinks=follow_symlinks) 
+                dirfd = open(name</span><span class="s3">, </span><span class="s1">O_RDONLY</span><span class="s3">, </span><span class="s1">dir_fd=topfd) 
+            </span><span class="s3">except </span><span class="s1">OSError </span><span class="s3">as </span><span class="s1">err: 
+                </span><span class="s3">if </span><span class="s1">onerror </span><span class="s3">is not None</span><span class="s1">: 
+                    onerror(err) 
+                </span><span class="s3">continue</span><span class="s1"> 
+            </span><span class="s3">try</span><span class="s1">: 
+                </span><span class="s3">if </span><span class="s1">follow_symlinks </span><span class="s3">or </span><span class="s1">path.samestat(orig_st</span><span class="s3">, </span><span class="s1">stat(dirfd)): 
+                    dirpath = path.join(toppath</span><span class="s3">, </span><span class="s1">name) 
+                    </span><span class="s3">yield from </span><span class="s1">_fwalk(dirfd</span><span class="s3">, </span><span class="s1">dirpath</span><span class="s3">, </span><span class="s1">topdown</span><span class="s3">, </span><span class="s1">onerror</span><span class="s3">, </span><span class="s1">follow_symlinks) 
+            </span><span class="s3">finally</span><span class="s1">: 
+                close(dirfd) 
+ 
+        </span><span class="s3">if not </span><span class="s1">topdown: 
+            </span><span class="s3">yield </span><span class="s1">toppath</span><span class="s3">, </span><span class="s1">dirs</span><span class="s3">, </span><span class="s1">nondirs</span><span class="s3">, </span><span class="s1">topfd 
+ 
+    __all__.append(</span><span class="s4">&quot;fwalk&quot;</span><span class="s1">) 
+ 
+</span><span class="s2"># Make sure os.environ exists, at least</span><span class="s1"> 
+</span><span class="s3">try</span><span class="s1">: 
+    environ 
+</span><span class="s3">except </span><span class="s1">NameError: 
+    environ = {} 
+ 
+</span><span class="s3">def </span><span class="s1">execl(file</span><span class="s3">, </span><span class="s1">*args): 
+    </span><span class="s0">&quot;&quot;&quot;execl(file, *args) 
+ 
+    Execute the executable file with argument list args, replacing the 
+    current process. &quot;&quot;&quot;</span><span class="s1"> 
+    execv(file</span><span class="s3">, </span><span class="s1">args) 
+ 
+</span><span class="s3">def </span><span class="s1">execle(file</span><span class="s3">, </span><span class="s1">*args): 
+    </span><span class="s0">&quot;&quot;&quot;execle(file, *args, env) 
+ 
+    Execute the executable file with argument list args and 
+    environment env, replacing the current process. &quot;&quot;&quot;</span><span class="s1"> 
+    env = args[-</span><span class="s5">1</span><span class="s1">] 
+    execve(file</span><span class="s3">, </span><span class="s1">args[:-</span><span class="s5">1</span><span class="s1">]</span><span class="s3">, </span><span class="s1">env) 
+ 
+</span><span class="s3">def </span><span class="s1">execlp(file</span><span class="s3">, </span><span class="s1">*args): 
+    </span><span class="s0">&quot;&quot;&quot;execlp(file, *args) 
+ 
+    Execute the executable file (which is searched for along $PATH) 
+    with argument list args, replacing the current process. &quot;&quot;&quot;</span><span class="s1"> 
+    execvp(file</span><span class="s3">, </span><span class="s1">args) 
+ 
+</span><span class="s3">def </span><span class="s1">execlpe(file</span><span class="s3">, </span><span class="s1">*args): 
+    </span><span class="s0">&quot;&quot;&quot;execlpe(file, *args, env) 
+ 
+    Execute the executable file (which is searched for along $PATH) 
+    with argument list args and environment env, replacing the current 
+    process. &quot;&quot;&quot;</span><span class="s1"> 
+    env = args[-</span><span class="s5">1</span><span class="s1">] 
+    execvpe(file</span><span class="s3">, </span><span class="s1">args[:-</span><span class="s5">1</span><span class="s1">]</span><span class="s3">, </span><span class="s1">env) 
+ 
+</span><span class="s3">def </span><span class="s1">execvp(file</span><span class="s3">, </span><span class="s1">args): 
+    </span><span class="s0">&quot;&quot;&quot;execvp(file, args) 
+ 
+    Execute the executable file (which is searched for along $PATH) 
+    with argument list args, replacing the current process. 
+    args may be a list or tuple of strings. &quot;&quot;&quot;</span><span class="s1"> 
+    _execvpe(file</span><span class="s3">, </span><span class="s1">args) 
+ 
+</span><span class="s3">def </span><span class="s1">execvpe(file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, </span><span class="s1">env): 
+    </span><span class="s0">&quot;&quot;&quot;execvpe(file, args, env) 
+ 
+    Execute the executable file (which is searched for along $PATH) 
+    with argument list args and environment env , replacing the 
+    current process. 
+    args may be a list or tuple of strings. &quot;&quot;&quot;</span><span class="s1"> 
+    _execvpe(file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, </span><span class="s1">env) 
+ 
+__all__.extend([</span><span class="s4">&quot;execl&quot;</span><span class="s3">,</span><span class="s4">&quot;execle&quot;</span><span class="s3">,</span><span class="s4">&quot;execlp&quot;</span><span class="s3">,</span><span class="s4">&quot;execlpe&quot;</span><span class="s3">,</span><span class="s4">&quot;execvp&quot;</span><span class="s3">,</span><span class="s4">&quot;execvpe&quot;</span><span class="s1">]) 
+ 
+</span><span class="s3">def </span><span class="s1">_execvpe(file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, </span><span class="s1">env=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s3">if </span><span class="s1">env </span><span class="s3">is not None</span><span class="s1">: 
+        exec_func = execve 
+        argrest = (args</span><span class="s3">, </span><span class="s1">env) 
+    </span><span class="s3">else</span><span class="s1">: 
+        exec_func = execv 
+        argrest = (args</span><span class="s3">,</span><span class="s1">) 
+        env = environ 
+ 
+    head</span><span class="s3">, </span><span class="s1">tail = path.split(file) 
+    </span><span class="s3">if </span><span class="s1">head: 
+        exec_func(file</span><span class="s3">, </span><span class="s1">*argrest) 
+        </span><span class="s3">return</span><span class="s1"> 
+    last_exc = saved_exc = </span><span class="s3">None</span><span class="s1"> 
+    saved_tb = </span><span class="s3">None</span><span class="s1"> 
+    path_list = get_exec_path(env) 
+    </span><span class="s3">if </span><span class="s1">name != </span><span class="s4">'nt'</span><span class="s1">: 
+        file = fsencode(file) 
+        path_list = map(fsencode</span><span class="s3">, </span><span class="s1">path_list) 
+    </span><span class="s3">for </span><span class="s1">dir </span><span class="s3">in </span><span class="s1">path_list: 
+        fullname = path.join(dir</span><span class="s3">, </span><span class="s1">file) 
+        </span><span class="s3">try</span><span class="s1">: 
+            exec_func(fullname</span><span class="s3">, </span><span class="s1">*argrest) 
+        </span><span class="s3">except </span><span class="s1">OSError </span><span class="s3">as </span><span class="s1">e: 
+            last_exc = e 
+            tb = sys.exc_info()[</span><span class="s5">2</span><span class="s1">] 
+            </span><span class="s3">if </span><span class="s1">(e.errno != errno.ENOENT </span><span class="s3">and </span><span class="s1">e.errno != errno.ENOTDIR 
+                </span><span class="s3">and </span><span class="s1">saved_exc </span><span class="s3">is None</span><span class="s1">): 
+                saved_exc = e 
+                saved_tb = tb 
+    </span><span class="s3">if </span><span class="s1">saved_exc: 
+        </span><span class="s3">raise </span><span class="s1">saved_exc.with_traceback(saved_tb) 
+    </span><span class="s3">raise </span><span class="s1">last_exc.with_traceback(tb) 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">get_exec_path(env=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Returns the sequence of directories that will be searched for the 
+    named executable (similar to a shell) when launching a process. 
+ 
+    *env* must be an environment variable dict or None.  If *env* is None, 
+    os.environ will be used. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2"># Use a local import instead of a global import to limit the number of</span><span class="s1"> 
+    </span><span class="s2"># modules loaded at startup: the os module is always loaded at startup by</span><span class="s1"> 
+    </span><span class="s2"># Python. It may also avoid a bootstrap issue.</span><span class="s1"> 
+    </span><span class="s3">import </span><span class="s1">warnings 
+ 
+    </span><span class="s3">if </span><span class="s1">env </span><span class="s3">is None</span><span class="s1">: 
+        env = environ 
+ 
+    </span><span class="s2"># {b'PATH': ...}.get('PATH') and {'PATH': ...}.get(b'PATH') emit a</span><span class="s1"> 
+    </span><span class="s2"># BytesWarning when using python -b or python -bb: ignore the warning</span><span class="s1"> 
+    </span><span class="s3">with </span><span class="s1">warnings.catch_warnings(): 
+        warnings.simplefilter(</span><span class="s4">&quot;ignore&quot;</span><span class="s3">, </span><span class="s1">BytesWarning) 
+ 
+        </span><span class="s3">try</span><span class="s1">: 
+            path_list = env.get(</span><span class="s4">'PATH'</span><span class="s1">) 
+        </span><span class="s3">except </span><span class="s1">TypeError: 
+            path_list = </span><span class="s3">None</span><span class="s1"> 
+ 
+        </span><span class="s3">if </span><span class="s1">supports_bytes_environ: 
+            </span><span class="s3">try</span><span class="s1">: 
+                path_listb = env[</span><span class="s6">b'PATH'</span><span class="s1">] 
+            </span><span class="s3">except </span><span class="s1">(KeyError</span><span class="s3">, </span><span class="s1">TypeError): 
+                </span><span class="s3">pass</span><span class="s1"> 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">if </span><span class="s1">path_list </span><span class="s3">is not None</span><span class="s1">: 
+                    </span><span class="s3">raise </span><span class="s1">ValueError( 
+                        </span><span class="s4">&quot;env cannot contain 'PATH' and b'PATH' keys&quot;</span><span class="s1">) 
+                path_list = path_listb 
+ 
+            </span><span class="s3">if </span><span class="s1">path_list </span><span class="s3">is not None and </span><span class="s1">isinstance(path_list</span><span class="s3">, </span><span class="s1">bytes): 
+                path_list = fsdecode(path_list) 
+ 
+    </span><span class="s3">if </span><span class="s1">path_list </span><span class="s3">is None</span><span class="s1">: 
+        path_list = defpath 
+    </span><span class="s3">return </span><span class="s1">path_list.split(pathsep) 
+ 
+ 
+</span><span class="s2"># Change environ to automatically call putenv(), unsetenv if they exist.</span><span class="s1"> 
+</span><span class="s3">from </span><span class="s1">_collections_abc </span><span class="s3">import </span><span class="s1">MutableMapping 
+ 
+</span><span class="s3">class </span><span class="s1">_Environ(MutableMapping): 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">data</span><span class="s3">, </span><span class="s1">encodekey</span><span class="s3">, </span><span class="s1">decodekey</span><span class="s3">, </span><span class="s1">encodevalue</span><span class="s3">, </span><span class="s1">decodevalue</span><span class="s3">, </span><span class="s1">putenv</span><span class="s3">, </span><span class="s1">unsetenv): 
+        self.encodekey = encodekey 
+        self.decodekey = decodekey 
+        self.encodevalue = encodevalue 
+        self.decodevalue = decodevalue 
+        self.putenv = putenv 
+        self.unsetenv = unsetenv 
+        self._data = data 
+ 
+    </span><span class="s3">def </span><span class="s1">__getitem__(self</span><span class="s3">, </span><span class="s1">key): 
+        </span><span class="s3">try</span><span class="s1">: 
+            value = self._data[self.encodekey(key)] 
+        </span><span class="s3">except </span><span class="s1">KeyError: 
+            </span><span class="s2"># raise KeyError with the original key value</span><span class="s1"> 
+            </span><span class="s3">raise </span><span class="s1">KeyError(key) </span><span class="s3">from None</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">self.decodevalue(value) 
+ 
+    </span><span class="s3">def </span><span class="s1">__setitem__(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value): 
+        key = self.encodekey(key) 
+        value = self.encodevalue(value) 
+        self.putenv(key</span><span class="s3">, </span><span class="s1">value) 
+        self._data[key] = value 
+ 
+    </span><span class="s3">def </span><span class="s1">__delitem__(self</span><span class="s3">, </span><span class="s1">key): 
+        encodedkey = self.encodekey(key) 
+        self.unsetenv(encodedkey) 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">del </span><span class="s1">self._data[encodedkey] 
+        </span><span class="s3">except </span><span class="s1">KeyError: 
+            </span><span class="s2"># raise KeyError with the original key value</span><span class="s1"> 
+            </span><span class="s3">raise </span><span class="s1">KeyError(key) </span><span class="s3">from None</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__iter__(self): 
+        </span><span class="s3">for </span><span class="s1">key </span><span class="s3">in </span><span class="s1">self._data: 
+            </span><span class="s3">yield </span><span class="s1">self.decodekey(key) 
+ 
+    </span><span class="s3">def </span><span class="s1">__len__(self): 
+        </span><span class="s3">return </span><span class="s1">len(self._data) 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        </span><span class="s3">return </span><span class="s4">'environ({{{}}})'</span><span class="s1">.format(</span><span class="s4">', '</span><span class="s1">.join( 
+            (</span><span class="s4">'{!r}: {!r}'</span><span class="s1">.format(self.decodekey(key)</span><span class="s3">, </span><span class="s1">self.decodevalue(value)) 
+            </span><span class="s3">for </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value </span><span class="s3">in </span><span class="s1">self._data.items()))) 
+ 
+    </span><span class="s3">def </span><span class="s1">copy(self): 
+        </span><span class="s3">return </span><span class="s1">dict(self) 
+ 
+    </span><span class="s3">def </span><span class="s1">setdefault(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value): 
+        </span><span class="s3">if </span><span class="s1">key </span><span class="s3">not in </span><span class="s1">self: 
+            self[key] = value 
+        </span><span class="s3">return </span><span class="s1">self[key] 
+ 
+</span><span class="s3">try</span><span class="s1">: 
+    _putenv = putenv 
+</span><span class="s3">except </span><span class="s1">NameError: 
+    _putenv = </span><span class="s3">lambda </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value: </span><span class="s3">None</span><span class="s1"> 
+</span><span class="s3">else</span><span class="s1">: 
+    </span><span class="s3">if </span><span class="s4">&quot;putenv&quot; </span><span class="s3">not in </span><span class="s1">__all__: 
+        __all__.append(</span><span class="s4">&quot;putenv&quot;</span><span class="s1">) 
+ 
+</span><span class="s3">try</span><span class="s1">: 
+    _unsetenv = unsetenv 
+</span><span class="s3">except </span><span class="s1">NameError: 
+    _unsetenv = </span><span class="s3">lambda </span><span class="s1">key: _putenv(key</span><span class="s3">, </span><span class="s4">&quot;&quot;</span><span class="s1">) 
+</span><span class="s3">else</span><span class="s1">: 
+    </span><span class="s3">if </span><span class="s4">&quot;unsetenv&quot; </span><span class="s3">not in </span><span class="s1">__all__: 
+        __all__.append(</span><span class="s4">&quot;unsetenv&quot;</span><span class="s1">) 
+ 
+</span><span class="s3">def </span><span class="s1">_createenviron(): 
+    </span><span class="s3">if </span><span class="s1">name == </span><span class="s4">'nt'</span><span class="s1">: 
+        </span><span class="s2"># Where Env Var Names Must Be UPPERCASE</span><span class="s1"> 
+        </span><span class="s3">def </span><span class="s1">check_str(value): 
+            </span><span class="s3">if not </span><span class="s1">isinstance(value</span><span class="s3">, </span><span class="s1">str): 
+                </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;str expected, not %s&quot; </span><span class="s1">% type(value).__name__) 
+            </span><span class="s3">return </span><span class="s1">value 
+        encode = check_str 
+        decode = str 
+        </span><span class="s3">def </span><span class="s1">encodekey(key): 
+            </span><span class="s3">return </span><span class="s1">encode(key).upper() 
+        data = {} 
+        </span><span class="s3">for </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value </span><span class="s3">in </span><span class="s1">environ.items(): 
+            data[encodekey(key)] = value 
+    </span><span class="s3">else</span><span class="s1">: 
+        </span><span class="s2"># Where Env Var Names Can Be Mixed Case</span><span class="s1"> 
+        encoding = sys.getfilesystemencoding() 
+        </span><span class="s3">def </span><span class="s1">encode(value): 
+            </span><span class="s3">if not </span><span class="s1">isinstance(value</span><span class="s3">, </span><span class="s1">str): 
+                </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;str expected, not %s&quot; </span><span class="s1">% type(value).__name__) 
+            </span><span class="s3">return </span><span class="s1">value.encode(encoding</span><span class="s3">, </span><span class="s4">'surrogateescape'</span><span class="s1">) 
+        </span><span class="s3">def </span><span class="s1">decode(value): 
+            </span><span class="s3">return </span><span class="s1">value.decode(encoding</span><span class="s3">, </span><span class="s4">'surrogateescape'</span><span class="s1">) 
+        encodekey = encode 
+        data = environ 
+    </span><span class="s3">return </span><span class="s1">_Environ(data</span><span class="s3">,</span><span class="s1"> 
+        encodekey</span><span class="s3">, </span><span class="s1">decode</span><span class="s3">,</span><span class="s1"> 
+        encode</span><span class="s3">, </span><span class="s1">decode</span><span class="s3">,</span><span class="s1"> 
+        _putenv</span><span class="s3">, </span><span class="s1">_unsetenv) 
+ 
+</span><span class="s2"># unicode environ</span><span class="s1"> 
+environ = _createenviron() 
+</span><span class="s3">del </span><span class="s1">_createenviron 
+ 
+ 
+</span><span class="s3">def </span><span class="s1">getenv(key</span><span class="s3">, </span><span class="s1">default=</span><span class="s3">None</span><span class="s1">): 
+    </span><span class="s0">&quot;&quot;&quot;Get an environment variable, return None if it doesn't exist. 
+    The optional second argument can specify an alternate default. 
+    key, default and the result are str.&quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s3">return </span><span class="s1">environ.get(key</span><span class="s3">, </span><span class="s1">default) 
+ 
+supports_bytes_environ = (name != </span><span class="s4">'nt'</span><span class="s1">) 
+__all__.extend((</span><span class="s4">&quot;getenv&quot;</span><span class="s3">, </span><span class="s4">&quot;supports_bytes_environ&quot;</span><span class="s1">)) 
+ 
+</span><span class="s3">if </span><span class="s1">supports_bytes_environ: 
+    </span><span class="s3">def </span><span class="s1">_check_bytes(value): 
+        </span><span class="s3">if not </span><span class="s1">isinstance(value</span><span class="s3">, </span><span class="s1">bytes): 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;bytes expected, not %s&quot; </span><span class="s1">% type(value).__name__) 
+        </span><span class="s3">return </span><span class="s1">value 
+ 
+    </span><span class="s2"># bytes environ</span><span class="s1"> 
+    environb = _Environ(environ._data</span><span class="s3">,</span><span class="s1"> 
+        _check_bytes</span><span class="s3">, </span><span class="s1">bytes</span><span class="s3">,</span><span class="s1"> 
+        _check_bytes</span><span class="s3">, </span><span class="s1">bytes</span><span class="s3">,</span><span class="s1"> 
+        _putenv</span><span class="s3">, </span><span class="s1">_unsetenv) 
+    </span><span class="s3">del </span><span class="s1">_check_bytes 
+ 
+    </span><span class="s3">def </span><span class="s1">getenvb(key</span><span class="s3">, </span><span class="s1">default=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Get an environment variable, return None if it doesn't exist. 
+        The optional second argument can specify an alternate default. 
+        key, default and the result are bytes.&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">environb.get(key</span><span class="s3">, </span><span class="s1">default) 
+ 
+    __all__.extend((</span><span class="s4">&quot;environb&quot;</span><span class="s3">, </span><span class="s4">&quot;getenvb&quot;</span><span class="s1">)) 
+ 
+</span><span class="s3">def </span><span class="s1">_fscodec(): 
+    encoding = sys.getfilesystemencoding() 
+    </span><span class="s3">if </span><span class="s1">encoding == </span><span class="s4">'mbcs'</span><span class="s1">: 
+        errors = </span><span class="s4">'strict'</span><span class="s1"> 
+    </span><span class="s3">else</span><span class="s1">: 
+        errors = </span><span class="s4">'surrogateescape'</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">fsencode(filename): 
+        </span><span class="s0">&quot;&quot;&quot; 
+        Encode filename to the filesystem encoding with 'surrogateescape' error 
+        handler, return bytes unchanged. On Windows, use 'strict' error handler if 
+        the file system encoding is 'mbcs' (which is the default encoding). 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">isinstance(filename</span><span class="s3">, </span><span class="s1">bytes): 
+            </span><span class="s3">return </span><span class="s1">filename 
+        </span><span class="s3">elif </span><span class="s1">isinstance(filename</span><span class="s3">, </span><span class="s1">str): 
+            </span><span class="s3">return </span><span class="s1">filename.encode(encoding</span><span class="s3">, </span><span class="s1">errors) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;expect bytes or str, not %s&quot; </span><span class="s1">% type(filename).__name__) 
+ 
+    </span><span class="s3">def </span><span class="s1">fsdecode(filename): 
+        </span><span class="s0">&quot;&quot;&quot; 
+        Decode filename from the filesystem encoding with 'surrogateescape' error 
+        handler, return str unchanged. On Windows, use 'strict' error handler if 
+        the file system encoding is 'mbcs' (which is the default encoding). 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">isinstance(filename</span><span class="s3">, </span><span class="s1">str): 
+            </span><span class="s3">return </span><span class="s1">filename 
+        </span><span class="s3">elif </span><span class="s1">isinstance(filename</span><span class="s3">, </span><span class="s1">bytes): 
+            </span><span class="s3">return </span><span class="s1">filename.decode(encoding</span><span class="s3">, </span><span class="s1">errors) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;expect bytes or str, not %s&quot; </span><span class="s1">% type(filename).__name__) 
+ 
+    </span><span class="s3">return </span><span class="s1">fsencode</span><span class="s3">, </span><span class="s1">fsdecode 
+ 
+fsencode</span><span class="s3">, </span><span class="s1">fsdecode = _fscodec() 
+</span><span class="s3">del </span><span class="s1">_fscodec 
+ 
+</span><span class="s2"># Supply spawn*() (probably only for Unix)</span><span class="s1"> 
+</span><span class="s3">if </span><span class="s1">_exists(</span><span class="s4">&quot;fork&quot;</span><span class="s1">) </span><span class="s3">and not </span><span class="s1">_exists(</span><span class="s4">&quot;spawnv&quot;</span><span class="s1">) </span><span class="s3">and </span><span class="s1">_exists(</span><span class="s4">&quot;execv&quot;</span><span class="s1">): 
+ 
+    P_WAIT = </span><span class="s5">0</span><span class="s1"> 
+    P_NOWAIT = P_NOWAITO = </span><span class="s5">1</span><span class="s1"> 
+ 
+    __all__.extend([</span><span class="s4">&quot;P_WAIT&quot;</span><span class="s3">, </span><span class="s4">&quot;P_NOWAIT&quot;</span><span class="s3">, </span><span class="s4">&quot;P_NOWAITO&quot;</span><span class="s1">]) 
+ 
+    </span><span class="s2"># XXX Should we support P_DETACH?  I suppose it could fork()**2</span><span class="s1"> 
+    </span><span class="s2"># and close the std I/O streams.  Also, P_OVERLAY is the same</span><span class="s1"> 
+    </span><span class="s2"># as execv*()?</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">_spawnvef(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, </span><span class="s1">env</span><span class="s3">, </span><span class="s1">func): 
+        </span><span class="s2"># Internal helper; func is the exec*() function to use</span><span class="s1"> 
+        pid = fork() 
+        </span><span class="s3">if not </span><span class="s1">pid: 
+            </span><span class="s2"># Child</span><span class="s1"> 
+            </span><span class="s3">try</span><span class="s1">: 
+                </span><span class="s3">if </span><span class="s1">env </span><span class="s3">is None</span><span class="s1">: 
+                    func(file</span><span class="s3">, </span><span class="s1">args) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    func(file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, </span><span class="s1">env) 
+            </span><span class="s3">except</span><span class="s1">: 
+                _exit(</span><span class="s5">127</span><span class="s1">) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s2"># Parent</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">mode == P_NOWAIT: 
+                </span><span class="s3">return </span><span class="s1">pid </span><span class="s2"># Caller is responsible for waiting!</span><span class="s1"> 
+            </span><span class="s3">while </span><span class="s5">1</span><span class="s1">: 
+                wpid</span><span class="s3">, </span><span class="s1">sts = waitpid(pid</span><span class="s3">, </span><span class="s5">0</span><span class="s1">) 
+                </span><span class="s3">if </span><span class="s1">WIFSTOPPED(sts): 
+                    </span><span class="s3">continue</span><span class="s1"> 
+                </span><span class="s3">elif </span><span class="s1">WIFSIGNALED(sts): 
+                    </span><span class="s3">return </span><span class="s1">-WTERMSIG(sts) 
+                </span><span class="s3">elif </span><span class="s1">WIFEXITED(sts): 
+                    </span><span class="s3">return </span><span class="s1">WEXITSTATUS(sts) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    </span><span class="s3">raise </span><span class="s1">OSError(</span><span class="s4">&quot;Not stopped, signaled or exited???&quot;</span><span class="s1">) 
+ 
+    </span><span class="s3">def </span><span class="s1">spawnv(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args): 
+        </span><span class="s0">&quot;&quot;&quot;spawnv(mode, file, args) -&gt; integer 
+ 
+Execute file with arguments from args in a subprocess. 
+If mode == P_NOWAIT return the pid of the process. 
+If mode == P_WAIT return the process's exit code if it exits normally; 
+otherwise return -SIG, where SIG is the signal that killed it. &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">_spawnvef(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, None, </span><span class="s1">execv) 
+ 
+    </span><span class="s3">def </span><span class="s1">spawnve(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, </span><span class="s1">env): 
+        </span><span class="s0">&quot;&quot;&quot;spawnve(mode, file, args, env) -&gt; integer 
+ 
+Execute file with arguments from args in a subprocess with the 
+specified environment. 
+If mode == P_NOWAIT return the pid of the process. 
+If mode == P_WAIT return the process's exit code if it exits normally; 
+otherwise return -SIG, where SIG is the signal that killed it. &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">_spawnvef(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, </span><span class="s1">env</span><span class="s3">, </span><span class="s1">execve) 
+ 
+    </span><span class="s2"># Note: spawnvp[e] is't currently supported on Windows</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">spawnvp(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args): 
+        </span><span class="s0">&quot;&quot;&quot;spawnvp(mode, file, args) -&gt; integer 
+ 
+Execute file (which is looked for along $PATH) with arguments from 
+args in a subprocess. 
+If mode == P_NOWAIT return the pid of the process. 
+If mode == P_WAIT return the process's exit code if it exits normally; 
+otherwise return -SIG, where SIG is the signal that killed it. &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">_spawnvef(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, None, </span><span class="s1">execvp) 
+ 
+    </span><span class="s3">def </span><span class="s1">spawnvpe(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, </span><span class="s1">env): 
+        </span><span class="s0">&quot;&quot;&quot;spawnvpe(mode, file, args, env) -&gt; integer 
+ 
+Execute file (which is looked for along $PATH) with arguments from 
+args in a subprocess with the supplied environment. 
+If mode == P_NOWAIT return the pid of the process. 
+If mode == P_WAIT return the process's exit code if it exits normally; 
+otherwise return -SIG, where SIG is the signal that killed it. &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">_spawnvef(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args</span><span class="s3">, </span><span class="s1">env</span><span class="s3">, </span><span class="s1">execvpe) 
+ 
+ 
+    __all__.extend([</span><span class="s4">&quot;spawnv&quot;</span><span class="s3">, </span><span class="s4">&quot;spawnve&quot;</span><span class="s3">, </span><span class="s4">&quot;spawnvp&quot;</span><span class="s3">, </span><span class="s4">&quot;spawnvpe&quot;</span><span class="s1">]) 
+ 
+ 
+</span><span class="s3">if </span><span class="s1">_exists(</span><span class="s4">&quot;spawnv&quot;</span><span class="s1">): 
+    </span><span class="s2"># These aren't supplied by the basic Windows code</span><span class="s1"> 
+    </span><span class="s2"># but can be easily implemented in Python</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">spawnl(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s0">&quot;&quot;&quot;spawnl(mode, file, *args) -&gt; integer 
+ 
+Execute file with arguments from args in a subprocess. 
+If mode == P_NOWAIT return the pid of the process. 
+If mode == P_WAIT return the process's exit code if it exits normally; 
+otherwise return -SIG, where SIG is the signal that killed it. &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">spawnv(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args) 
+ 
+    </span><span class="s3">def </span><span class="s1">spawnle(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s0">&quot;&quot;&quot;spawnle(mode, file, *args, env) -&gt; integer 
+ 
+Execute file with arguments from args in a subprocess with the 
+supplied environment. 
+If mode == P_NOWAIT return the pid of the process. 
+If mode == P_WAIT return the process's exit code if it exits normally; 
+otherwise return -SIG, where SIG is the signal that killed it. &quot;&quot;&quot;</span><span class="s1"> 
+        env = args[-</span><span class="s5">1</span><span class="s1">] 
+        </span><span class="s3">return </span><span class="s1">spawnve(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args[:-</span><span class="s5">1</span><span class="s1">]</span><span class="s3">, </span><span class="s1">env) 
+ 
+ 
+    __all__.extend([</span><span class="s4">&quot;spawnl&quot;</span><span class="s3">, </span><span class="s4">&quot;spawnle&quot;</span><span class="s1">]) 
+ 
+ 
+</span><span class="s3">if </span><span class="s1">_exists(</span><span class="s4">&quot;spawnvp&quot;</span><span class="s1">): 
+    </span><span class="s2"># At the moment, Windows doesn't implement spawnvp[e],</span><span class="s1"> 
+    </span><span class="s2"># so it won't have spawnlp[e] either.</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">spawnlp(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s0">&quot;&quot;&quot;spawnlp(mode, file, *args) -&gt; integer 
+ 
+Execute file (which is looked for along $PATH) with arguments from 
+args in a subprocess with the supplied environment. 
+If mode == P_NOWAIT return the pid of the process. 
+If mode == P_WAIT return the process's exit code if it exits normally; 
+otherwise return -SIG, where SIG is the signal that killed it. &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">spawnvp(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args) 
+ 
+    </span><span class="s3">def </span><span class="s1">spawnlpe(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s0">&quot;&quot;&quot;spawnlpe(mode, file, *args, env) -&gt; integer 
+ 
+Execute file (which is looked for along $PATH) with arguments from 
+args in a subprocess with the supplied environment. 
+If mode == P_NOWAIT return the pid of the process. 
+If mode == P_WAIT return the process's exit code if it exits normally; 
+otherwise return -SIG, where SIG is the signal that killed it. &quot;&quot;&quot;</span><span class="s1"> 
+        env = args[-</span><span class="s5">1</span><span class="s1">] 
+        </span><span class="s3">return </span><span class="s1">spawnvpe(mode</span><span class="s3">, </span><span class="s1">file</span><span class="s3">, </span><span class="s1">args[:-</span><span class="s5">1</span><span class="s1">]</span><span class="s3">, </span><span class="s1">env) 
+ 
+ 
+    __all__.extend([</span><span class="s4">&quot;spawnlp&quot;</span><span class="s3">, </span><span class="s4">&quot;spawnlpe&quot;</span><span class="s1">]) 
+ 
+ 
+</span><span class="s2"># Supply os.popen()</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">popen(cmd</span><span class="s3">, </span><span class="s1">mode=</span><span class="s4">&quot;r&quot;</span><span class="s3">, </span><span class="s1">buffering=-</span><span class="s5">1</span><span class="s1">): 
+    </span><span class="s3">if not </span><span class="s1">isinstance(cmd</span><span class="s3">, </span><span class="s1">str): 
+        </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;invalid cmd type (%s, expected string)&quot; </span><span class="s1">% type(cmd)) 
+    </span><span class="s3">if </span><span class="s1">mode </span><span class="s3">not in </span><span class="s1">(</span><span class="s4">&quot;r&quot;</span><span class="s3">, </span><span class="s4">&quot;w&quot;</span><span class="s1">): 
+        </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;invalid mode %r&quot; </span><span class="s1">% mode) 
+    </span><span class="s3">if </span><span class="s1">buffering == </span><span class="s5">0 </span><span class="s3">or </span><span class="s1">buffering </span><span class="s3">is None</span><span class="s1">: 
+        </span><span class="s3">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;popen() does not support unbuffered streams&quot;</span><span class="s1">) 
+    </span><span class="s3">import </span><span class="s1">subprocess</span><span class="s3">, </span><span class="s1">io 
+    </span><span class="s3">if </span><span class="s1">mode == </span><span class="s4">&quot;r&quot;</span><span class="s1">: 
+        proc = subprocess.Popen(cmd</span><span class="s3">,</span><span class="s1"> 
+                                shell=</span><span class="s3">True,</span><span class="s1"> 
+                                stdout=subprocess.PIPE</span><span class="s3">,</span><span class="s1"> 
+                                bufsize=buffering) 
+        </span><span class="s3">return </span><span class="s1">_wrap_close(io.TextIOWrapper(proc.stdout)</span><span class="s3">, </span><span class="s1">proc) 
+    </span><span class="s3">else</span><span class="s1">: 
+        proc = subprocess.Popen(cmd</span><span class="s3">,</span><span class="s1"> 
+                                shell=</span><span class="s3">True,</span><span class="s1"> 
+                                stdin=subprocess.PIPE</span><span class="s3">,</span><span class="s1"> 
+                                bufsize=buffering) 
+        </span><span class="s3">return </span><span class="s1">_wrap_close(io.TextIOWrapper(proc.stdin)</span><span class="s3">, </span><span class="s1">proc) 
+ 
+</span><span class="s2"># Helper for popen() -- a proxy for a file whose close waits for the process</span><span class="s1"> 
+</span><span class="s3">class </span><span class="s1">_wrap_close: 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">stream</span><span class="s3">, </span><span class="s1">proc): 
+        self._stream = stream 
+        self._proc = proc 
+    </span><span class="s3">def </span><span class="s1">close(self): 
+        self._stream.close() 
+        returncode = self._proc.wait() 
+        </span><span class="s3">if </span><span class="s1">returncode == </span><span class="s5">0</span><span class="s1">: 
+            </span><span class="s3">return None</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">name == </span><span class="s4">'nt'</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">returncode 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">returncode &lt;&lt; </span><span class="s5">8  </span><span class="s2"># Shift left to match old behavior</span><span class="s1"> 
+    </span><span class="s3">def </span><span class="s1">__enter__(self): 
+        </span><span class="s3">return </span><span class="s1">self 
+    </span><span class="s3">def </span><span class="s1">__exit__(self</span><span class="s3">, </span><span class="s1">*args): 
+        self.close() 
+    </span><span class="s3">def </span><span class="s1">__getattr__(self</span><span class="s3">, </span><span class="s1">name): 
+        </span><span class="s3">return </span><span class="s1">getattr(self._stream</span><span class="s3">, </span><span class="s1">name) 
+    </span><span class="s3">def </span><span class="s1">__iter__(self): 
+        </span><span class="s3">return </span><span class="s1">iter(self._stream) 
+ 
+</span><span class="s2"># Supply os.fdopen()</span><span class="s1"> 
+</span><span class="s3">def </span><span class="s1">fdopen(fd</span><span class="s3">, </span><span class="s1">*args</span><span class="s3">, </span><span class="s1">**kwargs): 
+    </span><span class="s3">if not </span><span class="s1">isinstance(fd</span><span class="s3">, </span><span class="s1">int): 
+        </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;invalid fd type (%s, expected integer)&quot; </span><span class="s1">% type(fd)) 
+    </span><span class="s3">import </span><span class="s1">io 
+    </span><span class="s3">return </span><span class="s1">io.open(fd</span><span class="s3">, </span><span class="s1">*args</span><span class="s3">, </span><span class="s1">**kwargs) 
+</span></pre>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<html>
+<head>
+<title>PackageManager.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+PackageManager.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">PackageManager: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">, </span><span class="s1">password ) 
+ 
+    </span><span class="s0">def </span><span class="s1">listPackages(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will list all available packages on mikrotik 
+        :return: list of packages 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        packages = self.client.talk([</span><span class="s4">'/system/package/print'</span><span class="s1">]) 
+        print(packages) 
+        print(</span><span class="s4">&quot;build-time </span><span class="s0">\t</span><span class="s4"> package name </span><span class="s0">\t</span><span class="s4"> package version </span><span class="s0">\t</span><span class="s4"> disable status </span><span class="s0">\t</span><span class="s4"> Scheduled status&quot;</span><span class="s1">) 
+        </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">packages: 
+            print(packages[i][</span><span class="s4">'build-time'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+packages[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+packages[i][</span><span class="s4">'version'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+packages[i] 
+            [</span><span class="s4">'disabled'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+packages[i][</span><span class="s4">'scheduled'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">packages 
+ 
+    </span><span class="s0">def </span><span class="s1">enablePackage(self</span><span class="s0">,</span><span class="s1">packagename): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will enable disabled package by calling its name 
+        :param packagename: name of the package you want to enable 
+        :return: list of packages 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        packages = self.client.talk([</span><span class="s4">'/system/package/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+packagename]) 
+        </span><span class="s0">return </span><span class="s1">packages 
+ 
+    </span><span class="s0">def </span><span class="s1">disablePackage(self</span><span class="s0">,</span><span class="s1">packagename): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will disable enabled package 
+        :param packagename: package you want to disable 
+        :return: list of packages 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        packages = self.client.talk([</span><span class="s4">'/system/package/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+packagename]) 
+        </span><span class="s0">return </span><span class="s1">packages 
+ 
+    </span><span class="s0">def </span><span class="s1">unschedulePackageDisable(self</span><span class="s0">,</span><span class="s1">packagename): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will unschedule disablement 
+        :param packagename: name of package you want to un-disable 
+        :return: list of packages 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        packages = self.client.talk([</span><span class="s4">'/system/package/unschedule'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+packagename]) 
+        </span><span class="s0">return </span><span class="s1">packages 
+ 
+    </span><span class="s0">def </span><span class="s1">packageDowngrade(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will downgrade system packages 
+        :return: list of system packages 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        packages = self.client.talk([</span><span class="s4">'/system/package/downgrade'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">packages 
+ 
+    </span><span class="s0">def </span><span class="s1">unninstalPackage(self</span><span class="s0">,</span><span class="s1">packagename): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will schedule the unninstalation after the device reboot via its package name 
+        :param packagename: name of the package you want to remove 
+        :return: list of packages 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        packages = self.client.talk([</span><span class="s4">'/system/package/uninstall'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+packagename]) 
+        </span><span class="s0">return </span><span class="s1">packages 
+ 
+    </span><span class="s0">def </span><span class="s1">exportPackageConfiguration(self</span><span class="s0">,</span><span class="s1">filename): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will export configuration of packages configuration to a file.rsc, to verify  use Files library to 
+        verify it 
+        :param packagename: name of the file you wanna export configuration to 
+        :return: list of packages 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        packages = self.client.talk([</span><span class="s4">'/system/package/export'</span><span class="s0">,</span><span class="s4">'=file='</span><span class="s1">+filename]) 
+        </span><span class="s0">return </span><span class="s1">packages 
+ 
+    </span><span class="s0">def </span><span class="s1">installPackageUpdate(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will update packages on mikrotik 
+        :return: list of packages words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        packages = self.client.talk([</span><span class="s4">'/system/package/update/install'</span><span class="s1">]) 
+        print(packages) 
+        </span><span class="s0">return </span><span class="s1">packages 
+ 
+    </span><span class="s0">def </span><span class="s1">checkforupdates(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will check for packages updates online 
+        :return: result of api words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        packages = self.client.talk([</span><span class="s4">'/system/package/update/check-for-updates'</span><span class="s1">]) 
+        print(packages) 
+        </span><span class="s0">return </span><span class="s1">packages 
+ 
+    </span><span class="s0">def </span><span class="s1">checkInstalation(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will check mikrotik installation 
+        :return: output of results 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        instal = self.client.talk([</span><span class="s4">'/system/check-installation'</span><span class="s1">]) 
+        print(instal) 
+        </span><span class="s0">return </span><span class="s1">instal 
+ 
+    </span><span class="s0">def </span><span class="s1">checkDisk(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will check disk on  mikrotik after device reboot 
+        :return: result of api 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        disk = self.client.talk([</span><span class="s4">'/system/check-disk'</span><span class="s1">]) 
+        print(disk) 
+        </span><span class="s0">return </span><span class="s1">disk 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+</span></pre>
+</body>
+</html>

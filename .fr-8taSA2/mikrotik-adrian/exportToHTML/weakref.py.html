@@ -1,0 +1,627 @@
+<html>
+<head>
+<title>weakref.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(204,120,50); }
+.s4 { color: rgb(106,135,89); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+weakref.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Weak reference support for Python. 
+ 
+This module is an implementation of PEP 205: 
+ 
+http://www.python.org/dev/peps/pep-0205/ 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2"># Naming convention: Variables named &quot;wr&quot; are weak reference objects;</span><span class="s1"> 
+</span><span class="s2"># they are called this instead of &quot;ref&quot; to avoid name collisions with</span><span class="s1"> 
+</span><span class="s2"># the module-global ref() function imported from _weakref.</span><span class="s1"> 
+ 
+</span><span class="s3">from </span><span class="s1">_weakref </span><span class="s3">import </span><span class="s1">( 
+     getweakrefcount</span><span class="s3">,</span><span class="s1"> 
+     getweakrefs</span><span class="s3">,</span><span class="s1"> 
+     ref</span><span class="s3">,</span><span class="s1"> 
+     proxy</span><span class="s3">,</span><span class="s1"> 
+     CallableProxyType</span><span class="s3">,</span><span class="s1"> 
+     ProxyType</span><span class="s3">,</span><span class="s1"> 
+     ReferenceType) 
+ 
+</span><span class="s3">from </span><span class="s1">_weakrefset </span><span class="s3">import </span><span class="s1">WeakSet</span><span class="s3">, </span><span class="s1">_IterationGuard 
+ 
+</span><span class="s3">import </span><span class="s1">collections  </span><span class="s2"># Import after _weakref to avoid circular import.</span><span class="s1"> 
+</span><span class="s3">import </span><span class="s1">sys 
+</span><span class="s3">import </span><span class="s1">itertools 
+ 
+ProxyTypes = (ProxyType</span><span class="s3">, </span><span class="s1">CallableProxyType) 
+ 
+__all__ = [</span><span class="s4">&quot;ref&quot;</span><span class="s3">, </span><span class="s4">&quot;proxy&quot;</span><span class="s3">, </span><span class="s4">&quot;getweakrefcount&quot;</span><span class="s3">, </span><span class="s4">&quot;getweakrefs&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;WeakKeyDictionary&quot;</span><span class="s3">, </span><span class="s4">&quot;ReferenceType&quot;</span><span class="s3">, </span><span class="s4">&quot;ProxyType&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;CallableProxyType&quot;</span><span class="s3">, </span><span class="s4">&quot;ProxyTypes&quot;</span><span class="s3">, </span><span class="s4">&quot;WeakValueDictionary&quot;</span><span class="s3">,</span><span class="s1"> 
+           </span><span class="s4">&quot;WeakSet&quot;</span><span class="s3">, </span><span class="s4">&quot;WeakMethod&quot;</span><span class="s3">, </span><span class="s4">&quot;finalize&quot;</span><span class="s1">] 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">WeakMethod(ref): 
+    </span><span class="s0">&quot;&quot;&quot; 
+    A custom `weakref.ref` subclass which simulates a weak reference to 
+    a bound method, working around the lifetime problem of bound methods. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    __slots__ = </span><span class="s4">&quot;_func_ref&quot;</span><span class="s3">, </span><span class="s4">&quot;_meth_type&quot;</span><span class="s3">, </span><span class="s4">&quot;_alive&quot;</span><span class="s3">, </span><span class="s4">&quot;__weakref__&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__new__(cls</span><span class="s3">, </span><span class="s1">meth</span><span class="s3">, </span><span class="s1">callback=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s3">try</span><span class="s1">: 
+            obj = meth.__self__ 
+            func = meth.__func__ 
+        </span><span class="s3">except </span><span class="s1">AttributeError: 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;argument should be a bound method, not {}&quot;</span><span class="s1"> 
+                            .format(type(meth))) </span><span class="s3">from None</span><span class="s1"> 
+        </span><span class="s3">def </span><span class="s1">_cb(arg): 
+            </span><span class="s2"># The self-weakref trick is needed to avoid creating a reference</span><span class="s1"> 
+            </span><span class="s2"># cycle.</span><span class="s1"> 
+            self = self_wr() 
+            </span><span class="s3">if </span><span class="s1">self._alive: 
+                self._alive = </span><span class="s3">False</span><span class="s1"> 
+                </span><span class="s3">if </span><span class="s1">callback </span><span class="s3">is not None</span><span class="s1">: 
+                    callback(self) 
+        self = ref.__new__(cls</span><span class="s3">, </span><span class="s1">obj</span><span class="s3">, </span><span class="s1">_cb) 
+        self._func_ref = ref(func</span><span class="s3">, </span><span class="s1">_cb) 
+        self._meth_type = type(meth) 
+        self._alive = </span><span class="s3">True</span><span class="s1"> 
+        self_wr = ref(self) 
+        </span><span class="s3">return </span><span class="s1">self 
+ 
+    </span><span class="s3">def </span><span class="s1">__call__(self): 
+        obj = super().__call__() 
+        func = self._func_ref() 
+        </span><span class="s3">if </span><span class="s1">obj </span><span class="s3">is None or </span><span class="s1">func </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">return None</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">self._meth_type(func</span><span class="s3">, </span><span class="s1">obj) 
+ 
+    </span><span class="s3">def </span><span class="s1">__eq__(self</span><span class="s3">, </span><span class="s1">other): 
+        </span><span class="s3">if </span><span class="s1">isinstance(other</span><span class="s3">, </span><span class="s1">WeakMethod): 
+            </span><span class="s3">if not </span><span class="s1">self._alive </span><span class="s3">or not </span><span class="s1">other._alive: 
+                </span><span class="s3">return </span><span class="s1">self </span><span class="s3">is </span><span class="s1">other 
+            </span><span class="s3">return </span><span class="s1">ref.__eq__(self</span><span class="s3">, </span><span class="s1">other) </span><span class="s3">and </span><span class="s1">self._func_ref == other._func_ref 
+        </span><span class="s3">return False</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__ne__(self</span><span class="s3">, </span><span class="s1">other): 
+        </span><span class="s3">if </span><span class="s1">isinstance(other</span><span class="s3">, </span><span class="s1">WeakMethod): 
+            </span><span class="s3">if not </span><span class="s1">self._alive </span><span class="s3">or not </span><span class="s1">other._alive: 
+                </span><span class="s3">return </span><span class="s1">self </span><span class="s3">is not </span><span class="s1">other 
+            </span><span class="s3">return </span><span class="s1">ref.__ne__(self</span><span class="s3">, </span><span class="s1">other) </span><span class="s3">or </span><span class="s1">self._func_ref != other._func_ref 
+        </span><span class="s3">return True</span><span class="s1"> 
+ 
+    __hash__ = ref.__hash__ 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">WeakValueDictionary(collections.MutableMapping): 
+    </span><span class="s0">&quot;&quot;&quot;Mapping class that references values weakly. 
+ 
+    Entries in the dictionary will be discarded when no strong 
+    reference to the value exists anymore 
+    &quot;&quot;&quot;</span><span class="s1"> 
+    </span><span class="s2"># We inherit the constructor without worrying about the input</span><span class="s1"> 
+    </span><span class="s2"># dictionary; since it uses our .update() method, we get the right</span><span class="s1"> 
+    </span><span class="s2"># checks (if the other dictionary is a WeakValueDictionary,</span><span class="s1"> 
+    </span><span class="s2"># objects are unwrapped on the way out, and we always wrap on the</span><span class="s1"> 
+    </span><span class="s2"># way in).</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(*args</span><span class="s3">, </span><span class="s1">**kw): 
+        </span><span class="s3">if not </span><span class="s1">args: 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;descriptor '__init__' of 'WeakValueDictionary' &quot;</span><span class="s1"> 
+                            </span><span class="s4">&quot;object needs an argument&quot;</span><span class="s1">) 
+        self</span><span class="s3">, </span><span class="s1">*args = args 
+        </span><span class="s3">if </span><span class="s1">len(args) &gt; </span><span class="s5">1</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">'expected at most 1 arguments, got %d' </span><span class="s1">% len(args)) 
+        </span><span class="s3">def </span><span class="s1">remove(wr</span><span class="s3">, </span><span class="s1">selfref=ref(self)): 
+            self = selfref() 
+            </span><span class="s3">if </span><span class="s1">self </span><span class="s3">is not None</span><span class="s1">: 
+                </span><span class="s3">if </span><span class="s1">self._iterating: 
+                    self._pending_removals.append(wr.key) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    </span><span class="s3">del </span><span class="s1">self.data[wr.key] 
+        self._remove = remove 
+        </span><span class="s2"># A list of keys to be removed</span><span class="s1"> 
+        self._pending_removals = [] 
+        self._iterating = set() 
+        self.data = d = {} 
+        self.update(*args</span><span class="s3">, </span><span class="s1">**kw) 
+ 
+    </span><span class="s3">def </span><span class="s1">_commit_removals(self): 
+        l = self._pending_removals 
+        d = self.data 
+        </span><span class="s2"># We shouldn't encounter any KeyError, because this method should</span><span class="s1"> 
+        </span><span class="s2"># always be called *before* mutating the dict.</span><span class="s1"> 
+        </span><span class="s3">while </span><span class="s1">l: 
+            </span><span class="s3">del </span><span class="s1">d[l.pop()] 
+ 
+    </span><span class="s3">def </span><span class="s1">__getitem__(self</span><span class="s3">, </span><span class="s1">key): 
+        o = self.data[key]() 
+        </span><span class="s3">if </span><span class="s1">o </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">KeyError(key) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">o 
+ 
+    </span><span class="s3">def </span><span class="s1">__delitem__(self</span><span class="s3">, </span><span class="s1">key): 
+        </span><span class="s3">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        </span><span class="s3">del </span><span class="s1">self.data[key] 
+ 
+    </span><span class="s3">def </span><span class="s1">__len__(self): 
+        </span><span class="s3">return </span><span class="s1">len(self.data) - len(self._pending_removals) 
+ 
+    </span><span class="s3">def </span><span class="s1">__contains__(self</span><span class="s3">, </span><span class="s1">key): 
+        </span><span class="s3">try</span><span class="s1">: 
+            o = self.data[key]() 
+        </span><span class="s3">except </span><span class="s1">KeyError: 
+            </span><span class="s3">return False</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">o </span><span class="s3">is not None</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        </span><span class="s3">return </span><span class="s4">&quot;&lt;%s at %#x&gt;&quot; </span><span class="s1">% (self.__class__.__name__</span><span class="s3">, </span><span class="s1">id(self)) 
+ 
+    </span><span class="s3">def </span><span class="s1">__setitem__(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value): 
+        </span><span class="s3">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        self.data[key] = KeyedRef(value</span><span class="s3">, </span><span class="s1">self._remove</span><span class="s3">, </span><span class="s1">key) 
+ 
+    </span><span class="s3">def </span><span class="s1">copy(self): 
+        new = WeakValueDictionary() 
+        </span><span class="s3">for </span><span class="s1">key</span><span class="s3">, </span><span class="s1">wr </span><span class="s3">in </span><span class="s1">self.data.items(): 
+            o = wr() 
+            </span><span class="s3">if </span><span class="s1">o </span><span class="s3">is not None</span><span class="s1">: 
+                new[key] = o 
+        </span><span class="s3">return </span><span class="s1">new 
+ 
+    __copy__ = copy 
+ 
+    </span><span class="s3">def </span><span class="s1">__deepcopy__(self</span><span class="s3">, </span><span class="s1">memo): 
+        </span><span class="s3">from </span><span class="s1">copy </span><span class="s3">import </span><span class="s1">deepcopy 
+        new = self.__class__() 
+        </span><span class="s3">for </span><span class="s1">key</span><span class="s3">, </span><span class="s1">wr </span><span class="s3">in </span><span class="s1">self.data.items(): 
+            o = wr() 
+            </span><span class="s3">if </span><span class="s1">o </span><span class="s3">is not None</span><span class="s1">: 
+                new[deepcopy(key</span><span class="s3">, </span><span class="s1">memo)] = o 
+        </span><span class="s3">return </span><span class="s1">new 
+ 
+    </span><span class="s3">def </span><span class="s1">get(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">default=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s3">try</span><span class="s1">: 
+            wr = self.data[key] 
+        </span><span class="s3">except </span><span class="s1">KeyError: 
+            </span><span class="s3">return </span><span class="s1">default 
+        </span><span class="s3">else</span><span class="s1">: 
+            o = wr() 
+            </span><span class="s3">if </span><span class="s1">o </span><span class="s3">is None</span><span class="s1">: 
+                </span><span class="s2"># This should only happen</span><span class="s1"> 
+                </span><span class="s3">return </span><span class="s1">default 
+            </span><span class="s3">else</span><span class="s1">: 
+                </span><span class="s3">return </span><span class="s1">o 
+ 
+    </span><span class="s3">def </span><span class="s1">items(self): 
+        </span><span class="s3">with </span><span class="s1">_IterationGuard(self): 
+            </span><span class="s3">for </span><span class="s1">k</span><span class="s3">, </span><span class="s1">wr </span><span class="s3">in </span><span class="s1">self.data.items(): 
+                v = wr() 
+                </span><span class="s3">if </span><span class="s1">v </span><span class="s3">is not None</span><span class="s1">: 
+                    </span><span class="s3">yield </span><span class="s1">k</span><span class="s3">, </span><span class="s1">v 
+ 
+    </span><span class="s3">def </span><span class="s1">keys(self): 
+        </span><span class="s3">with </span><span class="s1">_IterationGuard(self): 
+            </span><span class="s3">for </span><span class="s1">k</span><span class="s3">, </span><span class="s1">wr </span><span class="s3">in </span><span class="s1">self.data.items(): 
+                </span><span class="s3">if </span><span class="s1">wr() </span><span class="s3">is not None</span><span class="s1">: 
+                    </span><span class="s3">yield </span><span class="s1">k 
+ 
+    __iter__ = keys 
+ 
+    </span><span class="s3">def </span><span class="s1">itervaluerefs(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return an iterator that yields the weak references to the values. 
+ 
+        The references are not guaranteed to be 'live' at the time 
+        they are used, so the result of calling the references needs 
+        to be checked before being used.  This can be used to avoid 
+        creating references that will cause the garbage collector to 
+        keep the values around longer than needed. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">with </span><span class="s1">_IterationGuard(self): 
+            </span><span class="s3">yield from </span><span class="s1">self.data.values() 
+ 
+    </span><span class="s3">def </span><span class="s1">values(self): 
+        </span><span class="s3">with </span><span class="s1">_IterationGuard(self): 
+            </span><span class="s3">for </span><span class="s1">wr </span><span class="s3">in </span><span class="s1">self.data.values(): 
+                obj = wr() 
+                </span><span class="s3">if </span><span class="s1">obj </span><span class="s3">is not None</span><span class="s1">: 
+                    </span><span class="s3">yield </span><span class="s1">obj 
+ 
+    </span><span class="s3">def </span><span class="s1">popitem(self): 
+        </span><span class="s3">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        </span><span class="s3">while True</span><span class="s1">: 
+            key</span><span class="s3">, </span><span class="s1">wr = self.data.popitem() 
+            o = wr() 
+            </span><span class="s3">if </span><span class="s1">o </span><span class="s3">is not None</span><span class="s1">: 
+                </span><span class="s3">return </span><span class="s1">key</span><span class="s3">, </span><span class="s1">o 
+ 
+    </span><span class="s3">def </span><span class="s1">pop(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">*args): 
+        </span><span class="s3">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        </span><span class="s3">try</span><span class="s1">: 
+            o = self.data.pop(key)() 
+        </span><span class="s3">except </span><span class="s1">KeyError: 
+            </span><span class="s3">if </span><span class="s1">args: 
+                </span><span class="s3">return </span><span class="s1">args[</span><span class="s5">0</span><span class="s1">] 
+            </span><span class="s3">raise</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">o </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">KeyError(key) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">o 
+ 
+    </span><span class="s3">def </span><span class="s1">setdefault(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">default=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s3">try</span><span class="s1">: 
+            wr = self.data[key] 
+        </span><span class="s3">except </span><span class="s1">KeyError: 
+            </span><span class="s3">if </span><span class="s1">self._pending_removals: 
+                self._commit_removals() 
+            self.data[key] = KeyedRef(default</span><span class="s3">, </span><span class="s1">self._remove</span><span class="s3">, </span><span class="s1">key) 
+            </span><span class="s3">return </span><span class="s1">default 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">wr() 
+ 
+    </span><span class="s3">def </span><span class="s1">update(*args</span><span class="s3">, </span><span class="s1">**kwargs): 
+        </span><span class="s3">if not </span><span class="s1">args: 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">&quot;descriptor 'update' of 'WeakValueDictionary' &quot;</span><span class="s1"> 
+                            </span><span class="s4">&quot;object needs an argument&quot;</span><span class="s1">) 
+        self</span><span class="s3">, </span><span class="s1">*args = args 
+        </span><span class="s3">if </span><span class="s1">len(args) &gt; </span><span class="s5">1</span><span class="s1">: 
+            </span><span class="s3">raise </span><span class="s1">TypeError(</span><span class="s4">'expected at most 1 arguments, got %d' </span><span class="s1">% len(args)) 
+        dict = args[</span><span class="s5">0</span><span class="s1">] </span><span class="s3">if </span><span class="s1">args </span><span class="s3">else None</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">self._pending_removals: 
+            self._commit_removals() 
+        d = self.data 
+        </span><span class="s3">if </span><span class="s1">dict </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s3">if not </span><span class="s1">hasattr(dict</span><span class="s3">, </span><span class="s4">&quot;items&quot;</span><span class="s1">): 
+                dict = type({})(dict) 
+            </span><span class="s3">for </span><span class="s1">key</span><span class="s3">, </span><span class="s1">o </span><span class="s3">in </span><span class="s1">dict.items(): 
+                d[key] = KeyedRef(o</span><span class="s3">, </span><span class="s1">self._remove</span><span class="s3">, </span><span class="s1">key) 
+        </span><span class="s3">if </span><span class="s1">len(kwargs): 
+            self.update(kwargs) 
+ 
+    </span><span class="s3">def </span><span class="s1">valuerefs(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return a list of weak references to the values. 
+ 
+        The references are not guaranteed to be 'live' at the time 
+        they are used, so the result of calling the references needs 
+        to be checked before being used.  This can be used to avoid 
+        creating references that will cause the garbage collector to 
+        keep the values around longer than needed. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">list(self.data.values()) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">KeyedRef(ref): 
+    </span><span class="s0">&quot;&quot;&quot;Specialized reference that includes a key corresponding to the value. 
+ 
+    This is used in the WeakValueDictionary to avoid having to create 
+    a function object for each key stored in the mapping.  A shared 
+    callback object can use the 'key' attribute of a KeyedRef instead 
+    of getting a reference to the key from an enclosing scope. 
+ 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    __slots__ = </span><span class="s4">&quot;key&quot;</span><span class="s3">,</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__new__(type</span><span class="s3">, </span><span class="s1">ob</span><span class="s3">, </span><span class="s1">callback</span><span class="s3">, </span><span class="s1">key): 
+        self = ref.__new__(type</span><span class="s3">, </span><span class="s1">ob</span><span class="s3">, </span><span class="s1">callback) 
+        self.key = key 
+        </span><span class="s3">return </span><span class="s1">self 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">ob</span><span class="s3">, </span><span class="s1">callback</span><span class="s3">, </span><span class="s1">key): 
+        super().__init__(ob</span><span class="s3">, </span><span class="s1">callback) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">WeakKeyDictionary(collections.MutableMapping): 
+    </span><span class="s0">&quot;&quot;&quot; Mapping class that references keys weakly. 
+ 
+    Entries in the dictionary will be discarded when there is no 
+    longer a strong reference to the key. This can be used to 
+    associate additional data with an object owned by other parts of 
+    an application without adding attributes to those objects. This 
+    can be especially useful with objects that override attribute 
+    accesses. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">dict=</span><span class="s3">None</span><span class="s1">): 
+        self.data = {} 
+        </span><span class="s3">def </span><span class="s1">remove(k</span><span class="s3">, </span><span class="s1">selfref=ref(self)): 
+            self = selfref() 
+            </span><span class="s3">if </span><span class="s1">self </span><span class="s3">is not None</span><span class="s1">: 
+                </span><span class="s3">if </span><span class="s1">self._iterating: 
+                    self._pending_removals.append(k) 
+                </span><span class="s3">else</span><span class="s1">: 
+                    </span><span class="s3">del </span><span class="s1">self.data[k] 
+        self._remove = remove 
+        </span><span class="s2"># A list of dead weakrefs (keys to be removed)</span><span class="s1"> 
+        self._pending_removals = [] 
+        self._iterating = set() 
+        self._dirty_len = </span><span class="s3">False</span><span class="s1"> 
+        </span><span class="s3">if </span><span class="s1">dict </span><span class="s3">is not None</span><span class="s1">: 
+            self.update(dict) 
+ 
+    </span><span class="s3">def </span><span class="s1">_commit_removals(self): 
+        </span><span class="s2"># NOTE: We don't need to call this method before mutating the dict,</span><span class="s1"> 
+        </span><span class="s2"># because a dead weakref never compares equal to a live weakref,</span><span class="s1"> 
+        </span><span class="s2"># even if they happened to refer to equal objects.</span><span class="s1"> 
+        </span><span class="s2"># However, it means keys may already have been removed.</span><span class="s1"> 
+        l = self._pending_removals 
+        d = self.data 
+        </span><span class="s3">while </span><span class="s1">l: 
+            </span><span class="s3">try</span><span class="s1">: 
+                </span><span class="s3">del </span><span class="s1">d[l.pop()] 
+            </span><span class="s3">except </span><span class="s1">KeyError: 
+                </span><span class="s3">pass</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">_scrub_removals(self): 
+        d = self.data 
+        self._pending_removals = [k </span><span class="s3">for </span><span class="s1">k </span><span class="s3">in </span><span class="s1">self._pending_removals </span><span class="s3">if </span><span class="s1">k </span><span class="s3">in </span><span class="s1">d] 
+        self._dirty_len = </span><span class="s3">False</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__delitem__(self</span><span class="s3">, </span><span class="s1">key): 
+        self._dirty_len = </span><span class="s3">True</span><span class="s1"> 
+        </span><span class="s3">del </span><span class="s1">self.data[ref(key)] 
+ 
+    </span><span class="s3">def </span><span class="s1">__getitem__(self</span><span class="s3">, </span><span class="s1">key): 
+        </span><span class="s3">return </span><span class="s1">self.data[ref(key)] 
+ 
+    </span><span class="s3">def </span><span class="s1">__len__(self): 
+        </span><span class="s3">if </span><span class="s1">self._dirty_len </span><span class="s3">and </span><span class="s1">self._pending_removals: 
+            </span><span class="s2"># self._pending_removals may still contain keys which were</span><span class="s1"> 
+            </span><span class="s2"># explicitly removed, we have to scrub them (see issue #21173).</span><span class="s1"> 
+            self._scrub_removals() 
+        </span><span class="s3">return </span><span class="s1">len(self.data) - len(self._pending_removals) 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        </span><span class="s3">return </span><span class="s4">&quot;&lt;%s at %#x&gt;&quot; </span><span class="s1">% (self.__class__.__name__</span><span class="s3">, </span><span class="s1">id(self)) 
+ 
+    </span><span class="s3">def </span><span class="s1">__setitem__(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value): 
+        self.data[ref(key</span><span class="s3">, </span><span class="s1">self._remove)] = value 
+ 
+    </span><span class="s3">def </span><span class="s1">copy(self): 
+        new = WeakKeyDictionary() 
+        </span><span class="s3">for </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value </span><span class="s3">in </span><span class="s1">self.data.items(): 
+            o = key() 
+            </span><span class="s3">if </span><span class="s1">o </span><span class="s3">is not None</span><span class="s1">: 
+                new[o] = value 
+        </span><span class="s3">return </span><span class="s1">new 
+ 
+    __copy__ = copy 
+ 
+    </span><span class="s3">def </span><span class="s1">__deepcopy__(self</span><span class="s3">, </span><span class="s1">memo): 
+        </span><span class="s3">from </span><span class="s1">copy </span><span class="s3">import </span><span class="s1">deepcopy 
+        new = self.__class__() 
+        </span><span class="s3">for </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value </span><span class="s3">in </span><span class="s1">self.data.items(): 
+            o = key() 
+            </span><span class="s3">if </span><span class="s1">o </span><span class="s3">is not None</span><span class="s1">: 
+                new[o] = deepcopy(value</span><span class="s3">, </span><span class="s1">memo) 
+        </span><span class="s3">return </span><span class="s1">new 
+ 
+    </span><span class="s3">def </span><span class="s1">get(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">default=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s3">return </span><span class="s1">self.data.get(ref(key)</span><span class="s3">,</span><span class="s1">default) 
+ 
+    </span><span class="s3">def </span><span class="s1">__contains__(self</span><span class="s3">, </span><span class="s1">key): 
+        </span><span class="s3">try</span><span class="s1">: 
+            wr = ref(key) 
+        </span><span class="s3">except </span><span class="s1">TypeError: 
+            </span><span class="s3">return False</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">wr </span><span class="s3">in </span><span class="s1">self.data 
+ 
+    </span><span class="s3">def </span><span class="s1">items(self): 
+        </span><span class="s3">with </span><span class="s1">_IterationGuard(self): 
+            </span><span class="s3">for </span><span class="s1">wr</span><span class="s3">, </span><span class="s1">value </span><span class="s3">in </span><span class="s1">self.data.items(): 
+                key = wr() 
+                </span><span class="s3">if </span><span class="s1">key </span><span class="s3">is not None</span><span class="s1">: 
+                    </span><span class="s3">yield </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value 
+ 
+    </span><span class="s3">def </span><span class="s1">keys(self): 
+        </span><span class="s3">with </span><span class="s1">_IterationGuard(self): 
+            </span><span class="s3">for </span><span class="s1">wr </span><span class="s3">in </span><span class="s1">self.data: 
+                obj = wr() 
+                </span><span class="s3">if </span><span class="s1">obj </span><span class="s3">is not None</span><span class="s1">: 
+                    </span><span class="s3">yield </span><span class="s1">obj 
+ 
+    __iter__ = keys 
+ 
+    </span><span class="s3">def </span><span class="s1">values(self): 
+        </span><span class="s3">with </span><span class="s1">_IterationGuard(self): 
+            </span><span class="s3">for </span><span class="s1">wr</span><span class="s3">, </span><span class="s1">value </span><span class="s3">in </span><span class="s1">self.data.items(): 
+                </span><span class="s3">if </span><span class="s1">wr() </span><span class="s3">is not None</span><span class="s1">: 
+                    </span><span class="s3">yield </span><span class="s1">value 
+ 
+    </span><span class="s3">def </span><span class="s1">keyrefs(self): 
+        </span><span class="s0">&quot;&quot;&quot;Return a list of weak references to the keys. 
+ 
+        The references are not guaranteed to be 'live' at the time 
+        they are used, so the result of calling the references needs 
+        to be checked before being used.  This can be used to avoid 
+        creating references that will cause the garbage collector to 
+        keep the keys around longer than needed. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">list(self.data) 
+ 
+    </span><span class="s3">def </span><span class="s1">popitem(self): 
+        self._dirty_len = </span><span class="s3">True</span><span class="s1"> 
+        </span><span class="s3">while True</span><span class="s1">: 
+            key</span><span class="s3">, </span><span class="s1">value = self.data.popitem() 
+            o = key() 
+            </span><span class="s3">if </span><span class="s1">o </span><span class="s3">is not None</span><span class="s1">: 
+                </span><span class="s3">return </span><span class="s1">o</span><span class="s3">, </span><span class="s1">value 
+ 
+    </span><span class="s3">def </span><span class="s1">pop(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">*args): 
+        self._dirty_len = </span><span class="s3">True</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">self.data.pop(ref(key)</span><span class="s3">, </span><span class="s1">*args) 
+ 
+    </span><span class="s3">def </span><span class="s1">setdefault(self</span><span class="s3">, </span><span class="s1">key</span><span class="s3">, </span><span class="s1">default=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s3">return </span><span class="s1">self.data.setdefault(ref(key</span><span class="s3">, </span><span class="s1">self._remove)</span><span class="s3">,</span><span class="s1">default) 
+ 
+    </span><span class="s3">def </span><span class="s1">update(self</span><span class="s3">, </span><span class="s1">dict=</span><span class="s3">None, </span><span class="s1">**kwargs): 
+        d = self.data 
+        </span><span class="s3">if </span><span class="s1">dict </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s3">if not </span><span class="s1">hasattr(dict</span><span class="s3">, </span><span class="s4">&quot;items&quot;</span><span class="s1">): 
+                dict = type({})(dict) 
+            </span><span class="s3">for </span><span class="s1">key</span><span class="s3">, </span><span class="s1">value </span><span class="s3">in </span><span class="s1">dict.items(): 
+                d[ref(key</span><span class="s3">, </span><span class="s1">self._remove)] = value 
+        </span><span class="s3">if </span><span class="s1">len(kwargs): 
+            self.update(kwargs) 
+ 
+ 
+</span><span class="s3">class </span><span class="s1">finalize: 
+    </span><span class="s0">&quot;&quot;&quot;Class for finalization of weakrefable objects 
+ 
+    finalize(obj, func, *args, **kwargs) returns a callable finalizer 
+    object which will be called when obj is garbage collected. The 
+    first time the finalizer is called it evaluates func(*arg, **kwargs) 
+    and returns the result. After this the finalizer is dead, and 
+    calling it just returns None. 
+ 
+    When the program exits any remaining finalizers for which the 
+    atexit attribute is true will be run in reverse order of creation. 
+    By default atexit is true. 
+    &quot;&quot;&quot;</span><span class="s1"> 
+ 
+    </span><span class="s2"># Finalizer objects don't have any state of their own.  They are</span><span class="s1"> 
+    </span><span class="s2"># just used as keys to lookup _Info objects in the registry.  This</span><span class="s1"> 
+    </span><span class="s2"># ensures that they cannot be part of a ref-cycle.</span><span class="s1"> 
+ 
+    __slots__ = () 
+    _registry = {} 
+    _shutdown = </span><span class="s3">False</span><span class="s1"> 
+    _index_iter = itertools.count() 
+    _dirty = </span><span class="s3">False</span><span class="s1"> 
+    _registered_with_atexit = </span><span class="s3">False</span><span class="s1"> 
+ 
+    </span><span class="s3">class </span><span class="s1">_Info: 
+        __slots__ = (</span><span class="s4">&quot;weakref&quot;</span><span class="s3">, </span><span class="s4">&quot;func&quot;</span><span class="s3">, </span><span class="s4">&quot;args&quot;</span><span class="s3">, </span><span class="s4">&quot;kwargs&quot;</span><span class="s3">, </span><span class="s4">&quot;atexit&quot;</span><span class="s3">, </span><span class="s4">&quot;index&quot;</span><span class="s1">) 
+ 
+    </span><span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">obj</span><span class="s3">, </span><span class="s1">func</span><span class="s3">, </span><span class="s1">*args</span><span class="s3">, </span><span class="s1">**kwargs): 
+        </span><span class="s3">if not </span><span class="s1">self._registered_with_atexit: 
+            </span><span class="s2"># We may register the exit function more than once because</span><span class="s1"> 
+            </span><span class="s2"># of a thread race, but that is harmless</span><span class="s1"> 
+            </span><span class="s3">import </span><span class="s1">atexit 
+            atexit.register(self._exitfunc) 
+            finalize._registered_with_atexit = </span><span class="s3">True</span><span class="s1"> 
+        info = self._Info() 
+        info.weakref = ref(obj</span><span class="s3">, </span><span class="s1">self) 
+        info.func = func 
+        info.args = args 
+        info.kwargs = kwargs </span><span class="s3">or None</span><span class="s1"> 
+        info.atexit = </span><span class="s3">True</span><span class="s1"> 
+        info.index = next(self._index_iter) 
+        self._registry[self] = info 
+        finalize._dirty = </span><span class="s3">True</span><span class="s1"> 
+ 
+    </span><span class="s3">def </span><span class="s1">__call__(self</span><span class="s3">, </span><span class="s1">_=</span><span class="s3">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;If alive then mark as dead and return func(*args, **kwargs); 
+        otherwise return None&quot;&quot;&quot;</span><span class="s1"> 
+        info = self._registry.pop(self</span><span class="s3">, None</span><span class="s1">) 
+        </span><span class="s3">if </span><span class="s1">info </span><span class="s3">and not </span><span class="s1">self._shutdown: 
+            </span><span class="s3">return </span><span class="s1">info.func(*info.args</span><span class="s3">, </span><span class="s1">**(info.kwargs </span><span class="s3">or </span><span class="s1">{})) 
+ 
+    </span><span class="s3">def </span><span class="s1">detach(self): 
+        </span><span class="s0">&quot;&quot;&quot;If alive then mark as dead and return (obj, func, args, kwargs); 
+        otherwise return None&quot;&quot;&quot;</span><span class="s1"> 
+        info = self._registry.get(self) 
+        obj = info </span><span class="s3">and </span><span class="s1">info.weakref() 
+        </span><span class="s3">if </span><span class="s1">obj </span><span class="s3">is not None and </span><span class="s1">self._registry.pop(self</span><span class="s3">, None</span><span class="s1">): 
+            </span><span class="s3">return </span><span class="s1">(obj</span><span class="s3">, </span><span class="s1">info.func</span><span class="s3">, </span><span class="s1">info.args</span><span class="s3">, </span><span class="s1">info.kwargs </span><span class="s3">or </span><span class="s1">{}) 
+ 
+    </span><span class="s3">def </span><span class="s1">peek(self): 
+        </span><span class="s0">&quot;&quot;&quot;If alive then return (obj, func, args, kwargs); 
+        otherwise return None&quot;&quot;&quot;</span><span class="s1"> 
+        info = self._registry.get(self) 
+        obj = info </span><span class="s3">and </span><span class="s1">info.weakref() 
+        </span><span class="s3">if </span><span class="s1">obj </span><span class="s3">is not None</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s1">(obj</span><span class="s3">, </span><span class="s1">info.func</span><span class="s3">, </span><span class="s1">info.args</span><span class="s3">, </span><span class="s1">info.kwargs </span><span class="s3">or </span><span class="s1">{}) 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">alive(self): 
+        </span><span class="s0">&quot;&quot;&quot;Whether finalizer is alive&quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s3">return </span><span class="s1">self </span><span class="s3">in </span><span class="s1">self._registry 
+ 
+    @property 
+    </span><span class="s3">def </span><span class="s1">atexit(self): 
+        </span><span class="s0">&quot;&quot;&quot;Whether finalizer should be called at exit&quot;&quot;&quot;</span><span class="s1"> 
+        info = self._registry.get(self) 
+        </span><span class="s3">return </span><span class="s1">bool(info) </span><span class="s3">and </span><span class="s1">info.atexit 
+ 
+    @atexit.setter 
+    </span><span class="s3">def </span><span class="s1">atexit(self</span><span class="s3">, </span><span class="s1">value): 
+        info = self._registry.get(self) 
+        </span><span class="s3">if </span><span class="s1">info: 
+            info.atexit = bool(value) 
+ 
+    </span><span class="s3">def </span><span class="s1">__repr__(self): 
+        info = self._registry.get(self) 
+        obj = info </span><span class="s3">and </span><span class="s1">info.weakref() 
+        </span><span class="s3">if </span><span class="s1">obj </span><span class="s3">is None</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s4">'&lt;%s object at %#x; dead&gt;' </span><span class="s1">% (type(self).__name__</span><span class="s3">, </span><span class="s1">id(self)) 
+        </span><span class="s3">else</span><span class="s1">: 
+            </span><span class="s3">return </span><span class="s4">'&lt;%s object at %#x; for %r at %#x&gt;' </span><span class="s1">% \ 
+                (type(self).__name__</span><span class="s3">, </span><span class="s1">id(self)</span><span class="s3">, </span><span class="s1">type(obj).__name__</span><span class="s3">, </span><span class="s1">id(obj)) 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">_select_for_exit(cls): 
+        </span><span class="s2"># Return live finalizers marked for exit, oldest first</span><span class="s1"> 
+        L = [(f</span><span class="s3">,</span><span class="s1">i) </span><span class="s3">for </span><span class="s1">(f</span><span class="s3">,</span><span class="s1">i) </span><span class="s3">in </span><span class="s1">cls._registry.items() </span><span class="s3">if </span><span class="s1">i.atexit] 
+        L.sort(key=</span><span class="s3">lambda </span><span class="s1">item:item[</span><span class="s5">1</span><span class="s1">].index) 
+        </span><span class="s3">return </span><span class="s1">[f </span><span class="s3">for </span><span class="s1">(f</span><span class="s3">,</span><span class="s1">i) </span><span class="s3">in </span><span class="s1">L] 
+ 
+    @classmethod 
+    </span><span class="s3">def </span><span class="s1">_exitfunc(cls): 
+        </span><span class="s2"># At shutdown invoke finalizers for which atexit is true.</span><span class="s1"> 
+        </span><span class="s2"># This is called once all other non-daemonic threads have been</span><span class="s1"> 
+        </span><span class="s2"># joined.</span><span class="s1"> 
+        reenable_gc = </span><span class="s3">False</span><span class="s1"> 
+        </span><span class="s3">try</span><span class="s1">: 
+            </span><span class="s3">if </span><span class="s1">cls._registry: 
+                </span><span class="s3">import </span><span class="s1">gc 
+                </span><span class="s3">if </span><span class="s1">gc.isenabled(): 
+                    reenable_gc = </span><span class="s3">True</span><span class="s1"> 
+                    gc.disable() 
+                pending = </span><span class="s3">None</span><span class="s1"> 
+                </span><span class="s3">while True</span><span class="s1">: 
+                    </span><span class="s3">if </span><span class="s1">pending </span><span class="s3">is None or </span><span class="s1">finalize._dirty: 
+                        pending = cls._select_for_exit() 
+                        finalize._dirty = </span><span class="s3">False</span><span class="s1"> 
+                    </span><span class="s3">if not </span><span class="s1">pending: 
+                        </span><span class="s3">break</span><span class="s1"> 
+                    f = pending.pop() 
+                    </span><span class="s3">try</span><span class="s1">: 
+                        </span><span class="s2"># gc is disabled, so (assuming no daemonic</span><span class="s1"> 
+                        </span><span class="s2"># threads) the following is the only line in</span><span class="s1"> 
+                        </span><span class="s2"># this function which might trigger creation</span><span class="s1"> 
+                        </span><span class="s2"># of a new finalizer</span><span class="s1"> 
+                        f() 
+                    </span><span class="s3">except </span><span class="s1">Exception: 
+                        sys.excepthook(*sys.exc_info()) 
+                    </span><span class="s3">assert </span><span class="s1">f </span><span class="s3">not in </span><span class="s1">cls._registry 
+        </span><span class="s3">finally</span><span class="s1">: 
+            </span><span class="s2"># prevent any more finalizers from executing during shutdown</span><span class="s1"> 
+            finalize._shutdown = </span><span class="s3">True</span><span class="s1"> 
+            </span><span class="s3">if </span><span class="s1">reenable_gc: 
+                gc.enable() 
+</span></pre>
+</body>
+</html>

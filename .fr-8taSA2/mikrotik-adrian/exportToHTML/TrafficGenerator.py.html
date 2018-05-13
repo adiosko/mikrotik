@@ -1,0 +1,538 @@
+<html>
+<head>
+<title>TrafficGenerator.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+TrafficGenerator.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">TrafficGenerator: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">setTrafficId(self</span><span class="s0">,</span><span class="s1">ID): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set traffic id 
+        :param ID: number 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk([</span><span class="s4">'/tool/traffic-generator/set'</span><span class="s0">,</span><span class="s4">'=test-id='</span><span class="s1">+ID]) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setLatency(self</span><span class="s0">,</span><span class="s1">latency): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set latency 
+        :param latency: in mikrosecs 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/set'</span><span class="s0">, </span><span class="s4">'=latency-distribution-max=' </span><span class="s1">+ latency] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setSamplesToKeep(self</span><span class="s0">,</span><span class="s1">samples): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set max samples to keep 
+        :param samples: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/set'</span><span class="s0">, </span><span class="s4">'=stats-samples-to-keep=' </span><span class="s1">+ samples] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setquickStartId(self</span><span class="s0">,</span><span class="s1">id</span><span class="s0">,</span><span class="s1">stream): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        method will set quick start test id 
+        :param id: 
+        :param stream: steram to set 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/quick'</span><span class="s0">, </span><span class="s4">'=test-id=' </span><span class="s1">+ id</span><span class="s0">,</span><span class="s4">'=stream='</span><span class="s1">+stream] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setquickPort(self</span><span class="s0">,</span><span class="s1">stream</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set  steram and port 
+        :param stream: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/quick'</span><span class="s0">, </span><span class="s4">'=stream=' </span><span class="s1">+ stream</span><span class="s0">,</span><span class="s4">'=port='</span><span class="s1">+port] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setquicInterface(self</span><span class="s0">,</span><span class="s1">stream</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface to use 
+        :param stream: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/quick'</span><span class="s0">, </span><span class="s4">'=stream=' </span><span class="s1">+ stream</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setQuickPacketSize(self</span><span class="s0">,</span><span class="s1">stream</span><span class="s0">,</span><span class="s1">packetSize): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pakcet size of stream 
+        :param stream: 
+        :param packetSize: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/quick'</span><span class="s0">, </span><span class="s4">'=stream=' </span><span class="s1">+ stream</span><span class="s0">,</span><span class="s4">'=packet-size='</span><span class="s1">+packetSize] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setQuickPPS(self</span><span class="s0">,</span><span class="s1">stream</span><span class="s0">,</span><span class="s1">PPS): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set stream PPS 
+        :param stream: 
+        :param PPS: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/quick'</span><span class="s0">, </span><span class="s4">'=stream=' </span><span class="s1">+ stream</span><span class="s0">,</span><span class="s4">'=pps='</span><span class="s1">+PPS] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setQuickMBPS(self</span><span class="s0">,</span><span class="s1">stream</span><span class="s0">,</span><span class="s1">mbps): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set stream mbps 
+        :param stream: 
+        :param mbps: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/quick'</span><span class="s0">, </span><span class="s4">'=stream=' </span><span class="s1">+ stream</span><span class="s0">,</span><span class="s4">'=mbps='</span><span class="s1">+mbps] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setQuickTxTemplate(self</span><span class="s0">,</span><span class="s1">stream</span><span class="s0">,</span><span class="s1">template): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set tx template for stream 
+        :param stream: 
+        :param template: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/quick'</span><span class="s0">, </span><span class="s4">'=stream=' </span><span class="s1">+ stream</span><span class="s0">,</span><span class="s4">'=tx-template='</span><span class="s1">+template] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">startGenerator(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will start generator 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/start'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">stopGenerator(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will stop generator 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stop'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">injectPcapInterface(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set pcap iface 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/inject'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">injectPcapFile(self</span><span class="s0">,</span><span class="s1">interface</span><span class="s0">,</span><span class="s1">file): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will inject pcap file 
+        :param interface: 
+        :param file: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/inject'</span><span class="s0">,</span><span class="s4">'=data='</span><span class="s1">+file</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">listStreamStats(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list stream stats 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stats/stream/print'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">listLatencyDists(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list latency distributions 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stats/latency-distribution/print'</span><span class="s1">] ) 
+        </span><span class="s0">if </span><span class="s1">traff == {}: 
+            print(</span><span class="s4">&quot;No latency found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Latency</span><span class="s0">\t</span><span class="s4">Count</span><span class="s0">\t</span><span class="s4">Share&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">traff: 
+                print(traff[i][</span><span class="s4">'latency'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+traff[i][</span><span class="s4">'count'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+traff[i][</span><span class="s4">'share'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">listPorts(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list ports on generator 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stats/port/print'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">listRaws(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all raws for generator 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stats/raw/print'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">listGeneratorPorts(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all generator ports 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/port/print'</span><span class="s1">] ) 
+        </span><span class="s0">if </span><span class="s1">traff == {}: 
+            print(</span><span class="s4">&quot;No port found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">interface</span><span class="s0">\t</span><span class="s4">first header&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">traff: 
+                print(traff[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+traff[i][</span><span class="s4">'interface'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+traff[i][</span><span class="s4">'first-header'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">addGeneratorPort(self</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add interface to generator 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/port/add'</span><span class="s0">,</span><span class="s4">'=interface='</span><span class="s1">+interface] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setNamePort(self</span><span class="s0">,</span><span class="s1">oldname</span><span class="s0">,</span><span class="s1">newname): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set port name 
+        :param oldname: old name of port 
+        :param newname: new name of port 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/port/set'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+oldname</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+newname] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setInterfacePort(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set interface name 
+        :param name: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/port/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=interface=' </span><span class="s1">+ interface] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setFirstHeader(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">header): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set first header of name 
+        :param name: 
+        :param header: always mac 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/port/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=name=' </span><span class="s1">+ header] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">enableGeneratorPort(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enablegenerator port 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/port/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=disabled=no'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">disableGeneratorPort(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable generatoir port 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/port/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=disabled=yes'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">removeGeneratorPort(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove generator port 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/port/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">addPacketTemplate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add new packet template 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/packet-template/add'</span><span class="s0">, </span><span class="s4">'=name=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setPacketTemplateHeader(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">header): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set header of template 
+        :param name: 
+        :param header: ip, ipv6, raw, tcp, udp, vlan 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=header-stack='</span><span class="s1">+header] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setPacketTemplateData(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">data): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set name template data 
+        :param name: 
+        :param data: incrementing, random, specific-byte, uninitialized 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk([</span><span class="s4">'/tool/traffic-generator/packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                  </span><span class="s4">'=data=' </span><span class="s1">+ data] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setPacketTemplatePort(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set template port 
+        :param name: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=port=' </span><span class="s1">+ port] ) 
+ 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setPacketTemplateInterface(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">interface): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set template interface 
+        :param name: 
+        :param interface: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=interface=' </span><span class="s1">+ interface] ) 
+ 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">removePAcketTemplate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove packet template 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/packet-template/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name]) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">commentPacketTemplate(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment template 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                           </span><span class="s4">'=comment=' </span><span class="s1">+ comment] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">listRawPacketTemplates(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list raw packet templates 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk([</span><span class="s4">'/tool/traffic-generator/raw-packet-template/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">traff == {}: 
+            print(</span><span class="s4">&quot;No raw template found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">header</span><span class="s0">\t</span><span class="s4">header length</span><span class="s0">\t</span><span class="s4">ip header offset&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">traff: 
+                print(traff[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+traff[i][</span><span class="s4">'header'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+traff[i][</span><span class="s4">'header-length'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1"> 
+                      +traff[i][</span><span class="s4">'ip-header-offset'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">addRawPacketTemplate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add raw templatew 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setRawHeader(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">header): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set header of file 
+        :param name: 
+        :param header: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=header='</span><span class="s1">+header] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setRawPort(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">port): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set port of raw template 
+        :param name: 
+        :param port: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=port='</span><span class="s1">+port] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setRawData(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">data): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set raw data 
+        :param name: 
+        :param data: incremeneting, random, specific-type, uninitialized 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=data='</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setIPHeaderOffsetRaw(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">offset): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set offset 
+        :param name: 
+        :param offset: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=ip-header-offset='</span><span class="s1">+offset] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setIpv6HeaderOffset(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">offset): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set Ipv6 offset 
+        :param name: 
+        :param offset: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=ipv6-header-offset='</span><span class="s1">+offset] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">setUdpHeaderOffset(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">offset): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set udp level offset 
+        :param name: 
+        :param offset: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=udp-header-offset=' </span><span class="s1">+ offset] ) 
+ 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">useSpecialFooter(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set special foot 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=special-footer=yes'</span><span class="s1">] ) 
+ 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">dontUseSpecialFooter(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will dont use special footer 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=special-footer=no'</span><span class="s1">] ) 
+ 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">removeRawTemplate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove raw template 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/remove'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+ 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">commentRawTemplate(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment raw template 
+        :param name: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/raw-packet-template/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s1"> 
+                                   </span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+ 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">listStreams(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all streams 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stream/print'</span><span class="s1">] ) 
+        </span><span class="s0">if </span><span class="s1">traff == {}: 
+            print(</span><span class="s4">&quot;no stream found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">ID</span><span class="s0">\t</span><span class="s4">pakcet size</span><span class="s0">\t</span><span class="s4">tx template&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">traff: 
+                print(traff[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+traff[i][</span><span class="s4">'id'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+traff[i][</span><span class="s4">'packet-size'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+traff[i][</span><span class="s4">'tx-template'</span><span class="s1">]) 
+        print(traff) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">addStream(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">template): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add stream 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stream/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=tx-template='</span><span class="s1">+template] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">removeStreamTemplate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove stream template 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stream/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">enableStreamTemplate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable template 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stream/enable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name] ) 
+        </span><span class="s0">return </span><span class="s1">traff 
+ 
+    </span><span class="s0">def </span><span class="s1">disableStreamTemplate(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable template 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        traff = self.client.talk( [</span><span class="s4">'/tool/traffic-generator/stream/disable'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name] ) 
+        </span><span class="s0">return </span><span class="s1">traff</span></pre>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<html>
+<head>
+<title>rlcompleter.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(98,151,85); font-style: italic; }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+rlcompleter.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">&quot;&quot;&quot;Word completion for GNU readline. 
+ 
+The completer completes keywords, built-ins and globals in a selectable 
+namespace (which defaults to __main__); when completing NAME.NAME..., it 
+evaluates (!) the expression up to the last dot and completes its attributes. 
+ 
+It's very cool to do &quot;import sys&quot; type &quot;sys.&quot;, hit the completion key (twice), 
+and see the list of names defined by the sys module! 
+ 
+Tip: to use the tab key as the completion key, call 
+ 
+    readline.parse_and_bind(&quot;tab: complete&quot;) 
+ 
+Notes: 
+ 
+- Exceptions raised by the completer function are *ignored* (and generally cause 
+  the completion to fail).  This is a feature -- since readline sets the tty 
+  device in raw (or cbreak) mode, printing a traceback wouldn't work well 
+  without some complicated hoopla to save, reset and restore the tty state. 
+ 
+- The evaluation of the NAME.NAME... form may cause arbitrary application 
+  defined code to be executed if an object with a __getattr__ hook is found. 
+  Since it is the responsibility of the application (or the user) to enable this 
+  feature, I consider this an acceptable risk.  More complicated expressions 
+  (e.g. function calls or indexing operations) are *not* evaluated. 
+ 
+- When the original stdin is not a tty device, GNU readline is never 
+  used, and this module (and the readline module) are silently inactive. 
+ 
+&quot;&quot;&quot;</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">atexit 
+</span><span class="s2">import </span><span class="s1">builtins 
+</span><span class="s2">import </span><span class="s1">__main__ 
+ 
+__all__ = [</span><span class="s3">&quot;Completer&quot;</span><span class="s1">] 
+ 
+</span><span class="s2">class </span><span class="s1">Completer: 
+    </span><span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">namespace = </span><span class="s2">None</span><span class="s1">): 
+        </span><span class="s0">&quot;&quot;&quot;Create a new completer for the command line. 
+ 
+        Completer([namespace]) -&gt; completer instance. 
+ 
+        If unspecified, the default namespace where completions are performed 
+        is __main__ (technically, __main__.__dict__). Namespaces should be 
+        given as dictionaries. 
+ 
+        Completer instances should be used as the completion mechanism of 
+        readline via the set_completer() call: 
+ 
+        readline.set_completer(Completer(my_namespace).complete) 
+        &quot;&quot;&quot;</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">namespace </span><span class="s2">and not </span><span class="s1">isinstance(namespace</span><span class="s2">, </span><span class="s1">dict): 
+            </span><span class="s2">raise </span><span class="s1">TypeError(</span><span class="s3">'namespace must be a dictionary'</span><span class="s1">) 
+ 
+        </span><span class="s4"># Don't bind to namespace quite yet, but flag whether the user wants a</span><span class="s1"> 
+        </span><span class="s4"># specific namespace or to use __main__.__dict__. This will allow us</span><span class="s1"> 
+        </span><span class="s4"># to bind to __main__.__dict__ at completion time, not now.</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">namespace </span><span class="s2">is None</span><span class="s1">: 
+            self.use_main_ns = </span><span class="s5">1</span><span class="s1"> 
+        </span><span class="s2">else</span><span class="s1">: 
+            self.use_main_ns = </span><span class="s5">0</span><span class="s1"> 
+            self.namespace = namespace 
+ 
+    </span><span class="s2">def </span><span class="s1">complete(self</span><span class="s2">, </span><span class="s1">text</span><span class="s2">, </span><span class="s1">state): 
+        </span><span class="s0">&quot;&quot;&quot;Return the next possible completion for 'text'. 
+ 
+        This is called successively with state == 0, 1, 2, ... until it 
+        returns None.  The completion should begin with 'text'. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">if </span><span class="s1">self.use_main_ns: 
+            self.namespace = __main__.__dict__ 
+ 
+        </span><span class="s2">if not </span><span class="s1">text.strip(): 
+            </span><span class="s2">if </span><span class="s1">state == </span><span class="s5">0</span><span class="s1">: 
+                </span><span class="s2">if </span><span class="s1">_readline_available: 
+                    readline.insert_text(</span><span class="s3">'</span><span class="s2">\t</span><span class="s3">'</span><span class="s1">) 
+                    readline.redisplay() 
+                    </span><span class="s2">return </span><span class="s3">''</span><span class="s1"> 
+                </span><span class="s2">else</span><span class="s1">: 
+                    </span><span class="s2">return </span><span class="s3">'</span><span class="s2">\t</span><span class="s3">'</span><span class="s1"> 
+            </span><span class="s2">else</span><span class="s1">: 
+                </span><span class="s2">return None</span><span class="s1"> 
+ 
+        </span><span class="s2">if </span><span class="s1">state == </span><span class="s5">0</span><span class="s1">: 
+            </span><span class="s2">if </span><span class="s3">&quot;.&quot; </span><span class="s2">in </span><span class="s1">text: 
+                self.matches = self.attr_matches(text) 
+            </span><span class="s2">else</span><span class="s1">: 
+                self.matches = self.global_matches(text) 
+        </span><span class="s2">try</span><span class="s1">: 
+            </span><span class="s2">return </span><span class="s1">self.matches[state] 
+        </span><span class="s2">except </span><span class="s1">IndexError: 
+            </span><span class="s2">return None</span><span class="s1"> 
+ 
+    </span><span class="s2">def </span><span class="s1">_callable_postfix(self</span><span class="s2">, </span><span class="s1">val</span><span class="s2">, </span><span class="s1">word): 
+        </span><span class="s2">if </span><span class="s1">callable(val): 
+            word = word + </span><span class="s3">&quot;(&quot;</span><span class="s1"> 
+        </span><span class="s2">return </span><span class="s1">word 
+ 
+    </span><span class="s2">def </span><span class="s1">global_matches(self</span><span class="s2">, </span><span class="s1">text): 
+        </span><span class="s0">&quot;&quot;&quot;Compute matches when text is a simple name. 
+ 
+        Return a list of all keywords, built-in functions and names currently 
+        defined in self.namespace that match. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">import </span><span class="s1">keyword 
+        matches = [] 
+        seen = {</span><span class="s3">&quot;__builtins__&quot;</span><span class="s1">} 
+        n = len(text) 
+        </span><span class="s2">for </span><span class="s1">word </span><span class="s2">in </span><span class="s1">keyword.kwlist: 
+            </span><span class="s2">if </span><span class="s1">word[:n] == text: 
+                seen.add(word) 
+                matches.append(word) 
+        </span><span class="s2">for </span><span class="s1">nspace </span><span class="s2">in </span><span class="s1">[self.namespace</span><span class="s2">, </span><span class="s1">builtins.__dict__]: 
+            </span><span class="s2">for </span><span class="s1">word</span><span class="s2">, </span><span class="s1">val </span><span class="s2">in </span><span class="s1">nspace.items(): 
+                </span><span class="s2">if </span><span class="s1">word[:n] == text </span><span class="s2">and </span><span class="s1">word </span><span class="s2">not in </span><span class="s1">seen: 
+                    seen.add(word) 
+                    matches.append(self._callable_postfix(val</span><span class="s2">, </span><span class="s1">word)) 
+        </span><span class="s2">return </span><span class="s1">matches 
+ 
+    </span><span class="s2">def </span><span class="s1">attr_matches(self</span><span class="s2">, </span><span class="s1">text): 
+        </span><span class="s0">&quot;&quot;&quot;Compute matches when text contains a dot. 
+ 
+        Assuming the text is of the form NAME.NAME....[NAME], and is 
+        evaluable in self.namespace, it will be evaluated and its attributes 
+        (as revealed by dir()) are used as possible completions.  (For class 
+        instances, class members are also considered.) 
+ 
+        WARNING: this can still invoke arbitrary C code, if an object 
+        with a __getattr__ hook is evaluated. 
+ 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        </span><span class="s2">import </span><span class="s1">re 
+        m = re.match(</span><span class="s3">r&quot;(\w+(\.\w+)*)\.(\w*)&quot;</span><span class="s2">, </span><span class="s1">text) 
+        </span><span class="s2">if not </span><span class="s1">m: 
+            </span><span class="s2">return </span><span class="s1">[] 
+        expr</span><span class="s2">, </span><span class="s1">attr = m.group(</span><span class="s5">1</span><span class="s2">, </span><span class="s5">3</span><span class="s1">) 
+        </span><span class="s2">try</span><span class="s1">: 
+            thisobject = eval(expr</span><span class="s2">, </span><span class="s1">self.namespace) 
+        </span><span class="s2">except </span><span class="s1">Exception: 
+            </span><span class="s2">return </span><span class="s1">[] 
+ 
+        </span><span class="s4"># get the content of the object, except __builtins__</span><span class="s1"> 
+        words = set(dir(thisobject)) 
+        words.discard(</span><span class="s3">&quot;__builtins__&quot;</span><span class="s1">) 
+ 
+        </span><span class="s2">if </span><span class="s1">hasattr(thisobject</span><span class="s2">, </span><span class="s3">'__class__'</span><span class="s1">): 
+            words.add(</span><span class="s3">'__class__'</span><span class="s1">) 
+            words.update(get_class_members(thisobject.__class__)) 
+        matches = [] 
+        n = len(attr) 
+        </span><span class="s2">for </span><span class="s1">word </span><span class="s2">in </span><span class="s1">words: 
+            </span><span class="s2">if </span><span class="s1">word[:n] == attr: 
+                </span><span class="s2">try</span><span class="s1">: 
+                    val = getattr(thisobject</span><span class="s2">, </span><span class="s1">word) 
+                </span><span class="s2">except </span><span class="s1">Exception: 
+                    </span><span class="s2">continue  </span><span class="s4"># Exclude properties that are not set</span><span class="s1"> 
+                word = self._callable_postfix(val</span><span class="s2">, </span><span class="s3">&quot;%s.%s&quot; </span><span class="s1">% (expr</span><span class="s2">, </span><span class="s1">word)) 
+                matches.append(word) 
+        matches.sort() 
+        </span><span class="s2">return </span><span class="s1">matches 
+ 
+</span><span class="s2">def </span><span class="s1">get_class_members(klass): 
+    ret = dir(klass) 
+    </span><span class="s2">if </span><span class="s1">hasattr(klass</span><span class="s2">,</span><span class="s3">'__bases__'</span><span class="s1">): 
+        </span><span class="s2">for </span><span class="s1">base </span><span class="s2">in </span><span class="s1">klass.__bases__: 
+            ret = ret + get_class_members(base) 
+    </span><span class="s2">return </span><span class="s1">ret 
+ 
+</span><span class="s2">try</span><span class="s1">: 
+    </span><span class="s2">import </span><span class="s1">readline 
+</span><span class="s2">except </span><span class="s1">ImportError: 
+    _readline_available = </span><span class="s2">False</span><span class="s1"> 
+</span><span class="s2">else</span><span class="s1">: 
+    readline.set_completer(Completer().complete) 
+    </span><span class="s4"># Release references early at shutdown (the readline module's</span><span class="s1"> 
+    </span><span class="s4"># contents are quasi-immortal, and the completer function holds a</span><span class="s1"> 
+    </span><span class="s4"># reference to globals).</span><span class="s1"> 
+    atexit.register(</span><span class="s2">lambda</span><span class="s1">: readline.set_completer(</span><span class="s2">None</span><span class="s1">)) 
+    _readline_available = </span><span class="s2">True</span><span class="s1"> 
+</span></pre>
+</body>
+</html>

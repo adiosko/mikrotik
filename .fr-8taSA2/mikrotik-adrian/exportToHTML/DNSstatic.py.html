@@ -1,0 +1,120 @@
+<html>
+<head>
+<title>DNSstatic.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+DNSstatic.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">DNSstatic: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listRecords(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all static records 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk([</span><span class="s4">'/ip/dns/static/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">dns == {}: 
+            print(</span><span class="s4">&quot;No record found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Name</span><span class="s0">\t</span><span class="s4">Address</span><span class="s0">\t</span><span class="s4">TTL&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">dns: 
+                print(dns[i][</span><span class="s4">'name'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+dns[i][</span><span class="s4">'address'</span><span class="s1">]+</span><span class="s4">&quot;</span><span class="s0">\t</span><span class="s4">&quot;</span><span class="s1">+dns[i][</span><span class="s4">'ttl'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">addRecord(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add record 
+        :param name: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk([</span><span class="s4">'/ip/dns/static/add'</span><span class="s0">,</span><span class="s4">'=name='</span><span class="s1">+name</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+address]) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">removeRecord(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will remove record 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk([</span><span class="s4">'/ip/dns/static/remove'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+name]) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">enableRecord(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will enable record 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s4">'/ip/dns/static/enable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">disableRecord(self</span><span class="s0">,</span><span class="s1">name): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will disable record 
+        :param name: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s4">'/ip/dns/static/disable'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">commentRecord(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">comment): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will comment record 
+        :param name: 
+        :param comment: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s4">'/ip/dns/static/comment'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">,</span><span class="s4">'=comment='</span><span class="s1">+comment] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">setName(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">newName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will rename name of server 
+        :param name: 
+        :param newName: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s4">'/ip/dns/static/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=name=' </span><span class="s1">+ newName] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">setAddress(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">address): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set address 
+        :param name: 
+        :param address: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s4">'/ip/dns/static/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=address=' </span><span class="s1">+ address] ) 
+        </span><span class="s0">return </span><span class="s1">dns 
+ 
+    </span><span class="s0">def </span><span class="s1">setTtl(self</span><span class="s0">,</span><span class="s1">name</span><span class="s0">,</span><span class="s1">ttl=</span><span class="s4">&quot;1d 00:00:00&quot;</span><span class="s1">): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will set ttl for dns 
+        :param name: 
+        :param ttl: 
+        :return: 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        dns = self.client.talk( [</span><span class="s4">'/ip/dns/static/set'</span><span class="s0">, </span><span class="s4">'=numbers=' </span><span class="s1">+ name</span><span class="s0">, </span><span class="s4">'=ttl=' </span><span class="s1">+ ttl] ) 
+        </span><span class="s0">return </span><span class="s1">dns</span></pre>
+</body>
+</html>

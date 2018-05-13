@@ -1,0 +1,108 @@
+<html>
+<head>
+<title>AutoUpdate.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(104,151,187); }
+.s3 { color: rgb(98,151,85); font-style: italic; }
+.s4 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+AutoUpdate.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapyClient 
+</span><span class="s0">from </span><span class="s1">tikapy </span><span class="s0">import </span><span class="s1">TikapySslClient 
+ 
+</span><span class="s0">class </span><span class="s1">AutoUpdate: 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        self.client = TikapyClient( address</span><span class="s0">, </span><span class="s2">8728 </span><span class="s1">) 
+        self.client.login( username</span><span class="s0">,</span><span class="s1">password) 
+ 
+    </span><span class="s0">def </span><span class="s1">listSystemUpgradePackages(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all updates downlaaded 
+        :return: lisf of updates 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        update = self.client.talk([</span><span class="s4">'/system/upgrade/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">update == {}: 
+            print(</span><span class="s4">&quot;No update files found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(update) 
+        </span><span class="s0">return </span><span class="s1">update 
+ 
+    </span><span class="s0">def </span><span class="s1">downloadSpecificUpdateFile(self</span><span class="s0">,</span><span class="s1">fileName): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will download specific update by its name 
+        :param fileName: name of package u wanna download 
+        :return:  list of packages 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        files = self.client.talk([</span><span class="s4">'/system/upgrade/download'</span><span class="s0">,</span><span class="s4">'=numbers='</span><span class="s1">+fileName]) 
+        </span><span class="s0">return </span><span class="s1">files 
+ 
+    </span><span class="s0">def </span><span class="s1">downloadUpdates(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will download all updates to mikrotik 
+        :return:  list of updates 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        files = self.client.talk( [</span><span class="s4">'/system/upgrade/download-all'</span><span class="s1">] ) 
+        </span><span class="s0">return </span><span class="s1">files 
+ 
+    </span><span class="s0">def </span><span class="s1">listUpdateSources(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list all update sources 
+        :return: list of sources 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        sources = self.client.talk([</span><span class="s4">'/system/upgrade/upgrade-package-source/print'</span><span class="s1">]) 
+        </span><span class="s0">if </span><span class="s1">sources == {}: 
+            print(</span><span class="s4">&quot;No source found&quot;</span><span class="s1">) 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(</span><span class="s4">&quot;Address</span><span class="s0">\t</span><span class="s4">Username&quot;</span><span class="s1">) 
+            </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">sources: 
+                print(sources[i][</span><span class="s4">'address'</span><span class="s1">]+</span><span class="s4">&quot; &quot;</span><span class="s1">+sources[i][</span><span class="s4">'user'</span><span class="s1">]) 
+        </span><span class="s0">return </span><span class="s1">sources 
+ 
+    </span><span class="s0">def </span><span class="s1">addDownloadSource(self</span><span class="s0">,</span><span class="s1">address</span><span class="s0">,</span><span class="s1">username): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will add Download source by address and username 
+        :param address: source address (IP) 
+        :param username: source username 
+        :return: list of words 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        source = self.client.talk([</span><span class="s4">'/system/upgrade/upgrade-package-source/add'</span><span class="s0">,</span><span class="s4">'=address='</span><span class="s1">+address</span><span class="s0">,</span><span class="s4">'=user='</span><span class="s1">+username]) 
+        </span><span class="s0">return </span><span class="s1">source 
+ 
+    </span><span class="s0">def </span><span class="s1">setDownloadMirror(self</span><span class="s0">,</span><span class="s1">enabled</span><span class="s0">,</span><span class="s1">server1</span><span class="s0">,</span><span class="s1">server2</span><span class="s0">,</span><span class="s1">interval</span><span class="s0">,</span><span class="s1">username</span><span class="s0">,</span><span class="s1">password): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will setup Download MIrror 
+        :param enabled:  enable status yes or no 
+        :param server1: IP of primary server 
+        :param server2: IP of secondary server 
+        :param interval: interval of checking 
+        :param username: username on server 
+        :param password: password on server 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mirror = self.client.talk([</span><span class="s4">'/system/upgrade/mirror/set'</span><span class="s0">,</span><span class="s4">'=enabled='</span><span class="s1">+enabled 
+                                   </span><span class="s0">,</span><span class="s4">'=primary-server='</span><span class="s1">+server1</span><span class="s0">,</span><span class="s4">'=secondary-server='</span><span class="s1">+server2</span><span class="s0">,</span><span class="s4">'=check-interval='</span><span class="s1">+interval 
+                                   </span><span class="s0">,</span><span class="s4">'=user='</span><span class="s1">+username</span><span class="s0">,</span><span class="s4">'=password='</span><span class="s1">+password]) 
+        </span><span class="s0">return </span><span class="s1">mirror 
+ 
+    </span><span class="s0">def </span><span class="s1">listMirrors(self): 
+        </span><span class="s3">&quot;&quot;&quot; 
+        Method will list setup mirrors to download packages 
+        :return: list 
+        &quot;&quot;&quot;</span><span class="s1"> 
+        mirror = self.client.talk([</span><span class="s4">'/system/upgrade/mirror/print'</span><span class="s1">]) 
+        print(mirror) 
+        </span><span class="s0">return </span><span class="s1">mirror 
+</span></pre>
+</body>
+</html>
