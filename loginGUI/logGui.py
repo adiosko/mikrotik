@@ -11,11 +11,11 @@ qtCreatorFile = "./loginGUI/log.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-class logGui(QtGui.QMainWindow,Ui_MainWindow):
+class logGui(QtGui.QWidget,Ui_MainWindow):
     def __init__(self,user,pwd,server):
         #super( loginMikrotik, self ).__init__( )
         #self.setupUi(self)
-        QtGui.QMainWindow.__init__(self)
+        QtGui.QWidget.__init__(self)
         Ui_MainWindow.__init__(self)
         self.user = user
         self.pwd = pwd

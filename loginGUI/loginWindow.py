@@ -69,7 +69,10 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.pwd = pwd
         self.server = server
         self.setupUi(self)
+        self.mdi = QMdiArea()
+        self.setCentralWidget(self.mdi)
         self.setWindowTitle( user + "@" + server )
+        self.opened_window = []
         self.init_buttons()
         #sablona mikrotik tlacitka a menu (vytvorenie IP tlacitka)
         self.menu = self.menuBar()
@@ -541,8 +544,12 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.opened_window.show()
 
     def mangle(self):
-        self.opened_window = mangleGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        #self.opened_window.append(mangleGui(self.user,self.pwd,self.server))
+        #self.opened_window[-1].show()
+        mangle = mangleGui(self.user,self.pwd,self.server)
+        self.mdi.addSubWindow(mangle)
+        mangle.show()
+        self.mdi.cascadeSubWindows()
 
     def logging(self):
         self.opened_window = loggingGui(self.user,self.pwd,self.server)
