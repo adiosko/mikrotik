@@ -96,7 +96,7 @@ class usersGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addUserGui( self.user, self.pwd, self.server, self )
         #self.nd.show()
         action = addUserGui( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 

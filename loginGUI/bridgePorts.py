@@ -95,8 +95,9 @@ class bridgePort(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.show()
 
     def addPort(self):
-        self.nd =addPortGui(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        action = addPortGui( self.user, self.pwd, self.server, self )
+        self.parent.mdi.addSubWindow( action )
+        action.show()
 
     def init_buttons(self):
         #self.addButton.clicked.connect( self.addVlan )

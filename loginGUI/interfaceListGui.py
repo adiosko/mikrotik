@@ -65,7 +65,7 @@ class interfaceListGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addInterfaceListGui(self.user,self.pwd,self.server,self)
         #self.nd.show()
         action = addInterfaceListGui( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 

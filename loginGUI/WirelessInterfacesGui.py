@@ -102,7 +102,7 @@ class wirelessInterfaceGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addWirelessInterfaceGui( self.user, self.pwd, self.server, self )
         #self.nd.show()
         action = addWirelessInterfaceGui( self.user, self.pwd, self.server,self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
 
     def init_buttons(self):

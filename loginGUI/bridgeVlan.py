@@ -85,8 +85,9 @@ class bridgeVLAN(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.show()
 
     def addVlan(self):
-        self.nd = addVLANGui(self.user, self.pwd, self.server,self)
-        self.nd.show()
+        action = addVLANGui( self.user, self.pwd, self.server, self )
+        self.parent.mdi.addSubWindow( action )
+        action.show()
 
 
     def init_buttons(self):

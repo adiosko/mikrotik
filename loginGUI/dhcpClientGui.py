@@ -111,7 +111,7 @@ class dhcpClientGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addDhcpclientGui(self.user, self.pwd, self.server,self)
         #self.nd.show()
         action = addDhcpclientGui( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 

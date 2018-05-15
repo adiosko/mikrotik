@@ -51,7 +51,7 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addArpGui(self.user, self.pwd, self.server,self)
         #self.nd.show()
         action = addArpGui( self.user, self.pwd, self.server, self)
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 

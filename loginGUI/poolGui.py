@@ -41,7 +41,7 @@ class poolGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addPool( self.user, self.pwd, self.server, self )
         #self.nd.show()
         action = addPool( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 

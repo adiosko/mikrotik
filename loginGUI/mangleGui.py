@@ -158,7 +158,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addMangleInput( self.user, self.pwd, self.server, self )
         #self.nd.show()
         action = addMangleInput( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -166,7 +166,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addMangleInputReject( self.user, self.pwd, self.server, self )
         #self.nd.show()
         action = addMangleInputReject( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -174,7 +174,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addMangleInputDrop( self.user, self.pwd, self.server, self )
         #self.nd.show()
         action = addMangleInputDrop( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -182,7 +182,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addMangleForwardAccept(self.user, self.pwd, self.server, self )
         #self.nd.show()
         action = addMangleForwardAccept( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -190,7 +190,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addMangleForwardDrop( self.user, self.pwd, self.server, self )
         #self.nd.show()
         action = addMangleForwardDrop( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -198,7 +198,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addMangleForwardReject( self.user, self.pwd, self.server, self )
         #self.nd.show()
         action = addMangleForwardReject( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -206,7 +206,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addMangleOutputAccept(self.user,self.pwd,self.server,self)
         #self.nd.show()
         action = addMangleOutputAccept( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -214,7 +214,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addMangleOutputDrop(self.user,self.pwd,self.server,self)
         #elf.nd.show()
         action = addMangleOutputDrop( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -222,7 +222,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addMangleOutputReject(self.user,self.pwd,self.server,self)
         #self.nd.show()
         action = addMangleOutputReject( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -231,7 +231,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addManglePostrouteAccept(self.user,self.pwd,self.server,self)
         #self.nd.show()
         action = addManglePostrouteAccept( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -239,7 +239,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addManglePostrouteDrop(self.user,self.pwd,self.server,self)
         #self.nd.show()
         action = addManglePostrouteDrop( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -247,7 +247,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addManglePostrouteReject(self.user,self.pwd,self.server,self)
         #self.nd.show()
         action = addManglePostrouteReject( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -255,7 +255,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addManglePrerouteAccept(self.user,self.pwd,self.server,self)
         #self.nd.show()
         action = addManglePrerouteAccept( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -263,7 +263,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addManglePrerouteDrop(self.user,self.pwd,self.server,self)
         #self.nd.show()
         action = addManglePrerouteDrop( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -271,7 +271,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd = addManglePrerouteReject(self.user,self.pwd,self.server,self)
         #self.nd.show()
         action = addManglePrerouteReject( self.user, self.pwd, self.server, self )
-        self.mdi.addSubWindow( action )
+        self.parent.mdi.addSubWindow( action )
         action.show()
         #self.mdi.cascadeSubWindows()
 
