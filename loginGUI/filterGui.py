@@ -149,40 +149,76 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def addInputAccept(self):
-        self.nd = addInputAcceptGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addInputAcceptGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addInputAcceptGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addInputReject(self):
-        self.nd = addInputRejectGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addInputRejectGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addInputRejectGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addInputDrop(self):
-        self.nd = addInputDropGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addInputDropGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addInputDropGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addForwardAccept(self):
-        self.nd = addForwardAcceptGui(self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addForwardAcceptGui(self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addForwardAcceptGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addForwardDrop(self):
-        self.nd = addForwardDropGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addForwardDropGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addForwardDropGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addForwardReject(self):
-        self.nd = addForwardRejectGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addForwardRejectGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addForwardRejectGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addOutpuAccept(self):
-        self.nd = addOutputAcceptGui(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addOutputAcceptGui(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addOutputAcceptGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addOutpuDrop(self):
-        self.nd = addOutputDenyGui(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addOutputDenyGui(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addOutputDenyGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addOutpuReject(self):
-        self.nd = addOutputRejectGui(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addOutputRejectGui(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addOutputRejectGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
     """
     def addSrcNat(self):
         self.nd = addSrcNatGui( self.user, self.pwd, self.server, self )

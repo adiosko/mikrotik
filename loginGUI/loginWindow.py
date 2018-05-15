@@ -71,6 +71,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         self.setupUi(self)
         self.mdi = QMdiArea()
         self.setCentralWidget(self.mdi)
+        self.mdi.cascadeSubWindows()
         self.setWindowTitle( user + "@" + server )
         self.opened_window = []
         self.init_buttons()
@@ -122,7 +123,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         #self.menuFiles.addAction( self.actionFiles )
         #self.actionFiles.triggered.connect( self.files )
         #vytvorenie podtlacitka ARP
-        self.actionArp =QAction("ARP",self)
+        self.actionArp = QAction("ARP",self)
         self.menuIP.addAction( self.actionArp )
         self.actionArp.triggered.connect( self.openArpWindow)
         #vytvorenie DHCP klient
@@ -314,20 +315,22 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         pass
 
     def openAddressesWindow(self):
-        print("test")
-        self.opened_window = ipAddressesGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = ipAddressesGui( self.user, self.pwd, self.server)
+        action.parent = self
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def openArpWindow(self):
-        print("arp")
-        self.opened_window = arpGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = arpGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def quit(self):
         sys.exit()
 
     def about(self):
-        print("C")
         self.msg = QMessageBox()
         self.msg.setIcon(QMessageBox.Information)
         self.msg.setText("Info")
@@ -361,199 +364,294 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.show()
 
     def package(self):
-        self.opened_window = packages( self.user, self.pwd, self.server )
-        self.opened_window.show()
+        action = packages( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def disks(self):
-        self.opened_window = disks(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = disks( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def driver(self):
-        self.opened_window = drivers(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = drivers( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def files(self):
-        self.opened_window = fileGui( self.user, self.pwd, self.server )
-        self.opened_window.show()
+        action = fileGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def history(self):
-        self.opened_window = history(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = history( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def log(self):
-        self.opened_window = logGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = logGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.setFixedSize(640,480)
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def restore(self):
-        self.opened_window = restoreGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = restoreGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def identity(self):
-        self.opened_window = hostnameGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = hostnameGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def reset(self):
-        self.opened_window = resetGui( self.user, self.pwd, self.server )
-        self.opened_window.show()
+        action = resetGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def irq(self):
-        self.opened_window = irqGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = irqGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def cpu(self):
-        self.opened_window = cpuGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = cpuGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def usb(self):
-        self.opened_window = usbGui( self.user, self.pwd, self.server )
-        self.opened_window.show()
+        action = usbGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def pci(self):
-        self.opened_window = pciGui( self.user, self.pwd, self.server )
-        self.opened_window.show()
+        action = pciGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def listUsers(self):
-        self.opened_window = usersActive(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = usersActive( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def users(self):
-        self.opened_window = usersGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = usersGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def interfaces(self):
-        self.opened_window = interfaceGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = interfaceGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        action.setFixedSize(1070,644)
+        self.mdi.cascadeSubWindows()
 
     def bridgeHosts(self):
-        self.opened_window = bridgeConnections(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = bridgeConnections( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def bridgeVlan(self):
-        self.opened_window = bridgeVLAN(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = bridgeVLAN( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def bridgePort(self):
-        self.opened_window = bridgePort(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = bridgePort( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def bridge(self):
-        self.opened_window = bridgeGUI(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = bridgeGUI( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def wirelessInterface(self):
-        self.opened_window = wirelessInterfaceGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = wirelessInterfaceGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def security(self):
-        self.opened_window = securityGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = securityGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def registrationTable(self):
-        self.opened_window = registrationGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = registrationGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def services(self):
-        self.opened_window = servicesGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = servicesGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def nexthops(self):
-        self.opened_window= nextHopGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = nextHopGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def poolUsed(self):
-        self.opened_window = poolUsedGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = poolUsedGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def route(self):
-        self.opened_window =routeGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = routeGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def pool(self):
-        self.opened_window = poolGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = poolGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def neighbors(self):
-        self.opened_window = neighborList(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = neighborList( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def fwcon(self):
-        self.opened_window = fwConnection(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = fwConnection( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def nat(self):
-        self.opened_window = natGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = natGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def filter(self):
-        self.opened_window = fwGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = fwGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def serviceport(self):
-        self.opened_window = servicePortGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = servicePortGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def dnsServer(self):
-        self.opened_window = dnsGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = dnsGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def firewallConnection(self):
         pass
 
     def addressList(self):
-        self.opened_window = addresslistGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = addresslistGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def cachedns(self):
-        self.opened_window = dnscacheGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = dnscacheGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def staticrecord(self):
-        self.opened_window = dnsstaticGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = dnsstaticGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def dhcplease(self):
-        self.opened_window= dhcpleaseGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = dhcpleaseGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def dhcpclient(self):
-        self.opened_window = dhcpClientGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = dhcpClientGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def dhcprelay(self):
-        self.opened_window = dhcpRelayGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = dhcpRelayGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def dhcpserver(self):
         self.opened_window = dhcpServerGui(self.user,self.pwd,self.server)
         self.opened_window.show()
 
     def ethernet(self):
-        self.opened_window = ethernetGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = ethernetGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.setFixedSize(1239,339)
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def interfaceList(self):
-        self.opened_window = interfaceListGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = interfaceListGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.setFixedSize(636,336)
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def interfaceMembers(self):
-        self.opened_window = interfaceListMemberGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = interfaceListMemberGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.setFixedSize(715,352)
+        action.show()
+        self.mdi.cascadeSubWindows()
+
 
     def vlanInterface(self):
-        self.opened_window = interfaceVlanGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = interfaceVlanGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.setFixedSize(1002,616)
+        action.show()
+        self.mdi.cascadeSubWindows()
 
     def mangle(self):
-        #self.opened_window.append(mangleGui(self.user,self.pwd,self.server))
-        #self.opened_window[-1].show()
         mangle = mangleGui(self.user,self.pwd,self.server)
         self.mdi.addSubWindow(mangle)
         mangle.show()
         self.mdi.cascadeSubWindows()
 
     def logging(self):
-        self.opened_window = loggingGui(self.user,self.pwd,self.server)
-        self.opened_window.show()
+        action = loggingGui( self.user, self.pwd, self.server )
+        self.mdi.addSubWindow( action )
+        action.show()
+        self.mdi.cascadeSubWindows()
 
 if __name__ == "__main__":
     app = QtGui.QApplication( sys.argv )

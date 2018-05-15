@@ -144,24 +144,44 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.show()
 
     def addMasquarade(self):
-        self.nd = addMasquaradeGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addMasquaradeGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addMasquaradeGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addSrcNat(self):
-        self.nd = addSrcNatGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addSrcNatGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addSrcNatGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addDstNat(self):
-        self.nd = addDstNatGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addDstNatGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addDstNatGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addSrcAccept(self):
-        self.nd = addSrcAcceptGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addSrcAcceptGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addSrcAcceptGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addDstAccept(self):
-        self.nd = addDstAcceptGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addDstAcceptGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addDstAcceptGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listNat)

@@ -11,11 +11,11 @@ qtCreatorFile = "./loginGUI/history.ui"
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-class history(QtGui.QWidget,Ui_MainWindow):
+class history(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self,user,pwd,server):
         #super( loginMikrotik, self ).__init__( )
         #self.setupUi(self)
-        QtGui.QWidget.__init__(self)
+        QtGui.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         #super().__init__( self, None, QtCore.Qt.WindowStaysOnTopHint )
         self.user = user

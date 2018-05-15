@@ -92,8 +92,12 @@ class dnsstaticGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.show()
 
     def addItem(self):
-        self.nd = addStaticGui(self.user, self.pwd, self.server,self)
-        self.nd.show()
+        #self.nd = addStaticGui(self.user, self.pwd, self.server,self)
+        #self.nd.show()
+        action = addStaticGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
 
     def init_buttons(self):

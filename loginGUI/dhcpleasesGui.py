@@ -114,8 +114,12 @@ class dhcpleaseGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.show()
 
     def addLease(self):
-        self.nd = addStaticLease(self.user, self.pwd, self.server,self)
-        self.nd.show()
+        #self.nd = addStaticLease(self.user, self.pwd, self.server,self)
+        #self.nd.show()
+        action = addStaticLease( self.user, self.pwd, self.server, self)
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def makeStatic(self):
         try:

@@ -50,8 +50,12 @@ class routeGui(QtGui.QMainWindow,Ui_MainWindow):
             self.address_to_id[devices[i]['dst-address']] = devices[i]['.id']
 
     def addRoute(self):
-        self.nd = addRoute(self.user, self.pwd, self.server,self)
-        self.nd.show()
+        #self.nd = addRoute(self.user, self.pwd, self.server,self)
+        #self.nd.show()
+        action = addRoute( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
 
     def enableRoute(self):

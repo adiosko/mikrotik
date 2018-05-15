@@ -92,8 +92,10 @@ class bridgeGUI(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.show()
 
     def addBridge(self):
-        self.nd = addBridgeGui(self.user, self.pwd, self.server,self)
-        self.nd.show()
+        action = addBridgeGui( self.user, self.pwd, self.server, self)
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def init_buttons(self):
         #self.addButton.clicked.connect( self.addVlan )

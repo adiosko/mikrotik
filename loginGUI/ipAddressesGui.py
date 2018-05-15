@@ -4,8 +4,10 @@ from PyQt4.QtCore import *
 from PyQt4 import QtCore, QtGui, uic
 #import  LoginManager
 from loginGUI.addAddressGui import addAddressGui
+#from loginGUI.loginWindow import loginMikrotik
 #my designed file
 from IPv4.Addresses import  Addresses
+#from loginGUI.loginWindow import loginMikrotik
 
 qtCreatorFile = "./loginGUI/ipAddresses.ui"
 
@@ -21,6 +23,9 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
         self.pwd = pwd
         self.server = server
         self.setupUi(self)
+        #self.parent = loginMikrotik(self.user,self.pwd,self.server, self)
+        #self.mdi = QMdiArea()
+        #self.setCentralWidget( self.mdi )
         self.init_buttons()
         #self.address_to_id = {}
         self.addr = Addresses(self.server,self.user,self.pwd)
@@ -41,8 +46,12 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
             self.address_to_id[devices[i]['address']] = devices[i]['.id']
 
     def addAddress(self):
-        self.nd = addAddressGui(self.user,self.pwd,self.server, self)
-        self.nd.show()
+        #self.nd = addAddressGui(self.user,self.pwd,self.server, self)
+        #self.nd.show()
+        action = addAddressGui( self.user, self.pwd, self.server, self)
+        self.parent.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
 
     def enableAddress(self):
@@ -89,33 +98,6 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.setInformativeText( str(e) )
             self.msg.setWindowTitle( str( e.args[0] ) )
             self.msg.show()
-
-    # funguje na 30 percent
-    def setAddress(self):
-        current = self.ipAddressValues.currentRow()
-        itemAddress = self.ipAddressValues.item( current)
-        self.addr.setAddress( str( current),itemAddress)
-        itemAddress.setFlags(Qt.ItemIsEditable)
-        self.listAddresses()
-
-    # funguje na 30 percent
-    def setNetwork(self):
-        current = self.networkValues.currentRow()
-        itemNetwork = self.networkValues.item( current )
-        self.addr.setNetwork( str( current ),itemNetwork )
-        itemNetwork.setFlags( Qt.ItemIsEditable )
-        self.listAddresses()
-
-    #funguje na 30 percent
-    def setInterface(self):
-        current = self.interfaceValues.currentRow()
-        idAddress = self.address_to_id[current.text()]
-        itemInterface = self.interfaceValues.item( idAddress )
-        itemInterfaceSet = self.interfaceValues.toPlainText()
-        editInterface = itemInterface.setFlags( Qt.ItemIsEditable )
-        print(editInterface)
-        self.addr.setInterface( idAddress, editInterface )
-        self.listAddresses()
 
 
     def init_buttons(self):

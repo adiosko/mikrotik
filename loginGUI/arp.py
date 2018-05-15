@@ -48,8 +48,12 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
             self.address_to_id[devices[i]['address']] = devices[i]['.id']
 
     def addArp(self):
-        self.nd = addArpGui(self.user, self.pwd, self.server,self)
-        self.nd.show()
+        #self.nd = addArpGui(self.user, self.pwd, self.server,self)
+        #self.nd.show()
+        action = addArpGui( self.user, self.pwd, self.server, self)
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def enableArp(self):
         try:

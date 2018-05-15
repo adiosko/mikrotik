@@ -108,8 +108,12 @@ class dhcpClientGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def addClient(self):
-        self.nd = addDhcpclientGui(self.user, self.pwd, self.server,self)
-        self.nd.show()
+        #self.nd = addDhcpclientGui(self.user, self.pwd, self.server,self)
+        #self.nd.show()
+        action = addDhcpclientGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def releaseAddress(self):
         try:

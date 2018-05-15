@@ -51,8 +51,12 @@ class securityGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def addProfile(self):
-        self.nd = addProfile( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addProfile( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addProfile( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listProfiles )

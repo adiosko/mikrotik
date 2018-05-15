@@ -91,8 +91,12 @@ class interfaceVlanGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.show()
 
     def addList(self):
-        self.nd = addVLANInterfaceGui(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addVLANInterfaceGui(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addVLANInterfaceGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
 
     def init_buttons(self):

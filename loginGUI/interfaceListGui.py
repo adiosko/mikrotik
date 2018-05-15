@@ -62,8 +62,12 @@ class interfaceListGui(QtGui.QMainWindow,Ui_MainWindow):
             self.msg.show()
 
     def addList(self):
-        self.nd = addInterfaceListGui(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addInterfaceListGui(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addInterfaceListGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
 
     def init_buttons(self):

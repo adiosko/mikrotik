@@ -101,8 +101,12 @@ class dhcpServerGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def addClient(self):
-        self.nd = addDhcpServerGui(self.user, self.pwd, self.server,self)
-        self.nd.show()
+        #self.nd = addDhcpServerGui(self.user, self.pwd, self.server,self)
+        #self.nd.show()
+        action = addDhcpServerGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listAddresses)

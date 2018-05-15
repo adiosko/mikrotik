@@ -62,13 +62,6 @@ class usersGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def enableUser(self):
-        '''
-        currentUser = self.userField.currentRow()
-        itemUser = self.userField.item( currentUser)
-        idUser = self.address_to_id[itemUser.text()]
-        self.addr.enableSystemUser( idUser)
-        itemAddress.setFlags( Qt.ItemIsSelectable )
-        '''
         try:
             current = self.userField.currentRow()
             itemName = self.userField.item( current )
@@ -100,8 +93,12 @@ class usersGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def addUser(self):
-        self.nd = addUserGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addUserGui( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addUserGui( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def init_buttons(self):
         self.addButton.clicked.connect( self.addUser )

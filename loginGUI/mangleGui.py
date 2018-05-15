@@ -155,64 +155,125 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def addInputAccept(self):
-        self.nd = addMangleInput( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addMangleInput( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addMangleInput( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addInputReject(self):
-        self.nd = addMangleInputReject( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addMangleInputReject( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addMangleInputReject( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addInputDrop(self):
-        self.nd = addMangleInputDrop( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addMangleInputDrop( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addMangleInputDrop( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addForwardAccept(self):
-        self.nd = addMangleForwardAccept(self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addMangleForwardAccept(self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addMangleForwardAccept( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addForwardDrop(self):
-        self.nd = addMangleForwardDrop( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addMangleForwardDrop( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addMangleForwardDrop( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addForwardReject(self):
-        self.nd = addMangleForwardReject( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addMangleForwardReject( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addMangleForwardReject( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addOutpuAccept(self):
-        self.nd = addMangleOutputAccept(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addMangleOutputAccept(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addMangleOutputAccept( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addOutpuDrop(self):
-        self.nd = addMangleOutputDrop(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addMangleOutputDrop(self.user,self.pwd,self.server,self)
+        #elf.nd.show()
+        action = addMangleOutputDrop( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addOutpuReject(self):
-        self.nd = addMangleOutputReject(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addMangleOutputReject(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addMangleOutputReject( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
+
 
     def addPostAccept(self):
-        self.nd = addManglePostrouteAccept(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addManglePostrouteAccept(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addManglePostrouteAccept( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addPostDrop(self):
-        self.nd = addManglePostrouteDrop(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addManglePostrouteDrop(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addManglePostrouteDrop( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addPostReject(self):
-        self.nd = addManglePostrouteReject(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addManglePostrouteReject(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addManglePostrouteReject( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addPreAccept(self):
-        self.nd = addManglePrerouteAccept(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addManglePrerouteAccept(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addManglePrerouteAccept( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addPreDrop(self):
-        self.nd = addManglePrerouteDrop(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addManglePrerouteDrop(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addManglePrerouteDrop( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def addPreReject(self):
-        self.nd = addManglePrerouteReject(self.user,self.pwd,self.server,self)
-        self.nd.show()
+        #self.nd = addManglePrerouteReject(self.user,self.pwd,self.server,self)
+        #self.nd.show()
+        action = addManglePrerouteReject( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listRules)

@@ -94,8 +94,12 @@ class dhcpRelayGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def addClient(self):
-        self.nd = addDhcpRelayGui(self.user, self.pwd, self.server,self)
-        self.nd.show()
+        #self.nd = addDhcpRelayGui(self.user, self.pwd, self.server,self)
+        #self.nd.show()
+        action = addDhcpRelayGui( self.user, self.pwd, self.server, self)
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listAddresses)

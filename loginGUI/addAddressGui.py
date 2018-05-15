@@ -2,6 +2,7 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4 import QtCore, QtGui, uic
+#from loginGui import loginMikrotik
 #import  LoginManager
 #my designed file
 from IPv4.Addresses import  Addresses
@@ -21,6 +22,8 @@ class addAddressGui(QtGui.QMainWindow,Ui_MainWindow):
         self.pwd = pwd
         self.server = server
         self.setupUi(self)
+        #self.mdi = QMdiArea()
+        #self.setCentralWidget( loginMikrotik.mdi )
         self.init_buttons()
         self.addr = Addresses(self.server,self.user,self.pwd)
 

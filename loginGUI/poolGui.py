@@ -38,8 +38,12 @@ class poolGui(QtGui.QMainWindow,Ui_MainWindow):
 
 
     def addPool(self):
-        self.nd = addPool( self.user, self.pwd, self.server, self )
-        self.nd.show()
+        #self.nd = addPool( self.user, self.pwd, self.server, self )
+        #self.nd.show()
+        action = addPool( self.user, self.pwd, self.server, self )
+        self.mdi.addSubWindow( action )
+        action.show()
+        #self.mdi.cascadeSubWindows()
 
     def removePool(self):
         try:
