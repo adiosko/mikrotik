@@ -27,7 +27,6 @@ class addAddressListGui(QtGui.QMainWindow,Ui_MainWindow):
             address = self.addressField.toPlainText()
             self.addr.addAddressList(name,address)
             self.window_addr.listAddresses()
-            self.close()
         except Exception as e:
             from PyQt4.QtGui import QMessageBox
             self.msg = QMessageBox()

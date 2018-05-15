@@ -95,6 +95,7 @@ class interfaceVlanGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addVLANInterfaceGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(374,143)
         action.show()
         #self.mdi.cascadeSubWindows()
 

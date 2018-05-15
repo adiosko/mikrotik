@@ -96,6 +96,7 @@ class dnsstaticGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addStaticGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(452,126)
         action.show()
         #self.mdi.cascadeSubWindows()
 

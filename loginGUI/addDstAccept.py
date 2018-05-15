@@ -33,7 +33,6 @@ class addDstAcceptGui(QtGui.QMainWindow,Ui_MainWindow):
             dstaddr = self.dstField.toPlainText()
             self.addr.addDstAccept(dstaddr,srcaddr,protocol,srcport,dstport)
             self.address_window.listNat()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

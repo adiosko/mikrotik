@@ -54,6 +54,7 @@ class routeGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addRoute( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(380,105)
         action.show()
         #self.mdi.cascadeSubWindows()
 

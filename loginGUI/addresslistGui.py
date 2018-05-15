@@ -105,7 +105,9 @@ class addresslistGui(QtGui.QMainWindow,Ui_MainWindow):
     def addItem(self):
         action = addAddressListGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(450,118)
         action.show()
+        self.parent.mdi.cascadeSubWindows()
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listAddresses )

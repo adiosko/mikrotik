@@ -34,7 +34,6 @@ class addOutputDenyGui(QtGui.QMainWindow,Ui_MainWindow):
             interface = self.interfaceField.toPlainText()
             self.addr.addOutputdeny(dstaddr,srcaddr,protocol,srcport,dstport,interface)
             self.address_window.listRules()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

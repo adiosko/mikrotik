@@ -97,6 +97,7 @@ class bridgePort(QtGui.QMainWindow,Ui_MainWindow):
     def addPort(self):
         action = addPortGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(437,126)
         action.show()
 
     def init_buttons(self):

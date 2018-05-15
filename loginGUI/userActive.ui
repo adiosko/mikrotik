@@ -53,32 +53,12 @@
      <string>From</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="fromField">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>40</y>
-      <width>121</width>
-      <height>201</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QListWidget" name="userField">
     <property name="geometry">
      <rect>
       <x>30</x>
       <y>40</y>
-      <width>111</width>
-      <height>201</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="atField">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>40</y>
-      <width>161</width>
+      <width>631</width>
       <height>201</height>
      </rect>
     </property>
@@ -94,16 +74,6 @@
     </property>
     <property name="text">
      <string>At</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="viaField">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>40</y>
-      <width>121</width>
-      <height>201</height>
-     </rect>
     </property>
    </widget>
    <widget class="QLineEdit" name="version_3">
@@ -130,16 +100,6 @@
     </property>
     <property name="text">
      <string>Group</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="groupField">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>40</y>
-      <width>121</width>
-      <height>201</height>
-     </rect>
     </property>
    </widget>
   </widget>

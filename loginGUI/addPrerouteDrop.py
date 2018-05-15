@@ -33,7 +33,6 @@ class addManglePrerouteDrop(QtGui.QMainWindow,Ui_MainWindow):
             dstaddr = self.dstField.toPlainText()
             self.addr.addPreroutingdeny(dstaddr,srcaddr,protocol,srcport,dstport)
             self.address_window.listRules()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

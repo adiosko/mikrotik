@@ -27,7 +27,6 @@ class addStaticGui(QtGui.QMainWindow,Ui_MainWindow):
             address = self.addressField.toPlainText()
             self.addr.addRecord(name,address)
             self.pool_window.listAddresses()
-            self.close()
         except Exception as e:
             from PyQt4.QtGui import QMessageBox
             self.msg = QMessageBox()

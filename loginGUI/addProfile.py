@@ -28,7 +28,6 @@ class addProfile(QtGui.QMainWindow,Ui_MainWindow):
             password = self.passwordField.toPlainText()
             self.addr.addProfile(name,password)
             self.wireless_window.listProfiles()
-            self.close()
         except Exception as e:
             from PyQt4.QtGui import QMessageBox
             self.msg = QMessageBox()

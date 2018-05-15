@@ -31,7 +31,6 @@ class addVLANInterfaceGui(QtGui.QMainWindow,Ui_MainWindow):
             vlan  = self.vlanField.toPlainText()
             self.addr.addVlan(name,interface,vlan)
             self.arp_window.listInterfaces()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

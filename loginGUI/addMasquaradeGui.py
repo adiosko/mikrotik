@@ -29,7 +29,6 @@ class addMasquaradeGui(QtGui.QMainWindow,Ui_MainWindow):
             interface = self.interfaceField.toPlainText()
             self.addr.addMasquarade(interface)
             self.address_window.listNat()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

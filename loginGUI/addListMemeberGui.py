@@ -31,7 +31,6 @@ class addListMemberGui(QtGui.QMainWindow,Ui_MainWindow):
             interface = self.interfaceField.toPlainText()
             self.addr.addInterface(name,interface)
             self.address_window.listInterfaces()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

@@ -27,7 +27,6 @@ class addPool(QtGui.QMainWindow,Ui_MainWindow):
             range = self.rangeField.toPlainText()
             self.addr.addPool(name,range)
             self.pool_window.listPools()
-            self.close()
         except Exception as e:
             from PyQt4.QtGui import QMessageBox
             self.msg = QMessageBox()

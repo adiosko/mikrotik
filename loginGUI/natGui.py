@@ -148,6 +148,7 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addMasquaradeGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(383,111)
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -156,6 +157,7 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addSrcNatGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(395,231)
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -164,6 +166,7 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addDstNatGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(404,264)
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -172,6 +175,7 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addSrcAcceptGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(407,256)
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -180,6 +184,7 @@ class natGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addDstAcceptGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(389,213)
         action.show()
         #self.mdi.cascadeSubWindows()
 

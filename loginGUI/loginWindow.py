@@ -317,6 +317,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = ipAddressesGui( self.user, self.pwd, self.server)
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(525,318)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -324,6 +325,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = arpGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(625,298)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -366,18 +368,21 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
     def package(self):
         action = packages( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(353,396)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def disks(self):
         action = disks( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(564,286)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def driver(self):
         action = drivers( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(246,208)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -390,61 +395,70 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
     def history(self):
         action = history( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(858,464)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def log(self):
         action = logGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
-        action.setFixedSize(640,480)
+        action.setFixedSize(878,475)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def restore(self):
         action = restoreGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(336,100)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def identity(self):
         action = hostnameGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(402,90)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def reset(self):
         action = resetGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(273,185)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def irq(self):
         action = irqGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(743,284)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def cpu(self):
         action = cpuGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(720,298)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def usb(self):
         action = usbGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(750,243)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def pci(self):
         action = pciGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(617,236)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def listUsers(self):
         action = usersActive( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(844,265)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -452,6 +466,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = usersGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(684,299)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -459,7 +474,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = interfaceGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
-        action.setFixedSize( 1070, 644 )
+        action.setFixedSize( 1101, 651)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -467,6 +482,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
     def bridgeHosts(self):
         action = bridgeConnections( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(782,289)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -474,6 +490,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = bridgeVLAN( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(657,263)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -481,6 +498,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = bridgePort( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(1002,382)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -488,6 +506,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = bridgeGUI( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(1042,248)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -495,6 +514,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = wirelessInterfaceGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(889,268)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -502,30 +522,35 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = securityGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(686,276)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def registrationTable(self):
         action = registrationGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(637,263)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def services(self):
         action = servicesGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(812,323)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def nexthops(self):
         action = nextHopGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(702,282)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def poolUsed(self):
         action = poolUsedGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(809,274)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -533,6 +558,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = routeGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(979,275)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -540,18 +566,21 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = poolGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(457,245)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def neighbors(self):
         action = neighborList( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(1122,301)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def fwcon(self):
         action = fwConnection( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(952,405)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -559,6 +588,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = natGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(1278,626)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -566,18 +596,21 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = fwGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(1449,595)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def serviceport(self):
         action = servicePortGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(725,342)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def dnsServer(self):
         action = dnsGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(426,111)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -588,12 +621,14 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = addresslistGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(991,357)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def cachedns(self):
         action = dnscacheGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(647,365)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -601,12 +636,14 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = dnsstaticGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(745,356)
         action.show()
         self.mdi.cascadeSubWindows()
 
     def dhcplease(self):
         action = dhcpleaseGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(1030,391)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -614,6 +651,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = dhcpClientGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(1086,415)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -621,6 +659,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = dhcpRelayGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(815,374)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -628,6 +667,7 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         action = dhcpServerGui( self.user, self.pwd, self.server )
         action.parent = self
         self.mdi.addSubWindow( action )
+        action.setFixedSize(946,341)
         action.show()
         self.mdi.cascadeSubWindows()
 
@@ -667,12 +707,14 @@ class loginMikrotik(QtGui.QMainWindow,Ui_MainWindow):
         mangle = mangleGui(self.user,self.pwd,self.server)
         mangle.parent = self
         self.mdi.addSubWindow(mangle)
+        mangle.setFixedSize(1282,646)
         mangle.show()
         self.mdi.cascadeSubWindows()
 
     def logging(self):
         action = loggingGui( self.user, self.pwd, self.server )
         self.mdi.addSubWindow( action )
+        action.setFixedSize(1081,462)
         action.show()
         self.mdi.cascadeSubWindows()
 

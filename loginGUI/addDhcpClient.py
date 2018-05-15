@@ -29,7 +29,6 @@ class addDhcpclientGui(QtGui.QMainWindow,Ui_MainWindow):
             interface = self.interfaceField.toPlainText()
             self.addr.addClient(interface)
             self.address_window.listAddresses()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

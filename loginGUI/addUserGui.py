@@ -31,7 +31,6 @@ class addUserGui(QtGui.QMainWindow,Ui_MainWindow):
             group = self.groupField.text()
             self.addr.addUser(user,password,group)
             self.address_window.listUsers()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

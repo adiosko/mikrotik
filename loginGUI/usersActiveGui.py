@@ -28,16 +28,8 @@ class usersActive(QtGui.QMainWindow,Ui_MainWindow):
     def listUsers(self):
         devices = self.addr.listActiveUsers()
         self.userField.clear()
-        self.atField.clear()
-        self.fromField.clear()
-        self.viaField.clear()
-        self.groupField.clear()
         for i in devices:
-            self.userField.addItem( devices[i]['name'] )
-            self.atField.addItem(devices[i]['when'])
-            self.fromField.addItem(devices[i]['address'])
-            self.viaField.addItem( devices[i]['via'] )
-            self.groupField.addItem( devices[i]['group'] )
+            self.userField.addItem( devices[i]['name']+"\t"+devices[i]['when']+"\t"+devices[i]['address']+"  \t"+devices[i]['via']+"\t"+devices[i]['group'] )
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listUsers )

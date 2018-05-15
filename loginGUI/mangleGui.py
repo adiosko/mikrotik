@@ -159,6 +159,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addMangleInput( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(387,249)
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -167,6 +168,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addMangleInputReject( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 387, 249 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -175,6 +177,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addMangleInputDrop( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 387, 249 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -183,6 +186,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addMangleForwardAccept( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 387, 249 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -191,6 +195,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addMangleForwardDrop( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 387, 249 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -199,6 +204,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addMangleForwardReject( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 387, 249 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -207,6 +213,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addMangleOutputAccept( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 387, 249 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -215,6 +222,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #elf.nd.show()
         action = addMangleOutputDrop( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 387, 249 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -223,6 +231,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addMangleOutputReject( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 387, 249 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -232,6 +241,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addManglePostrouteAccept( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 375,230 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -240,6 +250,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addManglePostrouteDrop( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 375, 230 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -248,6 +259,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addManglePostrouteReject( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 375, 230 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -256,6 +268,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addManglePrerouteAccept( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 375, 230 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -264,6 +277,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addManglePrerouteDrop( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 375, 230 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -272,6 +286,7 @@ class mangleGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addManglePrerouteReject( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 375, 230 )
         action.show()
         #self.mdi.cascadeSubWindows()
 

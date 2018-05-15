@@ -153,6 +153,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addInputAcceptGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(359,272)
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -161,6 +162,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addInputRejectGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 359, 272 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -169,6 +171,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addInputDropGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 359, 272 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -177,6 +180,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addForwardAcceptGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(380,273)
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -185,6 +189,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addForwardDropGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 380, 273 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -193,6 +198,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addForwardRejectGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 380, 273 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -201,6 +207,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addOutputAcceptGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(379,275)
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -209,6 +216,7 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addOutputDenyGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 379, 275 )
         action.show()
         #self.mdi.cascadeSubWindows()
 
@@ -217,25 +225,9 @@ class fwGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addOutputRejectGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize( 379, 275 )
         action.show()
         #self.mdi.cascadeSubWindows()
-    """
-    def addSrcNat(self):
-        self.nd = addSrcNatGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
-
-    def addDstNat(self):
-        self.nd = addDstNatGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
-
-    def addSrcAccept(self):
-        self.nd = addSrcAcceptGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
-
-    def addDstAccept(self):
-        self.nd = addDstAcceptGui( self.user, self.pwd, self.server, self )
-        self.nd.show()
-    """
 
     def init_buttons(self):
         self.refreshButton.clicked.connect( self.listRules)

@@ -30,7 +30,6 @@ class addRoute(QtGui.QMainWindow,Ui_MainWindow):
             gateway = self.gwField.toPlainText()
             self.addr.addRoute(dest,gateway)
             self.route_window.listRoutes()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

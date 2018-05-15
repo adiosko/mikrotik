@@ -30,7 +30,6 @@ class addPortGui(QtGui.QMainWindow,Ui_MainWindow):
             bridge = self.bridgeField.toPlainText()
             self.addr.addPort(interface,bridge)
             self.arp_window.listArp()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

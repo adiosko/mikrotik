@@ -34,7 +34,6 @@ class addDhcpServerGui(QtGui.QMainWindow,Ui_MainWindow):
             lease = self.leaseField.toPlainText()
             self.addr.addDhcp(name,interface,pool,server,lease)
             self.address_window.listAddresses()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

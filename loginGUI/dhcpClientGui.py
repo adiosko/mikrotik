@@ -112,6 +112,7 @@ class dhcpClientGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addDhcpclientGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(416,98)
         action.show()
         #self.mdi.cascadeSubWindows()
 

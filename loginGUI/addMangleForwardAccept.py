@@ -34,7 +34,6 @@ class addMangleForwardAccept(QtGui.QMainWindow,Ui_MainWindow):
             interface = self.ifaceField.toPlainText()
             self.addr.addForwardaccept(dstaddr,srcaddr,protocol,srcport,dstport,interface)
             self.address_window.listRules()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

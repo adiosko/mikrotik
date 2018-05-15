@@ -33,7 +33,6 @@ class addWirelessInterfaceGui(QtGui.QMainWindow,Ui_MainWindow):
             vlan = self.vlanField.toPlainText()
             self.addr.addInterface(name,master,secirity,vlan)
             self.wireless_window.listInterfaces()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

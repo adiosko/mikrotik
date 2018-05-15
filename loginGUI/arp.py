@@ -52,6 +52,7 @@ class arpGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addArpGui( self.user, self.pwd, self.server, self)
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(358,139)
         action.show()
         #self.mdi.cascadeSubWindows()
 

@@ -50,6 +50,7 @@ class ipAddressesGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addAddressGui( self.user, self.pwd, self.server, self)
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(368,95)
         action.show()
         #self.mdi.cascadeSubWindows()
 

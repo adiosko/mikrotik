@@ -29,7 +29,6 @@ class addBridgeGui(QtGui.QMainWindow,Ui_MainWindow):
             protocol = self.protocolField.toPlainText()
             self.addr.addBridge(name,protocol)
             self.bridge_window.listBridge()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

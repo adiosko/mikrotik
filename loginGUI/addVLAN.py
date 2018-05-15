@@ -1,6 +1,8 @@
 from PyQt4 import QtCore, QtGui, uic
 #import  LoginManager
 #my designed file
+from PyQt4.QtGui import QMessageBox
+
 from bridge.bridgeVlan import bridgeVlan
 import sys
 
@@ -28,7 +30,6 @@ class addVLANGui(QtGui.QMainWindow,Ui_MainWindow):
             vlan  = self.vlanField.toPlainText()
             self.addr.addVlan(bridge,vlan)
             self.arp_window.listVlan()
-            self.close()
         except Exception as e:
             self.msg = QMessageBox()
             self.msg.setIcon( QMessageBox.Critical )

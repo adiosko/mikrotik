@@ -94,6 +94,7 @@ class bridgeGUI(QtGui.QMainWindow,Ui_MainWindow):
     def addBridge(self):
         action = addBridgeGui( self.user, self.pwd, self.server, self)
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(376,103)
         action.show()
         #self.mdi.cascadeSubWindows()
 

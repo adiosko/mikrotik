@@ -55,6 +55,7 @@ class securityGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addProfile( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(411,130)
         action.show()
         #self.mdi.cascadeSubWindows()
 

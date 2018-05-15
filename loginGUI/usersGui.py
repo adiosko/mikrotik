@@ -97,6 +97,7 @@ class usersGui(QtGui.QMainWindow,Ui_MainWindow):
         #self.nd.show()
         action = addUserGui( self.user, self.pwd, self.server, self )
         self.parent.mdi.addSubWindow( action )
+        action.setFixedSize(355,166)
         action.show()
         #self.mdi.cascadeSubWindows()
 
