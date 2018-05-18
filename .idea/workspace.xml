@@ -4,81 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/loginGUI/WirelessInterfacesGui.py" line="74" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/loginGUI/WirelessInterfacesGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/WirelessInterfacesGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addAddressGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addAddressGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addAddressListGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addAddressListGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addArpGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addArpGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addBridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addBridge.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addDhcpClient.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addDhcpClient.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addDhcpRelayGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addDhcpRelayGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addDhcpServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addDhcpServer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addDstAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addDstAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addDstNatGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addDstNatGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addFilterOutputAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addFilterOutputAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addFilterOutputDeny.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addFilterOutputDeny.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addFilterOutputReject.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addFilterOutputReject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addForwardAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addForwardAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addForwardDrop.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addForwardDrop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addForwardReject.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addForwardReject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addFwInputAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addFwInputAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addInputDrop.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addInputDrop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addInputReject.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addInputReject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addInterfaceList.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addInterfaceList.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addInterfaceVlanGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addInterfaceVlanGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addListMemeberGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addListMemeberGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMangleForwardAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMangleForwardAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMangleForwardDrop.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMangleForwardDrop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMangleForwardReject.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMangleForwardReject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMangleInputAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMangleInputAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMangleInputDrop.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMangleInputDrop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMangleInputReject.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMangleInputReject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMangleOuputAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMangleOuputAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMangleOutputDrop.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMangleOutputDrop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMangleOutputReject.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMangleOutputReject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addManglePostRouteAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addManglePostRouteAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addMasquaradeGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addMasquaradeGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addPoolGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addPoolGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addPort.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addPort.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addPostReject.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addPostReject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addPostRoutingDrop.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addPostRoutingDrop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addPrerouteAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addPrerouteAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addPrerouteDrop.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addPrerouteDrop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addPrerouteReject.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addPrerouteReject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addProfile.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addProfile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addRoute.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addRoute.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addSaticDhcpLease.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addSaticDhcpLease.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addSrcAccept.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addSrcAccept.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addSrcNat.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addSrcNat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addStaticDnsGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addStaticDnsGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addUserGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addUserGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addVLAN.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addVLAN.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addWirelessInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addWirelessInterface.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/addresslistGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/addresslistGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/arp.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/arp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/bridgeGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/bridgeGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/bridgePorts.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/bridgePorts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/bridgeVlan.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/bridgeVlan.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/dhcpClientGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/dhcpClientGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/dhcpRelayGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/dhcpRelayGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/dhcpServerGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/dhcpServerGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/filterGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/filterGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/interfaceListGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/interfaceListGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/interfaceListMembers.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/interfaceListMembers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/interfaceVlanGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/interfaceVlanGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/ipAddressesGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/ipAddressesGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/loginWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/loginWindow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/mangleGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/mangleGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/natGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/natGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/ndsstaticGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/ndsstaticGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/poolGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/poolGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/routeGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/routeGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/securityGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/securityGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/userActive.ui" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/userActive.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/usersActiveGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/usersActiveGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loginGUI/usersGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/loginGUI/usersGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mt.output" beforeDir="false" afterPath="$PROJECT_DIR$/mt.output" afterDir="false" />
-    </list>
+    <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="" />
     <ignored path="diplomkap3.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -231,7 +157,7 @@
       <file leaf-file-name="addWirelessInterface.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/loginGUI/addWirelessInterface.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="275">
+            <state relative-caret-position="302">
               <caret line="34" column="49" selection-start-line="34" selection-start-column="49" selection-end-line="34" selection-end-column="49" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
@@ -377,9 +303,9 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1813" />
-    <option name="width" value="1910" />
-    <option name="height" value="1050" />
+    <option name="y" value="-1" />
+    <option name="width" value="1920" />
+    <option name="height" value="1080" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -712,8 +638,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1920" y="-1" width="1920" height="1053" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="-1" width="1920" height="1080" extended-state="6" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3290461" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5506937" side_tool="true" weight="0.3135776" />
@@ -721,8 +646,8 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3286638" />
       <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4960464" weight="0.32829374" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4493063" weight="0.28725702" />
-      <window_info anchor="bottom" x="1931" y="373" width="1897" height="306" id="Terminal" order="9" sideWeight="0.4095941" visible="true" weight="0.325054" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17395945" />
+      <window_info active="true" anchor="bottom" x="1931" y="373" width="1897" height="306" id="Terminal" order="9" sideWeight="0.4095941" visible="true" weight="0.3158447" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17395945" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="SciView" order="3" />
@@ -1288,7 +1213,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/loginGUI/addWirelessInterface.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
+        <state relative-caret-position="302">
           <caret line="34" column="49" selection-start-line="34" selection-start-column="49" selection-end-line="34" selection-end-column="49" />
           <folding>
             <element signature="e#0#36#0" expanded="true" />

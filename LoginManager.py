@@ -1,7 +1,6 @@
-import sys, posix, time, binascii, socket, select
+import sys, time, binascii, socket, select
 import pexpect
 import os
-import scp
 from centralControl import centralControl
 
 credentials = {
