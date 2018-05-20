@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>WinboxLinux</string>
+   <string>Login WIndow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLineEdit" name="addressField">
