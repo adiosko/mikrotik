@@ -9,7 +9,7 @@ import os
 
 class Files:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( 'admin', 'admin' )
 
     def listFiles(self):

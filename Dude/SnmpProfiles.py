@@ -3,5 +3,5 @@ from tikapy import TikapySslClient
 
 class SnmpProfiles:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)

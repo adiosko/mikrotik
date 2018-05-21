@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class interfaceNstreamDualSetDataRates:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def setRatesB(self,name,rates="1Mbps,2Mbps,5.5Mbps,11Mbps"):

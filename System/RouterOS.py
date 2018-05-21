@@ -5,7 +5,7 @@ from pprint import pprint
 import tikapy
 import os
 
-client = TikapyClient('172.16.129.2', 8728)
+self.client = TikapySslClient( address, 8729 )
 client.login('admin','admin')
 
 print(client.talk( ['/certificate/create-certificate-request', '=template=cert1', '= key-passphrase=pass']))

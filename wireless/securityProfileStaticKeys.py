@@ -4,7 +4,7 @@ from wireless import securityProfileSetGeneral
 
 class securityProfileSetStaticKeys:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def setKey0(self,name,keyValue,value):

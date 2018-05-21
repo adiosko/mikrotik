@@ -3,7 +3,7 @@ from tikapy import TikapySslClient
 
 class FirewallActions:
     def __init__(self,address,username,password):
-        self.client = TikapyClient( address, 8728 )
+        sself.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def setAcceptFilter(self,number):

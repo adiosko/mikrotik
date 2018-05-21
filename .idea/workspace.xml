@@ -4,7 +4,388 @@
     <bookmark url="file://$PROJECT_DIR$/loginGUI/WirelessInterfacesGui.py" line="74" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="" />
+    <list default="true" id="64508484-cad0-4744-a8cd-59d5c05f25c3" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Charts.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Charts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Devices.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Devices.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Links.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Links.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Mibs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Mibs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/NetworkMaps.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/NetworkMaps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Networks.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Networks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Notifications.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Notifications.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Probes.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Probes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/RosInfo.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/RosInfo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/ServerConfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/ServerConfig.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Services.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/SnmpProfiles.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/SnmpProfiles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/SyslogService.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/SyslogService.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dude/Tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dude/Tools.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/Accounting.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/Accounting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/Addresses.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/Addresses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/Arp.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/Arp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/FirewallAction.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/FirewallAction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/FirewallAdvancedSetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/FirewallAdvancedSetup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/FirewallExtraSetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/FirewallExtraSetup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/FirewallL7Protocols.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/FirewallL7Protocols.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotActive.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotActive.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotCookies.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotCookies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotHost.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotHost.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotIpBindings.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotIpBindings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotServerProfile.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotServerProfile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotServicePorts.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotServicePorts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotUserProfile.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotUserProfile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotUsers.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotUsers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotWalledGarden.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotWalledGarden.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/HotspotWalledGardenList.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/HotspotWalledGardenList.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/IPsecGroups.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/IPsecGroups.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/IPsecKeys.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/IPsecKeys.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/IPsecModeCOnfig.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/IPsecModeCOnfig.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/IPsecPolicies.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/IPsecPolicies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/IPsecProposal.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/IPsecProposal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/IPsecUsers.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/IPsecUsers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/IpsecInstalledSa.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/IpsecInstalledSa.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/IpsecPeers.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/IpsecPeers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/IpsecRemotePeers.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/IpsecRemotePeers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/NeighborDIscovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/NeighborDIscovery.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/Packing.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/Packing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/RoouteVrf.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/RoouteVrf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/RouteRules.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/RouteRules.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/Settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/Settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/Smb.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/Smb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/SmbShare.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/SmbShare.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/SmbUsers.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/SmbUsers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/Snmp.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/Snmp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/SnmpCommnity.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/SnmpCommnity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/Socks.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/Socks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/SocksAccess.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/SocksAccess.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/SocksConnections.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/SocksConnections.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/Tftp.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/Tftp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/TrafficFlow.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/TrafficFlow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/TrafficFlowIpfix.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/TrafficFlowIpfix.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/UpnpInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/UpnpInterface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/UpnpSetting.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/UpnpSetting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/WebProxyAccess.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/WebProxyAccess.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/WebProxyCache.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/WebProxyCache.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/WebProxyCacheContetnt.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/WebProxyCacheContetnt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/WebProxyConnections.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/WebProxyConnections.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/WebProxyDirect.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/WebProxyDirect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/WebProxyInserts.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/WebProxyInserts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/WebProxyLookup.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/WebProxyLookup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/WebProxyRefreshes.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/WebProxyRefreshes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv4/WebProxySettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv4/WebProxySettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/DHCPrelay.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/DHCPrelay.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/DHCPv6Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/DHCPv6Client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/DhcpServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/DhcpServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/FirewallActions.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/FirewallActions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/FirewallAdvancedSetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/FirewallAdvancedSetup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/FirewallConenctions.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/FirewallConenctions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/FirewallExtraSetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/FirewallExtraSetup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/FirewallFilter.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/FirewallFilter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/FirewallGeneralSetup.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/FirewallGeneralSetup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/FirewallMangle.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/FirewallMangle.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/FirewallRaw.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/FirewallRaw.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/IPv6Route.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/IPv6Route.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/IPv6Settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/IPv6Settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/Ipv6AddressList.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/Ipv6AddressList.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/Ipv6Addresses.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/Ipv6Addresses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/Ipv6NeighborDiscovery.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/Ipv6NeighborDiscovery.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/Neighbors.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/Neighbors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IPv6/Pool.py" beforeDir="false" afterPath="$PROJECT_DIR$/IPv6/Pool.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/KVM/KVM.py" beforeDir="false" afterPath="$PROJECT_DIR$/KVM/KVM.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsAcceptFilter.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsAcceptFilter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsAdvertiseFilter.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsAdvertiseFilter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsBgpVpls.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsBgpVpls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsCiscoBgpVpls.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsCiscoBgpVpls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsForwardingTable.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsForwardingTable.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsInterface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsLdpInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsLdpInterface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsLdpNeighbor.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsLdpNeighbor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsLdpSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsLdpSettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsLocalBinding.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsLocalBinding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsRemoteBindings.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsRemoteBindings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsSettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/MplsVpls.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/MplsVpls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/TrafficEngInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/TrafficEngInterface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/TrafficEngPathState.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/TrafficEngPathState.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/TrafficEngResvState.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/TrafficEngResvState.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/TrafficEngTraffInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/TrafficEngTraffInterface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MPLS/TrafficEngTunnelPath.py" beforeDir="false" afterPath="$PROJECT_DIR$/MPLS/TrafficEngTunnelPath.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Queues/QueueInterfaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/Queues/QueueInterfaces.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Queues/QueueTree.py" beforeDir="false" afterPath="$PROJECT_DIR$/Queues/QueueTree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Queues/QueueTypes.py" beforeDir="false" afterPath="$PROJECT_DIR$/Queues/QueueTypes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Queues/SimpleQueues.py" beforeDir="false" afterPath="$PROJECT_DIR$/Queues/SimpleQueues.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Radius/Radius.py" beforeDir="false" afterPath="$PROJECT_DIR$/Radius/Radius.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/BFD.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/BFD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/FIlterChains.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/FIlterChains.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/FilterActions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/FilterActions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/FilterBGP.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/FilterBGP.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/FilterBgpActions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/FilterBgpActions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/IgmpProxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/IgmpProxy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/MME.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/MME.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfArea.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfArea.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfAreaBorderRouters.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfAreaBorderRouters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfAreaRanges.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfAreaRanges.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfAsBorderRouters.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfAsBorderRouters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfInstances.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfInstances.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfInterface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfLsa.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfLsa.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfNbmaNeighbor.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfNbmaNeighbor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfNeighbors.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfNeighbors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfNetworks.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfNetworks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfRoutes.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfRoutes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfShamLinks.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfShamLinks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/OspfVirtualLink.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/OspfVirtualLink.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimBsr.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimBsr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimBsrCandidates.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimBsrCandidates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimIgmpGroups.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimIgmpGroups.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimInterfaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimInterfaces.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimJoins.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimJoins.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimMRib.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimMRib.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimMfc.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimMfc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimNeighbors.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimNeighbors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimRp.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimRp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PimSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PimSettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/PrefixList.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/PrefixList.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RipInterfaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RipInterfaces.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RipKeys.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RipKeys.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RipNeighbors.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RipNeighbors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RipNetworks.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RipNetworks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RipNgInterface.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RipNgInterface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RipNgRoutes.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RipNgRoutes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RipNgSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RipNgSettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RipRoutes.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RipRoutes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RipSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RipSettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RoutingFilterActions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RoutingFilterActions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RoutingFilterBgp.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RoutingFilterBgp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RoutingFilterBgpActions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RoutingFilterBgpActions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RoutingFilterMatchers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RoutingFilterMatchers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RoutingFilters.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RoutingFilters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/RpCandidate.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/RpCandidate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/VPNRoutes.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/VPNRoutes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/bgpAdverisment.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/bgpAdverisment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/bgpAfregates.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/bgpAfregates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/bgpInstance.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/bgpInstance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/bgpNetworks.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/bgpNetworks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/bgpPeer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/bgpPeer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Routing/bgpVRF.py" beforeDir="false" afterPath="$PROJECT_DIR$/Routing/bgpVRF.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/AutoUpdate.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/AutoUpdate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/Certificates.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/Certificates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/Console.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/Console.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/Files.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/Files.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/Health.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/Health.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/Interfaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/Interfaces.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/LCD.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/LCD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/LED.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/LED.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/Licence.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/Licence.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/NTPclient.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/NTPclient.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/NTPserver.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/NTPserver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/RouterBoard.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/RouterBoard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/RouterOS.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/RouterOS.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/Scheduller.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/Scheduller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/Scripts.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/Scripts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/SpecialLogin.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/SpecialLogin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/SystemClock.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/SystemClock.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/UPS.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/UPS.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/WatchDog.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/WatchDog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/userGroup.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/userGroup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/userGroupSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/userGroupSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/userPrivateKey.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/userPrivateKey.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/System/usersSshKeys.py" beforeDir="false" afterPath="$PROJECT_DIR$/System/usersSshKeys.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/BwServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/BwServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/BwTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/BwTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/Email.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/Email.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/FloodPing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/FloodPing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/Graphing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/Graphing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/IpScan.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/IpScan.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/MacServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/MacServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/Netwatch.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/Netwatch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/PacketSniffer.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/PacketSniffer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/Ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/Ping.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/PingSpeed.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/PingSpeed.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/Profile.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/Profile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/RoMon.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/RoMon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/SMS.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/SMS.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/Telnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/Telnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/Torch.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/Torch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/Traceroute.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/Traceroute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/TrafficGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/TrafficGenerator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/TrafficMonitorList.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/TrafficMonitorList.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/BridgeMdb.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/BridgeMdb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/BridgeSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/BridgeSettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeArp.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeArp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeFIlterArp.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeFIlterArp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeFilter.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeFilter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeFilterAction.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeFilterAction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeFilterAdvanced.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeFilterGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeFilterGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeFilterStp.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeFilterStp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeMSTI.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeMSTI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeNat.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeNat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeNatAction.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeNatAction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeNatAdvanced.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeNatAdvanced.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeNatGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeNatGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgeNatStp.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgeNatStp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bridge/bridgePortMstOverride.py" beforeDir="false" afterPath="$PROJECT_DIR$/bridge/bridgePortMstOverride.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/accessList.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/accessList.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/accessListSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/accessListSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/capAaa.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/capAaa.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/capManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/capManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/capManagerInterfaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/capManagerInterfaces.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/capsmanRegTable.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/capsmanRegTable.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/channelSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/channelSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/channels.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/channels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/configChannels.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/configChannels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/configDatapath.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/configDatapath.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/configRates.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/configRates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/configSecurity.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/configSecurity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/configWireless.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/configWireless.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/configurations.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/configurations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/dataPath.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/dataPath.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/dataPathSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/dataPathSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/interface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/interfaceChannelSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/interfaceChannelSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/interfaceDatapathSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/interfaceDatapathSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/interfaceRatesSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/interfaceRatesSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/interfaceSecuritySet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/interfaceSecuritySet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/interfaceSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/interfaceSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/interfaceWirelessSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/interfaceWirelessSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/provisioningSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/provisioningSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/provisoning.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/provisoning.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/radio.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/radio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/rates.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/rates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/ratesSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/ratesSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/remoteCap.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/remoteCap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/reselectChannel.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/reselectChannel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/security.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capsman/securitySet.py" beforeDir="false" afterPath="$PROJECT_DIR$/capsman/securitySet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/bonding.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/bonding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/bondingGeneralSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/bondingGeneralSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/bondingSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/bondingSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/detectInternet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/detectInternet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/detectInternetState.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/detectInternetState.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/eoIPTunel.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/eoIPTunel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/eoIpSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/eoIpSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/eoipSetLoopProtection.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/eoipSetLoopProtection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/ethernetLoopProtectionSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/ethernetLoopProtectionSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/ethernetSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/ethernetSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/ethernetSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/ethernetSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/greTunel.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/greTunel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/greTunelSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/greTunelSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/interfaceListSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/interfaceListSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/interfaceLteSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/interfaceLteSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/interfacesLte.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/interfacesLte.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/ipTunel.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/ipTunel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/ipTunelSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/ipTunelSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/lists.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/lists.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/listsSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/listsSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/lteApnSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/lteApnSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/vlanLoopProtectSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/vlanLoopProtectSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/vlanSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/vlanSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/vrrp.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/vrrp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/vrrpGeneralSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/vrrpGeneralSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/vrrpScriptSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/vrrpScriptSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interfaces/vrrpSetVrrp.py" beforeDir="false" afterPath="$PROJECT_DIR$/interfaces/vrrpSetVrrp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/makeSupportFile/makeSupport.py" beforeDir="false" afterPath="$PROJECT_DIR$/makeSupportFile/makeSupport.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mesh/MeshFdb.py" beforeDir="false" afterPath="$PROJECT_DIR$/mesh/MeshFdb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mesh/MeshInterfaces.py" beforeDir="false" afterPath="$PROJECT_DIR$/mesh/MeshInterfaces.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mesh/MeshPorts.py" beforeDir="false" afterPath="$PROJECT_DIR$/mesh/MeshPorts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mt.output" beforeDir="false" afterPath="$PROJECT_DIR$/mt.output" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/activeConnections.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/activeConnections.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceL2tpCLient.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceL2tpCLient.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceL2tpClientSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceL2tpClientSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceL2tpServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceL2tpServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceL2tpServerBinding.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceL2tpServerBinding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceL2tpSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceL2tpSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceOvpnClient.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnClient.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceOvpnClientSetDialOut.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnClientSetDialOut.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceOvpnClientSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnClientSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceOvpnServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceOvpnServerBinding.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnServerBinding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceOvpnServerSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceOvpnServerSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppClient.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppClient.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppClientSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppClientSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppClientSetPpp.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppClientSetPpp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppServerSetDialIn.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppServerSetDialIn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppServerSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppServerSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppoe.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppoe.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppoeClient.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppoeClient.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppoeClientSetDialOut.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppoeClientSetDialOut.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppoeSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppoeSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePppoeSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePppoeSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePptpCLientSetDialOut.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePptpClient.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePptpClient.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePptpClientSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePptpServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePptpServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePptpServerBinding.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePptpServerBinding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfacePptpServerSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfacePptpServerSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceSstpCLientGeneralSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceSstpCLientGeneralSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceSstpClient.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceSstpClient.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceSstpClientSetDialOut.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceSstpServer.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceSstpServer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceSstpServerBinding.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceSstpServerBinding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/interfaceSstpServerSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/interfaceSstpServerSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/l2tpSecrets.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/l2tpSecrets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/pppAuthenticationAndAcounting.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/pppAuthenticationAndAcounting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/pppoe.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/pppoe.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/pppoeSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/pppoeSettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/profileGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/profileGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/profileLimits.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/profileLimits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/profileProtocols.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/profileProtocols.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/profileQueue.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/profileQueue.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/profileScripts.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/profileScripts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/profiles.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/profiles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/secretSettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/secretSettings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ppp/secrets.py" beforeDir="false" afterPath="$PROJECT_DIR$/ppp/secrets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/switch/SwitchGeeral.py" beforeDir="false" afterPath="$PROJECT_DIR$/switch/SwitchGeeral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/switch/SwitchHost.py" beforeDir="false" afterPath="$PROJECT_DIR$/switch/SwitchHost.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/switch/SwitchPorts.py" beforeDir="false" afterPath="$PROJECT_DIR$/switch/SwitchPorts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/switch/SwitchRule.py" beforeDir="false" afterPath="$PROJECT_DIR$/switch/SwitchRule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/switch/SwitchVlan.py" beforeDir="false" afterPath="$PROJECT_DIR$/switch/SwitchVlan.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/NstremeDual.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/NstremeDual.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/accessList.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/accessList.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/accessListSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/accessListSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/channelSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/channelSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/channels.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/channels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/connectList.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/connectList.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/connectListSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/connectListSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceCap.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceCap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceNstreamDualDataratesSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceNstreamDualDataratesSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceNstremeDualGeneralSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceNstremeDualGeneralSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceNstremeDualGlobal.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceNstremeDualGlobal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceNstremeDualSetDual.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceNstremeDualSetDual.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceRepeater.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceRepeater.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceSnifferSetting.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceSnifferSetting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtual.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtual.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualApbridgeSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualApbridgeSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualBridgeSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualBridgeSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualGeneralSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualGeneralSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualNstreamDualSlave.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualNstreamDualSlave.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualStation.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualStation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualStationBridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualStationBridge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudoBridgeClone.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudoBridgeClone.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudobridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudobridge.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualWds.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualWds.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualWdsSlave.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualWdsSlave.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceVirtualWirelessSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceVirtualWirelessSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceWds.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceWds.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceWdsSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceWdsSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceWdsSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceWdsSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceWdsWdsSet.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceWdsWdsSet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceWirelessAllignement.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceWirelessAllignement.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/interfaceWpsCLient.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/interfaceWpsCLient.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/nstreameSetDual.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/nstreameSetDual.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/nstremeDataRates.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/nstremeDataRates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/nstremeSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/nstremeSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/securityProfileEap.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/securityProfileEap.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/securityProfileRadius.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/securityProfileRadius.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/securityProfileSetGeneral.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/securityProfileSetGeneral.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/securityProfileStaticKeys.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/securityProfileStaticKeys.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wireless/wirelessSnooper.py" beforeDir="false" afterPath="$PROJECT_DIR$/wireless/wirelessSnooper.py" afterDir="false" />
+    </list>
     <ignored path="diplomkap3.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,121 +427,120 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="addProfile.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addProfile.py">
+      <file leaf-file-name="nstremeDataRates.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/nstremeDataRates.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="29" column="47" selection-start-line="29" selection-start-column="47" selection-end-line="29" selection-end-column="47" />
+            <state relative-caret-position="75">
+              <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
               <folding>
-                <element signature="e#0#36#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addresslistGui.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addresslistGui.py">
+      <file leaf-file-name="NstremeDual.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/NstremeDual.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="434">
-              <caret line="110" selection-start-line="110" selection-end-line="110" />
+            <state relative-caret-position="75">
+              <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
               <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addRoute.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addRoute.py">
+      <file leaf-file-name="nstremeSetGeneral.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/nstremeSetGeneral.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="31" column="42" selection-start-line="31" selection-start-column="42" selection-end-line="31" selection-end-column="42" />
+            <state relative-caret-position="75">
+              <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
               <folding>
-                <element signature="e#0#36#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addSaticDhcpLease.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addSaticDhcpLease.py">
+      <file leaf-file-name="registration.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/registration.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="32" column="45" selection-start-line="32" selection-start-column="45" selection-end-line="32" selection-end-column="45" />
+            <state relative-caret-position="75">
+              <caret line="5" column="54" lean-forward="true" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="54" />
               <folding>
-                <element signature="e#0#36#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addSrcAccept.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addSrcAccept.py">
+      <file leaf-file-name="securityProfile.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/securityProfile.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="34" column="41" selection-start-line="34" selection-start-column="41" selection-end-line="34" selection-end-column="41" />
+            <state>
               <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addSrcNat.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addSrcNat.py">
+      <file leaf-file-name="securityProfileEap.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/securityProfileEap.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="34" column="41" selection-start-line="34" selection-start-column="41" selection-end-line="34" selection-end-column="41" />
+            <state relative-caret-position="90">
+              <caret line="6" column="54" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
               <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addStaticDnsGui.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addStaticDnsGui.py">
+      <file leaf-file-name="securityProfileRadius.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/securityProfileRadius.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="28" column="44" selection-start-line="28" selection-start-column="44" selection-end-line="28" selection-end-column="44" />
+            <state relative-caret-position="75">
+              <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
               <folding>
-                <element signature="e#0#36#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addUserGui.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addUserGui.py">
+      <file leaf-file-name="securityProfileSetGeneral.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/securityProfileSetGeneral.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="32" column="43" selection-start-line="32" selection-start-column="43" selection-end-line="32" selection-end-column="43" />
+            <state relative-caret-position="75">
+              <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
               <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addVLAN.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addVLAN.py">
+      <file leaf-file-name="securityProfileStaticKeys.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wireless/securityProfileStaticKeys.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="33" column="24" lean-forward="true" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
+            <state relative-caret-position="90">
+              <caret line="6" column="54" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
               <folding>
-                <element signature="e#0#36#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addWirelessInterface.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/loginGUI/addWirelessInterface.py">
+      <file leaf-file-name="wirelessSnooper.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/wireless/wirelessSnooper.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="302">
-              <caret line="34" column="49" selection-start-line="34" selection-start-column="49" selection-end-line="34" selection-end-column="49" />
+            <state relative-caret-position="75">
+              <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
               <folding>
-                <element signature="e#0#36#0" expanded="true" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -239,57 +619,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/loginGUI/loginWindow.py" />
-        <option value="$PROJECT_DIR$/loginGUI/usersActiveGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addAddressGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addAddressListGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addArpGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addBridge.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addDhcpClient.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addDhcpRelayGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addDhcpServer.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addDstAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addDstNatGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addFilterOutputAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addFilterOutputDeny.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addFilterOutputReject.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addForwardAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addForwardDrop.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addForwardReject.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addFwInputAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addInputDrop.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addInputReject.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addInterfaceList.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addInterfaceVlanGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addListMemeberGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMangleForwardAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMangleForwardDrop.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMangleForwardReject.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMangleInputAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMangleInputDrop.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMangleInputReject.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMangleOuputAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMangleOutputDrop.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMangleOutputReject.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addManglePostRouteAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addMasquaradeGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addPoolGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addPort.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addPostReject.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addPostRoutingDrop.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addPrerouteAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addPrerouteDrop.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addPrerouteReject.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addProfile.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addresslistGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addRoute.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addSaticDhcpLease.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addSrcAccept.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addSrcNat.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addStaticDnsGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addUserGui.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addVLAN.py" />
-        <option value="$PROJECT_DIR$/loginGUI/addWirelessInterface.py" />
+        <option value="$PROJECT_DIR$/Tools/PacketSniffer.py" />
+        <option value="$PROJECT_DIR$/Tools/Ping.py" />
+        <option value="$PROJECT_DIR$/Tools/PingSpeed.py" />
+        <option value="$PROJECT_DIR$/Tools/Profile.py" />
+        <option value="$PROJECT_DIR$/Tools/RoMon.py" />
+        <option value="$PROJECT_DIR$/Tools/SMS.py" />
+        <option value="$PROJECT_DIR$/Tools/Telnet.py" />
+        <option value="$PROJECT_DIR$/Tools/Torch.py" />
+        <option value="$PROJECT_DIR$/Tools/Traceroute.py" />
+        <option value="$PROJECT_DIR$/Tools/TrafficGenerator.py" />
+        <option value="$PROJECT_DIR$/Tools/TrafficMonitorList.py" />
+        <option value="$PROJECT_DIR$/wireless/accessList.py" />
+        <option value="$PROJECT_DIR$/wireless/accessListSet.py" />
+        <option value="$PROJECT_DIR$/wireless/channels.py" />
+        <option value="$PROJECT_DIR$/wireless/channelSet.py" />
+        <option value="$PROJECT_DIR$/wireless/connectList.py" />
+        <option value="$PROJECT_DIR$/wireless/connectListSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceCap.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceNstreamDualDataratesSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceNstremeDualGeneralSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceNstremeDualGlobal.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceNstremeDualSetDual.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceRepeater.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceSnifferSetting.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtual.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualApbridgeSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualBridgeSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualGeneralSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualNstreamDualSlave.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStation.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStationBridge.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudobridge.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualStationPseudoBridgeClone.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualWds.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualWdsSlave.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceVirtualWirelessSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWds.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWdsSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWdsSetGeneral.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWdsWdsSet.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWirelessAllignement.py" />
+        <option value="$PROJECT_DIR$/wireless/interfaceWpsCLient.py" />
+        <option value="$PROJECT_DIR$/wireless/nstreameSetDual.py" />
+        <option value="$PROJECT_DIR$/wireless/nstremeDataRates.py" />
+        <option value="$PROJECT_DIR$/wireless/NstremeDual.py" />
+        <option value="$PROJECT_DIR$/wireless/nstremeSetGeneral.py" />
+        <option value="$PROJECT_DIR$/wireless/securityProfileEap.py" />
+        <option value="$PROJECT_DIR$/wireless/securityProfileRadius.py" />
+        <option value="$PROJECT_DIR$/wireless/securityProfileSetGeneral.py" />
+        <option value="$PROJECT_DIR$/wireless/securityProfileStaticKeys.py" />
+        <option value="$PROJECT_DIR$/wireless/wirelessSnooper.py" />
       </list>
     </option>
   </component>
@@ -303,9 +683,9 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="-1" />
-    <option name="width" value="1920" />
-    <option name="height" value="1080" />
+    <option name="x" value="1808" />
+    <option name="width" value="1910" />
+    <option name="height" value="1077" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -331,6 +711,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -341,13 +722,72 @@
             <path>
               <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
               <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="IPv4" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="IPv6" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="KVM" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="log" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
               <item name="loginGUI" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="ppp" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="Queues" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="Radius" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="Routing" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="switch" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="System" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="Tools" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="diplomkap3" type="b2602c69:ProjectViewProjectNode" />
+              <item name="diplomkap3" type="462c0819:PsiDirectoryNode" />
+              <item name="wireless" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -464,35 +904,6 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="diplomkap3" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="diplomkap3" />
-      <method />
-    </configuration>
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -510,92 +921,6 @@
       <option name="TEST_TYPE" value="TEST_SCRIPT" />
       <option name="PATTERN" value="" />
       <option name="USE_PATTERN" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Doctests">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="diplomkap3" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Nosetests">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="diplomkap3" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <option name="PARAMS" value="" />
-      <option name="USE_PARAM" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Unittests">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="diplomkap3" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <option name="PUREUNITTEST" value="true" />
-      <option name="PARAMS" value="" />
-      <option name="USE_PARAM" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="py.test">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="diplomkap3" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
-      <option name="testToRun" value="" />
-      <option name="keywords" value="" />
-      <option name="params" value="" />
-      <option name="USE_PARAM" value="false" />
-      <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
     <list>
@@ -638,7 +963,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-1" width="1920" height="1080" extended-state="6" />
+    <frame x="1920" y="-1" width="1920" height="1053" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3290461" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5506937" side_tool="true" weight="0.3135776" />
@@ -646,8 +972,8 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3286638" />
       <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4960464" weight="0.32829374" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4493063" weight="0.28725702" />
-      <window_info active="true" anchor="bottom" x="1931" y="373" width="1897" height="306" id="Terminal" order="9" sideWeight="0.4095941" visible="true" weight="0.3158447" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17395945" />
+      <window_info anchor="bottom" x="1931" y="373" width="1897" height="306" id="Terminal" order="9" sideWeight="0.4095941" visible="true" weight="0.325054" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17609392" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="SciView" order="3" />
@@ -666,24 +992,24 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15955175" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3290461" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3286638" />
       <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4493063" visible="true" weight="0.29589632" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="11" sideWeight="0.4960464" weight="0.3290461" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39956802" />
       <window_info anchor="right" id="Database" order="4" />
       <window_info anchor="bottom" x="1931" y="373" width="1897" height="306" id="Terminal" order="10" sideWeight="0.4095941" weight="0.3261339" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5506937" side_tool="true" weight="0.3135776" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3286638" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Python Console" order="11" sideWeight="0.4960464" weight="0.3290461" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info id="Favorites" order="2" side_tool="true" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -718,505 +1044,510 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/loginGUI/loginWindow.py">
+    <entry file="file://$PROJECT_DIR$/Tools/Profile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="718" column="36" lean-forward="true" selection-start-line="718" selection-start-column="24" selection-end-line="718" selection-end-column="36" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addAddressGui.py">
+    <entry file="file://$PROJECT_DIR$/Tools/RoMon.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="34" column="47" selection-start-line="34" selection-start-column="47" selection-end-line="34" selection-end-column="47" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addAddressListGui.py">
+    <entry file="file://$PROJECT_DIR$/Tools/SMS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="28" column="44" selection-start-line="28" selection-start-column="44" selection-end-line="28" selection-end-column="44" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addArpGui.py">
+    <entry file="file://$PROJECT_DIR$/Tools/Telnet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="32" column="37" selection-start-line="32" selection-start-column="37" selection-end-line="32" selection-end-column="37" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addBridge.py">
+    <entry file="file://$PROJECT_DIR$/Tools/Torch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="30" column="43" selection-start-line="30" selection-start-column="43" selection-end-line="30" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addDhcpClient.py">
+    <entry file="file://$PROJECT_DIR$/Tools/Traceroute.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="30" column="47" selection-start-line="30" selection-start-column="47" selection-end-line="30" selection-end-column="47" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addDhcpRelayGui.py">
+    <entry file="file://$PROJECT_DIR$/Tools/TrafficGenerator.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="47" selection-start-line="32" selection-start-column="47" selection-end-line="32" selection-end-column="47" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addDhcpServer.py">
+    <entry file="file://$PROJECT_DIR$/Tools/TrafficMonitorList.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="47" selection-start-line="35" selection-start-column="47" selection-end-line="35" selection-end-column="47" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addDstAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/accessList.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="41" selection-start-line="34" selection-start-column="41" selection-end-line="34" selection-end-column="41" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addDstNatGui.py">
+    <entry file="file://$PROJECT_DIR$/wireless/accessListSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="41" selection-start-line="35" selection-start-column="41" selection-end-line="35" selection-end-column="41" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addFilterOutputAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/channels.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addFilterOutputDeny.py">
+    <entry file="file://$PROJECT_DIR$/wireless/channelSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addFilterOutputReject.py">
+    <entry file="file://$PROJECT_DIR$/wireless/connectList.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addForwardAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/connectListSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addForwardDrop.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceCap.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addForwardReject.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstreamDualDataratesSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addFwInputAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstremeDualGeneralSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addInputDrop.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstremeDualGlobal.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addInputReject.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceNstremeDualSetDual.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addInterfaceList.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceRepeater.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" column="48" selection-start-line="31" selection-start-column="48" selection-end-line="31" selection-end-column="48" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addInterfaceVlanGui.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaces.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="44" selection-start-line="32" selection-start-column="44" selection-end-line="32" selection-end-column="44" />
+        <state>
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addListMemeberGui.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceSnifferSetting.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="48" selection-start-line="32" selection-start-column="48" selection-end-line="32" selection-end-column="48" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMangleForwardAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtual.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMangleForwardDrop.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualApbridgeSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMangleForwardReject.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualBridgeSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMangleInputAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualGeneralSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMangleInputDrop.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualNstreamDualSlave.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMangleInputReject.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMangleOuputAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStationBridge.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMangleOutputDrop.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStationPseudobridge.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMangleOutputReject.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualStationPseudoBridgeClone.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addManglePostRouteAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualWds.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="43" selection-start-line="34" selection-start-column="43" selection-end-line="34" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addMasquaradeGui.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualWdsSlave.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="30" column="41" selection-start-line="30" selection-start-column="41" selection-end-line="30" selection-end-column="41" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addPoolGui.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceVirtualWirelessSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" column="40" selection-start-line="28" selection-start-column="40" selection-end-line="28" selection-end-column="40" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addPort.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWds.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" column="37" selection-start-line="31" selection-start-column="37" selection-end-line="31" selection-end-column="37" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addPostReject.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="43" selection-start-line="34" selection-start-column="43" selection-end-line="34" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addPostRoutingAccept.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addPostRoutingDrop.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsSetGeneral.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="43" selection-start-line="34" selection-start-column="43" selection-end-line="34" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addPrerouteAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWdsWdsSet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="43" selection-start-line="34" selection-start-column="43" selection-end-line="34" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addPrerouteDrop.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWirelessAllignement.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="43" selection-start-line="34" selection-start-column="43" selection-end-line="34" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addPrerouteReject.py">
+    <entry file="file://$PROJECT_DIR$/wireless/interfaceWpsCLient.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="34" column="43" selection-start-line="34" selection-start-column="43" selection-end-line="34" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addProfile.py">
+    <entry file="file://$PROJECT_DIR$/wireless/nstreameSetDual.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="29" column="47" selection-start-line="29" selection-start-column="47" selection-end-line="29" selection-end-column="47" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addresslistGui.py">
+    <entry file="file://$PROJECT_DIR$/wireless/nstremeDataRates.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="434">
-          <caret line="110" selection-start-line="110" selection-end-line="110" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addRoute.py">
+    <entry file="file://$PROJECT_DIR$/wireless/NstremeDual.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" column="42" selection-start-line="31" selection-start-column="42" selection-end-line="31" selection-end-column="42" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addSaticDhcpLease.py">
+    <entry file="file://$PROJECT_DIR$/wireless/nstremeSetGeneral.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="45" selection-start-line="32" selection-start-column="45" selection-end-line="32" selection-end-column="45" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addSrcAccept.py">
+    <entry file="file://$PROJECT_DIR$/wireless/registration.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="41" selection-start-line="34" selection-start-column="41" selection-end-line="34" selection-end-column="41" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" lean-forward="true" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addSrcNat.py">
+    <entry file="file://$PROJECT_DIR$/wireless/securityProfile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="41" selection-start-line="34" selection-start-column="41" selection-end-line="34" selection-end-column="41" />
+        <state>
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addStaticDnsGui.py">
+    <entry file="file://$PROJECT_DIR$/wireless/securityProfileEap.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" column="44" selection-start-line="28" selection-start-column="44" selection-end-line="28" selection-end-column="44" />
+        <state relative-caret-position="90">
+          <caret line="6" column="54" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addUserGui.py">
+    <entry file="file://$PROJECT_DIR$/wireless/securityProfileRadius.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="43" selection-start-line="32" selection-start-column="43" selection-end-line="32" selection-end-column="43" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addVLAN.py">
+    <entry file="file://$PROJECT_DIR$/wireless/securityProfileSetGeneral.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="33" column="24" lean-forward="true" selection-start-line="33" selection-start-column="24" selection-end-line="33" selection-end-column="24" />
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loginGUI/addWirelessInterface.py">
+    <entry file="file://$PROJECT_DIR$/wireless/securityProfileStaticKeys.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="34" column="49" selection-start-line="34" selection-start-column="49" selection-end-line="34" selection-end-column="49" />
+        <state relative-caret-position="90">
+          <caret line="6" column="54" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wireless/wirelessSnooper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="54" selection-start-line="5" selection-start-column="54" selection-end-line="5" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>

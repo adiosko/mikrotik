@@ -4,7 +4,7 @@ import tikapy
 
 class Addresses:
     def __init__(self,address,username,password):
-        self.client = tikapy.TikapySslClient( address)
+        self.client = TikapySslClient( address, 8729 )
         self.client.login( username,password)
 
     def listAddresses(self):
